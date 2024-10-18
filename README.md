@@ -27,7 +27,8 @@ Afterwards, run the build script to build the executable:
 Alternatively, you may build the executable manually using the following commands:
 
 ```bash
-mkdir build && cd build
+mkdir build
+cd build
 cmake ..
 make
 ```
