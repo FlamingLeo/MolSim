@@ -8,13 +8,11 @@ The codebase for the Molecular Dynamics Bachelor Practical Course @ TUM of Group
 - [Luca-Dumitru Drîndea](https://github.com/Luky002)
 - [Mara Godeanu](https://github.com/MaraGodeanu)
 
-
-
 ## Getting Started (preliminary)
 
 ### Build Instructions
 
-Before attempting to build, ensure that you have Xerces-C++ installed via your system's package manager. On Debian-based systems, simply run the following command:
+Before attempting to build, ensure that you have the Xerces-C++ library installed via your system's package manager. On Debian-based systems, simply run the following command:
 
 ```bash
 sudo apt-get install libxerces-c-dev
