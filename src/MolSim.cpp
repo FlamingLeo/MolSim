@@ -1,6 +1,6 @@
 
-#include "FileReader.h"
-#include "outputWriter/VTKWriter.h"
+#include "io/input/FileReader.h"
+#include "io/output/VTKWriter.h"
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
