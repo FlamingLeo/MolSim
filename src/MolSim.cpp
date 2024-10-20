@@ -77,8 +77,15 @@ void calculateF() {
   iterator = particles.begin();
 
   for (auto &p1 : particles) {
+    p1.setOldF(p1.getF());
     for (auto &p2 : particles) {
       // @TODO: insert calculation of forces here!
+      // where i index is p1 and j index is p2
+      if(not (p1 == p2)) {
+          p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
+                  p1.getM() * p2.getM() / std::pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()), 3), p2.getX() - p1.getX(),
+                  std::multiplies<>()));
+      }
     }
   }
 }
@@ -86,12 +93,15 @@ void calculateF() {
 void calculateX() {
   for (auto &p : particles) {
     // @TODO: insert calculation of position updates here!
+    p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
+    delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
     // @TODO: insert calculation of veclocity updates here!
+    p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>()));
   }
 }
 
