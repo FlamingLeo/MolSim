@@ -69,6 +69,8 @@ public:
 
   void setF(std::array<double, 3>) ;
 
+  void setFToZero();
+
   const std::array<double, 3> &getOldF() const;
 
   void setOldF(std::array<double, 3>) ;

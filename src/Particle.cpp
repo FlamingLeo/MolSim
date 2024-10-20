@@ -53,6 +53,8 @@ const std::array<double, 3> &Particle::getF() const { return f; }
 
 void Particle::setF(std::array<double, 3> g) {f = g;}
 
+void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
+
 const std::array<double, 3> &Particle::getOldF() const { return old_f; }
 
 void Particle::setOldF(std::array<double, 3> g) {old_f = g;}
