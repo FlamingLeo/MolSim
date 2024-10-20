@@ -78,6 +78,7 @@ void calculateF() {
 
   for (auto &p1 : particles) {
     p1.setOldF(p1.getF());
+    p1.setF(std::array<double, 3> arr = {0});
     for (auto &p2 : particles) {
       // @TODO: insert calculation of forces here!
       // where i index is p1 and j index is p2
@@ -117,4 +118,5 @@ void plotParticles(int iteration) {
   }
 
   writer.writeFile(out_name, iteration);
+
 }
