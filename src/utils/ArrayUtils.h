@@ -1,5 +1,6 @@
 /**
  * @file ArrayMath.h
+ * @brief Utility functions for working with iterable data containers.
  * @author F. Gratl
  * @date 12/13/19
  */

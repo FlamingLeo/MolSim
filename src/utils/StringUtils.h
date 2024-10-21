@@ -18,7 +18,7 @@ namespace StringUtils
      * @brief Converts a string to a double.
      *
      * @param str A reference to the string to be converted.
-     * @return double
+     * @return The converted string as a double.
      */
     double toDouble(const std::string &str)
     {
