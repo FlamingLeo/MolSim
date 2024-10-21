@@ -7,54 +7,24 @@
  *
  */
 #pragma once
+#include <utils/Arguments.h>
 #define OPTSTRING "s:e:d:h"
 
-/**
- * @brief Struct containing each option configurable via command line arguments.
- *
- */
-struct Arguments
+namespace CLIParser
 {
-    /// @brief Start time of a simulation (default: 0).
-    double start_time{0};
-    /// @brief End time of a simulation (default: 1000).
-    double end_time{1000};
-    /// @brief Duration of a timestep (default: 0.014).
-    double delta_t{0.014};
-};
-
-class CLIParser
-{
-private:
-    Arguments args;
-
-public:
-    /**
-     * @brief Construct a new CLIParser object.
-     *
-     * @param progname A string used to update the program name inside CLIUtils.
-     */
-    CLIParser(const char *progname /* = "./MolSim" */);
-
     /**
      * @brief Check the mathematical validity of the given arguments.
+     *
+     * @param args A reference to the argument struct to be checked.
      */
-    void checkValidity();
+    void checkValidity(const Arguments &args);
 
     /**
-     * @brief Parse CLI arguments, store them in the args variable and return it.
+     * @brief Parse and store CLI arguments.
      *
      * @param argc Argument counter, typically passed directly via the main function.
      * @param argv Argument vector, typically passed directly via the main function.
-     * 
-     * @return Arguments 
+     * @param args A reference to the argument struct to be modified.
      */
-    Arguments parseArguments(int argc, char **argv);
-
-    /**
-     * @brief Get CLI arguments.
-     *
-     * @return Arguments
-     */
-    Arguments getArgs();
+    void parseArguments(int argc, char **argv, Arguments &args);
 };

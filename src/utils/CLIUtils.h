@@ -15,7 +15,7 @@
 namespace CLIUtils
 {
     /**
-     * @brief The filename of the executable (default: "./MolSim")
+     * @brief The filename of the executable (default: "./MolSim").
      */
     std::string_view filename{"./MolSim"};
 
@@ -36,10 +36,10 @@ namespace CLIUtils
                      "USAGE: "
                   << filename << " [options] <filename>\n"
                                  "OPTIONS:\n"
-                                 "-s / --start_time <number>: Sets the start time (decimal) for a specific simulation (default: 0).\n"
-                                 "-e / --end_time <number>: Sets the end time (decimal) for a specific simulation (default: 1000).\n"
-                                 "-d / --delta_t <number>: Sets the time interval between two iterations of a simulation (default: 0.014).\n"
-                                 "-h / --help: Prints out a help message. Doesn't perform any simulation.\n";
+                                 "-s <number> : Sets the start time (decimal) for a specific simulation (default: 0).\n"
+                                 "-e <number> : Sets the end time (decimal) for a specific simulation (default: 1000).\n"
+                                 "-d <number> : Sets the time interval between two iterations of a simulation (default: 0.014).\n"
+                                 "-h          : Prints out a help message. Doesn't perform any simulation.\n";
     }
 
     /**

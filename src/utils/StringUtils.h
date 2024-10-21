@@ -20,7 +20,7 @@ namespace StringUtils
      * @param str A reference to the string to be converted.
      * @return double
      */
-    double convertStringToDouble(const std::string &str)
+    double toDouble(const std::string &str)
     {
         try
         {

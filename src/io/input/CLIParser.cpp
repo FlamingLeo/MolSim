@@ -5,13 +5,7 @@
 #include <cstdlib>
 #include <getopt.h>
 
-/* could also do "using namespace CLIUtils" here... */
-CLIParser::CLIParser(const char *progname)
-{
-    CLIUtils::filename = progname;
-}
-
-void CLIParser::checkValidity()
+void CLIParser::checkValidity(const Arguments &args)
 {
     // maybe disallow start and end being the same? or print out some warning?
     if (args.start_time > args.end_time)
@@ -20,41 +14,34 @@ void CLIParser::checkValidity()
         CLIUtils::error("Timestep must be positive!");
 }
 
-Arguments CLIParser::parseArguments(int argc, char **argv)
+void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
 {
-    static struct option long_options[]{
-        {"start_time", required_argument, 0, 's'},
-        {"end_time", required_argument, 0, 'e'},
-        {"delta_t", required_argument, 0, 'd'},
-        {"help", no_argument, 0, 'h'},
-        {0, 0, 0, 0}};
-
-    int ch;
-    opterr = 0; // silence default getopt error messages
+    int ch;                       // store option character
+    CLIUtils::filename = argv[0]; // update filename for help and usage strings
+    opterr = 0;                   // silence default getopt error messages
 
     // check for invalid syntax (not enough args)
     if (argc < 2)
         CLIUtils::error("Not enough arguments!");
 
     // loop over all of the options
-    // TODO: fix partial options being recognized (e.g. "--he" for "--help")
-    while ((ch = getopt_long(argc, argv, OPTSTRING, long_options, 0)) != -1)
+    while ((ch = getopt(argc, argv, OPTSTRING)) != -1)
     {
         switch (ch)
         {
-        case 's':
-            args.start_time = StringUtils::convertStringToDouble(optarg);
+        case 's': /* start time */
+            args.start_time = StringUtils::toDouble(optarg);
             break;
-        case 'e':
-            args.end_time = StringUtils::convertStringToDouble(optarg);
+        case 'e': /* end time */
+            args.end_time = StringUtils::toDouble(optarg);
             break;
-        case 'd':
-            args.delta_t = StringUtils::convertStringToDouble(optarg);
+        case 'd': /* timestep */
+            args.delta_t = StringUtils::toDouble(optarg);
             break;
-        case 'h':
+        case 'h': /* help */
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
-        case '?':
+        case '?': /* invalid syntax */
             if (optopt == 's')
                 CLIUtils::error("Start time not specified!");
             else if (optopt == 'e')
@@ -63,7 +50,7 @@ Arguments CLIParser::parseArguments(int argc, char **argv)
                 CLIUtils::error("Timestep not specified!");
             else
                 CLIUtils::error("Unknown option found!");
-        default:
+        default: /* shouldn't happen... */
             CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }
     }
@@ -73,10 +60,5 @@ Arguments CLIParser::parseArguments(int argc, char **argv)
         CLIUtils::error("Invalid syntax!");
 
     // finally, check numerical argument validity and return arguments if all goes well
-    checkValidity();
-    return args;
+    checkValidity(args);
 }
-
-Arguments CLIParser::getArgs() {
-    return args;
-};

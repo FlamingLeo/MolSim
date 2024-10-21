@@ -2,6 +2,7 @@
 #include "io/input/FileReader.h"
 #include "io/output/VTKWriter.h"
 #include "io/input/CLIParser.h"
+#include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
@@ -34,10 +35,10 @@ std::list<Particle> particles;
 
 int main(int argc, char *argv[])
 {
-  CLIParser cliParser{argv[0]};
+  Arguments args;
+  CLIParser::parseArguments(argc, argv, args);
 
-  Arguments args = cliParser.parseArguments(argc, argv);
-
+  // TODO check for invalid files (e.g. directories)
   FileReader fileReader;
   fileReader.readFile(particles, argv[argc - 1]);
 
