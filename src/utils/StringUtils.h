@@ -82,4 +82,4 @@ namespace StringUtils
         std::string s{c};
         return s;
     }
-}
+} // end namespace StringUtils

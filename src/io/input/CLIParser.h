@@ -26,4 +26,4 @@ namespace CLIParser
      * @param args A reference to the argument struct in which to store the parsed arguments.
      */
     void parseArguments(int argc, char **argv, Arguments &args);
-};
+}; // end namespace CLIParser

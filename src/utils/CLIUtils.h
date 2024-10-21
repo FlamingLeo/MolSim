@@ -56,4 +56,4 @@ namespace CLIUtils
         printUsage();
         std::exit(EXIT_FAILURE);
     }
-}
+} // end namespace CLIUtils
