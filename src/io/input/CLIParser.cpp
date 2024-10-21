@@ -38,6 +38,9 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
         case 'd': /* timestep */
             args.delta_t = StringUtils::toDouble(optarg);
             break;
+        case 'f': /* output frequency */
+            args.it_freq = StringUtils::toInt(optarg);
+            break;
         case 'h': /* help */
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
@@ -48,8 +51,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
                 CLIUtils::error("End time not specified!");
             else if (optopt == 'd')
                 CLIUtils::error("Timestep not specified!");
+            else if (optopt == 'f')
+                CLIUtils::error("Output frequency not specified!");
             else
-                CLIUtils::error("Unknown option found!");
+                CLIUtils::error("Unknown option found", StringUtils::charToString(optopt));
         default: /* shouldn't happen... */
             CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }
@@ -57,7 +62,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
 
     // by this point, following correct syntax, optind should be exactly one less than the argument counter
     if (optind != (argc - 1))
-        CLIUtils::error("Invalid syntax!");
+        CLIUtils::error("Invalid syntax - no file input provided!");
 
     // finally, check numerical argument validity and return arguments if all goes well
     checkValidity(args);

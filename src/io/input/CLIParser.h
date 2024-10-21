@@ -8,7 +8,6 @@
  */
 #pragma once
 #include <utils/Arguments.h>
-#define OPTSTRING "s:e:d:h"
 
 namespace CLIParser
 {

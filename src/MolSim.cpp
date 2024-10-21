@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     calculateV(args.delta_t);
 
     iteration++;
-    if (iteration % 10 == 0)
+    if (iteration % args.it_freq == 0)
     {
       plotParticles(iteration);
     }
