@@ -15,6 +15,7 @@ XYZWriter::XYZWriter() = default;
 
 XYZWriter::~XYZWriter() = default;
 
+// TODO check ofstream result
 void XYZWriter::plotParticles(std::list<Particle> particles,
                               const std::string &filename, int iteration) {
   std::ofstream file;
