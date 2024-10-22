@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
   Arguments args;
   CLIParser::parseArguments(argc, argv, args);
 
-  // this will probably change when more simulations come
+  // this will change when more simulations come
   Verlet v{args};
 
   // TODO move this into ParticleContainer, preferably

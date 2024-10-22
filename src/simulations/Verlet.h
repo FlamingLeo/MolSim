@@ -9,9 +9,10 @@
 #pragma once
 #include "objects/Particle.h"
 #include "utils/Arguments.h"
+#include "Simulation.h"
 #include <list>
 
-class Verlet
+class Verlet : public Simulation
 {
 private:
     std::list<Particle> m_particles; // TODO ParticleContainer...
@@ -46,7 +47,7 @@ public:
      * @brief Runs the simulation.
      *
      */
-    void runSimulation();
+    void runSimulation() override;
 
     /**
      * @brief Plots the particles.
