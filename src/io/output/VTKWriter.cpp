@@ -6,94 +6,146 @@
  */
 
 #include "VTKWriter.h"
+#include "utils/CLIUtils.h"
 
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <filesystem>
 
-namespace outputWriter {
+namespace outputWriter
+{
+  VTKWriter::VTKWriter() = default;
 
-VTKWriter::VTKWriter() = default;
+  VTKWriter::~VTKWriter() = default;
 
-VTKWriter::~VTKWriter() = default;
+  bool VTKWriter::initializeOutput(int numParticles)
+  {
+    // initialize new vtk file
+    m_vtkFile = new VTKFile_t("UnstructuredGrid");
+    if (!m_vtkFile)
+    {
+      CLIUtils::error("Error initializing VTK file!", "", false, false);
+      return false;
+    }
 
-void VTKWriter::initializeOutput(int numParticles) {
+    // per point, we add type, position, velocity and force
+    PointData pointData;
+    DataArray_t mass(type::Float32, "mass", 1);
+    DataArray_t velocity(type::Float32, "velocity", 3);
+    DataArray_t forces(type::Float32, "force", 3);
+    DataArray_t type(type::Int32, "type", 1);
+    pointData.DataArray().push_back(mass);
+    pointData.DataArray().push_back(velocity);
+    pointData.DataArray().push_back(forces);
+    pointData.DataArray().push_back(type);
 
-  vtkFile = new VTKFile_t("UnstructuredGrid");
+    CellData cellData; // we don't have cell data => leave it empty
 
-  // per point, we add type, position, velocity and force
-  PointData pointData;
-  DataArray_t mass(type::Float32, "mass", 1);
-  DataArray_t velocity(type::Float32, "velocity", 3);
-  DataArray_t forces(type::Float32, "force", 3);
-  DataArray_t type(type::Int32, "type", 1);
-  pointData.DataArray().push_back(mass);
-  pointData.DataArray().push_back(velocity);
-  pointData.DataArray().push_back(forces);
-  pointData.DataArray().push_back(type);
+    // 3 coordinates
+    Points points;
+    DataArray_t pointCoordinates(type::Float32, "points", 3);
+    points.DataArray().push_back(pointCoordinates);
 
-  CellData cellData; // we don't have cell data => leave it empty
+    Cells cells; // we don't have cells, => leave it empty
+    // for some reasons, we have to add a dummy entry for paraview
+    DataArray_t cells_data(type::Float32, "types", 0);
+    cells.DataArray().push_back(cells_data);
 
-  // 3 coordinates
-  Points points;
-  DataArray_t pointCoordinates(type::Float32, "points", 3);
-  points.DataArray().push_back(pointCoordinates);
-
-  Cells cells; // we don't have cells, => leave it empty
-  // for some reasons, we have to add a dummy entry for paraview
-  DataArray_t cells_data(type::Float32, "types", 0);
-  cells.DataArray().push_back(cells_data);
-
-  PieceUnstructuredGrid_t piece(pointData, cellData, points, cells,
-                                numParticles, 0);
-  UnstructuredGrid_t unstructuredGrid(piece);
-  vtkFile->UnstructuredGrid(unstructuredGrid);
-}
-
-// TODO check ofstream result
-void VTKWriter::writeFile(const std::string &filename, int iteration) {
-  std::stringstream strstr;
-  strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
-
-  std::ofstream file(strstr.str().c_str());
-  VTKFile(file, *vtkFile);
-  delete vtkFile;
-}
-
-void VTKWriter::plotParticle(Particle &p) {
-  if (vtkFile->UnstructuredGrid().present()) {
-    std::cout << "UnstructuredGrid is present" << std::endl;
-  } else {
-    std::cout << "ERROR: No UnstructuredGrid present" << std::endl;
+    PieceUnstructuredGrid_t piece(pointData, cellData, points, cells,
+                                  numParticles, 0);
+    UnstructuredGrid_t unstructuredGrid(piece);
+    m_vtkFile->UnstructuredGrid(unstructuredGrid);
+    return true;
   }
 
-  PointData::DataArray_sequence &pointDataSequence =
-      vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
-  PointData::DataArray_iterator dataIterator = pointDataSequence.begin();
+  bool VTKWriter::writeFile(const std::string &filename, int iteration)
+  {
+    // before we do anything, check if there is something valid to write
+    if (!m_vtkFile)
+    {
+      CLIUtils::error("Cannot write uninitialized VTK file!", "", false, false);
+      return false;
+    }
 
-  dataIterator->push_back(p.getM());
+    // create output directory in which to store generated VTK output files
+    if (!(std::filesystem::exists(OUTPUT_DIR)))
+    {
+      if (!(std::filesystem::create_directory(OUTPUT_DIR)))
+      {
+        CLIUtils::error("Error creating VTK directory!", "", false, false);
+        return false;
+      };
+    }
 
-  dataIterator++;
-  dataIterator->push_back(p.getV()[0]);
-  dataIterator->push_back(p.getV()[1]);
-  dataIterator->push_back(p.getV()[2]);
+    // generate unique filename based on iteration
+    std::stringstream strstr;
+    strstr << OUTPUT_DIR << "/" << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
 
-  dataIterator++;
-  dataIterator->push_back(p.getOldF()[0]);
-  dataIterator->push_back(p.getOldF()[1]);
-  dataIterator->push_back(p.getOldF()[2]);
+    std::ofstream file(strstr.str().c_str());
 
-  dataIterator++;
-  dataIterator->push_back(p.getType());
+    if (!file)
+    {
+      CLIUtils::error("Error opening output file", filename, false, false);
+      return false;
+    }
 
-  Points::DataArray_sequence &pointsSequence =
-      vtkFile->UnstructuredGrid()->Piece().Points().DataArray();
-  Points::DataArray_iterator pointsIterator = pointsSequence.begin();
-  pointsIterator->push_back(p.getX()[0]);
-  pointsIterator->push_back(p.getX()[1]);
-  pointsIterator->push_back(p.getX()[2]);
-}
+    // write file using vtk library
+    VTKFile(file, *m_vtkFile);
+    delete m_vtkFile;
+    return true;
+  }
+
+  bool VTKWriter::plotParticle(const Particle &p)
+  {
+    // check for valid vtk file
+    if (!m_vtkFile || !(m_vtkFile->UnstructuredGrid().present()))
+    {
+      CLIUtils::error("VTK file incorrectly initialized!", "", false, false);
+      return false;
+    }
+
+    // do some dark vtk magic
+    PointData::DataArray_sequence &pointDataSequence =
+        m_vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
+    PointData::DataArray_iterator dataIterator = pointDataSequence.begin();
+
+    dataIterator->push_back(p.getM());
+
+    dataIterator++;
+    dataIterator->push_back(p.getV()[0]);
+    dataIterator->push_back(p.getV()[1]);
+    dataIterator->push_back(p.getV()[2]);
+
+    dataIterator++;
+    dataIterator->push_back(p.getOldF()[0]);
+    dataIterator->push_back(p.getOldF()[1]);
+    dataIterator->push_back(p.getOldF()[2]);
+
+    dataIterator++;
+    dataIterator->push_back(p.getType());
+
+    Points::DataArray_sequence &pointsSequence =
+        m_vtkFile->UnstructuredGrid()->Piece().Points().DataArray();
+    Points::DataArray_iterator pointsIterator = pointsSequence.begin();
+    pointsIterator->push_back(p.getX()[0]);
+    pointsIterator->push_back(p.getX()[1]);
+    pointsIterator->push_back(p.getX()[2]);
+    return true;
+  }
+
+  void VTKWriter::writeParticles(const std::list<Particle> &particles, const std::string &filename, int iteration)
+  {
+    if (!(initializeOutput(particles.size())))
+      return;
+
+    for (auto &p : particles)
+      if (!(plotParticle(p)))
+        return;
+
+    writeFile(filename, iteration);
+  }
 
 } // namespace outputWriter

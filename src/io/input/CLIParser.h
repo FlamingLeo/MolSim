@@ -1,6 +1,6 @@
 /**
  * @file CLIParser.h
- * @brief Command line argument parser.
+ * @brief Command line argument parsing functions.
  * @date 2024-10-21
  *
  * @copyright Copyright (c) 2024
@@ -26,4 +26,4 @@ namespace CLIParser
      * @param args A reference to the argument struct in which to store the parsed arguments.
      */
     void parseArguments(int argc, char **argv, Arguments &args);
-}; // end namespace CLIParser
+}; // namespace CLIParser

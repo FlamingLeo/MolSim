@@ -1,8 +1,11 @@
-/*
- * Particle.h
+/**
+ * @file Particle.h
+ * @author eckhardw
+ * @brief Model of a single particle.
+ * @date 2010-02-23
  *
- *  Created on: 23.02.2010
- *      Author: eckhardw
+ * @copyright Copyright (c) 2024
+ *
  */
 
 #pragma once
@@ -10,37 +13,39 @@
 #include <array>
 #include <string>
 
-class Particle {
+/// @brief Particle class modeling a particle's position, velocity, force, mass and type.
+class Particle
+{
 
 private:
   /**
-   * Position of the particle
+   * @brief Position of the particle.
    */
   std::array<double, 3> x;
 
   /**
-   * Velocity of the particle
+   * @brief Velocity of the particle.
    */
   std::array<double, 3> v;
 
   /**
-   * Force effective on this particle
+   * @brief Force effective on this particle.
    */
   std::array<double, 3> f;
 
   /**
-   * Force which was effective on this particle
+   * @brief Force which was effective on this particle.
    */
   std::array<double, 3> old_f;
 
   /**
-   * Mass of this particle
+   * @brief Mass of this particle.
    */
   double m;
 
   /**
-   * Type of the particle. Use it for whatever you want (e.g. to separate
-   * molecules belonging to different bodies, matters, and so on)
+   * @brief Type of the particle. Use it for whatever you want (e.g. to separate molecules belonging to different bodies, matters, and so on).
+   * 
    */
   int type;
 
@@ -58,30 +63,23 @@ public:
   virtual ~Particle();
 
   const std::array<double, 3> &getX() const;
-
-  void setX(std::array<double, 3>) ;
-
   const std::array<double, 3> &getV() const;
-
-  void setV(std::array<double, 3>) ;
-
   const std::array<double, 3> &getF() const;
+  const std::array<double, 3> &getOldF() const;
+  const double getM() const;
+  const int getType() const;
 
-  void setF(std::array<double, 3>) ;
-
+  void setX(std::array<double, 3>);
+  void setV(std::array<double, 3>);
+  void setF(std::array<double, 3>);
+  void setOldF(std::array<double, 3>);
+  
+  /// @brief Resets the force of the particle to 0,0,0.
   void setFToZero();
 
-  const std::array<double, 3> &getOldF() const;
-
-  void setOldF(std::array<double, 3>) ;
-
-  double getM() const;
-
-  int getType() const;
+  std::string toString() const;
 
   bool operator==(Particle &other);
-
-  std::string toString() const;
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

@@ -21,7 +21,7 @@ namespace StringUtils
      * @param str A reference to the string to be converted.
      * @return The converted string as a double.
      */
-    double toDouble(const std::string &str)
+    static inline double toDouble(const std::string &str)
     {
         try
         {
@@ -49,7 +49,7 @@ namespace StringUtils
      * @param str A reference to the string to be converted.
      * @return The converted string as an int.
      */
-    double toInt(const std::string &str)
+    static inline double toInt(const std::string &str)
     {
         try
         {
@@ -77,9 +77,9 @@ namespace StringUtils
      * @param c The character to be converted.
      * @return The resulting string.
      */
-    std::string charToString(char c)
+    static inline std::string charToString(char c)
     {
         std::string s{c};
         return s;
     }
-} // end namespace StringUtils
+} // namespace StringUtils

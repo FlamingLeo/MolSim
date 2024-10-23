@@ -18,12 +18,12 @@ namespace CLIUtils
     /**
      * @brief The filename of the executable (default: "./MolSim").
      */
-    std::string_view filename{"./MolSim"};
+    static inline std::string_view filename{"./MolSim"};
 
     /**
      * @brief Prints a usage string explaining the syntax of the main program.
      */
-    void printUsage()
+    static inline void printUsage()
     {
         std::cerr << "USAGE: " << filename << " [options] <filename>\n";
     }
@@ -31,7 +31,7 @@ namespace CLIUtils
     /**
      * @brief Prints a help string explaining the functionality of the main program.
      */
-    void printHelp()
+    static inline void printHelp()
     {
         std::cout << "The PSE Molecular Dynamics simulation program, developed by Group C.\n\n"
                      "USAGE: "
@@ -45,15 +45,19 @@ namespace CLIUtils
     }
 
     /**
-     * @brief Prints an error message to stderr with the prefix "ERROR: ", prints the usage string and exits with EXIT_FAILURE.
+     * @brief Prints an error message to stderr with the prefix "ERROR: ", optionally prints the usage string and exits with EXIT_FAILURE.
      *
      * @param msg The message to be printed to stderr.
      * @param opt An optional extra string to be appended at the end (default: empty)
+     * @param usage An optional boolean which defines whether or not the usage string should be printed.
+     * @param close An optional boolean which defines whether or not the program should completely exit afterwards.
      */
-    void error(const char *msg, const std::string &opt = "")
+    static inline void error(const char *msg, const std::string &opt = "", bool usage = true, bool close = true)
     {
         std::cerr << "ERROR: " << msg << (opt.empty() ? "" : ": ") << opt << "\n";
-        printUsage();
-        std::exit(EXIT_FAILURE);
+        if (usage)
+            printUsage();
+        if (close)
+            std::exit(EXIT_FAILURE);
     }
-} // end namespace CLIUtils
+} // namespace CLIUtils

@@ -38,26 +38,17 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
 Particle::~Particle() { std::cout << "Particle destructed!" << std::endl; }
 
 const std::array<double, 3> &Particle::getX() const { return x; }
+const std::array<double, 3> &Particle::getV() const { return v; }
+const std::array<double, 3> &Particle::getF() const { return f; }
+const std::array<double, 3> &Particle::getOldF() const { return old_f; }
+const double Particle::getM() const { return m; }
+const int Particle::getType() const { return type; }
 
 void Particle::setX(std::array<double, 3> new_x) { x = new_x; }
-
-const std::array<double, 3> &Particle::getV() const { return v; }
-
 void Particle::setV(std::array<double, 3> new_v) { v = new_v; }
-
-const std::array<double, 3> &Particle::getF() const { return f; }
-
 void Particle::setF(std::array<double, 3> g) { f = g; }
-
-void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
-
-const std::array<double, 3> &Particle::getOldF() const { return old_f; }
-
 void Particle::setOldF(std::array<double, 3> g) { old_f = g; }
-
-double Particle::getM() const { return m; }
-
-int Particle::getType() const { return type; }
+void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
 
 std::string Particle::toString() const
 {

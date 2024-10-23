@@ -9,6 +9,7 @@ Verlet::~Verlet() = default;
 
 void Verlet::runSimulation()
 {
+    outputWriter::VTKWriter writer;
     double current_time = m_start_time;
     int iteration = 0;
 
@@ -21,9 +22,8 @@ void Verlet::runSimulation()
 
         iteration++;
         if (iteration % m_it_freq == 0)
-        {
-            plotParticles(iteration);
-        }
+            writer.writeParticles(m_particles, "MD_vtk", iteration);
+
         current_time += m_delta_t;
     }
 }
@@ -65,22 +65,6 @@ void Verlet::calculateV()
     {
         p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(m_delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>()));
     }
-}
-
-void Verlet::plotParticles(int iteration)
-{
-
-    std::string out_name("MD_vtk");
-
-    outputWriter::VTKWriter writer;
-    writer.initializeOutput(m_particles.size());
-
-    for (auto &p : m_particles)
-    {
-        writer.plotParticle(p);
-    }
-
-    writer.writeFile(out_name, iteration);
 }
 
 std::list<Particle> &Verlet::getParticles() { return m_particles; }

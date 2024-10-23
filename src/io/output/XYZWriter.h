@@ -1,28 +1,43 @@
-/*
- * XYZWriter.h
+/**
+ * @file XYZWriter.h
+ * @author eckhardw
+ * @brief Class used to generate XYZ output.
+ * @date 2010-03-01
  *
- *  Created on: 01.03.2010
- *      Author: eckhardw
+ * @copyright Copyright (c) 2010 - 2024
+ *
  */
 
 #pragma once
 
 #include "objects/Particle.h"
-
+#include "FileWriter.h"
 #include <fstream>
 #include <list>
+#define OUTPUT_DIR "xyz"
 
-namespace outputWriter {
+namespace outputWriter
+{
 
-class XYZWriter {
+  /**
+   * @brief This class implements the functionality to generate VTK output from particles.
+   *
+   */
+  class XYZWriter : public FileWriter
+  {
 
-public:
-  XYZWriter();
+  public:
+    XYZWriter();
+    virtual ~XYZWriter();
 
-  virtual ~XYZWriter();
-
-  void plotParticles(std::list<Particle> particles, const std::string &filename,
-                     int iteration);
-};
+    /**
+     * @brief Writes the type, mass, position, velocity and force of a list of particles to a XYZ file.
+     *
+     * @param particles A list of the particles.
+     * @param filename The base name of the output file to be written.
+     * @param iteration The number of the current iteration, used to generate a unique filename.
+     */
+    void writeParticles(std::list<Particle> particles, const std::string &filename, int iteration);
+  };
 
 } // namespace outputWriter

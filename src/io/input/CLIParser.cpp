@@ -22,7 +22,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
 
     // check for invalid syntax (not enough args)
     if (argc < 2)
-        CLIUtils::error("Not enough arguments!");
+        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
 
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1)
