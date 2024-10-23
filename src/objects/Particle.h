@@ -45,7 +45,7 @@ private:
 
   /**
    * @brief Type of the particle. Use it for whatever you want (e.g. to separate molecules belonging to different bodies, matters, and so on).
-   * 
+   *
    */
   int type;
 
@@ -69,11 +69,11 @@ public:
   const double getM() const;
   const int getType() const;
 
-  void setX(std::array<double, 3>);
-  void setV(std::array<double, 3>);
-  void setF(std::array<double, 3>);
-  void setOldF(std::array<double, 3>);
-  
+  void setX(const std::array<double, 3> &new_x);
+  void setV(const std::array<double, 3> &new_v);
+  void setF(const std::array<double, 3> &g);
+  void setOldF(const std::array<double, 3> &g);
+
   /// @brief Resets the force of the particle to 0,0,0.
   void setFToZero();
 
