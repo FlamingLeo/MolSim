@@ -13,6 +13,13 @@ ParticleContainer::Iterator ParticleContainer::Iterator::operator++(int) {
     ++(*this);
     return tmp;
 }
+bool operator==(const ParticleContainer::Iterator &a, const ParticleContainer::Iterator &b) {
+    return a.m_ptr == b.m_ptr;
+}
+
+bool operator!=(const ParticleContainer::Iterator &a, const ParticleContainer::Iterator &b) {
+    return a.m_ptr != b.m_ptr;
+}
 
 // particle container functions
 void ParticleContainer::addParticle(const Particle &particle) { m_particles.push_back(particle); }

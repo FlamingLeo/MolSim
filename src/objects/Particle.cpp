@@ -37,7 +37,7 @@ void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
 
 std::string Particle::toString() const {
     std::stringstream stream;
-    stream << "Particle: X:" << x << " v: " << v << " f: " << f << " old_f: " << old_f << " type: " << type;
+    stream << "Particle: X:" << x << " v: " << v << " f: " << f << " old_f: " << old_f << " m: " << m << " type: " << type;
     return stream.str();
 }
 

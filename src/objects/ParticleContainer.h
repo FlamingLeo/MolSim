@@ -14,6 +14,7 @@ class ParticleContainer {
   private:
     std::vector<Particle> m_particles;
 
+  public:
     class Iterator {
       private:
         Particle *m_ptr;
@@ -24,15 +25,10 @@ class ParticleContainer {
         Particle *operator->();
         Iterator &operator++();
         Iterator operator++(int);
-        friend bool operator==(const Iterator& a, const Iterator& b) {
-            return a.m_ptr == b.m_ptr;
-        }
-        friend bool operator!=(const Iterator& a, const Iterator& b) {
-            return a.m_ptr != b.m_ptr;
-        }
+        friend bool operator==(const Iterator &a, const Iterator &b);
+        friend bool operator!=(const Iterator &a, const Iterator &b);
     };
 
-  public:
     void addParticle(const Particle &particle);
     size_t size();
     std::vector<Particle> &getParticles();
