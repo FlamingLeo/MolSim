@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
     Verlet v{args};
 
     // TODO move this into ParticleContainer, preferably
-    FileReader fileReader;
-    fileReader.readFile(v.getParticles(), argv[argc - 1]);
+    FileReader fileReader(argv[argc - 1]);
+    fileReader.readFile(v.getParticles());
 
     v.runSimulation();
 

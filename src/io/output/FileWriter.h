@@ -25,17 +25,17 @@ class FileWriter {
     /**
      * @brief Creates a new FileWriter and opens the file with the given name.
      *
-     * @param filename The name of the file to load into m_file.
+     * @param filename The name of the file to load into the output stream m_file.
      */
     FileWriter(const std::string &filename);
 
     /// @brief Closes the opened file and destroys the FileWriter object.
-    ~FileWriter();
+    virtual ~FileWriter();
 
     /**
      * @brief Opens / creates the file with the given name.
      *
-     * @param filename The name of the file to load into m_file.
+     * @param filename The name of the file to load into the output stream m_file.
      */
     void openFile(const std::string &filename);
 

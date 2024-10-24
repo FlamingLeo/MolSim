@@ -10,22 +10,40 @@
 #pragma once
 
 #include "objects/Particle.h"
+#include <fstream>
 #include <list>
 
-/// @brief The file reader class which implements functionality to read data
-/// from input files.
+/// @brief File reader class which implements functionality to read data from input files.
 class FileReader {
+  private:
+    /// @brief Input stream representing the file containing molecule data.
+    std::ifstream m_infile;
 
   public:
+    /// @brief Creates a new FileReader with no file initialized.
     FileReader();
+
+    /**
+     * @brief Creates a new FileReader and opens the file with the given name.
+     *
+     * @param filename The name of the file to load into m_infile.
+     */
+    FileReader(const std::string &filename);
+
+    /// @brief Destroys the FileReader object and automatically closes the input stream.
     virtual ~FileReader();
 
     /**
-     * @brief Reads particle data into a list of particles from a given input
-     * file.
+     * @brief Initializes the input stream with the given file (via its name).
+     *
+     * @param filename The name of the file to load into the input stream m_infile.
+     */
+    void openFile(const std::string &filename);
+
+    /**
+     * @brief Reads particle data into a list of particles from a given input file.
      *
      * @param particles A list of particles to write the input data into.
-     * @param filename The input file containing particle data.
      */
-    void readFile(std::list<Particle> &particles, char *filename);
+    void readFile(std::list<Particle> &particles);
 };
