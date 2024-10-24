@@ -25,8 +25,7 @@ namespace outputWriter
     {
       if (!(std::filesystem::create_directory(OUTPUT_DIR)))
       {
-        CLIUtils::error("Error creating XYZ directory!", "", false, false);
-        return;
+        CLIUtils::error("Error creating XYZ directory!");
       };
     }
 

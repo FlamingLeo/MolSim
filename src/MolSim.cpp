@@ -18,9 +18,7 @@ int main(int argc, char *argv[])
 
   // TODO move this into ParticleContainer, preferably
   FileReader fileReader;
-  if(!(fileReader.readFile(v.getParticles(), argv[argc - 1]))) {
-    exit(EXIT_FAILURE);
-  };
+  fileReader.readFile(v.getParticles(), argv[argc - 1]);
 
   v.runSimulation();
 

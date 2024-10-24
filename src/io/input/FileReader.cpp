@@ -18,29 +18,20 @@
 FileReader::FileReader() = default;
 FileReader::~FileReader() = default;
 
-bool FileReader::readFile(std::list<Particle> &particles, char *filename)
+void FileReader::readFile(std::list<Particle> &particles, char *filename)
 {
   // check if input file is a regular file
   if (!(std::filesystem::is_regular_file(filename)))
-  {
-    CLIUtils::error("Input file path is not a regular file", filename, true, false);
-    return false;
-  }
+    CLIUtils::error("Input file path is not a regular file", filename, true);
 
   // check if file exists
   if (!(std::filesystem::exists(filename)))
-  {
-    CLIUtils::error("Input file does not exist", filename, true, false);
-    return false;
-  }
+    CLIUtils::error("Input file does not exist", filename, true);
 
   // try to open file
   std::ifstream input_file(filename);
   if (!(input_file.is_open()))
-  {
-    CLIUtils::error("Could not open file", filename, false, false);
-    return false;
-  }
+    CLIUtils::error("Could not open file", filename);
 
   // parse file content into particle list
   std::array<double, 3> x;
@@ -73,16 +64,11 @@ bool FileReader::readFile(std::list<Particle> &particles, char *filename)
     for (auto &vj : v)
       datastream >> vj;
     if (datastream.eof())
-    {
-      CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i), false, false);
-      return false;
-    }
+      CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i));
     datastream >> m;
     particles.emplace_back(x, v, m);
 
     getline(input_file, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
   }
-
-  return true;
 }

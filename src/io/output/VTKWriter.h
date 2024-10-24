@@ -32,31 +32,28 @@ namespace outputWriter
 
     /**
      * @brief Initializes m_vtkFile with necessary metadata for writing purposes.
+     * Terminates program execution on error.
      * 
      * @param numParticles The total number of particles.
-     * @return true if the VTK file was successfully initialized.
-     * @return false if the VTK file could not be initialized properly.
      */
-    bool initializeOutput(int numParticles);
+    void initializeOutput(int numParticles);
     
     /**
      * @brief Writes the contents of m_vtkFile into a given VTK file.
+     * Terminates program execution on error.
      * 
      * @param filename The name of the output file in which to write the VTK data.
      * @param iteration The current iteration of the simulation.
-     * @return true if the data was successfully written.
-     * @return false if the data could not be written to the output file.
      */
-    bool writeFile(const std::string &filename, int iteration);
+    void writeFile(const std::string &filename, int iteration);
     
     /**
      * @brief Plots a single particle to m_vtkFile.
+     * Terminates program execution on error.
      * 
      * @param p The particle to be plotted.
-     * @return true if the particle was succesfully plotted.
-     * @return false if the particle could not be plotted properly.
      */
-    bool plotParticle(const Particle &p);
+    void plotParticle(const Particle &p);
 
   public:
     VTKWriter();
@@ -65,6 +62,7 @@ namespace outputWriter
 
     /**
      * @brief Writes the type, mass, position, velocity and force of a list of particles to a VTK file.
+     * Terminates program execution on error.
      *
      * @param particles A list of the particles.
      * @param filename The base name of the output file to be written.
