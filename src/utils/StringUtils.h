@@ -77,7 +77,7 @@ namespace StringUtils
      * @param c The character to be converted.
      * @return The resulting string.
      */
-    static inline std::string charToString(char c)
+    static inline std::string fromString(char c)
     {
         std::string s{c};
         return s;

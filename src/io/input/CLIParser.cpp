@@ -54,7 +54,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args)
             else if (optopt == 'f')
                 CLIUtils::error("Output frequency not specified!");
             else
-                CLIUtils::error("Unknown option found", StringUtils::charToString(optopt));
+                CLIUtils::error("Unknown option found", StringUtils::fromString(optopt));
         default: /* shouldn't happen... */
             CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }

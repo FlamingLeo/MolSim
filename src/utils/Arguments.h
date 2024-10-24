@@ -1,6 +1,6 @@
 /**
  * @file Arguments.h
- * @brief Simulation arguments.
+ * @brief Configurable program and simulation arguments.
  * @date 2024-10-21
  *
  * @copyright Copyright (c) 2024
