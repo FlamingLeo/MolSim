@@ -9,6 +9,14 @@
 #pragma once
 
 /**
+ * @brief Enum containing each (valid) type of output writer.
+ *
+ */
+namespace outputWriter {
+enum class WriterType { VTK, XYZ };
+}
+
+/**
  * @brief Struct containing each option configurable via command line arguments.
  */
 struct Arguments {
@@ -20,4 +28,6 @@ struct Arguments {
     double delta_t{0.014};
     /// @brief Logging frequency (default: every 10 iterations)
     int it_freq{10};
+    /// @brief Output type (default: VTK).
+    outputWriter::WriterType type{outputWriter::WriterType::VTK};
 };

@@ -8,11 +8,13 @@
  *
  */
 #pragma once
+#include "objects/Particle.h"
 #include <fstream>
+#include <list>
 #include <string>
 
-/// @brief Superclass which implements functionality to output data to a file on
-/// disk.
+namespace outputWriter {
+/// @brief Superclass which implements functionality to output data to a file on disk.
 class FileWriter {
   protected:
     /// @brief Output stream containing the file to write contents to.
@@ -50,4 +52,15 @@ class FileWriter {
      * @param content The string to be written inside of the file.
      */
     void writeFile(const std::string &content);
+
+    /**
+     * @brief Interface function for writing the type, mass, position, velocity and force of a list of
+     * particles to a file. Terminates program execution on error.
+     *
+     * @param particles A list of the particles.
+     * @param iteration The number of the current iteration, used to generate a
+     * unique filename.
+     */
+    virtual void writeParticles(const std::list<Particle> &particles, int iteration) = 0;
 };
+} // namespace outputWriter

@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
     FileReader fileReader(argv[argc - 1]);
     fileReader.readFile(v.getParticles());
 
+    #if 0
     ParticleContainer c;
 
     for (Particle& p : v.getParticles()) {
@@ -29,8 +30,9 @@ int main(int argc, char *argv[]) {
     for(const auto& p : c) {
         std::cout << p.toString() << "\n";
     }
+    #endif
 
-    // v.runSimulation();
+    v.runSimulation();
 
     return 0;
 }

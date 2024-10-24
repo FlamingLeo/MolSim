@@ -26,9 +26,18 @@ class Verlet : public Simulation {
     double m_delta_t;
     /// @brief The output (logging) frequency for generating a file output.
     int m_it_freq;
+    /// @brief The type of the generated output file.
+    outputWriter::WriterType m_type;
 
   public:
+    /**
+     * @brief Initialize a new Verlet simulation with the given program arguments.
+     *
+     * @param args An Arguments struct containing relevant simulation parameters.
+     */
     Verlet(const Arguments &args);
+
+    /// @brief Default destructor destroying declared data.
     ~Verlet();
 
     /// @brief Calculates the force for all particles.

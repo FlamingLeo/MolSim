@@ -13,7 +13,7 @@ XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname)
 
 XYZWriter::~XYZWriter() { closeFile(); };
 
-void XYZWriter::writeParticles(std::list<Particle> particles, int iteration) {
+void XYZWriter::writeParticles(const std::list<Particle> &particles, int iteration) {
     // create output directory in which to store generated XYZ output files
     if (!(std::filesystem::exists(m_dirname))) {
         if (!(std::filesystem::create_directory(m_dirname))) {
@@ -23,8 +23,7 @@ void XYZWriter::writeParticles(std::list<Particle> particles, int iteration) {
 
     // define file name
     std::stringstream strstr, content;
-    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0')
-           << std::setw(4) << iteration << ".xyz";
+    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
 
     openFile(strstr.str());
 

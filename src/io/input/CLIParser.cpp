@@ -4,6 +4,24 @@
 #include <cstdlib>
 #include <getopt.h>
 #include <iostream>
+#include <unordered_map>
+
+/// @brief Map containing conversion information for converting a string to a WriterType enum.
+/// Static .cpp utility variable; undocumented in header file.
+static std::unordered_map<std::string, outputWriter::WriterType> const table = {{"vtk", outputWriter::WriterType::VTK},
+                                                                                {"xyz", outputWriter::WriterType::XYZ}};
+
+/// @brief Function to convert a string to a WriterType enum using the above map.
+/// @param type The string containing the desired WriterType.
+/// @return The desired WriterType enum if the type string is valid, otherwise terminate with error.
+static outputWriter::WriterType stringToWriterType(const std::string &type) {
+    auto it = table.find(type);
+    if (it != table.end())
+        return it->second;
+    else
+        CLIUtils::error("Invalid output type", type);
+    return outputWriter::WriterType::VTK; // shouldn't reach this; included to silence warning
+}
 
 void CLIParser::checkValidity(const Arguments &args) {
     // maybe disallow start and end being the same? or print out some warning?
@@ -20,8 +38,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
 
     // check for invalid syntax (not enough args)
     if (argc < 2)
-        CLIUtils::error(
-            "Not enough arguments! Use '-h' to display a help message.");
+        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
 
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
@@ -38,6 +55,9 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
         case 'f': /* output frequency */
             args.it_freq = StringUtils::toInt(optarg);
             break;
+        case 'o': /* output type */
+            args.type = stringToWriterType(optarg);
+            break;
         case 'h': /* help */
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
@@ -50,9 +70,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
                 CLIUtils::error("Timestep not specified!");
             else if (optopt == 'f')
                 CLIUtils::error("Output frequency not specified!");
+            else if (optopt == 'o')
+                CLIUtils::error("Output type not specified!");
             else
-                CLIUtils::error("Unknown option found",
-                                StringUtils::fromString(optopt));
+                CLIUtils::error("Unknown option found", StringUtils::fromString(optopt));
         default: /* shouldn't happen... */
             CLIUtils::error("An unknown error occurred while parsing command "
                             "line arguments!");

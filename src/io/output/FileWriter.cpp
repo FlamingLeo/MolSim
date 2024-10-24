@@ -2,6 +2,7 @@
 #include "utils/CLIUtils.h"
 #include <fstream>
 
+namespace outputWriter {
 FileWriter::FileWriter() = default;
 
 FileWriter::FileWriter(const std::string &filename) { openFile(filename); }
@@ -31,3 +32,4 @@ void FileWriter::writeFile(const std::string &content) {
     if (m_file.bad())
         CLIUtils::error("Failed to write contents to file stream!");
 }
+} // namespace outputWriter
