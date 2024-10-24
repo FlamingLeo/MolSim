@@ -27,7 +27,9 @@ class VTKWriter : public FileWriter {
   private:
     /// @brief The VTK file instance containing particle data.
     VTKFile_t *m_vtkFile;
+    /// @brief The base name of the generated files.
     std::string m_basename = "MD_vtk";
+    /// @brief The name of the directory in which to store the generated files.
     std::string m_dirname = "vtk";
 
     /**
@@ -55,10 +57,25 @@ class VTKWriter : public FileWriter {
     void plotParticle(const Particle &p);
 
   public:
+    /// @brief Creates a new uninitialized VTKWriter.
     VTKWriter();
+
+    /**
+     * @brief Creates a new VTKWriter with the given basename for future file outputs.
+     *
+     * @param basename The base name of the generated files.
+     */
     VTKWriter(const std::string &basename);
+
+    /**
+     * @brief Creates a new VTKWriter with the given basename for future file outputs in the specified directory.
+     *
+     * @param basename The base name of the generated files.
+     * @param dirname The directory name of the generated files.
+     */
     VTKWriter(const std::string &basename, const std::string &dirname);
 
+    /// @brief Destroys the current VTKWriter object.
     virtual ~VTKWriter();
 
     /**

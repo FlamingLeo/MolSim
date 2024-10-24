@@ -19,16 +19,31 @@ class FileWriter {
     std::ofstream m_file;
 
   public:
+    /// @brief Creates a new FileWriter with no file initialized.
     FileWriter();
+
+    /**
+     * @brief Creates a new FileWriter and opens the file with the given name.
+     *
+     * @param filename The name of the file to load into m_file.
+     */
     FileWriter(const std::string &filename);
+
+    /// @brief Closes the opened file and destroys the FileWriter object.
     ~FileWriter();
 
+    /**
+     * @brief Opens / creates the file with the given name.
+     *
+     * @param filename The name of the file to load into m_file.
+     */
     void openFile(const std::string &filename);
+
+    /// @brief Closes the opened file if it exists, otherwise does nothing.
     void closeFile();
 
     /**
-     * @brief Overwrites the contents of the file opened in m_file with a given
-     * string.
+     * @brief Overwrites the contents of the file opened in m_file with a given string.
      *
      * On error, the program will terminate.
      *
