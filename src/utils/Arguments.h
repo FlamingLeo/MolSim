@@ -11,8 +11,7 @@
 /**
  * @brief Struct containing each option configurable via command line arguments.
  */
-struct Arguments
-{
+struct Arguments {
     /// @brief Start time of a simulation (default: 0).
     double start_time{0};
     /// @brief End time of a simulation (default: 1000).

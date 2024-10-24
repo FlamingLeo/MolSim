@@ -1,21 +1,21 @@
 #include "Verlet.h"
 
 #include "io/output/VTKWriter.h"
-#include "utils/ArrayUtils.h"
 #include "utils/Arguments.h"
+#include "utils/ArrayUtils.h"
 
-Verlet::Verlet(const Arguments &args) : m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t}, m_it_freq{args.it_freq} {};
+Verlet::Verlet(const Arguments &args)
+    : m_start_time{args.start_time}, m_end_time{args.end_time},
+      m_delta_t{args.delta_t}, m_it_freq{args.it_freq} {};
 Verlet::~Verlet() = default;
 
-void Verlet::runSimulation()
-{
+void Verlet::runSimulation() {
     outputWriter::VTKWriter writer;
     double current_time = m_start_time;
     int iteration = 0;
 
     // for this loop, we assume: current x, current f and current v are known
-    while (current_time < m_end_time)
-    {
+    while (current_time < m_end_time) {
         calculateX();
         calculateF();
         calculateV();
@@ -28,42 +28,44 @@ void Verlet::runSimulation()
     }
 }
 
-void Verlet::calculateF()
-{
+void Verlet::calculateF() {
     std::list<Particle>::iterator iterator;
     iterator = m_particles.begin();
 
-    for (auto &p1 : m_particles)
-    {
+    for (auto &p1 : m_particles) {
         p1.setOldF(p1.getF());
         p1.setFToZero();
-        for (auto &p2 : m_particles)
-        {
+        for (auto &p2 : m_particles) {
             // where i index is p1 and j index is p2
-            if (not(p1 == p2))
-            {
-                p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
-                                        p1.getM() * p2.getM() / std::pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()), 3), p2.getX() - p1.getX(),
-                                        std::multiplies<>()));
+            if (not(p1 == p2)) {
+                p1.setF(
+                    p1.getF() +
+                    ArrayUtils::elementWiseScalarOp(
+                        p1.getM() * p2.getM() /
+                            std::pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()),
+                                     3),
+                        p2.getX() - p1.getX(), std::multiplies<>()));
             }
         }
     }
 }
 
-void Verlet::calculateX()
-{
-    for (auto &p : m_particles)
-    {
-        p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(m_delta_t, p.getV(), std::multiplies<>()) +
-               m_delta_t * m_delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
+void Verlet::calculateX() {
+    for (auto &p : m_particles) {
+        p.setX(p.getX() +
+               ArrayUtils::elementWiseScalarOp(m_delta_t, p.getV(),
+                                               std::multiplies<>()) +
+               m_delta_t * m_delta_t *
+                   ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(),
+                                                   std::multiplies<>()));
     }
 }
 
-void Verlet::calculateV()
-{
-    for (auto &p : m_particles)
-    {
-        p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(m_delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>()));
+void Verlet::calculateV() {
+    for (auto &p : m_particles) {
+        p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(
+                              m_delta_t / (2 * p.getM()),
+                              p.getOldF() + p.getF(), std::multiplies<>()));
     }
 }
 

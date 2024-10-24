@@ -12,19 +12,20 @@
 #include "objects/Particle.h"
 #include <list>
 
-/// @brief The file reader class which implements functionality to read data from input files.
-class FileReader
-{
+/// @brief The file reader class which implements functionality to read data
+/// from input files.
+class FileReader {
 
-public:
-  FileReader();
-  virtual ~FileReader();
+  public:
+    FileReader();
+    virtual ~FileReader();
 
-  /**
-   * @brief Reads particle data into a list of particles from a given input file.
-   *
-   * @param particles A list of particles to write the input data into.
-   * @param filename The input file containing particle data.
-   */
-  void readFile(std::list<Particle> &particles, char *filename);
+    /**
+     * @brief Reads particle data into a list of particles from a given input
+     * file.
+     *
+     * @param particles A list of particles to write the input data into.
+     * @param filename The input file containing particle data.
+     */
+    void readFile(std::list<Particle> &particles, char *filename);
 };

@@ -10,20 +10,19 @@
 
 #pragma once
 
-#include "objects/Particle.h"
 #include "FileWriter.h"
+#include "objects/Particle.h"
 #include <fstream>
 #include <list>
 
-namespace outputWriter
-{
+namespace outputWriter {
 
-  /**
-   * @brief This class implements the functionality to generate VTK output from particles.
-   *
-   */
-  class XYZWriter : public FileWriter
-  {
+/**
+ * @brief This class implements the functionality to generate VTK output from
+ * particles.
+ *
+ */
+class XYZWriter : public FileWriter {
   private:
     std::string m_basename = "MD_xyz";
     std::string m_dirname = "xyz";
@@ -35,12 +34,14 @@ namespace outputWriter
     virtual ~XYZWriter();
 
     /**
-     * @brief Writes the type, mass, position, velocity and force of a list of particles to a XYZ file.
+     * @brief Writes the type, mass, position, velocity and force of a list of
+     * particles to a XYZ file.
      *
      * @param particles A list of the particles.
-     * @param iteration The number of the current iteration, used to generate a unique filename.
+     * @param iteration The number of the current iteration, used to generate a
+     * unique filename.
      */
     void writeParticles(std::list<Particle> particles, int iteration);
-  };
+};
 
 } // namespace outputWriter

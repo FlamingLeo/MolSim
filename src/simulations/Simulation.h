@@ -7,9 +7,8 @@
  *
  */
 #pragma once
-class Simulation
-{
-public:
+class Simulation {
+  public:
     // maybe include virtual functions for X,F and V calculations here aswell?
     virtual void runSimulation() = 0;
     virtual ~Simulation() {}

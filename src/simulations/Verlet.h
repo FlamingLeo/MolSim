@@ -7,15 +7,15 @@
  *
  */
 #pragma once
+#include "Simulation.h"
 #include "objects/Particle.h"
 #include "utils/Arguments.h"
-#include "Simulation.h"
 #include <list>
 
-/// @brief Class containing the functionality and parameters required to run a simulation of the Velocity-Störmer-Verlet method.
-class Verlet : public Simulation
-{
-private:
+/// @brief Class containing the functionality and parameters required to run a
+/// simulation of the Velocity-Störmer-Verlet method.
+class Verlet : public Simulation {
+  private:
     /// @brief The list of particles used in the simulation.
     std::list<Particle> m_particles; // TODO ParticleContainer...
     /// @brief The start time of the simulation.
@@ -27,7 +27,7 @@ private:
     /// @brief The output (logging) frequency for generating a file output.
     int m_it_freq;
 
-public:
+  public:
     Verlet(const Arguments &args);
     ~Verlet();
 
