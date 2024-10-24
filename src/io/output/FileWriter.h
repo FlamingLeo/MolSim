@@ -8,19 +8,29 @@
  */
 #pragma once
 #include <string>
+#include <fstream>
 
-/// @brief The file writer superclass which implements functionality to output data to a file on disk.
+/// @brief Superclass which implements functionality to output data to a file on disk.
 class FileWriter
 {
+protected:
+    /// @brief Output stream containing the file to write contents to.
+    std::ofstream m_file;
+
 public:
+    FileWriter();
+    FileWriter(const std::string &filename);
+    ~FileWriter();
+    
+    void openFile(const std::string &filename);
+    void closeFile();
 
     /**
-     * @brief Creates / opens a file, and overwrites the contents the file with a given string.
-     * 
+     * @brief Overwrites the contents of the file opened in m_file with a given string.
+     *
      * On error, the program will terminate.
-     * 
-     * @param filename The name of the file to be opened.
+     *
      * @param content The string to be written inside of the file.
      */
-    void writeFile(const std::string &filename, const std::string &content);
+    void writeFile(const std::string &content);
 };

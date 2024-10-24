@@ -14,7 +14,6 @@
 #include "FileWriter.h"
 #include <fstream>
 #include <list>
-#define OUTPUT_DIR "xyz"
 
 namespace outputWriter
 {
@@ -25,19 +24,23 @@ namespace outputWriter
    */
   class XYZWriter : public FileWriter
   {
+  private:
+    std::string m_basename = "MD_xyz";
+    std::string m_dirname = "xyz";
 
   public:
     XYZWriter();
+    XYZWriter(const std::string &basename);
+    XYZWriter(const std::string &basename, const std::string &dirname);
     virtual ~XYZWriter();
 
     /**
      * @brief Writes the type, mass, position, velocity and force of a list of particles to a XYZ file.
      *
      * @param particles A list of the particles.
-     * @param filename The base name of the output file to be written.
      * @param iteration The number of the current iteration, used to generate a unique filename.
      */
-    void writeParticles(std::list<Particle> particles, const std::string &filename, int iteration);
+    void writeParticles(std::list<Particle> particles, int iteration);
   };
 
 } // namespace outputWriter

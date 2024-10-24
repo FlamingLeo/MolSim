@@ -14,7 +14,6 @@
 #include "io/vtk/vtk-unstructured.h"
 #include "FileWriter.h"
 #include <list>
-#define OUTPUT_DIR "vtk"
 
 namespace outputWriter
 {
@@ -29,6 +28,8 @@ namespace outputWriter
   private:
     /// @brief The VTK file instance containing particle data.
     VTKFile_t *m_vtkFile;
+    std::string m_basename = "MD_vtk";
+    std::string m_dirname = "vtk";
 
     /**
      * @brief Initializes m_vtkFile with necessary metadata for writing purposes.
@@ -42,10 +43,9 @@ namespace outputWriter
      * @brief Writes the contents of m_vtkFile into a given VTK file.
      * Terminates program execution on error.
      * 
-     * @param filename The name of the output file in which to write the VTK data.
      * @param iteration The current iteration of the simulation.
      */
-    void writeFile(const std::string &filename, int iteration);
+    void writeFile(int iteration);
     
     /**
      * @brief Plots a single particle to m_vtkFile.
@@ -57,6 +57,8 @@ namespace outputWriter
 
   public:
     VTKWriter();
+    VTKWriter(const std::string& basename);
+    VTKWriter(const std::string& basename, const std::string& dirname);
 
     virtual ~VTKWriter();
 
@@ -65,10 +67,9 @@ namespace outputWriter
      * Terminates program execution on error.
      *
      * @param particles A list of the particles.
-     * @param filename The base name of the output file to be written.
      * @param iteration The number of the current iteration, used to generate a unique filename.
      */
-    void writeParticles(const std::list<Particle> &particles, const std::string &filename, int iteration);
+    void writeParticles(const std::list<Particle> &particles, int iteration);
   };
 
 } // namespace outputWriter

@@ -18,6 +18,8 @@
 namespace outputWriter
 {
   VTKWriter::VTKWriter() = default;
+  VTKWriter::VTKWriter(const std::string& basename) : m_basename {basename} {};
+  VTKWriter::VTKWriter(const std::string& basename, const std::string& dirname) : m_basename {basename}, m_dirname {dirname} {};
 
   VTKWriter::~VTKWriter() = default;
 
@@ -57,27 +59,27 @@ namespace outputWriter
     m_vtkFile->UnstructuredGrid(unstructuredGrid);
   }
 
-  void VTKWriter::writeFile(const std::string &filename, int iteration)
+  void VTKWriter::writeFile(int iteration)
   {
     // before we do anything, check if there is something valid to write
     if (!m_vtkFile)
       CLIUtils::error("Cannot write uninitialized VTK file!");
 
     // create output directory in which to store generated VTK output files
-    if (!(std::filesystem::exists(OUTPUT_DIR)))
+    if (!(std::filesystem::exists(m_dirname)))
     {
-      if (!(std::filesystem::create_directory(OUTPUT_DIR)))
+      if (!(std::filesystem::create_directory(m_dirname)))
         CLIUtils::error("Error creating VTK directory!");
     }
 
     // generate unique filename based on iteration
     std::stringstream strstr;
-    strstr << OUTPUT_DIR << "/" << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
+    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
 
     std::ofstream file(strstr.str().c_str());
 
     if (!file)
-      CLIUtils::error("Error opening output file", filename);
+      CLIUtils::error("Error opening output file", m_basename);
 
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
@@ -118,14 +120,14 @@ namespace outputWriter
     pointsIterator->push_back(p.getX()[2]);
   }
 
-  void VTKWriter::writeParticles(const std::list<Particle> &particles, const std::string &filename, int iteration)
+  void VTKWriter::writeParticles(const std::list<Particle> &particles, int iteration)
   {
     initializeOutput(particles.size());
 
     for (auto &p : particles)
       plotParticle(p);
 
-    writeFile(filename, iteration);
+    writeFile(iteration);
   }
 
 } // namespace outputWriter

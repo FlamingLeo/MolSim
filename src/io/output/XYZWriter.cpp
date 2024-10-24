@@ -15,15 +15,20 @@ namespace outputWriter
 {
 
   XYZWriter::XYZWriter() = default;
+  XYZWriter::XYZWriter(const std::string &basename) : m_basename{basename} {}
+  XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname) : m_basename{basename}, m_dirname{dirname} {}
 
-  XYZWriter::~XYZWriter() = default;
+  XYZWriter::~XYZWriter()
+  {
+    closeFile();
+  };
 
-  void XYZWriter::writeParticles(std::list<Particle> particles, const std::string &filename, int iteration)
+  void XYZWriter::writeParticles(std::list<Particle> particles, int iteration)
   {
     // create output directory in which to store generated XYZ output files
-    if (!(std::filesystem::exists(OUTPUT_DIR)))
+    if (!(std::filesystem::exists(m_dirname)))
     {
-      if (!(std::filesystem::create_directory(OUTPUT_DIR)))
+      if (!(std::filesystem::create_directory(m_dirname)))
       {
         CLIUtils::error("Error creating XYZ directory!");
       };
@@ -31,7 +36,9 @@ namespace outputWriter
 
     // define file name
     std::stringstream strstr, content;
-    strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
+    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
+
+    openFile(strstr.str());
 
     // write content to preliminary string stream
     content << particles.size() << std::endl;
@@ -54,7 +61,7 @@ namespace outputWriter
     }
 
     // finalize output
-    writeFile(strstr.str(), content.str());
+    writeFile(content.str());
   }
 
 } // namespace outputWriter

@@ -2,18 +2,44 @@
 #include "utils/CLIUtils.h"
 #include <fstream>
 
-void FileWriter::writeFile(const std::string &filename, const std::string &content)
+FileWriter::FileWriter() = default;
+
+FileWriter::FileWriter(const std::string &filename)
 {
-    // open the file
-    std::ofstream file(filename);
-    if (!file)
+    openFile(filename);
+}
+
+FileWriter::~FileWriter()
+{
+    closeFile();
+}
+
+void FileWriter::closeFile() {
+    if (m_file.is_open())
+        m_file.close();
+}
+
+void FileWriter::openFile(const std::string &filename)
+{
+    if (m_file.is_open())
+        m_file.close();
+
+    m_file.open(filename);
+
+    if (!m_file.is_open())
         CLIUtils::error("Failed to open file", filename);
+}
 
-    // write the string to the file
-    file << content;
-    if (!file)
-        CLIUtils::error("Failed to write contents to file", filename);
-
-    // close the file stream
-    file.close();
+void FileWriter::writeFile(const std::string &content)
+{
+    if (m_file.is_open())
+    {
+        m_file << content;
+        if (m_file.bad())
+            CLIUtils::error("Failed to write contents to file stream!");
+    }
+    else
+    {
+        CLIUtils::error("No file opened for writing!");
+    }
 }

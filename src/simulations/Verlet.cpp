@@ -22,7 +22,7 @@ void Verlet::runSimulation()
 
         iteration++;
         if (iteration % m_it_freq == 0)
-            writer.writeParticles(m_particles, "MD_vtk", iteration);
+            writer.writeParticles(m_particles, iteration);
 
         current_time += m_delta_t;
     }
