@@ -1,10 +1,3 @@
-/*
- * Particle.cpp
- *
- *  Created on: 23.02.2010
- *      Author: eckhardw
- */
-
 #include "Particle.h"
 
 #include "utils/ArrayUtils.h"

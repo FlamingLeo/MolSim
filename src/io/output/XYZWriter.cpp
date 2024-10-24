@@ -1,10 +1,3 @@
-/*
- * XYZWriter.cpp
- *
- *  Created on: 01.03.2010
- *      Author: eckhardw
- */
-
 #include "XYZWriter.h"
 #include "utils/CLIUtils.h"
 #include <filesystem>

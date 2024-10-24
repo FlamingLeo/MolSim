@@ -1,10 +1,3 @@
-/*
- * VTKWriter.cpp
- *
- *  Created on: 01.03.2010
- *      Author: eckhardw
- */
-
 #include "VTKWriter.h"
 #include "utils/CLIUtils.h"
 
