@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "objects/Particle.h"
+#include "objects/ParticleContainer.h"
 #include <fstream>
 #include <list>
 
@@ -45,5 +45,5 @@ class FileReader {
      *
      * @param particles A list of particles to write the input data into.
      */
-    void readFile(std::list<Particle> &particles);
+    void readFile(ParticleContainer &particles);
 };

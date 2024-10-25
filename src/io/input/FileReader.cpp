@@ -29,7 +29,7 @@ void FileReader::openFile(const std::string &filename) {
         CLIUtils::error("Could not open file", filename);
 }
 
-void FileReader::readFile(std::list<Particle> &particles) {
+void FileReader::readFile(ParticleContainer &particles) {
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!");
 
@@ -64,7 +64,7 @@ void FileReader::readFile(std::list<Particle> &particles) {
         if (datastream.eof())
             CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i));
         datastream >> m;
-        particles.emplace_back(x, v, m);
+        particles.addParticle(x, v, m);
 
         getline(m_infile, tmp_string);
         std::cout << "Read line: " << tmp_string << std::endl;

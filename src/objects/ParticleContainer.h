@@ -29,7 +29,10 @@ class ParticleContainer {
         friend bool operator!=(const Iterator &a, const Iterator &b);
     };
 
+    ParticleContainer();
+    ParticleContainer(size_t num_particles);
     void addParticle(const Particle &particle);
+    void addParticle(const std::array<double, 3>& x, const std::array<double, 3>& v, double m);
     size_t size();
     std::vector<Particle> &getParticles();
     Iterator begin() { return Iterator(&m_particles[0]); }

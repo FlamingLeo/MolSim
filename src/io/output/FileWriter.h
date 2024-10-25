@@ -8,7 +8,7 @@
  *
  */
 #pragma once
-#include "objects/Particle.h"
+#include "objects/ParticleContainer.h"
 #include <fstream>
 #include <list>
 #include <string>
@@ -61,6 +61,6 @@ class FileWriter {
      * @param iteration The number of the current iteration, used to generate a
      * unique filename.
      */
-    virtual void writeParticles(const std::list<Particle> &particles, int iteration) = 0;
+    virtual void writeParticles(ParticleContainer &particles, int iteration) = 0;
 };
 } // namespace outputWriter

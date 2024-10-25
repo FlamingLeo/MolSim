@@ -8,7 +8,7 @@
  */
 #pragma once
 #include "Simulation.h"
-#include "objects/Particle.h"
+#include "objects/ParticleContainer.h"
 #include "utils/Arguments.h"
 #include <list>
 
@@ -17,7 +17,7 @@
 class Verlet : public Simulation {
   private:
     /// @brief The list of particles used in the simulation.
-    std::list<Particle> m_particles; // TODO ParticleContainer...
+    ParticleContainer m_particles; // TODO ParticleContainer...
     /// @brief The start time of the simulation.
     double m_start_time;
     /// @brief The end time of the simulation.
@@ -52,5 +52,5 @@ class Verlet : public Simulation {
     /// @brief Runs the simulation.
     void runSimulation() override;
 
-    std::list<Particle> &getParticles();
+    ParticleContainer &getParticles();
 };

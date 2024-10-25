@@ -29,8 +29,7 @@ void Verlet::runSimulation() {
 }
 
 void Verlet::calculateF() {
-    std::list<Particle>::iterator iterator;
-    iterator = m_particles.begin();
+    // auto iterator = m_particles.begin();
 
     for (auto &p1 : m_particles) {
         p1.setOldF(p1.getF());
@@ -61,4 +60,4 @@ void Verlet::calculateV() {
     }
 }
 
-std::list<Particle> &Verlet::getParticles() { return m_particles; }
+ParticleContainer &Verlet::getParticles() { return m_particles; }

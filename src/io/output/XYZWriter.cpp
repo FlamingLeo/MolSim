@@ -13,7 +13,7 @@ XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname)
 
 XYZWriter::~XYZWriter() { closeFile(); };
 
-void XYZWriter::writeParticles(const std::list<Particle> &particles, int iteration) {
+void XYZWriter::writeParticles(ParticleContainer &particles, int iteration) {
     // create output directory in which to store generated XYZ output files
     if (!(std::filesystem::exists(m_dirname))) {
         if (!(std::filesystem::create_directory(m_dirname))) {

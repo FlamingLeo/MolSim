@@ -59,7 +59,7 @@ class XYZWriter : public FileWriter {
      * @param iteration The number of the current iteration, used to generate a
      * unique filename.
      */
-    void writeParticles(const std::list<Particle>& particles, int iteration) override;
+    void writeParticles(ParticleContainer &particles, int iteration) override;
 };
 
 } // namespace outputWriter
