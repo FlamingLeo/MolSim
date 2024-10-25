@@ -20,11 +20,14 @@ class ParticleContainer {
 
     ContainerType::iterator begin() { return m_particles.begin(); }
     ContainerType::iterator end()   { return m_particles.end(); }
+    ContainerType::const_iterator begin() const { return m_particles.begin(); }
+    ContainerType::const_iterator end() const { return m_particles.end(); }
+
 
     ParticleContainer();
     ParticleContainer(size_t num_particles);
     void addParticle(const Particle &particle);
     void addParticle(const std::array<double, 3>& x, const std::array<double, 3>& v, double m);
-    size_t size();
+    size_t size() const;
     std::vector<Particle> &getParticles();
 };

@@ -61,6 +61,6 @@ class FileWriter {
      * @param iteration The number of the current iteration, used to generate a
      * unique filename.
      */
-    virtual void writeParticles(ParticleContainer &particles, int iteration) = 0;
+    virtual void writeParticles(const ParticleContainer &particles, int iteration) = 0;
 };
 } // namespace outputWriter

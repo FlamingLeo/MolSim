@@ -10,5 +10,5 @@ ParticleContainer::ParticleContainer(size_t numParticles) {
 
 void ParticleContainer::addParticle(const Particle &particle) { m_particles.push_back(particle); }
 void ParticleContainer::addParticle(const std::array<double, 3>& x, const std::array<double, 3>& v, double m) { m_particles.emplace_back(x,v,m); }
-size_t ParticleContainer::size() { return m_particles.size(); }
+size_t ParticleContainer::size() const { return m_particles.size(); }
 std::vector<Particle> &ParticleContainer::getParticles() { return m_particles; }

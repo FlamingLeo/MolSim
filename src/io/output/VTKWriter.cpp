@@ -110,7 +110,7 @@ void VTKWriter::plotParticle(const Particle &p) {
     pointsIterator->push_back(p.getX()[2]);
 }
 
-void VTKWriter::writeParticles(ParticleContainer &particles, int iteration) {
+void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration) {
     initializeOutput(particles.size());
 
     for (auto &p : particles)
