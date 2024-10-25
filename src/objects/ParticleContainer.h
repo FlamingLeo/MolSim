@@ -9,25 +9,27 @@
 #pragma once
 #include "objects/Particle.h"
 #include <vector>
+#include <array>
+#include <string>
+
+/// @brief The chosen data type for storing particles is a std::vector.
+using ContainerType = std::vector<Particle>;
 
 class ParticleContainer {
   private:
-    std::vector<Particle> m_particles;
+    ContainerType m_particles;
 
   public:
-
-    using ContainerType = std::vector<Particle>;
-
-    ContainerType::iterator begin() { return m_particles.begin(); }
-    ContainerType::iterator end()   { return m_particles.end(); }
-    ContainerType::const_iterator begin() const { return m_particles.begin(); }
-    ContainerType::const_iterator end() const { return m_particles.end(); }
-
+    ContainerType::iterator begin();
+    ContainerType::iterator end();
+    ContainerType::const_iterator begin() const;
+    ContainerType::const_iterator end() const;
 
     ParticleContainer();
     ParticleContainer(size_t num_particles);
     void addParticle(const Particle &particle);
-    void addParticle(const std::array<double, 3>& x, const std::array<double, 3>& v, double m);
+    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m);
+    void fromFile(const std::string& filename);
     size_t size() const;
-    std::vector<Particle> &getParticles();
+    ContainerType &getParticles();
 };

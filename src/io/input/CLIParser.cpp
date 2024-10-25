@@ -8,21 +8,38 @@
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
 /// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, outputWriter::WriterType> const table = {{"vtk", outputWriter::WriterType::VTK},
-                                                                                {"xyz", outputWriter::WriterType::XYZ}};
+static std::unordered_map<std::string, outputWriter::WriterType> const writerTable = {
+    {"vtk", outputWriter::WriterType::VTK}, {"xyz", outputWriter::WriterType::XYZ}};
+
+/// @brief Map containing conversion information for converting a string to a SimulationType enum.
+/// Static .cpp utility variable; undocumented in header file.
+static std::unordered_map<std::string, SimulationType> const SimulationTable = {{"verlet", SimulationType::VERLET}};
 
 /// @brief Function to convert a string to a WriterType enum using the above map.
 /// @param type The string containing the desired WriterType.
 /// @return The desired WriterType enum if the type string is valid, otherwise terminate with error.
 static outputWriter::WriterType stringToWriterType(const std::string &type) {
-    auto it = table.find(type);
-    if (it != table.end())
+    auto it = writerTable.find(type);
+    if (it != writerTable.end())
         return it->second;
     else
         CLIUtils::error("Invalid output type", type);
     return outputWriter::WriterType::VTK; // shouldn't reach this; included to silence warning
 }
 
+/// @brief Function to convert a string to a SimulationType enum using the above map.
+/// @param type The string containing the desired SimulationType.
+/// @return The desired SimulationType enum if the type string is valid, otherwise terminate with error.
+static SimulationType stringToSimulationType(const std::string &type) {
+    auto it = SimulationTable.find(type);
+    if (it != SimulationTable.end())
+        return it->second;
+    else
+        CLIUtils::error("Invalid output type", type);
+    return SimulationType::VERLET; // shouldn't reach this; included to silence warning
+}
+
+/* documented functions start here */
 void CLIParser::checkValidity(const Arguments &args) {
     // maybe disallow start and end being the same? or print out some warning?
     if (args.start_time > args.end_time)
@@ -58,6 +75,9 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
         case 'o': /* output type */
             args.type = stringToWriterType(optarg);
             break;
+        case 't': /* simulation type */
+            args.sim = stringToSimulationType(optarg);
+            break;
         case 'h': /* help */
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
@@ -72,6 +92,8 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
                 CLIUtils::error("Output frequency not specified!");
             else if (optopt == 'o')
                 CLIUtils::error("Output type not specified!");
+            else if (optopt == 't')
+                CLIUtils::error("Simulation type not specified!");
             else
                 CLIUtils::error("Unknown option found", StringUtils::fromString(optopt));
         default: /* shouldn't happen... */
