@@ -10,7 +10,6 @@
 #pragma once
 #include "objects/ParticleContainer.h"
 #include <fstream>
-#include <list>
 #include <string>
 
 /// @brief Superclass which implements functionality to output data to a file on disk.
@@ -53,7 +52,8 @@ class FileWriter {
     void writeFile(const std::string &content);
 
     /**
-     * @brief Interface function for writing the type, mass, position, velocity and force of a ParticleContainer to a file. Terminates program execution on error.
+     * @brief Interface function for writing the type, mass, position, velocity and force of a ParticleContainer to a
+     * file. Terminates program execution on error.
      *
      * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a

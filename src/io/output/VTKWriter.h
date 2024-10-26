@@ -13,9 +13,6 @@
 #include "FileWriter.h"
 #include "io/vtk/vtk-unstructured.h"
 #include "objects/Particle.h"
-#include <list>
-
-
 
 /**
  * @brief This class implements the functionality to generate VTK output from
@@ -79,7 +76,8 @@ class VTKWriter : public FileWriter {
     virtual ~VTKWriter();
 
     /**
-     * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a VTK file. Terminates program execution on error.
+     * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a VTK file. Terminates
+     * program execution on error.
      *
      * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a
@@ -87,5 +85,3 @@ class VTKWriter : public FileWriter {
      */
     void writeParticles(const ParticleContainer &particles, int iteration) override;
 };
-
-

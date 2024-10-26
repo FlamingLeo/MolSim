@@ -13,9 +13,6 @@
 #include "FileWriter.h"
 #include "objects/Particle.h"
 #include <fstream>
-#include <list>
-
-
 
 /**
  * @brief This class implements the functionality to generate VTK output from
@@ -35,14 +32,14 @@ class XYZWriter : public FileWriter {
 
     /**
      * @brief Creates a new XYZWriter with the given basename for future file outputs.
-     * 
+     *
      * @param basename The base name of the generated files.
      */
     XYZWriter(const std::string &basename);
 
     /**
      * @brief Creates a new XYZWriter with the given basename for future file outputs in the specified directory.
-     * 
+     *
      * @param basename The base name of the generated files.
      * @param dirname The directory name of the generated files.
      */
@@ -52,7 +49,8 @@ class XYZWriter : public FileWriter {
     virtual ~XYZWriter();
 
     /**
-     * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a XYZ file. Terminates program execution on error.
+     * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a XYZ file. Terminates
+     * program execution on error.
      *
      * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a
@@ -60,5 +58,3 @@ class XYZWriter : public FileWriter {
      */
     void writeParticles(const ParticleContainer &particles, int iteration) override;
 };
-
-
