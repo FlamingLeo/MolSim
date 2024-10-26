@@ -38,7 +38,7 @@ void FileReader::readFile(ParticleContainer *particles) {
         CLIUtils::error("Cannot read into uninitialized ParticleContainer!");
     }
 
-    // parse file content into particle list
+    // parse file content into particle container
     std::array<double, 3> x;
     std::array<double, 3> v;
     double m;
@@ -59,6 +59,10 @@ void FileReader::readFile(ParticleContainer *particles) {
     getline(m_infile, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
 
+    // reserve space for particles to avoid expensive copying
+    particles->reserve(num_particles);
+
+    // populate particle container
     for (int i = 0; i < num_particles; i++) {
         std::istringstream datastream(tmp_string);
 

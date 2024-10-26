@@ -2,9 +2,7 @@
 #include "io/input/FileReader.h"
 
 /* container constructors */
-ParticleContainer::ParticleContainer() {
-    m_particles.reserve(16); // TODO REMOVE THIS!
-};
+ParticleContainer::ParticleContainer() = default;
 ParticleContainer::ParticleContainer(size_t numParticles) { m_particles.reserve(numParticles); }
 
 /* iterator implementations */
@@ -51,6 +49,9 @@ void ParticleContainer::fromFile(const std::string &filename) {
     FileReader fileReader(filename);
     fileReader.readFile(this);
 };
+void ParticleContainer::reserve(size_t capacity) {
+    m_particles.reserve(capacity);
+}
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ContainerType &ParticleContainer::getParticles() { return m_particles; }

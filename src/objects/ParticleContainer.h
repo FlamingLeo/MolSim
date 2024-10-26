@@ -148,6 +148,13 @@ class ParticleContainer {
     void fromFile(const std::string &filename);
 
     /**
+     * @brief Reserves a certain amount of spaces inside the Particle vector.
+     * 
+     * @param capacity The amount of contiguous spaces to reserve in m_particles.
+     */
+    void reserve(size_t capacity);
+
+    /**
      * @brief Returns the size of the container.
      *
      * @return The size of the container.
