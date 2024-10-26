@@ -7,9 +7,14 @@
  *
  */
 #pragma once
+
+/// @brief Abstract class defining a possible simulation.
 class Simulation {
+  // maybe include virtual functions for X,F and V calculations here aswell?
   public:
-    // maybe include virtual functions for X,F and V calculations here aswell?
+    /// @brief Interface function for running the simulation.
     virtual void runSimulation() = 0;
+
+    /// @brief Destroys the current Simulation object.
     virtual ~Simulation() {}
 };

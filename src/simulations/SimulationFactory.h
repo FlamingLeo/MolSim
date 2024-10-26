@@ -1,7 +1,6 @@
 /**
- * @file SimulationStrategy.h
- * @brief Strategy (factory?) class for choosing the simulation to be performed.
- * @version 0.1
+ * @file SimulationFactory.h
+ * @brief Factory (strategy?) class for choosing the simulation to be performed.
  * @date 2024-10-26
  *
  * @copyright Copyright (c) 2024

@@ -6,17 +6,17 @@
 #include "utils/CLIUtils.h"
 
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
-    : m_particles{pc}, m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t},
-      m_it_freq{args.it_freq}, m_type{args.type} {};
+    : m_particles{pc}, m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t},
+      m_itFreq{args.it_freq}, m_type{args.type} {};
 
 Verlet::Verlet(const std::string &filename, const Arguments &args)
-    : m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t}, m_it_freq{args.it_freq},
+    : m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t}, m_itFreq{args.it_freq},
       m_type{args.type} {
     m_particles.fromFile(filename);
 };
 
 Verlet::Verlet(const Arguments &args)
-    : m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t}, m_it_freq{args.it_freq},
+    : m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t}, m_itFreq{args.it_freq},
       m_type{args.type} {};
 Verlet::~Verlet() = default;
 
@@ -25,17 +25,17 @@ void Verlet::runSimulation() {
         CLIUtils::error("Cannot run simulation without particles!", "", false);
 
     auto writer = createWriter(m_type);
-    double current_time = m_start_time;
+    double current_time = m_startTime;
     int iteration = 0;
 
     // for this loop, we assume: current x, current f and current v are known
-    while (current_time < m_end_time) {
+    while (current_time < m_endTime) {
         calculateX();
         calculateF();
         calculateV();
 
         iteration++;
-        if (iteration % m_it_freq == 0)
+        if (iteration % m_itFreq == 0)
             writer->writeParticles(m_particles, iteration);
 
         current_time += m_delta_t;

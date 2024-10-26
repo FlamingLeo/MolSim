@@ -13,13 +13,13 @@
 #include <utility>
 #include <vector>
 
-/// @brief The chosen data type for storing particles dynamically and contiguously is a std::vector.
+/// @brief The chosen data type for storing Particle objects dynamically and contiguously is a std::vector.
 using ContainerType = std::vector<Particle>;
 
-/// @brief Class for encapsulating multiple particles.
+/// @brief Class for encapsulating multiple Particle objects..
 class ParticleContainer {
   private:
-    /// @brief A ContainerType storing multiple particles, forming the base of this class.
+    /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
 
     /* iterator definitions */
@@ -42,7 +42,7 @@ class ParticleContainer {
     /// @return An iterator pointing to the last element of m_particles.
     ContainerType::const_iterator end() const;
 
-    /// @brief Custom pair iterator for iterating through all possible pairs of particles.
+    /// @brief Custom pair iterator for iterating through all possible pairs of Particle objects.
     class PairIterator {
       private:
         /// @brief A standard library iterator for iterating through the outer pairs.
@@ -76,7 +76,7 @@ class ParticleContainer {
         /**
          * @brief Override of the ++ operator.
          *
-         * @details Begins by incrementing the inner iterator. Once the inner iterator has reached the final particle in
+         * @details Begins by incrementing the inner iterator. Once the inner iterator has reached the final Particle in
          * the container, the outer iterator gets incremented and the inner iterator is reset to the beginning.
          *
          * @return A PairIterator& used to continue iteration.
@@ -120,14 +120,14 @@ class ParticleContainer {
     /// @brief Constructs a ParticleContainer with an empty default-initialized ContainerType.
     ParticleContainer();
 
-    /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle entries.
+    /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle Particle entries.
     /// @param num_particles The amount of space to be reserved in the empty ContainerType.
     ParticleContainer(size_t num_particles);
 
     /**
-     * @brief Adds an already existing particle to the container.
+     * @brief Adds an already existing Particle to the container.
      *
-     * @param particle The particle to be added to m_particles.
+     * @param particle The Particle to be added to m_particles.
      */
     void addParticle(const Particle &particle);
 
@@ -157,13 +157,13 @@ class ParticleContainer {
     /**
      * @brief Checks if the container is empty.
      *
-     * @return true if there are no particles in the container.
-     * @return false if there is at least one particle in the container.
+     * @return true if there are no Particle objects in the container.
+     * @return false if there is at least one Particle objects in the container.
      */
     bool isEmpty() const;
 
     /**
-     * @brief Gets a reference to the inner particle container.
+     * @brief Gets a reference to the inner Particle container.
      *
      * @return A ContainerType& referencing m_particles.
      */

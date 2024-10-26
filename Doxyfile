@@ -1516,3 +1516,6 @@ GENERATE_LEGEND        = YES
 # the various graphs.
 
 DOT_CLEANUP            = YES
+
+# Use MathJax for rendering LaTeX formulas.
+USE_MATHJAX = YES

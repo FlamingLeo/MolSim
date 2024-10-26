@@ -16,19 +16,19 @@
 /// @brief Particle class modeling a particle's position, velocity, force, mass and type.
 class Particle {
   private:
-    /// @brief Position of the particle.
+    /// @brief Position \f$ x \f$ of the particle.
     std::array<double, 3> x;
 
-    /// @brief Velocity of the particle.
+    /// @brief Velocity \f$ v \f$ of the particle.
     std::array<double, 3> v;
 
-    /// @brief Force effective on this particle.
+    /// @brief Force \f$ F \f$ effective on this particle.
     std::array<double, 3> f;
 
-    /// @brief Force which was effective on this particle.
+    /// @brief Force \f$ F_\text{old} \f$ which was effective on this particle.
     std::array<double, 3> old_f;
 
-    /// @brief Mass of this particle.
+    /// @brief Mass \f$ m \f$ of this particle.
     double m;
 
     /// @brief Type of the particle. Use it for whatever you want (e.g. to separate molecules belonging to different
@@ -47,44 +47,52 @@ class Particle {
      */
     Particle(const Particle &other);
 
+    /**
+     * @brief Construct a new Particle object using explicit values for each data field.
+     * 
+     * @param x_arg A reference to the array containing data for the position \f$ x \f$.
+     * @param v_arg A reference to the array containing data for the velocity \f$ v \f$.
+     * @param m_arg The mass \f$ m \f$ of the particle.
+     * @param type The type of the particle.
+     */
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type = 0);
+        const std::array<double, 3>& x_arg, const std::array<double, 3>& v_arg, double m_arg, int type = 0);
 
     /// @brief Destroys the Particle object.
     virtual ~Particle();
 
     /**
-     * @brief Gets the position of this particle.
+     * @brief Gets the position \f$ x \f$ of this particle.
      *
      * @return A reference to the position array of this particle.
      */
     const std::array<double, 3> &getX() const;
 
     /**
-     * @brief Gets the velocity of this particle.
+     * @brief Gets the velocity \f$ v \f$ of this particle.
      *
      * @return A reference to the velocity array of this particle.
      */
     const std::array<double, 3> &getV() const;
 
     /**
-     * @brief Gets the force effective on this particle.
+     * @brief Gets the force \f$ F \f$ effective on this particle.
      *
      * @return A reference to the force array of this particle.
      */
     const std::array<double, 3> &getF() const;
 
     /**
-     * @brief Gets the force previously effective on this particle.
+     * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle.
      *
      * @return A reference to the old force array of this particle.
      */
     const std::array<double, 3> &getOldF() const;
 
     /**
-     * @brief Gets the mass of the particle.
+     * @brief Gets the mass \f$ m \f$ of the particle.
      *
      * @return The mass of the particle.
      */
@@ -98,34 +106,34 @@ class Particle {
     const int getType() const;
 
     /**
-     * @brief Sets the new position of the particle to a given value.
+     * @brief Sets the new position \f$ x \f$ of the particle to a given value.
      *
      * @param new_x A reference to the array containing the new position of this particle.
      */
     void setX(const std::array<double, 3> &new_x);
 
     /**
-     * @brief Sets the new velocity of the particle to a given value.
+     * @brief Sets the new velocity \f$ v \f$ of the particle to a given value.
      *
      * @param new_v A reference to the array containing the new velocity of this particle.
      */
     void setV(const std::array<double, 3> &new_v);
 
     /**
-     * @brief Sets the new force effective on the particle to a given value.
+     * @brief Sets the new force effective on the particle \f$ F \f$ to a given value.
      *
      * @param g A reference to the array containing the new force effective on this particle.
      */
     void setF(const std::array<double, 3> &g);
 
     /**
-     * @brief Sets the new previously effective force on the particle to a given value.
+     * @brief Sets the new previously effective force on the particle \f$ F_\text{old} \f$ to a given value.
      *
      * @param g A reference to the array containing the new previously effective force on this particle.
      */
     void setOldF(const std::array<double, 3> &g);
 
-    /// @brief Resets the force of the particle to 0,0,0.
+    /// @brief Resets the force of the particle \f$ F \f$ to 0,0,0.
     void setFToZero();
 
     /**

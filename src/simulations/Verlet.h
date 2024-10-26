@@ -12,19 +12,20 @@
 #include "utils/Arguments.h"
 #include <string>
 
-/// @brief Class containing the functionality and parameters required to run a simulation of the Velocity-Störmer-Verlet method.
+/// @brief Class containing the functionality and parameters required to run a simulation of the Velocity-Störmer-Verlet
+/// method.
 class Verlet : public Simulation {
   private:
     /// @brief The ParticleContainer containing the particles used in the simulation.
     ParticleContainer m_particles;
-    /// @brief The start time of the simulation.
-    double m_start_time;
-    /// @brief The end time of the simulation.
-    double m_end_time;
-    /// @brief The timestep used during the simulation.
+    /// @brief The start time \f$ t_0 \f$ of the simulation.
+    double m_startTime;
+    /// @brief The end time \f$ t_\text{end} \f$ of the simulation.
+    double m_endTime;
+    /// @brief The timestep \f$ \Delta t \f$ used during the simulation.
     double m_delta_t;
     /// @brief The output (logging) frequency for generating a file output.
-    int m_it_freq;
+    int m_itFreq;
     /// @brief The type of the generated output file.
     WriterType m_type;
 
@@ -39,11 +40,11 @@ class Verlet : public Simulation {
 
     /**
      * @brief Initialize a new Verlet simulation from a specified file name using the given program arguments.
-     * 
+     *
      * @param filename The path to the file containing the particle information.
      * @param args An Arguments struct containing relevant simulation parameters.
      */
-    Verlet(const std::string& filename, const Arguments &args);
+    Verlet(const std::string &filename, const Arguments &args);
 
     /**
      * @brief Initialize a new Verlet simulation with the given program arguments.
@@ -52,16 +53,35 @@ class Verlet : public Simulation {
      */
     Verlet(const Arguments &args);
 
-    /// @brief Default destructor destroying declared data.
+    /// @brief Default destructor destroying data.
     ~Verlet();
 
-    /// @brief Calculates the force for all particles.
+    /**
+     * @brief Calculates the force \f$ F \f$ for all particles.
+     *
+     * @details For each particle in the simulation, the method works by first calculating the effective force \f[
+     * F_{ij} = \frac{m_i m_j}{(|| x_i - x_j ||_2)^3} (x_j - x_i) \f] between each pair of particles \f$ i \f$ and \f$ j
+     * \f$. Afterwards, the effective force for a single particle \f$ i \f$ is calculated using the formula \f[ F_i =
+     * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles.
+     *
+     */
     void calculateF();
 
-    /// @brief Calculates the position for all particles.
+    /**
+     * @brief Calculates the position \f$ x \f$ for all particles.
+     *
+     * @details The position \f$ x_i \f$ of a given particle \f$ i \f$ at the next unit of time \f$ t_{n+1} \f$ is
+     * calculated using the formula \f[ x_i(t_{n+1}) = x_i(t_n) + \Delta t \cdot v_i(t_n) + (\Delta t)^2
+     * \frac{F_i(t_n)}{2m_i}. \f]
+     */
     void calculateX();
 
-    /// @brief Calculates the velocity for all particles.
+    /**
+     * @brief Calculates the velocity \f$ v \f$ for all particles.
+     *
+     * @details The velocity \f$ v_i \f$ of a given particle \f$ i \f$ at the next unit of time \f$ t_{n+1} \f$ is
+     * calculated using the formula \f[ v_i(t_{n+1}) = v_i(t_n) + \Delta t \frac{F_i(t_n) + F_i(t_{n+1})}{2m_i}. \f]
+     */
     void calculateV();
 
     /// @brief Runs the simulation.
