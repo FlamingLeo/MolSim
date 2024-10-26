@@ -8,11 +8,11 @@
  */
 #pragma once
 #include "objects/Particle.h"
-#include <vector>
 #include <array>
 #include <string>
+#include <vector>
 
-/// @brief The chosen data type for storing particles is a std::vector.
+/// @brief The chosen data type for storing particles dynamically and contiguously is a std::vector.
 using ContainerType = std::vector<Particle>;
 
 class ParticleContainer {
@@ -29,7 +29,8 @@ class ParticleContainer {
     ParticleContainer(size_t num_particles);
     void addParticle(const Particle &particle);
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m);
-    void fromFile(const std::string& filename);
+    void fromFile(const std::string &filename);
     size_t size() const;
+    bool isEmpty() const;
     ContainerType &getParticles();
 };

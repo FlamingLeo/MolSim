@@ -10,14 +10,14 @@
 #include "Simulation.h"
 #include "objects/ParticleContainer.h"
 #include "utils/Arguments.h"
-#include <list>
+#include <string>
 
 /// @brief Class containing the functionality and parameters required to run a
 /// simulation of the Velocity-Störmer-Verlet method.
 class Verlet : public Simulation {
   private:
-    /// @brief The list of particles used in the simulation.
-    ParticleContainer m_particles; // TODO ParticleContainer...
+    /// @brief The ParticleContainer containing the particles used in the simulation.
+    ParticleContainer m_particles;
     /// @brief The start time of the simulation.
     double m_start_time;
     /// @brief The end time of the simulation.
@@ -30,6 +30,22 @@ class Verlet : public Simulation {
     outputWriter::WriterType m_type;
 
   public:
+    /**
+     * @brief Initialize a new Verlet simulation with specific particles and the given program arguments.
+     *
+     * @param m_particles A ParticleContainer containing the particles used in the simulation.
+     * @param args An Arguments struct containing relevant simulation parameters.
+     */
+    Verlet(const ParticleContainer &m_particles, const Arguments &args);
+
+    /**
+     * @brief Initialize a new Verlet simulation from a specified file name using the given program arguments.
+     * 
+     * @param filename The path to the file containing the particle information.
+     * @param args An Arguments struct containing relevant simulation parameters.
+     */
+    Verlet(const std::string& filename, const Arguments &args);
+
     /**
      * @brief Initialize a new Verlet simulation with the given program arguments.
      *

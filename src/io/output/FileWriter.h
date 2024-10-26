@@ -54,10 +54,9 @@ class FileWriter {
     void writeFile(const std::string &content);
 
     /**
-     * @brief Interface function for writing the type, mass, position, velocity and force of a list of
-     * particles to a file. Terminates program execution on error.
+     * @brief Interface function for writing the type, mass, position, velocity and force of a ParticleContainer to a file. Terminates program execution on error.
      *
-     * @param particles A list of the particles.
+     * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a
      * unique filename.
      */

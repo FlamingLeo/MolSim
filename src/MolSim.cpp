@@ -1,26 +1,21 @@
 
-#include "objects/ParticleContainer.h"
-#include "simulations/SimulationFactory.h"
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
+#include "objects/ParticleContainer.h"
+#include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
-#include <list>
+#include <string>
 
 int main(int argc, char *argv[]) {
     Arguments args;
     CLIParser::parseArguments(argc, argv, args);
+    std::string filename = argv[argc - 1];
 
-    // this will change when more simulations come
-    Verlet v{args};
-
-    // TODO move this into ParticleContainer, preferably
-    FileReader fileReader(argv[argc - 1]);
-    fileReader.readFile(v.getParticles());
-
-    v.runSimulation();
-
+    auto sim = createSimulation(args.sim, filename, args);
+    sim->runSimulation();
+    
     return 0;
 }

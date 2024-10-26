@@ -3,6 +3,17 @@
 #include "io/output/WriterFactory.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
+
+Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
+    : m_particles{pc}, m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t},
+      m_it_freq{args.it_freq}, m_type{args.type} {};
+
+Verlet::Verlet(const std::string &filename, const Arguments &args)
+    : m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t}, m_it_freq{args.it_freq},
+      m_type{args.type} {
+    m_particles.fromFile(filename);
+};
 
 Verlet::Verlet(const Arguments &args)
     : m_start_time{args.start_time}, m_end_time{args.end_time}, m_delta_t{args.delta_t}, m_it_freq{args.it_freq},
@@ -10,6 +21,9 @@ Verlet::Verlet(const Arguments &args)
 Verlet::~Verlet() = default;
 
 void Verlet::runSimulation() {
+    if (m_particles.isEmpty())
+        CLIUtils::error("Cannot run simulation without particles!", "", false);
+
     auto writer = outputWriter::createWriter(m_type);
     double current_time = m_start_time;
     int iteration = 0;

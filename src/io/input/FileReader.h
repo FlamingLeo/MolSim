@@ -11,7 +11,7 @@
 
 #include "objects/ParticleContainer.h"
 #include <fstream>
-#include <list>
+#include <vector>
 
 /// @brief File reader class which implements functionality to read data from input files.
 class FileReader {
@@ -41,9 +41,9 @@ class FileReader {
     void openFile(const std::string &filename);
 
     /**
-     * @brief Reads particle data into a list of particles from a given input file.
+     * @brief Reads particle data into a ParticleContainer from a given input file.
      *
-     * @param particles A list of particles to write the input data into.
+     * @param particles The ParticleContainer to write the input data into.
      */
-    void readFile(ParticleContainer &particles);
+    void readFile(ParticleContainer* particles);
 };

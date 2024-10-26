@@ -29,9 +29,14 @@ void FileReader::openFile(const std::string &filename) {
         CLIUtils::error("Could not open file", filename);
 }
 
-void FileReader::readFile(ParticleContainer &particles) {
+void FileReader::readFile(ParticleContainer *particles) {
+    // check if file is open and particles is not null
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!");
+
+    if (!particles) {
+        CLIUtils::error("Cannot read into uninitialized ParticleContainer!");
+    }
 
     // parse file content into particle list
     std::array<double, 3> x;
@@ -64,7 +69,7 @@ void FileReader::readFile(ParticleContainer &particles) {
         if (datastream.eof())
             CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i));
         datastream >> m;
-        particles.addParticle(x, v, m);
+        particles->addParticle(x, v, m);
 
         getline(m_infile, tmp_string);
         std::cout << "Read line: " << tmp_string << std::endl;
