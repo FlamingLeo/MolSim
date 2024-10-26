@@ -16,6 +16,6 @@ int main(int argc, char *argv[]) {
 
     auto sim = createSimulation(args.sim, filename, args);
     sim->runSimulation();
-    
+
     return 0;
 }

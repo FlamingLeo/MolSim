@@ -43,8 +43,6 @@ void Verlet::runSimulation() {
 }
 
 void Verlet::calculateF() {
-    // auto iterator = m_particles.begin();
-
     for (auto &p1 : m_particles) {
         p1.setOldF(p1.getF());
         p1.setFToZero();

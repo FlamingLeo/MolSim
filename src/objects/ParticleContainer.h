@@ -10,6 +10,7 @@
 #include "objects/Particle.h"
 #include <array>
 #include <string>
+#include <utility>
 #include <vector>
 
 /// @brief The chosen data type for storing particles dynamically and contiguously is a std::vector.
@@ -24,6 +25,26 @@ class ParticleContainer {
     ContainerType::iterator end();
     ContainerType::const_iterator begin() const;
     ContainerType::const_iterator end() const;
+
+    class PairIterator {
+      private:
+        ContainerType::iterator outer_it;
+        ContainerType::iterator inner_it;
+        ContainerType::iterator container_begin;
+        ContainerType::iterator container_end;
+
+      public:
+        PairIterator(ContainerType::iterator outer, ContainerType::iterator inner, ContainerType::iterator begin,
+                     ContainerType::iterator end);
+
+        std::pair<Particle &, Particle &> operator*() const;
+        PairIterator &operator++();
+        bool operator==(const PairIterator &other) const;
+        bool operator!=(const PairIterator &other) const;
+    };
+
+    PairIterator beginPairs();
+    PairIterator endPairs();
 
     ParticleContainer();
     ParticleContainer(size_t num_particles);
