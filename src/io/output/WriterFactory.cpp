@@ -1,14 +1,13 @@
 #include "WriterFactory.h"
 
-namespace outputWriter {
-std::unique_ptr<FileWriter> createWriter(outputWriter::WriterType type) {
+
+std::unique_ptr<FileWriter> createWriter(WriterType type) {
     switch (type) {
-    case outputWriter::WriterType::XYZ:
+    case WriterType::XYZ:
         return std::make_unique<XYZWriter>();
-    case outputWriter::WriterType::VTK:
+    case WriterType::VTK:
         return std::make_unique<VTKWriter>();
     default:
         CLIUtils::error("Invalid file writer type!");
     }
 };
-} // namespace outputWriter

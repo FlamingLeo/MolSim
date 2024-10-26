@@ -15,7 +15,7 @@
 #include <fstream>
 #include <list>
 
-namespace outputWriter {
+
 
 /**
  * @brief This class implements the functionality to generate VTK output from
@@ -61,4 +61,4 @@ class XYZWriter : public FileWriter {
     void writeParticles(const ParticleContainer &particles, int iteration) override;
 };
 
-} // namespace outputWriter
+

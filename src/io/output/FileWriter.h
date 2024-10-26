@@ -13,7 +13,6 @@
 #include <list>
 #include <string>
 
-namespace outputWriter {
 /// @brief Superclass which implements functionality to output data to a file on disk.
 class FileWriter {
   protected:
@@ -62,4 +61,3 @@ class FileWriter {
      */
     virtual void writeParticles(const ParticleContainer &particles, int iteration) = 0;
 };
-} // namespace outputWriter

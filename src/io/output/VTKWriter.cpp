@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-namespace outputWriter {
+
 VTKWriter::VTKWriter() = default;
 VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {};
 VTKWriter::VTKWriter(const std::string &basename, const std::string &dirname)
@@ -119,4 +119,4 @@ void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration
     writeFile(iteration);
 }
 
-} // namespace outputWriter
+

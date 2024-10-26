@@ -15,7 +15,7 @@
 #include "objects/Particle.h"
 #include <list>
 
-namespace outputWriter {
+
 
 /**
  * @brief This class implements the functionality to generate VTK output from
@@ -88,4 +88,4 @@ class VTKWriter : public FileWriter {
     void writeParticles(const ParticleContainer &particles, int iteration) override;
 };
 
-} // namespace outputWriter
+

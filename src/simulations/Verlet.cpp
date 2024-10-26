@@ -24,7 +24,7 @@ void Verlet::runSimulation() {
     if (m_particles.isEmpty())
         CLIUtils::error("Cannot run simulation without particles!", "", false);
 
-    auto writer = outputWriter::createWriter(m_type);
+    auto writer = createWriter(m_type);
     double current_time = m_start_time;
     int iteration = 0;
 

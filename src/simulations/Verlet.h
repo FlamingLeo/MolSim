@@ -27,7 +27,7 @@ class Verlet : public Simulation {
     /// @brief The output (logging) frequency for generating a file output.
     int m_it_freq;
     /// @brief The type of the generated output file.
-    outputWriter::WriterType m_type;
+    WriterType m_type;
 
   public:
     /**

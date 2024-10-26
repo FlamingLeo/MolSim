@@ -8,8 +8,8 @@
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
 /// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, outputWriter::WriterType> const writerTable = {
-    {"vtk", outputWriter::WriterType::VTK}, {"xyz", outputWriter::WriterType::XYZ}};
+static std::unordered_map<std::string, WriterType> const writerTable = {
+    {"vtk", WriterType::VTK}, {"xyz", WriterType::XYZ}};
 
 /// @brief Map containing conversion information for converting a string to a SimulationType enum.
 /// Static .cpp utility variable; undocumented in header file.
@@ -18,13 +18,13 @@ static std::unordered_map<std::string, SimulationType> const SimulationTable = {
 /// @brief Function to convert a string to a WriterType enum using the above map.
 /// @param type The string containing the desired WriterType.
 /// @return The desired WriterType enum if the type string is valid, otherwise terminate with error.
-static outputWriter::WriterType stringToWriterType(const std::string &type) {
+static WriterType stringToWriterType(const std::string &type) {
     auto it = writerTable.find(type);
     if (it != writerTable.end())
         return it->second;
     else
         CLIUtils::error("Invalid output type", type);
-    return outputWriter::WriterType::VTK; // shouldn't reach this; included to silence warning
+    return WriterType::VTK; // shouldn't reach this; included to silence warning
 }
 
 /// @brief Function to convert a string to a SimulationType enum using the above map.

@@ -9,9 +9,7 @@
 #pragma once
 
 /// @brief Enum containing each (valid) type of output writer.
-namespace outputWriter {
 enum class WriterType { VTK, XYZ };
-}
 
 /// @brief Enum containg each possible Simulation to be performed.
 enum class SimulationType { VERLET };
@@ -29,7 +27,7 @@ struct Arguments {
     /// @brief Logging frequency (default: every 10 iterations)
     int it_freq{10};
     /// @brief Output type (default: VTK).
-    outputWriter::WriterType type{outputWriter::WriterType::VTK};
+    WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: Verlet).
     SimulationType sim{SimulationType::VERLET};
 };
