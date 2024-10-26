@@ -2,14 +2,15 @@
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdlib>
+#include <cstring>
 #include <getopt.h>
 #include <iostream>
 #include <unordered_map>
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
 /// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, WriterType> const writerTable = {
-    {"vtk", WriterType::VTK}, {"xyz", WriterType::XYZ}};
+static std::unordered_map<std::string, WriterType> const writerTable = {{"vtk", WriterType::VTK},
+                                                                        {"xyz", WriterType::XYZ}};
 
 /// @brief Map containing conversion information for converting a string to a SimulationType enum.
 /// Static .cpp utility variable; undocumented in header file.
@@ -101,6 +102,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
                             "line arguments!");
         }
     }
+
+    // handle getopt's special "--" argument
+    if (std::strcmp(argv[optind - 1], "--") == 0)
+        CLIUtils::error("Invalid option '--'!");
 
     // by this point, following correct syntax, optind should be exactly one
     // less than the argument counter

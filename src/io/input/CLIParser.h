@@ -20,11 +20,12 @@ void checkValidity(const Arguments &args);
 /**
  * @brief Parse and store CLI arguments in an Arguments struct.
  *
- * @param argc Argument counter, typically passed directly via the main
- * function.
+ * @bug The input file path doesn't have to be the last argument passed via the command line. It can be anywhere and it
+ * will still work just fine.
+ *
+ * @param argc Argument counter, typically passed directly via the main function.
  * @param argv Argument vector, typically passed directly via the main function.
- * @param args A reference to the argument struct in which to store the parsed
- * arguments.
+ * @param args A reference to the argument struct in which to store the parsed arguments.
  */
 void parseArguments(int argc, char **argv, Arguments &args);
 }; // namespace CLIParser
