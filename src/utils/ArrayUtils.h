@@ -23,49 +23,49 @@
 #include <vector>
 
 /**
- * Collection of utility functions and operators for iterable data containers
+ * @brief Collection of utility functions and operators for iterable data containers
  * like std::array, std::vector, etc.
  */
 namespace ArrayUtils {
 
 // specialize a type for all of the STL containers.
 /**
- * Collection of structs that define what we consider a container. Remove / add
+ * @brief Collection of structs that define what we consider a container. Remove / add
  * whatever you need.
  */
 namespace is_container_impl {
 /**
- * Default case: T is not a container.
+ * @brief Default case: T is not a container.
  * @tparam T
  */
 template <typename T> struct is_container : std::false_type {};
 /**
- * Specialization to allow std::array.
+ * @brief Specialization to allow std::array.
  * @tparam T
  * @tparam N
  */
 template <typename T, std::size_t N>
 struct is_container<std::array<T, N>> : std::true_type {};
 /**
- * Specialization to allow std::vector.
+ * @brief Specialization to allow std::vector.
  * @tparam Args
  */
 template <typename... Args>
 struct is_container<std::vector<Args...>> : std::true_type {};
 /**
- * Specialization to allow std::list.
+ * @brief Specialization to allow std::list.
  * @tparam Args
  */
 template <typename... Args>
 struct is_container<std::list<Args...>> : std::true_type {};
 /**
- * Specialization to allow std::set.
+ * @brief Specialization to allow std::set.
  * @tparam Args
  */
 template <typename... Args>
 struct is_container<std::set<Args...>> : std::true_type {};
 /**
- * Specialization to allow std::unordered_set
+ * @brief Specialization to allow std::unordered_set
  * @tparam Args
  */
 template <typename... Args>
@@ -73,7 +73,7 @@ struct is_container<std::unordered_set<Args...>> : std::true_type {};
 } // namespace is_container_impl
 
 /**
- * Type trait to check if a given type is a container.
+ * @brief Type trait to check if a given type is a container.
  * @tparam T Type to check.
  */
 template <typename T> struct is_container {
@@ -82,7 +82,7 @@ template <typename T> struct is_container {
 };
 
 /**
- * Generates a string representation of a container which fulfills the Container
+ * @brief Generates a string representation of a container which fulfills the Container
  * requirement (provide cbegin and cend).
  * @tparam Container Type of Container.
  * @param container.
@@ -110,7 +110,7 @@ to_string(const Container &container, const std::string &delimiter = ", ",
 }
 
 /**
- * Applies an element wise binary function F to two containers.
+ * @brief Applies an element wise binary function F to two containers.
  *
  * If the containers differ in size the F is only applied to as many elements as
  * are in the smaller container.
@@ -141,7 +141,7 @@ inline Container elementWisePairOp(const Container &lhs, const Container &rhs,
 }
 
 /**
- * Applies a binary function F to with a scalar to every element in a container.
+ * @brief Applies a binary function F to with a scalar to every element in a container.
  *
  * @tparam Scalar Type of scalar value.
  * @tparam Container Type of the container.
@@ -167,7 +167,7 @@ inline Container elementWiseScalarOp(const Scalar &lhs, const Container &rhs,
 }
 
 /**
- * Calculates the L2 norm for a given container.
+ * @brief Calculates the L2 norm for a given container.
  * @tparam Container
  * @param c
  * @return sqrt(sum_i(c[i]*c[i])).
@@ -179,7 +179,7 @@ template <class Container> auto L2Norm(const Container &c) {
 } // namespace ArrayUtils
 
 /**
- * Stream operator for containers.
+ * @brief Stream operator for containers.
  *
  * This function actually checks if the given Template parameter satisfies
  * is_container.
@@ -197,7 +197,7 @@ operator<<(std::ostream &os, const Container &container) {
 }
 
 /**
- * Element wise addition of two containers.
+ * @brief Element wise addition of two containers.
  * @tparam Container
  * @param lhs
  * @param rhs
@@ -210,7 +210,7 @@ operator+(const Container &lhs, const Container &rhs) {
 }
 
 /**
- * Element wise subtraction of two containers.
+ * @brief Element wise subtraction of two containers.
  * @tparam Container
  * @param lhs
  * @param rhs
@@ -223,7 +223,7 @@ operator-(const Container &lhs, const Container &rhs) {
 }
 
 /**
- * Element wise multiplication of two containers.
+ * @brief Element wise multiplication of two containers.
  * @tparam Container
  * @param lhs
  * @param rhs
@@ -236,7 +236,7 @@ operator*(const Container &lhs, const Container &rhs) {
 }
 
 /**
- * Element wise scaling of a container.
+ * @brief Element wise scaling of a container.
  * @tparam Container
  * @param lhs
  * @param rhs
@@ -249,7 +249,7 @@ operator*(const Scalar &lhs, const Container &rhs) {
 }
 
 /**
- * Element wise comparison of two containers.
+ * @brief Element wise comparison of two containers.
  * @tparam Container
  * @param lhs
  * @param rhs

@@ -14,7 +14,7 @@
 #include <random>
 
 /**
- * Generate a random velocity vector according to the Maxwell-Boltzmann
+ * @brief Generate a random velocity vector according to the Maxwell-Boltzmann
  * distribution, with a given average velocity.
  *
  * @param averageVelocity The average velocity of the brownian motion for the

@@ -9,6 +9,7 @@
 #pragma once
 #include "utils/Arguments.h"
 
+/// @brief Namespace defining functions for parsing command line arguments.
 namespace CLIParser {
 /**
  * @brief Check the mathematical validity of the given arguments.

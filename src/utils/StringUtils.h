@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 
+/// @brief  Namespace defining utility functions for working with strings. 
 namespace StringUtils {
 /**
  * @brief Converts a string to a double.

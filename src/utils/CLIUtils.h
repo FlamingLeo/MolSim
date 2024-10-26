@@ -13,6 +13,7 @@
 #include <string_view>
 #define OPTSTRING "s:e:d:f:o:t:h"
 
+/// @brief Namespace defining utility functions for handling console output.
 namespace CLIUtils {
 /**
  * @brief The filename of the executable (default: "./MolSim").
