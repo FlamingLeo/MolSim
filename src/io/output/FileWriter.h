@@ -43,9 +43,8 @@ class FileWriter {
     void closeFile();
 
     /**
-     * @brief Overwrites the contents of the file opened in m_file with a given string.
-     *
-     * On error, the program will terminate.
+     * @brief Overwrites the contents of the file opened in m_file with a given string. On error, the program will
+     * terminate.
      *
      * @param content The string to be written inside of the file.
      */
@@ -56,8 +55,7 @@ class FileWriter {
      * file. Terminates program execution on error.
      *
      * @param particles The ParticleContainer.
-     * @param iteration The number of the current iteration, used to generate a
-     * unique filename.
+     * @param iteration The number of the current iteration, used to generate a unique filename.
      */
     virtual void writeParticles(const ParticleContainer &particles, int iteration) = 0;
 };

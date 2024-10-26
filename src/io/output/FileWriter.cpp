@@ -28,6 +28,7 @@ void FileWriter::writeFile(const std::string &content) {
         CLIUtils::error("No file opened for writing!");
 
     m_file << content;
+
     if (m_file.bad())
         CLIUtils::error("Failed to write contents to file stream!");
 }

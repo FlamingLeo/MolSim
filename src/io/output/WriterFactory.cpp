@@ -1,6 +1,5 @@
 #include "WriterFactory.h"
 
-
 std::unique_ptr<FileWriter> createWriter(WriterType type) {
     switch (type) {
     case WriterType::XYZ:

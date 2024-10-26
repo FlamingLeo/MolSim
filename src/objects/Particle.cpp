@@ -7,7 +7,8 @@ Particle::Particle(int type_arg) {
     type = type_arg;
     f = {0., 0., 0.};
     old_f = {0., 0., 0.};
-    std::cout << "Particle " << x << ", " << v << ", " << f << ", " << m << " generated (simple constructor)!" << std::endl;
+    std::cout << "Particle " << x << ", " << v << ", " << f << ", " << m << " generated (simple constructor)!"
+              << std::endl;
 }
 
 Particle::Particle(const Particle &other)

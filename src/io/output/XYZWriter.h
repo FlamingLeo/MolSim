@@ -14,11 +14,7 @@
 #include "objects/Particle.h"
 #include <fstream>
 
-/**
- * @brief This class implements the functionality to generate VTK output from
- * particles.
- *
- */
+/// @brief Class which implements functionality to generate VTK output from particles.
 class XYZWriter : public FileWriter {
   private:
     /// @brief The base name of the generated files.

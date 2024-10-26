@@ -107,12 +107,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
     if (std::strcmp(argv[optind - 1], "--") == 0)
         CLIUtils::error("Invalid option '--'!");
 
-    // by this point, following correct syntax, optind should be exactly one
-    // less than the argument counter
+    // by this point, following correct syntax, optind should be exactly one less than the argument counter
     if (optind != (argc - 1))
         CLIUtils::error("Invalid syntax - no file input provided!");
 
-    // finally, check numerical argument validity and return arguments if all
-    // goes well
+    // finally, check numerical argument validity and return arguments if all goes well
     checkValidity(args);
 }

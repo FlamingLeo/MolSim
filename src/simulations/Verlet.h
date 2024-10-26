@@ -12,8 +12,7 @@
 #include "utils/Arguments.h"
 #include <string>
 
-/// @brief Class containing the functionality and parameters required to run a
-/// simulation of the Velocity-Störmer-Verlet method.
+/// @brief Class containing the functionality and parameters required to run a simulation of the Velocity-Störmer-Verlet method.
 class Verlet : public Simulation {
   private:
     /// @brief The ParticleContainer containing the particles used in the simulation.
@@ -68,5 +67,7 @@ class Verlet : public Simulation {
     /// @brief Runs the simulation.
     void runSimulation() override;
 
+    /// @brief Gets a reference to the ParticleContainer storing the simulation's particles.
+    /// @return A reference to the simulation's ParticleContainer.
     ParticleContainer &getParticles();
 };

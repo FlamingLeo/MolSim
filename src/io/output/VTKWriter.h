@@ -14,13 +14,8 @@
 #include "io/vtk/vtk-unstructured.h"
 #include "objects/Particle.h"
 
-/**
- * @brief This class implements the functionality to generate VTK output from
- * particles.
- *
- */
+/// @brief Class which implements functionality to generate VTK output from particles.
 class VTKWriter : public FileWriter {
-
   private:
     /// @brief The VTK file instance containing particle data.
     VTKFile_t *m_vtkFile;
@@ -30,24 +25,21 @@ class VTKWriter : public FileWriter {
     std::string m_dirname = "vtk";
 
     /**
-     * @brief Initializes m_vtkFile with necessary metadata for writing
-     * purposes. Terminates program execution on error.
+     * @brief Initializes m_vtkFile with necessary metadata for writing purposes. Terminates program execution on error.
      *
      * @param numParticles The total number of particles.
      */
     void initializeOutput(int numParticles);
 
     /**
-     * @brief Writes the contents of m_vtkFile into a given VTK file.
-     * Terminates program execution on error.
+     * @brief Writes the contents of m_vtkFile into a given VTK file. Terminates program execution on error.
      *
      * @param iteration The current iteration of the simulation.
      */
     void writeFile(int iteration);
 
     /**
-     * @brief Plots a single particle to m_vtkFile.
-     * Terminates program execution on error.
+     * @brief Plots a single particle to m_vtkFile. Terminates program execution on error.
      *
      * @param p The particle to be plotted.
      */

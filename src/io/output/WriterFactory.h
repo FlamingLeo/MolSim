@@ -15,7 +15,6 @@
 #include "utils/CLIUtils.h"
 #include <memory>
 
-
 /**
  * @brief Returns a unique pointer to a default-initialized writer object of a given type.
  *

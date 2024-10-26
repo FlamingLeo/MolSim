@@ -4,8 +4,6 @@
 #include <iomanip>
 #include <sstream>
 
-
-
 XYZWriter::XYZWriter() = default;
 XYZWriter::XYZWriter(const std::string &basename) : m_basename{basename} {}
 XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname)
@@ -49,5 +47,3 @@ void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration
     // finalize output
     writeFile(content.str());
 }
-
-
