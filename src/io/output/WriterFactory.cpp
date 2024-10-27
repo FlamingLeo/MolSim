@@ -9,4 +9,5 @@ std::unique_ptr<FileWriter> createWriter(WriterType type) {
     default:
         CLIUtils::error("Invalid file writer type!");
     }
+    return std::make_unique<XYZWriter>();
 };

@@ -17,7 +17,7 @@ Particle::Particle(const Particle &other)
 }
 
 Particle::Particle(const std::array<double, 3> &x_arg, const std::array<double, 3> &v_arg, double m_arg, int type_arg)
-    : x{x_arg}, v{v_arg}, m{m_arg}, type{type_arg}, f{0., 0., 0.}, old_f{0., 0., 0.} {
+    : x{x_arg}, v{v_arg}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{m_arg}, type{type_arg} {
     std::cout << "Particle " << x << ", " << v << ", " << f << ", " << m << " generated!" << std::endl;
 }
 
