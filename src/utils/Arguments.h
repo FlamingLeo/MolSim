@@ -19,13 +19,13 @@ enum class SimulationType { VERLET };
  */
 struct Arguments {
     /// @brief Start time of a simulation (default: 0).
-    double start_time{0};
+    double startTime{0};
     /// @brief End time of a simulation (default: 1000).
-    double end_time{1000};
+    double endTime{1000};
     /// @brief Duration of a timestep (default: 0.014).
     double delta_t{0.014};
     /// @brief Logging frequency (default: every 10 iterations)
-    int it_freq{10};
+    int itFreq{10};
     /// @brief Output type (default: VTK).
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: Verlet).

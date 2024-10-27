@@ -6,17 +6,17 @@
 #include "utils/CLIUtils.h"
 
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
-    : m_particles{pc}, m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t},
-      m_itFreq{args.it_freq}, m_type{args.type} {};
+    : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
+      m_itFreq{args.itFreq}, m_type{args.type} {};
 
 Verlet::Verlet(const std::string &filename, const Arguments &args)
-    : m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t}, m_itFreq{args.it_freq},
+    : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_type{args.type} {
     m_particles.fromFile(filename);
 };
 
 Verlet::Verlet(const Arguments &args)
-    : m_startTime{args.start_time}, m_endTime{args.end_time}, m_delta_t{args.delta_t}, m_itFreq{args.it_freq},
+    : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_type{args.type} {};
 Verlet::~Verlet() = default;
 

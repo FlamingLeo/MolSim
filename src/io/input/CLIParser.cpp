@@ -43,7 +43,7 @@ static SimulationType stringToSimulationType(const std::string &type) {
 /* documented functions start here */
 void CLIParser::checkValidity(const Arguments &args) {
     // maybe disallow start and end being the same? or print out some warning?
-    if (args.start_time > args.end_time)
+    if (args.startTime > args.endTime)
         CLIUtils::error("Start time must be before end time!");
     if (args.delta_t <= 0)
         CLIUtils::error("Timestep must be positive!");
@@ -62,16 +62,16 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
         switch (ch) {
         case 's': /* start time */
-            args.start_time = StringUtils::toDouble(optarg);
+            args.startTime = StringUtils::toDouble(optarg);
             break;
         case 'e': /* end time */
-            args.end_time = StringUtils::toDouble(optarg);
+            args.endTime = StringUtils::toDouble(optarg);
             break;
         case 'd': /* timestep */
             args.delta_t = StringUtils::toDouble(optarg);
             break;
         case 'f': /* output frequency */
-            args.it_freq = StringUtils::toInt(optarg);
+            args.itFreq = StringUtils::toInt(optarg);
             break;
         case 'o': /* output type */
             args.type = stringToWriterType(optarg);
