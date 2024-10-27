@@ -38,8 +38,8 @@ static inline void printHelp() {
                  "-e <number>  : Sets the end time (decimal) for a specific simulation (default: 1000).\n"
                  "-d <number>  : Sets the time interval between two iterations of a simulation (default: 0.014).\n"
                  "-f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).\n"
-                 "-o [xyz|vtk] : Sets the output file type and directory (default: vtk).\n"
-                 "-t [verlet]  : Sets the desired simulation to be performed (default: Verlet) (WIP).\n"
+                 "-o <xyz|vtk> : Sets the output file type and directory (default: vtk).\n"
+                 "-t <verlet>  : Sets the desired simulation to be performed (default: Verlet) (WIP).\n"
                  "-h           : Prints out a help message. Doesn't perform any simulation.\n";
 }
 
