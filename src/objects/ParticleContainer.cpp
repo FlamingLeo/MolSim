@@ -49,9 +49,7 @@ void ParticleContainer::fromFile(const std::string &filename) {
     FileReader fileReader(filename);
     fileReader.readFile(this);
 };
-void ParticleContainer::reserve(size_t capacity) {
-    m_particles.reserve(capacity);
-}
+void ParticleContainer::reserve(size_t capacity) { m_particles.reserve(capacity); }
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ContainerType &ParticleContainer::getParticles() { return m_particles; }

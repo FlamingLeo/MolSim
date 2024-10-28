@@ -49,7 +49,7 @@ class Particle {
 
     /**
      * @brief Construct a new Particle object using explicit values for each data field.
-     * 
+     *
      * @param x_arg A reference to the array containing data for the position \f$ x \f$.
      * @param v_arg A reference to the array containing data for the velocity \f$ v \f$.
      * @param m_arg The mass \f$ m \f$ of the particle.
@@ -58,7 +58,7 @@ class Particle {
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        const std::array<double, 3>& x_arg, const std::array<double, 3>& v_arg, double m_arg, int type = 0);
+        const std::array<double, 3> &x_arg, const std::array<double, 3> &v_arg, double m_arg, int type = 0);
 
     /// @brief Destroys the Particle object.
     virtual ~Particle();

@@ -8,7 +8,6 @@
 #include <iostream>
 #include <string>
 
-
 VTKWriter::VTKWriter() = default;
 VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {};
 VTKWriter::VTKWriter(const std::string &basename, const std::string &dirname)
@@ -45,8 +44,7 @@ void VTKWriter::initializeOutput(int numParticles) {
     DataArray_t cells_data(type::Float32, "types", 0);
     cells.DataArray().push_back(cells_data);
 
-    PieceUnstructuredGrid_t piece(pointData, cellData, points, cells,
-                                  numParticles, 0);
+    PieceUnstructuredGrid_t piece(pointData, cellData, points, cells, numParticles, 0);
     UnstructuredGrid_t unstructuredGrid(piece);
     m_vtkFile->UnstructuredGrid(unstructuredGrid);
 }
@@ -64,8 +62,7 @@ void VTKWriter::writeFile(int iteration) {
 
     // generate unique filename based on iteration
     std::stringstream strstr;
-    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0')
-           << std::setw(4) << iteration << ".vtu";
+    strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
 
     std::ofstream file(strstr.str().c_str());
 
@@ -83,8 +80,7 @@ void VTKWriter::plotParticle(const Particle &p) {
         CLIUtils::error("VTK file incorrectly initialized!");
 
     // do some dark vtk magic
-    PointData::DataArray_sequence &pointDataSequence =
-        m_vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
+    PointData::DataArray_sequence &pointDataSequence = m_vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
     PointData::DataArray_iterator dataIterator = pointDataSequence.begin();
 
     dataIterator->push_back(p.getM());
@@ -102,8 +98,7 @@ void VTKWriter::plotParticle(const Particle &p) {
     dataIterator++;
     dataIterator->push_back(p.getType());
 
-    Points::DataArray_sequence &pointsSequence =
-        m_vtkFile->UnstructuredGrid()->Piece().Points().DataArray();
+    Points::DataArray_sequence &pointsSequence = m_vtkFile->UnstructuredGrid()->Piece().Points().DataArray();
     Points::DataArray_iterator pointsIterator = pointsSequence.begin();
     pointsIterator->push_back(p.getX()[0]);
     pointsIterator->push_back(p.getX()[1]);
@@ -118,5 +113,3 @@ void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration
 
     writeFile(iteration);
 }
-
-

@@ -45,5 +45,5 @@ class FileReader {
      *
      * @param particles The ParticleContainer to write the input data into.
      */
-    void readFile(ParticleContainer* particles);
+    void readFile(ParticleContainer *particles);
 };

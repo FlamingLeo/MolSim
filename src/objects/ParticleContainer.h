@@ -120,7 +120,8 @@ class ParticleContainer {
     /// @brief Constructs a ParticleContainer with an empty default-initialized ContainerType.
     ParticleContainer();
 
-    /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle Particle entries.
+    /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle Particle
+    /// entries.
     /// @param num_particles The amount of space to be reserved in the empty ContainerType.
     ParticleContainer(size_t num_particles);
 
@@ -149,7 +150,7 @@ class ParticleContainer {
 
     /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.
-     * 
+     *
      * @param capacity The amount of contiguous spaces to reserve in m_particles.
      */
     void reserve(size_t capacity);
