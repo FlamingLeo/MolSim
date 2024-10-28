@@ -34,5 +34,6 @@ jobs:
 
             - name: Push changes
               run: |
-                  git push origin master
+                  git pull
+                  git push
               if: success()
