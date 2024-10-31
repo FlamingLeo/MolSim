@@ -1,0 +1,28 @@
+name: Check Formatting
+
+on:
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    format:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the repository
+              uses: actions/checkout@v3
+
+            - name: Set up clang-format
+              run: sudo apt-get install clang-format
+
+            - name: Run clang-format
+              run: |
+                  find . -regex '.*\.\(cpp\|hpp\|cc\|hh\|c\|h\)' -exec clang-format -i {} \;
+
+            - name: Check for uncommitted changes
+              run: |
+                  if [[ $(git status --porcelain) ]]; then
+                      echo "::error::Code is not formatted. Run clang-format locally or commit the changes."
+                      exit 1
+                  fi
