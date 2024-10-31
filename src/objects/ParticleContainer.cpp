@@ -6,11 +6,11 @@ ParticleContainer::ParticleContainer() = default;
 ParticleContainer::ParticleContainer(size_t numParticles) { m_particles.reserve(numParticles); }
 
 /* iterator implementations */
-ContainerType::iterator ParticleContainer::begin() { return m_particles.begin(); }
-ContainerType::iterator ParticleContainer::end() { return m_particles.end(); }
+ParticleContainer::ContainerType::iterator ParticleContainer::begin() { return m_particles.begin(); }
+ParticleContainer::ContainerType::iterator ParticleContainer::end() { return m_particles.end(); }
 
-ContainerType::const_iterator ParticleContainer::begin() const { return m_particles.begin(); }
-ContainerType::const_iterator ParticleContainer::end() const { return m_particles.end(); }
+ParticleContainer::ContainerType::const_iterator ParticleContainer::begin() const { return m_particles.begin(); }
+ParticleContainer::ContainerType::const_iterator ParticleContainer::end() const { return m_particles.end(); }
 
 /* pair iterator */
 ParticleContainer::PairIterator::PairIterator(ContainerType::iterator outer, ContainerType::iterator inner,
@@ -52,4 +52,4 @@ void ParticleContainer::fromFile(const std::string &filename) {
 void ParticleContainer::reserve(size_t capacity) { m_particles.reserve(capacity); }
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
-ContainerType &ParticleContainer::getParticles() { return m_particles; }
+ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }

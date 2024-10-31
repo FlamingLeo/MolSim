@@ -13,11 +13,11 @@
 #include <utility>
 #include <vector>
 
-/// @brief The chosen data type for storing Particle objects dynamically and contiguously is a std::vector.
-using ContainerType = std::vector<Particle>;
-
 /// @brief Class for encapsulating multiple Particle objects..
 class ParticleContainer {
+    /// @brief The chosen data type for storing Particle objects dynamically and contiguously is a std::vector.
+    using ContainerType = std::vector<Particle>;
+
   private:
     /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
@@ -84,7 +84,7 @@ class ParticleContainer {
         PairIterator &operator++();
 
         /**
-         * @brief Checks if two iterator instances point to the same Particle.
+         * @brief Checks if two iterator instances point to the same Particle pair.
          *
          * @param other The other pair iterator to compare iteration progress with.
          * @return true if both iterators point to the same object.
@@ -93,7 +93,7 @@ class ParticleContainer {
         bool operator==(const PairIterator &other) const;
 
         /**
-         * @brief Checks if two iterator instances do not point to the same Particle.
+         * @brief Checks if two iterator instances do not point to the same Particle pair.
          *
          * @param other The other pair iterator to compare iteration progress with.
          * @return true if at least one iterator points to a different object.
