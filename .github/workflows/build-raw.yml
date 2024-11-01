@@ -1,0 +1,24 @@
+name: Test Build Script (Ubuntu)
+
+on:
+    push:
+        branches:
+            - "Assignment*"
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the repository
+              uses: actions/checkout@v4
+
+            - name: Set up only required testing dependencies
+              run: sudo apt-get update && sudo apt-get install -y build-essential clang clang-format clang-tools clang-tidy cmake
+
+            - name: Build project
+              run: chmod +x ./build.sh && ./build.sh
