@@ -49,7 +49,7 @@ make
 
 ### Run Instructions
 
-After building, the executable will be located in the `build` directory. The syntax from inside the directory is:
+After building, the executable will be located in the `build/src` directory. The syntax from inside the directory is:
 
 ```bash
 ./MolSim [options] <filename>
