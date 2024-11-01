@@ -1,6 +1,10 @@
 name: Check Formatting
 
 on:
+    push:
+        branches:
+            - 'assignment*'
+            - master
     pull_request:
         branches:
             - master
@@ -11,10 +15,10 @@ jobs:
 
         steps:
             - name: Checkout the repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Set up clang-format
-              run: sudo apt-get install clang-format
+              run: sudo apt-get install -y clang-format
 
             - name: Run clang-format
               run: |
@@ -23,6 +27,6 @@ jobs:
             - name: Check for uncommitted changes
               run: |
                   if [[ $(git status --porcelain) ]]; then
-                      echo "::error::Code is not formatted. Run clang-format locally or commit the changes."
+                      >&2 echo "Code is not formatted. Run clang-format locally or commit the changes."
                       exit 1
                   fi
