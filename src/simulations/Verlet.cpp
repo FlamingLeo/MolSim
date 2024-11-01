@@ -1,5 +1,4 @@
 #include "Verlet.h"
-
 #include "io/output/WriterFactory.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"

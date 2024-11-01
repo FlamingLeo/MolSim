@@ -10,7 +10,7 @@ if (NOT GTEST_FOUND)
     include(FetchContent)
     FetchContent_Declare(
         googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_REPOSITORY "https://github.com/google/googletest.git"
         GIT_TAG v${GTEST_VERSION}
     )
     FetchContent_MakeAvailable(googletest)

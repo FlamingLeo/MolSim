@@ -1,6 +1,5 @@
 #include "VTKWriter.h"
 #include "utils/CLIUtils.h"
-
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>

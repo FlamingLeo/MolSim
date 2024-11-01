@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # helper functions
 usage() {
   echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l]" 1>&2

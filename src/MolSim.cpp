@@ -1,4 +1,3 @@
-
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
 #include "objects/ParticleContainer.h"
