@@ -3,7 +3,7 @@ name: Run Tests
 on:
     push:
         branches:
-            - "assignment*"
+            - "Assignment*"
             - master
     pull_request:
         branches:
