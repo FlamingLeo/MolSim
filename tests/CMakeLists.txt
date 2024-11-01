@@ -1,7 +1,7 @@
 # enable testing with gtest
 enable_testing()
 
-# collect all source files and create make target
+# collect all test files and create make target
 file(GLOB_RECURSE MD_TESTS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
