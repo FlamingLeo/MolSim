@@ -1,6 +1,9 @@
+#ifndef NDEBUG
+#warning You are compiling the benchmarks using a debug build! Measurements will be inaccurate!
+#endif
+
 #include "simulations/Verlet.h"
 #include <benchmark/benchmark.h>
-#include <iostream>
 #include <spdlog/spdlog.h>
 
 static void BM_VerletNaive(benchmark::State &state) {
@@ -20,7 +23,6 @@ static void BM_VerletNaive(benchmark::State &state) {
         v.calculateV();
     }
 }
-BENCHMARK(BM_VerletNaive);
 
 static void BM_VerletNewton(benchmark::State &state) {
     // initialize planet simulation with input data
@@ -39,4 +41,6 @@ static void BM_VerletNewton(benchmark::State &state) {
         v.calculateV();
     }
 }
+
+BENCHMARK(BM_VerletNaive);
 BENCHMARK(BM_VerletNewton);
