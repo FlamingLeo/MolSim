@@ -4,7 +4,6 @@
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
-
 #include <iostream>
 #include <string>
 

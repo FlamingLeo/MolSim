@@ -14,7 +14,7 @@ target_include_directories(mdsrc
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(mdsrc PUBLIC xerces-c)
+target_link_libraries(mdsrc PUBLIC xerces-c spdlog::spdlog)
 
 # create executable target from source files
 add_executable(MolSim MolSim.cpp)
