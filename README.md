@@ -28,7 +28,8 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e
 This project uses the following external C++ libraries:
 
 -   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
--   [Googletest](https://github.com/google/googletest) 1.15.2
+-   [GoogleTest](https://github.com/google/googletest) 1.15.2
+-   [Benchmark](https://github.com/google/benchmark) 1.9.0
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 
 If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
@@ -54,6 +55,7 @@ Following options are supported:
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
+-c : Disables benchmarking (default: benchmarking enabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
 -l : Disables automatically installing missing libraries (default: installs automatically)
@@ -76,9 +78,10 @@ cd build
 cmake ..
 # -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
 # -DENABLE_DOXYGEN=<OFF|ON>
+# -DENABLE_BENCHMARKING=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
-# <MolSim|tests|doc_doxygen|all|clean>
+# <MolSim|bench|tests|doc_doxygen|all|clean|help>
 ```
 
 ### Run Instructions
@@ -106,6 +109,10 @@ The generated output for use with programs such as [ParaView](https://www.paravi
 ### Test Instructions
 
 The test executable will be located in the `build/tests` directory. From there, simply run `ctest` to execute the tests.
+
+### Benchmarking Instructions (preliminary)
+
+To perform benchmarking, the necessary binary must first be built using `make bench` inside the `build` directory, which will then be located inside `build/bench`. Running the binary will perform benchmarking on all simulations.
 
 ## Documentation
 
