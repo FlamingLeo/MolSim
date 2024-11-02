@@ -58,6 +58,8 @@ Following options are supported:
 -h : Prints out a help message. Doesn't build the program.
 -l : Disables automatically installing missing libraries (default: installs automatically)
 -m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-s : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
+     If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t : Automatically runs tests after successful compilation (default: off).
 ```
 
@@ -72,6 +74,7 @@ Alternatively, you may build the project manually:
 mkdir build
 cd build
 cmake ..
+# -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
 # -DENABLE_DOXYGEN=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make

@@ -2,13 +2,13 @@
 
 # helper functions
 usage() {
-  echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-t]" 1>&2
+  echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-s] [-t]" 1>&2
   exit 1
 }
 
 help() {
   printf "An automatic build script for compiling the program on Unix-based systems.
-\033[1mUSAGE\033[0m: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-t]
+\033[1mUSAGE\033[0m: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-s] [-t]
 
 \033[1mOPTIONS\033[0m:
 -b : Sets the type of the compiled binary (default: Release).
@@ -20,6 +20,8 @@ help() {
 -h : Prints out a help message. Doesn't build the program.
 -l : Disables automatically installing missing libraries (default: installs automatically)
 -m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-s : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
+     If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t : Automatically runs tests after successful compilation (default: off).
 
 \033[1mNOTES\033[0m:
@@ -30,9 +32,10 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:dhlmt"
+OPTSTRING=":b:dhlms:t"
 build_string=""
 doxygen_opt=""
+spdlog_level=""
 install_opt=true
 run_tests=false
 make_documentation=false
@@ -77,6 +80,16 @@ while getopts ${OPTSTRING} opt; do
     # run tests
     echo "[BUILD] Tests will automatically be executed after compilation."
     run_tests=true
+    ;;
+  s)
+    # spdlog level
+    if [[ "$OPTARG" =~ ^[0-6]$ ]]; then
+      spdlog_level="-DSPDLOG_LEVEL=${OPTARG}"
+      echo "[BUILD] Set spdlog level: ${OPTARG}"
+    else
+      echo "ERROR: Invalid spdlog level; must be between 0 and 6."
+      exit 1
+    fi
     ;;
   h)
     # print help message and quit
@@ -150,7 +163,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${doxygen_opt} ${build_string}
+cmake .. ${spdlog_level} ${doxygen_opt} ${build_string}
 
 # build project
 echo "[BUILD] Building project..."

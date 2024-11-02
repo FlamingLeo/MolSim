@@ -18,13 +18,13 @@ else()
     message(STATUS "Using build type ${CMAKE_BUILD_TYPE}")
 endif(NOT CMAKE_BUILD_TYPE)
 
-# include custom cmake modules
+# include custom cmake modules to check for libraries
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(xerces)
 include(doxygen)
 include(gtest)
 include(spdlog)
 
-# use list files in each subdirectory
+# use cmake files in each subdirectory
 add_subdirectory(src)
 add_subdirectory(tests)

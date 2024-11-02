@@ -5,9 +5,12 @@
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <string>
 
 int main(int argc, char *argv[]) {
+    spdlog::set_level(spdlog::level::trace);
+
     Arguments args;
     CLIParser::parseArguments(argc, argv, args);
     std::string filename = argv[argc - 1];
