@@ -25,41 +25,60 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e
 
 ### Dependencies
 
-This project uses the following dependencies:
+This project uses the following external C++ libraries:
 
 -   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
 -   [Googletest](https://github.com/google/googletest) 1.15.2
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 
-Aside from [Xerces-C++](https://xerces.apache.org/xerces-c/), which must be installed manually before compiling, the remaining dependencies will be automatically fetched via CMake if they are not present.
+If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
 
-### Build Instructions
+**NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
 
-Before attempting to build, ensure that you have the [Xerces-C++](https://xerces.apache.org/xerces-c/) library installed via your system's package manager. On Debian-based systems, use `apt-get` to install it:
+### Build Instructions (Automatic)
 
-```bash
-sudo apt-get install libxerces-c-dev
-```
-
-Afterwards, run the build script to build the executable:
+The repository provides a simple, configurable shell script to automate the build process.
 
 ```bash
 chmod +x build.sh # required once if you get a 'Permission denied' error
-./build.sh
+./build.sh [options]
 ```
 
-Alternatively, you may build the executable manually (and optionally disable Doxygen support):
+Following options are supported:
+
+```text
+-b : Sets the type of the compiled binary (default: Release).
+  - Debug          : No optimizations, debug information.
+  - Release        : High optimization levels, no debug information.
+  - RelWithDebInfo : High optimization levels, debug information.
+  - MinSizeRel     : Small file size, no debug information.
+-d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-h : Prints out a help message. Doesn't build the program.
+-l : Disables automatically installing missing libraries (default: installs automatically)
+-m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-t : Automatically runs tests after successful compilation (default: off).
+```
+
+**NOTE**: On Debian-based systems, the script will automatically attempt to install missing libraries (unless `-l` is set) to speed up the compilation process.
+This is done using `sudo apt-get install`. As such, you may be required to enter your password.
+
+### Build Instructions (Manual)
+
+Alternatively, you may build the project manually:
 
 ```bash
 mkdir build
 cd build
-cmake .. # no doxygen: 'cmake .. -DENABLE_DOXYGEN=OFF'
-make
+cmake .. 
+# -DENABLE_DOXYGEN=<OFF|ON> 
+# -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
+make 
+# <MolSim|tests|doc_doxygen|all|clean>
 ```
 
 ### Run Instructions
 
-After building, the executable will be located in the `build/src` directory. The syntax from inside the directory is:
+After building, the main executable will be located in the `build/src` directory. The syntax from inside the directory is:
 
 ```bash
 ./MolSim [options] <filename>
@@ -77,7 +96,11 @@ Currently, the following options are supported:
 -h           : Prints out a help message. Doesn't perform any simulation.
 ```
 
-The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective subdirectory of the `build` folder (e.g. `build/vtk` for VTK output).
+The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective subdirectory of the `build/src` folder (e.g. `build/src/vtk` for VTK output).
+
+### Test Instructions
+
+The test executable will be located in the `build/tests` directory. From there, simply run `ctest` to execute the tests.
 
 ## Documentation
 
