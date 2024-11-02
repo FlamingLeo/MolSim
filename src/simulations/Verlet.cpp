@@ -30,7 +30,7 @@ void Verlet::runSimulation() {
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < m_endTime) {
         calculateX();
-        calculateF();
+        calculateF_thirdLaw();
         calculateV();
 
         iteration++;
