@@ -57,7 +57,7 @@ class Verlet : public Simulation {
     ~Verlet();
 
     /**
-     * @brief Calculates the force \f$ F \f$ for all particles.
+     * @brief Calculates the force \f$ F \f$ for all particles using a naive approach.
      *
      * @details For each particle in the simulation, the method works by first calculating the effective force \f[
      * F_{ij} = \frac{m_i m_j}{(|| x_i - x_j ||_2)^3} (x_j - x_i) \f] between each pair of particles \f$ i \f$ and \f$ j
@@ -66,6 +66,18 @@ class Verlet : public Simulation {
      *
      */
     void calculateF();
+
+    /**
+     * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion.
+     *
+     * @details <em> For every action, there is an equal and opposite reaction.</em>
+     *
+     * Instead of looping through and calculating the force for each individual particle, we avoid recalculating force
+     * for pairs \f$(p_i, p_j)\f$ which have already been computed and apply the reciprocal forces to both particles
+     * simultaneously using Newton's third law: \f[ F_{ij} = -F_{ji}. \f]
+     *
+     */
+    void calculateF_thirdLaw();
 
     /**
      * @brief Calculates the position \f$ x \f$ for all particles.

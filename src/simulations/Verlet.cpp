@@ -56,6 +56,38 @@ void Verlet::calculateF() {
     }
 }
 
+void Verlet::calculateF_thirdLaw() {
+    // set previous f for each particle and reinitialize to zero
+    for (auto &p1 : m_particles) {
+        p1.setOldF(p1.getF());
+        p1.setFToZero();
+    }
+
+    // loop over unique pairs
+    for (size_t i = 0; i < m_particles.size(); ++i) {
+        auto &p1 = m_particles[i];
+
+        // avoid recalculating force for pairs which have already been computed
+        for (size_t j = i + 1; j < m_particles.size(); ++j) {
+            auto &p2 = m_particles[j];
+
+            auto distVec = p2.getX() - p1.getX();
+            double distNorm = ArrayUtils::L2Norm(distVec);
+
+            // prevent division by 0
+            if (distNorm == 0)
+                continue;
+
+            double forceMag = p1.getM() * p2.getM() / std::pow(distNorm, 3);
+            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+
+            // use newton's third law to apply force on p1 and opposite force on p2
+            p1.setF(p1.getF() + forceVec);
+            p2.setF(p2.getF() - forceVec);
+        }
+    }
+}
+
 void Verlet::calculateX() {
     for (auto &p : m_particles) {
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(m_delta_t, p.getV(), std::multiplies<>()) +

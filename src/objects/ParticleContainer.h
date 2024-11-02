@@ -103,6 +103,26 @@ class ParticleContainer {
     };
 
     /**
+     * @brief Override of the [] operator.
+     *
+     * Gets a Particle by index. Does NOT perform bounds checking.
+     *
+     * @param index The index of the Particle to get.
+     * @return A reference to the Particle at the specified index.
+     */
+    Particle &operator[](size_t index);
+
+    /**
+     * @brief Override of the [] operator (const).
+     *
+     * Gets a Particle by index. Does NOT perform bounds checking.
+     *
+     * @param index The index of the Particle to get.
+     * @return A const reference to the Particle at the specified index.
+     */
+    const Particle &operator[](size_t index) const;
+
+    /**
      * @brief Function marking the beginning of the pair iteration process.
      *
      * @return A PairIterator pointing to the first possible particle pair.

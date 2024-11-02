@@ -41,6 +41,9 @@ ParticleContainer::PairIterator ParticleContainer::endPairs() {
 }
 
 /* container functions */
+Particle &ParticleContainer::operator[](size_t index) { return m_particles[index]; }
+const Particle &ParticleContainer::operator[](size_t index) const { return m_particles[index]; }
+
 void ParticleContainer::addParticle(const Particle &particle) { m_particles.push_back(particle); }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m) {
     m_particles.emplace_back(x, v, m);
