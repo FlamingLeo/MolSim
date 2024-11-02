@@ -24,7 +24,7 @@ static WriterType stringToWriterType(const std::string &type) {
     if (it != writerTable.end())
         return it->second;
     else
-        CLIUtils::error("Invalid output type", type);
+        CLIUtils::error_log("Invalid output type", type);
     return WriterType::VTK; // shouldn't reach this; included to silence warning
 }
 
@@ -36,7 +36,7 @@ static SimulationType stringToSimulationType(const std::string &type) {
     if (it != SimulationTable.end())
         return it->second;
     else
-        CLIUtils::error("Invalid output type", type);
+        CLIUtils::error_log("Invalid output type", type);
     return SimulationType::VERLET; // shouldn't reach this; included to silence warning
 }
 
@@ -98,8 +98,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             else
                 CLIUtils::error("Unknown option found", StringUtils::fromString(optopt));
         default: /* shouldn't happen... */
-            CLIUtils::error("An unknown error occurred while parsing command "
-                            "line arguments!");
+            CLIUtils::error_log("An unknown error occurred while parsing command line arguments!");
         }
     }
 

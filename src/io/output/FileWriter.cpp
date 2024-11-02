@@ -20,15 +20,15 @@ void FileWriter::openFile(const std::string &filename) {
     m_file.open(filename);
 
     if (!m_file.is_open())
-        CLIUtils::error("Failed to open file", filename);
+        CLIUtils::error_log("Failed to open file", filename);
 }
 
 void FileWriter::writeFile(const std::string &content) {
     if (!(m_file.is_open()))
-        CLIUtils::error("No file opened for writing!");
+        CLIUtils::error_log("No file opened for writing!");
 
     m_file << content;
 
     if (m_file.bad())
-        CLIUtils::error("Failed to write contents to file stream!");
+        CLIUtils::error_log("Failed to write contents to file stream!");
 }

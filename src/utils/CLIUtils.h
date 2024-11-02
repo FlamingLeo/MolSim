@@ -10,6 +10,7 @@
 #pragma once
 #include <cstdlib>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <string_view>
 #define OPTSTRING "s:e:d:f:o:t:h"
 
@@ -29,10 +30,10 @@ static inline void printUsage() { std::cerr << "USAGE: " << filename << " [optio
  * @brief Prints a help string explaining the functionality of the main program.
  */
 static inline void printHelp() {
-    std::cout << "The PSE Molecular Dynamics simulation program, developed by Group C.\n\n"
+    std::cout << "The PSE Molecular Dynamics simulation program, developed by Group C.\n"
                  "USAGE: "
               << filename
-              << " [options] <filename>\n"
+              << " [options] <filename>\n\n"
                  "OPTIONS:\n"
                  "-s <number>  : Sets the start time (decimal) for a specific simulation (default: 0).\n"
                  "-e <number>  : Sets the end time (decimal) for a specific simulation (default: 1000).\n"
@@ -41,20 +42,23 @@ static inline void printHelp() {
                  "written (default: 10).\n"
                  "-o <xyz|vtk> : Sets the output file type and directory (default: vtk).\n"
                  "-t <verlet>  : Sets the desired simulation to be performed (default: Verlet) (WIP).\n"
-                 "-h           : Prints out a help message. Doesn't perform any simulation.\n";
+                 "-h           : Prints out a help message. Doesn't perform any simulation.\n\n"
+                 "NOTES:\n"
+                 "Logging must be configured at compile time. To change the log level, read the documentation and "
+                 "recompile the program accordingly.\n";
 }
 
 /**
  * @brief Prints an error message to stderr with the prefix "ERROR: ",
  * optionally prints the usage string and exits with EXIT_FAILURE.
  *
+ * This is typically used when the user does something wrong and has a different format to error logs printed with
+ * spdlog.
+ *
  * @param msg The message to be printed to stderr.
- * @param opt An optional extra string to be appended at the end (default:
- * empty)
- * @param usage An optional boolean which defines whether or not the usage
- * string should be printed.
- * @param close An optional boolean which defines whether or not the program
- * should completely exit afterwards.
+ * @param opt An optional extra string to be appended at the end (default: empty).
+ * @param usage An optional boolean which defines whether or not the usage string should be printed.
+ * @param close An optional boolean which defines whether or not the program should completely exit afterwards.
  */
 static inline void error(const char *msg, const std::string &opt = "", bool usage = true, bool close = true) {
     std::cerr << "ERROR: " << msg << (opt.empty() ? "" : ": ") << opt << "\n";
@@ -62,5 +66,19 @@ static inline void error(const char *msg, const std::string &opt = "", bool usag
         printUsage();
     if (close)
         std::exit(EXIT_FAILURE);
+}
+
+/**
+ * @brief Logs an error message and exits with EXIT_FAILURE.
+ *
+ * This is typically used when something goes wrong in the program logic and is not necessarily the user's fault, hence
+ * the extra date and file information.
+ *
+ * @param msg The message to be printed to the log output.
+ * @param opt An optional extra string to be appended at the end (default: empty).
+ */
+static inline void error_log(const char *msg, const std::string &opt = "") {
+    SPDLOG_ERROR("{}{}{}", msg, (opt.empty() ? "" : ": "), opt);
+    std::exit(EXIT_FAILURE);
 }
 } // namespace CLIUtils

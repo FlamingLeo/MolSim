@@ -18,7 +18,7 @@ void VTKWriter::initializeOutput(int numParticles) {
     // initialize new vtk file
     m_vtkFile = new VTKFile_t("UnstructuredGrid");
     if (!m_vtkFile)
-        CLIUtils::error("Error initializing VTK file!");
+        CLIUtils::error_log("Error initializing VTK file!");
 
     // per point, we add type, position, velocity and force
     PointData pointData;
@@ -51,12 +51,12 @@ void VTKWriter::initializeOutput(int numParticles) {
 void VTKWriter::writeFile(int iteration) {
     // before we do anything, check if there is something valid to write
     if (!m_vtkFile)
-        CLIUtils::error("Cannot write uninitialized VTK file!");
+        CLIUtils::error_log("Cannot write uninitialized VTK file!");
 
     // create output directory in which to store generated VTK output files
     if (!(std::filesystem::exists(m_dirname))) {
         if (!(std::filesystem::create_directory(m_dirname)))
-            CLIUtils::error("Error creating VTK directory!");
+            CLIUtils::error_log("Error creating VTK directory!");
     }
 
     // generate unique filename based on iteration
@@ -66,7 +66,7 @@ void VTKWriter::writeFile(int iteration) {
     std::ofstream file(strstr.str().c_str());
 
     if (!file)
-        CLIUtils::error("Error opening output file", m_basename);
+        CLIUtils::error_log("Error opening output file", m_basename);
 
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
@@ -76,7 +76,7 @@ void VTKWriter::writeFile(int iteration) {
 void VTKWriter::plotParticle(const Particle &p) {
     // check for valid vtk file
     if (!m_vtkFile || !(m_vtkFile->UnstructuredGrid().present()))
-        CLIUtils::error("VTK file incorrectly initialized!");
+        CLIUtils::error_log("VTK file incorrectly initialized!");
 
     // do some dark vtk magic
     PointData::DataArray_sequence &pointDataSequence = m_vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
