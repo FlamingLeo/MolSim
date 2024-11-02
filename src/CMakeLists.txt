@@ -22,3 +22,7 @@ target_link_libraries(MolSim mdsrc)
 
 # activate all compiler warnings (intel unsupported)
 target_compile_options(MolSim PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+# add spdlog to compiler definition
+target_compile_definitions(MolSim PUBLIC SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL})
+message(STATUS "SPDLOG_ACTIVE_LEVEL set to ${SPDLOG_ACTIVE_LEVEL} for src.")

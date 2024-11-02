@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
 
@@ -45,18 +46,18 @@ void FileReader::readFile(ParticleContainer *particles) {
     std::string tmp_string;
 
     getline(m_infile, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
+    SPDLOG_DEBUG("Read line: {}", tmp_string);
 
     while (tmp_string.empty() or tmp_string[0] == '#') {
         getline(m_infile, tmp_string);
-        std::cout << "Read line: " << tmp_string << std::endl;
+        SPDLOG_DEBUG("Read line: {}", tmp_string);
     }
 
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
-    std::cout << "Reading " << num_particles << "." << std::endl;
+    SPDLOG_DEBUG("Reading {} particles.", tmp_string);
     getline(m_infile, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
+    SPDLOG_DEBUG("Read line: {}", tmp_string);
 
     // reserve space for particles to avoid expensive copying
     particles->reserve(num_particles);
@@ -75,6 +76,6 @@ void FileReader::readFile(ParticleContainer *particles) {
         particles->addParticle(x, v, m);
 
         getline(m_infile, tmp_string);
-        std::cout << "Read line: " << tmp_string << std::endl;
+        SPDLOG_DEBUG("Read line: {}", tmp_string);
     }
 }

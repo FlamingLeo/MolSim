@@ -2,13 +2,13 @@
 
 # helper functions
 usage() {
-  echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-s] [-t]" 1>&2
+  echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-c] [-d] [-h] [-l] [-m] [-s] [-t]" 1>&2
   exit 1
 }
 
 help() {
   printf "An automatic build script for compiling the program on Unix-based systems.
-\033[1mUSAGE\033[0m: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-d] [-h] [-l] [-m] [-s] [-t]
+\033[1mUSAGE\033[0m: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-c] [-d] [-h] [-l] [-m] [-s] [-t]
 
 \033[1mOPTIONS\033[0m:
 -b : Sets the type of the compiled binary (default: Release).
@@ -16,6 +16,7 @@ help() {
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
+-c : Disables benchmarking (default: benchmarking enabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
 -l : Disables automatically installing missing libraries (default: installs automatically)
@@ -27,14 +28,17 @@ help() {
 \033[1mNOTES\033[0m:
 On Debian-based systems, the script will automatically attempt to install missing libraries (unless -l is set) to speed up the compilation process.
 This is done using 'sudo apt-get install'. As such, you may be required to enter your password.
+Additionally, this project depends on libbenchmark-dev for benchmarking, but installing it via apt-get will install a DEBUG build.
+As such, this script doesn't check for it, as it is recommended to let CMake fetch it as a dependency.
 "
   exit 0
 }
 
 # parse command line options
-OPTSTRING=":b:dhlms:t"
+OPTSTRING=":b:cdhlms:t"
 build_string=""
 doxygen_opt=""
+benchmarking_opt=""
 spdlog_level=""
 install_opt=true
 run_tests=false
@@ -50,6 +54,11 @@ while getopts ${OPTSTRING} opt; do
     fi
     echo "[BUILD] Using build option: ${OPTARG}."
     build_string="-DCMAKE_BUILD_TYPE=${OPTARG}"
+    ;;
+  c)
+    # disable benchmarking
+    echo "[BUILD] Benchmarking will be disabled."
+    benchmarking_opt="-DENABLE_BENCHMARKING=OFF"
     ;;
   d)
     # disable doxygen
@@ -163,7 +172,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${doxygen_opt} ${build_string}
+cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string}
 
 # build project
 echo "[BUILD] Building project..."

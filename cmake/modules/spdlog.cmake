@@ -40,7 +40,3 @@ else()
         set(SPDLOG_ACTIVE_LEVEL 2)
     endif()
 endif()
-
-# add spdlog to compiler definition
-add_compile_definitions(SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL})
-message(STATUS "SPDLOG_ACTIVE_LEVEL set to ${SPDLOG_ACTIVE_LEVEL}")
