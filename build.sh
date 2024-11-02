@@ -81,6 +81,7 @@ fi
 
 # check if libxerces-c-dev is installed
 # if not, install automatically (unless -l set)
+: '
 echo -n "[BUILD] Checking if libxerces-c is installed... "
 if pkg-config --list-all | grep -qw xerces; then
   echo "found."
@@ -93,6 +94,7 @@ else
     exit 1
   fi
 fi
+'
 
 # create new, empty build directory
 echo -n "[BUILD] Creating empty build directory... "

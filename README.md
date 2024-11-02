@@ -23,6 +23,16 @@ The code has been developed using the following software on separate machines:
 
 Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
 
+### Dependencies
+
+This project uses the following dependencies:
+
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
+-   [Googletest](https://github.com/google/googletest) 1.15.2
+-   [spdlog](https://github.com/gabime/spdlog) 1.14.1
+
+Aside from [Xerces-C++](https://xerces.apache.org/xerces-c/), which must be installed manually before compiling, the remaining dependencies will be automatically fetched via CMake if they are not present.
+
 ### Build Instructions
 
 Before attempting to build, ensure that you have the [Xerces-C++](https://xerces.apache.org/xerces-c/) library installed via your system's package manager. On Debian-based systems, use `apt-get` to install it:
