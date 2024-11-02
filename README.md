@@ -8,7 +8,7 @@ The codebase for the Molecular Dynamics Bachelor Practical Course @ TUM of Group
 -   [Luca-Dumitru Drîndea](https://github.com/Luky002)
 -   [Mara Godeanu](https://github.com/MaraGodeanu)
 
-## Getting Started
+## Prerequisites
 
 ### Tools Required
 
@@ -23,7 +23,7 @@ The code has been developed using the following software on separate machines:
 
 Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
 
-### Dependencies
+### Dependencies 
 
 This project uses the following external C++ libraries:
 
@@ -34,6 +34,8 @@ This project uses the following external C++ libraries:
 If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
 
 **NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
+
+## Getting Started
 
 ### Build Instructions (Automatic)
 
@@ -69,10 +71,10 @@ Alternatively, you may build the project manually:
 ```bash
 mkdir build
 cd build
-cmake .. 
-# -DENABLE_DOXYGEN=<OFF|ON> 
+cmake ..
+# -DENABLE_DOXYGEN=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
-make 
+make
 # <MolSim|tests|doc_doxygen|all|clean>
 ```
 
