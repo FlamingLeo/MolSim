@@ -1,9 +1,14 @@
 #include "ParticleContainer.h"
 #include "io/input/FileReader.h"
+#include <spdlog/spdlog.h>
 
-/* container constructors */
-ParticleContainer::ParticleContainer() = default;
-ParticleContainer::ParticleContainer(size_t numParticles) { m_particles.reserve(numParticles); }
+/* container constructors and destructor */
+ParticleContainer::ParticleContainer() { SPDLOG_TRACE("Generated ParticleContainer (empty)"); };
+ParticleContainer::ParticleContainer(size_t numParticles) {
+    m_particles.reserve(numParticles);
+    SPDLOG_TRACE("Generated ParticleContainer with {} spaces", numParticles);
+}
+ParticleContainer::~ParticleContainer() { SPDLOG_TRACE("Destroyed ParticleContainer"); }
 
 /* iterator implementations */
 ParticleContainer::ContainerType::iterator ParticleContainer::begin() { return m_particles.begin(); }

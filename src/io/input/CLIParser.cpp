@@ -5,6 +5,7 @@
 #include <cstring>
 #include <getopt.h>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <unordered_map>
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.

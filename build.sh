@@ -210,19 +210,24 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string}
+cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string} || { 
+  echo "[BUILD] CMake failed! Aborting..."
+  exit 1
+}
 
 # build project
 echo "[BUILD] Building project with ${num_jobs} parallel job(s)..."
-make -j ${num_jobs}
-
-# project has been built without issues, hopefully
-echo "[BUILD] Build completed successfully!"
+make -j ${num_jobs} || { 
+  echo "[BUILD] Build failed! Aborting..."
+  exit 1
+}
 
 # if set, create documentation after compilation
 if [[ "${make_documentation}" = true ]]; then
   echo "[BUILD] Building documentation..."
-  make doc_doxygen
+  make doc_doxygen || {
+    echo "[BUILD] Building documentation failed!"
+  }
 fi
 
 # if set, run tests after compilation
