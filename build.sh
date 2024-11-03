@@ -89,12 +89,12 @@ while getopts ${OPTSTRING} opt; do
     install_opt=false
     ;;
   m)
+    # make documentation
     if [[ -n "${doxygen_opt}" ]]; then
       echo "ERROR: Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
       usage
     fi
 
-    # make documentation
     echo "[BUILD] Documentation will be built after compilation."
     make_documentation=true
     ;;
@@ -146,7 +146,7 @@ if pkg-config --list-all | grep -qw xerces; then
 else
   if [[ "${install_opt}" = true ]]; then
     echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libxerces-c-dev
+    sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
   else
     echo "not found! Will be fetched during compilation..."
   fi
@@ -158,7 +158,7 @@ if pkg-config --list-all | grep -qw gtest; then
 else
   if [[ "${install_opt}" = true ]]; then
     echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libgtest-dev
+    sudo apt-get install -y libgtest-dev || echo "[BUILD] Failed to get gtest, will be fetched during compilation."
   else
     echo "not found! Will be fetched during compilation..."
   fi
@@ -170,9 +170,34 @@ if pkg-config --list-all | grep -qw spdlog; then
 else
   if [[ "${install_opt}" = true ]]; then
     echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libspdlog-dev
+    sudo apt-get install -y libspdlog-dev || echo "[BUILD] Failed to get spdlog, will be fetched during compilation."
   else
     echo "not found! Will be fetched during compilation..."
+  fi
+fi
+
+if [ -n "${benchmarking_opt}" ]; then 
+  echo -n "[BUILD] Checking if benchmark is installed... "
+  if pkg-config --list-all | grep -qw benchmark; then
+    echo "found."
+  else
+    if [[ "${install_opt}" = true ]]; then
+      echo "not found! Installing manually..."
+      
+      # installation instructions: https://github.com/google/benchmark?tab=readme-ov-file#installation
+      TEMP_DIR=$(mktemp -d)
+      git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
+      cd "$TEMP_DIR/benchmark"
+      cmake -E make_directory "build"
+      cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+      sudo cmake --build "build" --config Release --target install
+      cd -
+      rm -rf "$TEMP_DIR"
+      
+      echo "[BUILD] Installed benchmark."
+    else
+      echo "not found! Will be fetched during compilation..."
+    fi
   fi
 fi
 
