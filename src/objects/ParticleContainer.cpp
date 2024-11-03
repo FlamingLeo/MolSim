@@ -1,5 +1,6 @@
 #include "ParticleContainer.h"
 #include "io/input/FileReader.h"
+#include "utils/StringUtils.h"
 #include <spdlog/spdlog.h>
 
 /* container constructors and destructor */
@@ -49,15 +50,24 @@ ParticleContainer::PairIterator ParticleContainer::endPairs() {
 Particle &ParticleContainer::operator[](size_t index) { return m_particles[index]; }
 const Particle &ParticleContainer::operator[](size_t index) const { return m_particles[index]; }
 
-void ParticleContainer::addParticle(const Particle &particle) { m_particles.push_back(particle); }
+void ParticleContainer::addParticle(const Particle &particle) {
+    m_particles.push_back(particle);
+    SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
+}
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m) {
     m_particles.emplace_back(x, v, m);
+    SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", StringUtils::fromArray(x),
+                 StringUtils::fromArray(v), m);
 }
 void ParticleContainer::fromFile(const std::string &filename) {
+    SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);
     FileReader fileReader(filename);
     fileReader.readFile(this);
 };
-void ParticleContainer::reserve(size_t capacity) { m_particles.reserve(capacity); }
+void ParticleContainer::reserve(size_t capacity) {
+    m_particles.reserve(capacity);
+    SPDLOG_TRACE("Reserved {} spaces for ParticleContainer", capacity);
+}
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }

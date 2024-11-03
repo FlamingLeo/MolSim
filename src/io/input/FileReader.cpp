@@ -27,6 +27,8 @@ void FileReader::openFile(const std::string &filename) {
     m_infile.open(filename);
     if (!(m_infile.is_open()))
         CLIUtils::error_log("Could not open file", filename);
+
+    SPDLOG_DEBUG("Opened file {} for reading.", filename);
 }
 
 void FileReader::readFile(ParticleContainer *particles) {
@@ -57,7 +59,7 @@ void FileReader::readFile(ParticleContainer *particles) {
     numstream >> num_particles;
     SPDLOG_DEBUG("Reading {} particles.", tmp_string);
     getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read line: {}", tmp_string);
+    SPDLOG_DEBUG("Read particle data: {}", tmp_string);
 
     // reserve space for particles to avoid expensive copying
     particles->reserve(num_particles);
@@ -76,6 +78,7 @@ void FileReader::readFile(ParticleContainer *particles) {
         particles->addParticle(x, v, m);
 
         getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read line: {}", tmp_string);
+        SPDLOG_DEBUG("Read {}particle data{}", tmp_string.empty() ? "no more " : "",
+                     tmp_string.empty() ? "." : ": " + tmp_string);
     }
 }

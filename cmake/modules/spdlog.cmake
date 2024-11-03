@@ -19,11 +19,11 @@ else()
 endif()
 
 # set spdlog level (default: empty)
-set(SPDLOG_LEVEL "" CACHE STRING "Specify the SPDLOG_ACTIVE_LEVEL (0 - 6)")
+set(SPDLOG_LEVEL "?" CACHE STRING "Specify the SPDLOG_ACTIVE_LEVEL (0 - 6)")
 set_property(CACHE SPDLOG_LEVEL PROPERTY STRINGS "0;1;2;3;4;5;6")
 
 # check valid spdlog level or set based on build type
-if(SPDLOG_LEVEL)
+if(NOT "${SPDLOG_LEVEL}" STREQUAL "?")
     # spdlog level must be between 0 and 6
     if(NOT SPDLOG_LEVEL MATCHES "^[0-6]$")
         message(FATAL_ERROR "Invalid SPDLOG_LEVEL: ${SPDLOG_LEVEL}, valid range between 0 and 6.")
@@ -31,11 +31,11 @@ if(SPDLOG_LEVEL)
     set(SPDLOG_ACTIVE_LEVEL ${SPDLOG_LEVEL})
 else()
     # set spdlog level based on build type
-    # debug   -> 0 (trace)
+    # debug   -> 1 (debug)
     # release -> 2 (info)
     message(STATUS "SPDLOG_LEVEL not set, using corresponding build type level")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(SPDLOG_ACTIVE_LEVEL 0)
+        set(SPDLOG_ACTIVE_LEVEL 1)
     else()
         set(SPDLOG_ACTIVE_LEVEL 2)
     endif()

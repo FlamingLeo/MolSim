@@ -3,6 +3,7 @@
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include <spdlog/spdlog.h>
 
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
     : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},

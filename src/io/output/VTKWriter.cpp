@@ -5,14 +5,18 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <string>
 
-VTKWriter::VTKWriter() = default;
-VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {};
+VTKWriter::VTKWriter() { SPDLOG_TRACE("Created new VTKWriter (empty)."); }
+VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {
+    SPDLOG_TRACE("Created new VTKWriter with base name {}", basename);
+}
 VTKWriter::VTKWriter(const std::string &basename, const std::string &dirname)
-    : m_basename{basename}, m_dirname{dirname} {};
-
-VTKWriter::~VTKWriter() = default;
+    : m_basename{basename}, m_dirname{dirname} {
+    SPDLOG_TRACE("Created new VTKWriter with base name {} and directory name {}", basename, dirname);
+};
+VTKWriter::~VTKWriter() { SPDLOG_TRACE("Destroyed VTKWriter."); };
 
 void VTKWriter::initializeOutput(int numParticles) {
     // initialize new vtk file
@@ -46,6 +50,8 @@ void VTKWriter::initializeOutput(int numParticles) {
     PieceUnstructuredGrid_t piece(pointData, cellData, points, cells, numParticles, 0);
     UnstructuredGrid_t unstructuredGrid(piece);
     m_vtkFile->UnstructuredGrid(unstructuredGrid);
+
+    SPDLOG_TRACE("Initialized new VTK object.");
 }
 
 void VTKWriter::writeFile(int iteration) {
@@ -68,9 +74,13 @@ void VTKWriter::writeFile(int iteration) {
     if (!file)
         CLIUtils::error_log("Error opening output file", m_basename);
 
+    SPDLOG_TRACE("Opened file {} for writing.", strstr.str());
+
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
+    SPDLOG_DEBUG("Wrote contents to VTK file {}.", strstr.str());
     delete m_vtkFile;
+    SPDLOG_TRACE("Deleted VTK object.");
 }
 
 void VTKWriter::plotParticle(const Particle &p) {
@@ -102,6 +112,8 @@ void VTKWriter::plotParticle(const Particle &p) {
     pointsIterator->push_back(p.getX()[0]);
     pointsIterator->push_back(p.getX()[1]);
     pointsIterator->push_back(p.getX()[2]);
+
+    SPDLOG_TRACE("Plotted Particle - {}", p.toString());
 }
 
 void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration) {

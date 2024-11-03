@@ -47,8 +47,10 @@ class FileWriter {
      * terminate.
      *
      * @param content The string to be written inside of the file.
+     * @param filename An optional filename to be used with spdlog to display the name of the file currently being
+     * written to.
      */
-    void writeFile(const std::string &content);
+    void writeFile(const std::string &content, const std::string &filename = "");
 
     /**
      * @brief Interface function for writing the type, mass, position, velocity and force of a ParticleContainer to a

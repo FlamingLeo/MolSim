@@ -66,7 +66,7 @@ static inline double toInt(const std::string &str) {
  * @param c The character to be converted.
  * @return The resulting string.
  */
-static inline std::string fromString(char c) {
+static inline std::string fromChar(char c) {
     std::string s{c};
     return s;
 }
