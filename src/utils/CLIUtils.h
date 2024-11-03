@@ -27,7 +27,7 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Prints a usage string explaining the syntax of the main program.
  */
 static inline void printUsage() {
-    std::cerr << BOLD_ON << "[usage] " << BOLD_OFF << filename << " [options] <filename>\n";
+    std::cerr << "[" << BOLD_ON << "usage" << BOLD_OFF << "] " << filename << " [options] <filename>\n";
 }
 
 /**
