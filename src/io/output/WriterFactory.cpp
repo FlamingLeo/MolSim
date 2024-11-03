@@ -8,6 +8,9 @@ std::unique_ptr<FileWriter> createWriter(WriterType type) {
     case WriterType::VTK:
         SPDLOG_DEBUG("Generating VTKWriter...");
         return std::make_unique<VTKWriter>();
+    case WriterType::NIL:
+        SPDLOG_DEBUG("Generating NullWriter...");
+        return std::make_unique<NullWriter>();
     default:
         CLIUtils::error("Invalid file writer type!");
     }

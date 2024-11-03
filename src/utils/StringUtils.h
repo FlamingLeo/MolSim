@@ -16,8 +16,8 @@
 #include <string>
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
-static inline const std::unordered_map<std::string, WriterType> writerTable = {{"vtk", WriterType::VTK},
-                                                                               {"xyz", WriterType::XYZ}};
+static inline const std::unordered_map<std::string, WriterType> writerTable = {
+    {"vtk", WriterType::VTK}, {"xyz", WriterType::XYZ}, {"nil", WriterType::NIL}};
 
 /// @brief Map containing conversion information for converting a string to a SimulationType enum.
 static inline const std::unordered_map<std::string, SimulationType> simulationTable = {

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "FileWriter.h"
+#include "NullWriter.h"
 #include "VTKWriter.h"
 #include "XYZWriter.h"
 #include "utils/Arguments.h"

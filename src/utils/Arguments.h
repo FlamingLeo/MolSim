@@ -12,7 +12,7 @@
 #include <string>
 
 /// @brief Enum containing each (valid) type of output writer.
-enum class WriterType { VTK, XYZ };
+enum class WriterType { VTK, XYZ, NIL };
 
 /// @brief Enum containg each possible Simulation to be performed.
 enum class SimulationType { VERLET };

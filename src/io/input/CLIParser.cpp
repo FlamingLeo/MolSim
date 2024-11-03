@@ -14,6 +14,9 @@ void CLIParser::checkValidity(const Arguments &args) {
         CLIUtils::error("Start time must be before end time!");
     if (args.delta_t <= 0)
         CLIUtils::error("Timestep must be positive!");
+    if (args.itFreq <= 0) {
+        CLIUtils::error("Output frequency must be positive!");
+    }
 }
 
 void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
@@ -91,7 +94,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
         CLIUtils::error("Invalid syntax - no file input provided!");
 
     // finally, check numerical argument validity and return arguments if all goes well
-    SPDLOG_TRACE("Checking argument validity.");
+    SPDLOG_TRACE("Checking argument validity...");
     checkValidity(args);
 
     SPDLOG_DEBUG("Finished parsing command line arguments.");
