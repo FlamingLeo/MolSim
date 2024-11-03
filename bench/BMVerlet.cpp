@@ -2,6 +2,12 @@
 #warning You are compiling the benchmarks using a debug build! Measurements will be inaccurate!
 #endif
 
+#ifdef SPDLOG_ACTIVE_LEVEL
+#undef SPDLOG_ACTIVE_LEVEL
+#endif
+
+#define SPDLOG_ACTIVE_LEVEL 6
+
 #include "simulations/Verlet.h"
 #include <benchmark/benchmark.h>
 #include <spdlog/spdlog.h>
