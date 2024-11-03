@@ -21,7 +21,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y build-essential clang clang-format clang-tools clang-tidy cmake libxerces-c-dev libgtest-dev libspdlog-dev && export TSAN_OPTIONS='ignore_noninstrumented_modules=1'
 
             - name: Build project (manual)
-              run: mkdir build && cd build && cmake -E env CXXFLAGS="-fsanitize=address" cmake .. && make
+              run: mkdir build && cd build && cmake -E env CXXFLAGS="-fsanitize=address" cmake .. && make -j
 
             - name: Run tests
               run: cd build/tests && ctest
