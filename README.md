@@ -105,7 +105,7 @@ Currently, the following options are supported:
 -h           : Prints out a help message. Doesn't perform any simulation.
 ```
 
-The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective subdirectory of the `build/src` folder (e.g. `build/src/vtk` for VTK output).
+The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective `vtk` or `xyz` subdirectory from which the program executable was called (i.e. if the program was called from `build/src` with VTK output, the output will be in `build/src/vtk`)
 
 ### Test Instructions
 
