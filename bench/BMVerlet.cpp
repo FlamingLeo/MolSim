@@ -5,7 +5,6 @@
 #ifdef SPDLOG_ACTIVE_LEVEL
 #undef SPDLOG_ACTIVE_LEVEL
 #endif
-
 #define SPDLOG_ACTIVE_LEVEL 6
 
 #include "simulations/Verlet.h"
