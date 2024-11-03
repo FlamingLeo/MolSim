@@ -58,6 +58,7 @@ Following options are supported:
 -c : Disables benchmarking (default: benchmarking enabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
+-j : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l : Disables automatically installing missing libraries (default: installs automatically)
 -m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -s : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
