@@ -34,7 +34,7 @@ void FileWriter::openFile(const std::string &filename) {
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
 
-void FileWriter::writeFile(const std::string &content, const std::string &filename = "") {
+void FileWriter::writeFile(const std::string &content, const std::string &filename) {
     if (!(m_file.is_open()))
         CLIUtils::error_log("No file opened for writing!");
 
