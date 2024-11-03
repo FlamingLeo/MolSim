@@ -29,7 +29,7 @@ void Verlet::runSimulation() {
     SPDLOG_DEBUG("Running Verlet simulation (entered function)...");
 
     if (m_particles.isEmpty())
-        CLIUtils::error("Cannot run simulation without particles!");
+        CLIUtils::error("Cannot run simulation without particles!", "", false);
 
     auto writer = createWriter(m_type);
     double current_time = m_startTime;

@@ -12,7 +12,7 @@ std::unique_ptr<FileWriter> createWriter(WriterType type) {
         SPDLOG_DEBUG("Generating NullWriter...");
         return std::make_unique<NullWriter>();
     default:
-        CLIUtils::error("Invalid file writer type!");
+        CLIUtils::error("Invalid file writer type!", "", false);
     }
     return std::make_unique<XYZWriter>();
 };

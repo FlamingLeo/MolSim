@@ -69,6 +69,16 @@ void ParticleContainer::reserve(size_t capacity) {
     m_particles.reserve(capacity);
     SPDLOG_TRACE("Reserved {} spaces for ParticleContainer", capacity);
 }
+Particle &ParticleContainer::get(size_t index) {
+    if (index < 0 || index >= m_particles.size())
+        CLIUtils::error("Index out of bounds for ParticleContainer", StringUtils::fromNumber(index), false);
+    return m_particles[index];
+}
+const Particle &ParticleContainer::get(size_t index) const {
+    if (index < 0 || index >= m_particles.size())
+        CLIUtils::error("Index out of bounds for ParticleContainer", StringUtils::fromNumber(index), false);
+    return m_particles[index];
+}
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }

@@ -179,6 +179,22 @@ class ParticleContainer {
     void reserve(size_t capacity);
 
     /**
+     * @brief Gets a Particle by index. Performs bounds checking and terminates on invalid index.
+     *
+     * @param index The index of the Particle to get.
+     * @return A reference to the Particle at the specified index.
+     */
+    Particle &get(size_t index);
+
+    /**
+     * @brief Gets a const Particle by index. Performs bounds checking and terminates on invalid index.
+     *
+     * @param index The index of the Particle to get.
+     * @return A const reference to the Particle at the specified index.
+     */
+    const Particle &get(size_t index) const;
+
+    /**
      * @brief Returns the size of the container.
      *
      * @return The size of the container.

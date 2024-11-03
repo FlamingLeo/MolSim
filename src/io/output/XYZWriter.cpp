@@ -22,7 +22,7 @@ void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration
     // create output directory in which to store generated XYZ output files
     if (!(std::filesystem::exists(m_dirname))) {
         if (!(std::filesystem::create_directory(m_dirname))) {
-            CLIUtils::error("Error creating XYZ directory!");
+            CLIUtils::error("Error creating XYZ directory!", "", false);
         };
     }
 

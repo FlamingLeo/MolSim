@@ -7,7 +7,7 @@ std::unique_ptr<Simulation> createSimulation(SimulationType type, const std::str
         SPDLOG_DEBUG("Generating Verlet...");
         return std::make_unique<Verlet>(filename, args);
     default:
-        CLIUtils::error("Invalid Simulation type!");
+        CLIUtils::error("Invalid Simulation type!", "", false);
     }
     return std::make_unique<Verlet>(filename, args);
 }

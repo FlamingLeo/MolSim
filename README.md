@@ -96,16 +96,22 @@ After building, the main executable will be located in the `build/src` directory
 Currently, the following options are supported:
 
 ```text
--s <number>  : Sets the start time (decimal) for a specific simulation (default: 0).
--e <number>  : Sets the end time (decimal) for a specific simulation (default: 1000).
--d <number>  : Sets the time interval between two iterations of a simulation (default: 0.014).
--f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
--o <xyz|vtk> : Sets the output file type and directory (default: vtk).
--t <verlet>  : Sets the desired simulation to be performed (default: Verlet) (WIP).
--h           : Prints out a help message. Doesn't perform any simulation.
+-s <number> : Sets the start time (decimal) for a specific simulation (default: 0).
+-e <number> : Sets the end time (decimal) for a specific simulation (default: 1000).
+-d <number> : Sets the time interval between two iterations of a simulation (default: 0.014).
+-f <number> : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
+-o <type>   : Sets the output file type and directory (default: vtk).
+  - vtk     : Generates VTK Unstructured Grid (.vtu) files.
+  - xyz     : Generates XYZ (.xyz) files.
+  - nil     : Logs to stdout. Used for debugging purposes.
+-t <type>   : Sets the desired simulation to be performed (default: Verlet).
+  - verlet  : Simulates Verlet integration.
+-h          : Prints out a help message. Doesn't perform any simulation.
 ```
 
 The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective `vtk` or `xyz` subdirectory from which the program executable was called (i.e. if the program was called from `build/src` with VTK output, the output will be in `build/src/vtk`)
+
+**NOTE**: Logging must be configured at compile time. To change the log level, you must recompile the program [accordingly](#build-instructions-automatic).
 
 ### Test Instructions
 
