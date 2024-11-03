@@ -2,13 +2,14 @@
 
 # helper functions
 usage() {
-  echo "USAGE: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-c] [-d] [-h] [-l] [-m] [-s] [-t]" 1>&2
+  echo "USAGE: $0 [options]" 1>&2
+  echo "For more information, type '$0 -h'." 1>&2
   exit 1
 }
 
 help() {
   printf "An automatic build script for compiling the program on Unix-based systems.
-\033[1mUSAGE\033[0m: $0 [-b <Debug | Release | RelWithDebInfo | MinSizeRel>] [-c] [-d] [-h] [-l] [-m] [-s] [-t]
+\033[1mUSAGE\033[0m: $0 [options]
 
 \033[1mOPTIONS\033[0m:
 -b : Sets the type of the compiled binary (default: Release).
@@ -19,6 +20,7 @@ help() {
 -c : Disables benchmarking (default: benchmarking enabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
+-j : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l : Disables automatically installing missing libraries (default: installs automatically)
 -m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -s : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
@@ -35,7 +37,7 @@ As such, this script doesn't check for it, as it is recommended to let CMake fet
 }
 
 # parse command line options
-OPTSTRING=":b:cdhlms:t"
+OPTSTRING=":b:cdhj:lms:t"
 build_string=""
 doxygen_opt=""
 benchmarking_opt=""
@@ -43,6 +45,7 @@ spdlog_level=""
 install_opt=true
 run_tests=false
 make_documentation=false
+num_jobs=$(nproc)
 
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
@@ -64,11 +67,21 @@ while getopts ${OPTSTRING} opt; do
     # disable doxygen
     if [[ "${make_documentation}" == "true" ]]; then
       echo "ERROR: Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
-      exit 1
+      usage
     fi
 
     echo "[BUILD] Documentation generation will be disabled."
     doxygen_opt="-DENABLE_DOXYGEN=OFF"
+    ;;
+  j)
+    # number of makefile jobs
+    if [[ "$OPTARG" =~ ^[1-9][0-9]*$ ]]; then
+      num_jobs=${OPTARG}
+      echo "[BUILD] Set number of Makefile jobs: ${OPTARG}"
+    else
+      echo "ERROR: Number of Makefile jobs must be a positive integer."
+      usage
+    fi
     ;;
   l)
     # exit if library is missing
@@ -78,7 +91,7 @@ while getopts ${OPTSTRING} opt; do
   m)
     if [[ -n "${doxygen_opt}" ]]; then
       echo "ERROR: Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
-      exit 1
+      usage
     fi
 
     # make documentation
@@ -97,7 +110,7 @@ while getopts ${OPTSTRING} opt; do
       echo "[BUILD] Set spdlog level: ${OPTARG}"
     else
       echo "ERROR: Invalid spdlog level; must be between 0 and 6."
-      exit 1
+      usage
     fi
     ;;
   h)
@@ -175,8 +188,8 @@ echo "[BUILD] Calling CMake..."
 cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string}
 
 # build project
-echo "[BUILD] Building project..."
-make
+echo "[BUILD] Building project with ${num_jobs} parallel job(s)..."
+make -j ${num_jobs}
 
 # project has been built without issues, hopefully
 echo "[BUILD] Build completed successfully!"
