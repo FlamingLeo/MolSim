@@ -17,7 +17,7 @@ help() {
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
--c : Disables benchmarking (default: benchmarking enabled).
+-c : Enables benchmarking (default: benchmarking disabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
 -j : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
@@ -31,7 +31,7 @@ help() {
 On Debian-based systems, the script will automatically attempt to install missing libraries (unless -l is set) to speed up the compilation process.
 This is done using 'sudo apt-get install'. As such, you may be required to enter your password.
 Additionally, this project depends on libbenchmark-dev for benchmarking, but installing it via apt-get will install a DEBUG build.
-As such, this script doesn't check for it, as it is recommended to let CMake fetch it as a dependency.
+As such, this script will install the library manually using the instructions provided in the repository.
 "
   exit 0
 }
@@ -59,9 +59,9 @@ while getopts ${OPTSTRING} opt; do
     build_string="-DCMAKE_BUILD_TYPE=${OPTARG}"
     ;;
   c)
-    # disable benchmarking
-    echo "[BUILD] Benchmarking will be disabled."
-    benchmarking_opt="-DENABLE_BENCHMARKING=OFF"
+    # enable benchmarking
+    echo "[BUILD] Benchmarking will be enabled."
+    benchmarking_opt="-DENABLE_BENCHMARKING=ON"
     ;;
   d)
     # disable doxygen

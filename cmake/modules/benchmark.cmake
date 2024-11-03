@@ -1,5 +1,9 @@
-# by default, enable benchmarking
-option(ENABLE_BENCHMARKING "Enable Benchmarking" ON)
+# usage (in build directory): 
+# > cmake -DENABLE_BENCHMARKING=ON ..
+# > make bench
+
+# by default, disable benchmarking
+option(ENABLE_BENCHMARKING "Enable Benchmarking" OFF)
 
 if(ENABLE_BENCHMARKING)
     # latest version as of 01.11.2024: 1.9.0

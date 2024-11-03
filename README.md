@@ -55,7 +55,7 @@ Following options are supported:
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
--c : Disables benchmarking (default: benchmarking enabled).
+-c : Enables benchmarking (default: benchmarking disabled).
 -d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h : Prints out a help message. Doesn't build the program.
 -j : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
@@ -111,9 +111,17 @@ The generated output for use with programs such as [ParaView](https://www.paravi
 
 The test executable will be located in the `build/tests` directory. From there, simply run `ctest` to execute the tests.
 
-### Benchmarking Instructions (preliminary)
+### Benchmarking Instructions
 
-To perform benchmarking, the necessary binary must first be built using `make bench` inside the `build` directory, which will then be located inside `build/bench`. Running the binary will perform benchmarking on all simulations.
+Benchmarking is **disabled** by default and must be enabled manually using CMake. To perform benchmarking on all simulations, run the built binary inside `build/bench`.
+
+**NOTE**: You may need to [disable CPU scaling](https://github.com/google/benchmark/blob/main/docs/user_guide.md#disabling-cpu-frequency-scaling) when benchmarking for more accurate results. You can do this using `cpupower`.
+
+```bash
+sudo cpupower frequency-set --governor performance # disable CPU scaling
+# run benchmarks...
+sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
+```
 
 ## Documentation
 
