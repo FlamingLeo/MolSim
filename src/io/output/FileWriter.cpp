@@ -29,19 +29,19 @@ void FileWriter::openFile(const std::string &filename) {
     m_file.open(filename);
 
     if (!m_file.is_open())
-        CLIUtils::error_log("Failed to open file", filename);
+        CLIUtils::error("Failed to open file", filename);
 
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
 
 void FileWriter::writeFile(const std::string &content, const std::string &filename) {
     if (!(m_file.is_open()))
-        CLIUtils::error_log("No file opened for writing!");
+        CLIUtils::error("No file opened for writing!");
 
     m_file << content;
 
     if (m_file.bad())
-        CLIUtils::error_log("Failed to write contents to file stream!");
+        CLIUtils::error("Failed to write contents to file stream!");
 
     SPDLOG_INFO("Wrote contents to file{}.", filename.empty() ? "" : " " + filename);
 }

@@ -96,7 +96,7 @@ static inline WriterType toWriterType(const std::string &type) {
     if (it != writerTable.end())
         return it->second;
     else
-        CLIUtils::error_log("Invalid output type", type);
+        CLIUtils::error("Invalid output type", type);
     return WriterType::VTK; // shouldn't reach this; included to silence warning
 }
 
@@ -111,7 +111,7 @@ static inline SimulationType toSimulationType(const std::string &type) {
     if (it != simulationTable.end())
         return it->second;
     else
-        CLIUtils::error_log("Invalid output type", type);
+        CLIUtils::error("Invalid output type", type);
     return SimulationType::VERLET; // shouldn't reach this; included to silence warning
 }
 

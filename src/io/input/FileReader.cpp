@@ -26,7 +26,7 @@ void FileReader::openFile(const std::string &filename) {
     // try to open file
     m_infile.open(filename);
     if (!(m_infile.is_open()))
-        CLIUtils::error_log("Could not open file", filename);
+        CLIUtils::error("Could not open file", filename);
 
     SPDLOG_DEBUG("Opened file {} for reading.", filename);
 }
@@ -34,10 +34,10 @@ void FileReader::openFile(const std::string &filename) {
 void FileReader::readFile(ParticleContainer *particles) {
     // check if file is open and particles is not null
     if (!m_infile.is_open())
-        CLIUtils::error_log("No file opened for reading!");
+        CLIUtils::error("No file opened for reading!");
 
     if (!particles) {
-        CLIUtils::error_log("Cannot read into uninitialized ParticleContainer!");
+        CLIUtils::error("Cannot read into uninitialized ParticleContainer!");
     }
 
     // parse file content into particle container
@@ -73,7 +73,7 @@ void FileReader::readFile(ParticleContainer *particles) {
         for (auto &vj : v)
             datastream >> vj;
         if (datastream.eof())
-            CLIUtils::error_log("EOF reached unexpectedly reading from line", std::to_string(i));
+            CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i));
         datastream >> m;
         particles->addParticle(x, v, m);
 

@@ -26,14 +26,22 @@ Verlet::Verlet(const Arguments &args)
 Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); };
 
 void Verlet::runSimulation() {
-    SPDLOG_DEBUG("Running Verlet simulation...");
+    SPDLOG_DEBUG("Running Verlet simulation (entered function)...");
 
     if (m_particles.isEmpty())
-        CLIUtils::error_log("Cannot run simulation without particles!");
+        CLIUtils::error("Cannot run simulation without particles!");
 
     auto writer = createWriter(m_type);
     double current_time = m_startTime;
     int iteration = 0;
+
+    // log user choices
+    SPDLOG_INFO("Running Verlet simulation with the following arguments:");
+    SPDLOG_INFO("t_0         : {}", m_startTime);
+    SPDLOG_INFO("t_end       : {}", m_endTime);
+    SPDLOG_INFO("dt          : {}", m_delta_t);
+    SPDLOG_INFO("Output Freq.: every {} iterations", m_itFreq);
+    SPDLOG_INFO("Output Type : {}", StringUtils::fromWriterType(m_type));
 
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < m_endTime) {
@@ -52,7 +60,7 @@ void Verlet::runSimulation() {
         current_time += m_delta_t;
     }
 
-    SPDLOG_DEBUG("Completed Verlet simulation.");
+    SPDLOG_INFO("Completed Verlet simulation.");
 }
 
 void Verlet::calculateF() {

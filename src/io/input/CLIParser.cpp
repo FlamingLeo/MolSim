@@ -76,7 +76,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             else
                 CLIUtils::error("Unknown option found", StringUtils::fromChar(optopt));
         default: /* shouldn't happen... */
-            CLIUtils::error_log("An unknown error occurred while parsing command line arguments!");
+            CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }
     }
     SPDLOG_TRACE("[getopt] Finished iterating through options.");
