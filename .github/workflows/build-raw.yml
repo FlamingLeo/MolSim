@@ -1,10 +1,6 @@
 name: Test Build Script (Ubuntu)
 
 on:
-    push:
-        branches:
-            - "Assignment*"
-            - master
     pull_request:
         branches:
             - master
