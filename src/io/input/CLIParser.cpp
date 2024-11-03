@@ -8,40 +8,6 @@
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 
-/// @brief Map containing conversion information for converting a string to a WriterType enum.
-/// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, WriterType> const writerTable = {{"vtk", WriterType::VTK},
-                                                                        {"xyz", WriterType::XYZ}};
-
-/// @brief Map containing conversion information for converting a string to a SimulationType enum.
-/// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, SimulationType> const SimulationTable = {{"verlet", SimulationType::VERLET}};
-
-/// @brief Function to convert a string to a WriterType enum using the above map.
-/// @param type The string containing the desired WriterType.
-/// @return The desired WriterType enum if the type string is valid, otherwise terminate with error.
-static WriterType stringToWriterType(const std::string &type) {
-    auto it = writerTable.find(type);
-    if (it != writerTable.end())
-        return it->second;
-    else
-        CLIUtils::error_log("Invalid output type", type);
-    return WriterType::VTK; // shouldn't reach this; included to silence warning
-}
-
-/// @brief Function to convert a string to a SimulationType enum using the above map.
-/// @param type The string containing the desired SimulationType.
-/// @return The desired SimulationType enum if the type string is valid, otherwise terminate with error.
-static SimulationType stringToSimulationType(const std::string &type) {
-    auto it = SimulationTable.find(type);
-    if (it != SimulationTable.end())
-        return it->second;
-    else
-        CLIUtils::error_log("Invalid output type", type);
-    return SimulationType::VERLET; // shouldn't reach this; included to silence warning
-}
-
-/* documented functions start here */
 void CLIParser::checkValidity(const Arguments &args) {
     // maybe disallow start and end being the same? or print out some warning?
     if (args.startTime > args.endTime)
@@ -63,7 +29,7 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
 
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
-        SPDLOG_TRACE("[getopt] Read option {} with {}argument {}", StringUtils::fromChar(ch), optarg ? "" : "no ",
+        SPDLOG_TRACE("[getopt] Read option -{} with {}argument {}", StringUtils::fromChar(ch), optarg ? "" : "no ",
                      optarg ? optarg : "" /* this is really tacky but it works */);
         switch (ch) {
         case 's': /* start time */
@@ -83,11 +49,11 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             SPDLOG_DEBUG("Set output frequency to {}.", args.itFreq);
             break;
         case 'o': /* output type */
-            args.type = stringToWriterType(optarg);
+            args.type = StringUtils::toWriterType(optarg);
             SPDLOG_DEBUG("Set output type to {}.", optarg);
             break;
         case 't': /* simulation type */
-            args.sim = stringToSimulationType(optarg);
+            args.sim = StringUtils::toSimulationType(optarg);
             SPDLOG_DEBUG("Set simulation type to {}.", optarg);
             break;
         case 'h': /* help */

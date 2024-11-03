@@ -3,24 +3,31 @@
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include "utils/StringUtils.h"
 #include <spdlog/spdlog.h>
 
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
     : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
-      m_itFreq{args.itFreq}, m_type{args.type} {};
-
+      m_itFreq{args.itFreq}, m_type{args.type} {
+    SPDLOG_TRACE("Created Verlet simulation with ParticleContainer {} and Arguments {}", pc.toString(),
+                 args.toString());
+};
 Verlet::Verlet(const std::string &filename, const Arguments &args)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_type{args.type} {
     m_particles.fromFile(filename);
+    SPDLOG_TRACE("Created Verlet simulation from file {} with Arguments {}", filename, args.toString());
 };
-
 Verlet::Verlet(const Arguments &args)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
-      m_type{args.type} {};
-Verlet::~Verlet() = default;
+      m_type{args.type} {
+    SPDLOG_TRACE("Created Verlet simulation with Arguments {}", args.toString());
+};
+Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); };
 
 void Verlet::runSimulation() {
+    SPDLOG_DEBUG("Running Verlet simulation...");
+
     if (m_particles.isEmpty())
         CLIUtils::error_log("Cannot run simulation without particles!");
 
@@ -35,11 +42,17 @@ void Verlet::runSimulation() {
         calculateV();
 
         iteration++;
-        if (iteration % m_itFreq == 0)
+        if (iteration % m_itFreq == 0) {
+            // logging done here because otherwise the console output would legitimately become unreadable
+            // this also makes it somewhat more configurable at runtime
+            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, current_time);
             writer->writeParticles(m_particles, iteration);
+        }
 
         current_time += m_delta_t;
     }
+
+    SPDLOG_DEBUG("Completed Verlet simulation.");
 }
 
 void Verlet::calculateF() {

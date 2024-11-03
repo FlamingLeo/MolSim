@@ -2,14 +2,15 @@
 #include "io/input/FileReader.h"
 #include "utils/StringUtils.h"
 #include <spdlog/spdlog.h>
+#include <sstream>
 
 /* container constructors and destructor */
-ParticleContainer::ParticleContainer() { SPDLOG_TRACE("Generated ParticleContainer (empty)"); };
+ParticleContainer::ParticleContainer() { SPDLOG_TRACE("Generated ParticleContainer (empty)."); };
 ParticleContainer::ParticleContainer(size_t numParticles) {
     m_particles.reserve(numParticles);
-    SPDLOG_TRACE("Generated ParticleContainer with {} spaces", numParticles);
+    SPDLOG_TRACE("Generated ParticleContainer with {} spaces.", numParticles);
 }
-ParticleContainer::~ParticleContainer() { SPDLOG_TRACE("Destroyed ParticleContainer"); }
+ParticleContainer::~ParticleContainer() { SPDLOG_TRACE("Destroyed ParticleContainer."); }
 
 /* iterator implementations */
 ParticleContainer::ContainerType::iterator ParticleContainer::begin() { return m_particles.begin(); }
@@ -71,3 +72,14 @@ void ParticleContainer::reserve(size_t capacity) {
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
+std::string ParticleContainer::toString() const {
+    std::stringstream ss;
+    ss << "{ ";
+    for (size_t i = 0; i < m_particles.size(); ++i) {
+        ss << m_particles[i].toString();
+        if (i != m_particles.size() - 1)
+            ss << ", ";
+    }
+    ss << " }";
+    return ss.str();
+}

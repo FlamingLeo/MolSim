@@ -57,9 +57,9 @@ void FileReader::readFile(ParticleContainer *particles) {
 
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
-    SPDLOG_DEBUG("Reading {} particles.", tmp_string);
+    SPDLOG_DEBUG("Reading {} Particle objects.", tmp_string);
     getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read particle data: {}", tmp_string);
+    SPDLOG_DEBUG("Read Particle data: {}", tmp_string);
 
     // reserve space for particles to avoid expensive copying
     particles->reserve(num_particles);
@@ -78,7 +78,9 @@ void FileReader::readFile(ParticleContainer *particles) {
         particles->addParticle(x, v, m);
 
         getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read {}particle data{}", tmp_string.empty() ? "no more " : "",
+        SPDLOG_DEBUG("Read {}Particle data{}", tmp_string.empty() ? "no more " : "",
                      tmp_string.empty() ? "." : ": " + tmp_string);
     }
+
+    SPDLOG_TRACE("Finalized ParticleContainer - {}", particles->toString());
 }

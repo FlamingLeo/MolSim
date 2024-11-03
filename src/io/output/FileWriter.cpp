@@ -43,5 +43,5 @@ void FileWriter::writeFile(const std::string &content, const std::string &filena
     if (m_file.bad())
         CLIUtils::error_log("Failed to write contents to file stream!");
 
-    SPDLOG_DEBUG("Wrote contents to file{}.", filename.empty() ? "" : " " + filename);
+    SPDLOG_INFO("Wrote contents to file{}.", filename.empty() ? "" : " " + filename);
 }

@@ -199,4 +199,11 @@ class ParticleContainer {
      * @return A ContainerType& referencing m_particles.
      */
     ContainerType &getParticles();
+
+    /**
+     * @brief Returns a string representation of this container.
+     *
+     * @return A std::string of this container.
+     */
+    std::string toString() const;
 };

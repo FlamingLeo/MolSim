@@ -8,11 +8,36 @@
  */
 #pragma once
 
-#include "utils/CLIUtils.h"
+#include "Arguments.h"
+#include "CLIUtils.h"
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+
+/// @brief Map containing conversion information for converting a string to a WriterType enum.
+static inline const std::unordered_map<std::string, WriterType> writerTable = {{"vtk", WriterType::VTK},
+                                                                               {"xyz", WriterType::XYZ}};
+
+/// @brief Map containing conversion information for converting a string to a SimulationType enum.
+static inline const std::unordered_map<std::string, SimulationType> simulationTable = {
+    {"verlet", SimulationType::VERLET}};
+
+/// @brief Reverse map containing conversion information for converting a WriterType enum to a string.
+static inline const std::unordered_map<WriterType, std::string> writerStringTable = []() {
+    std::unordered_map<WriterType, std::string> reverseMap;
+    for (const auto &pair : writerTable)
+        reverseMap[pair.second] = pair.first;
+    return reverseMap;
+}();
+
+/// @brief Reverse map containing conversion information for converting a SimulationType enum to a string.
+static inline const std::unordered_map<SimulationType, std::string> simulationStringTable = []() {
+    std::unordered_map<SimulationType, std::string> reverseMap;
+    for (const auto &pair : simulationTable)
+        reverseMap[pair.second] = pair.first;
+    return reverseMap;
+}();
 
 /// @brief  Namespace defining utility functions for working with strings.
 namespace StringUtils {
@@ -61,6 +86,36 @@ static inline double toInt(const std::string &str) {
 }
 
 /**
+ * @brief Converts a string to a WriterType enum using a dedicated map.
+ *
+ * @param type The string containing the desired WriterType.
+ * @return The desired WriterType enum if the type string is valid, otherwise terminates with error.
+ */
+static inline WriterType toWriterType(const std::string &type) {
+    auto it = writerTable.find(type);
+    if (it != writerTable.end())
+        return it->second;
+    else
+        CLIUtils::error_log("Invalid output type", type);
+    return WriterType::VTK; // shouldn't reach this; included to silence warning
+}
+
+/**
+ * @brief Converts a string to a SimulationType enum using a dedicated map.
+ *
+ * @param type The string containing the desired SimulationType.
+ * @return The desired SimulationType enum if the type string is valid, otherwise terminates with error.
+ */
+static inline SimulationType toSimulationType(const std::string &type) {
+    auto it = simulationTable.find(type);
+    if (it != simulationTable.end())
+        return it->second;
+    else
+        CLIUtils::error_log("Invalid output type", type);
+    return SimulationType::VERLET; // shouldn't reach this; included to silence warning
+}
+
+/**
  * @brief Converts a char to a string.
  *
  * @param c The character to be converted.
@@ -69,6 +124,24 @@ static inline double toInt(const std::string &str) {
 static inline std::string fromChar(char c) {
     std::string s{c};
     return s;
+}
+
+/**
+ * @brief Converts a WriterType to a string.
+ *
+ * @param writerType An instance of the WriterType enum to be converted.
+ * @return The resulting string.
+ */
+static inline std::string fromWriterType(WriterType writerType) { return writerStringTable.at(writerType); }
+
+/**
+ * @brief Converts a SimulationType to a string.
+ *
+ * @param writerType An instance of the SimulationType enum to be converted.
+ * @return The resulting string.
+ */
+static inline std::string fromSimulationType(SimulationType simulationType) {
+    return simulationStringTable.at(simulationType);
 }
 
 /**
@@ -90,4 +163,5 @@ template <typename T, size_t N> static inline std::string fromArray(const std::a
     ss << "]";
     return ss.str();
 }
+
 } // namespace StringUtils

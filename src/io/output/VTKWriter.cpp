@@ -78,7 +78,7 @@ void VTKWriter::writeFile(int iteration) {
 
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
-    SPDLOG_DEBUG("Wrote contents to VTK file {}.", strstr.str());
+    SPDLOG_INFO("Wrote contents to VTK file {}.", strstr.str());
     delete m_vtkFile;
     SPDLOG_TRACE("Deleted VTK object.");
 }

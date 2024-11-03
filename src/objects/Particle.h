@@ -150,7 +150,7 @@ class Particle {
      * @return true if both particles' data (attributes) contain the same values.
      * @return false if both particles have at least one differing attribute.
      */
-    bool operator==(Particle &other);
+    bool operator==(const Particle &other);
 };
 
 /**
@@ -160,4 +160,4 @@ class Particle {
  * @param p A reference to the piped Particle.
  * @return The modified output stream, to allow chaining << operations.
  */
-std::ostream &operator<<(std::ostream &stream, Particle &p);
+std::ostream &operator<<(std::ostream &stream, const Particle &p);
