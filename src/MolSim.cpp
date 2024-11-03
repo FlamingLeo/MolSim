@@ -13,14 +13,14 @@ int main(int argc, char *argv[]) {
     spdlog::set_level(spdlog::level::trace);
 
 #ifdef NDEBUG
-    /* when compiling without debug settings, shorten log output to omit uninteresting information */
+    // when compiling without debug settings, shorten log output to omit uninteresting information
     spdlog::set_pattern("[%^%l%$] %v");
 #endif
 
     // parse command line arguments
+    std::string filename = argv[argc - 1];
     Arguments args;
     CLIParser::parseArguments(argc, argv, args);
-    std::string filename = argv[argc - 1];
 
     // run desired simulation based on user choice
     auto sim = createSimulation(args.sim, filename, args);

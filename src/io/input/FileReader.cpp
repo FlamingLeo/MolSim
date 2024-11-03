@@ -17,7 +17,7 @@ FileReader::~FileReader() = default;
 void FileReader::openFile(const std::string &filename) {
     // check if input file is a regular file
     if (!(std::filesystem::is_regular_file(filename)))
-        CLIUtils::error("Input file path is not a regular file", filename);
+        CLIUtils::error("Input file path is not a regular file; make sure the input is passed last!", filename);
 
     // check if file exists
     if (!(std::filesystem::exists(filename)))
