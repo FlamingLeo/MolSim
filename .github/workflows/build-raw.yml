@@ -21,7 +21,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y build-essential clang clang-format clang-tools clang-tidy cmake
 
             - name: Build project (fetch dependencies)
-              run: chmod +x ./build.sh && ./build.sh -l
+              run: chmod +x ./build.sh && ./build.sh -c -l
 
             - name: Build project (pre-install dependencies)
-              run: ./build.sh
+              run: ./build.sh -c
