@@ -47,6 +47,7 @@ install_opt=true
 run_tests=false
 make_documentation=false
 num_jobs=$(nproc)
+has_updated_apt=false
 
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
@@ -148,6 +149,10 @@ else
   # if the user is on a debian-based system and has chosen to install missing packages, install via apt-get
   if [[ "${install_opt}" = true ]]; then
     echo "installing."
+    if [[ "${has_updated_apt}" == "false" ]]; then
+      sudo apt-get update
+      has_updated_apt=true
+    fi
     sudo apt-get install -y pkg-config || {
       echo "[BUILD] Failed to install pkg-config! Will NOT check for missing dependencies!"
       can_check_for_pkgs=false
@@ -167,6 +172,10 @@ if [[ "${can_check_for_pkgs}" = true ]]; then
   else
     if [[ "${install_opt}" = true ]]; then
       echo "not found! Installing using apt-get..."
+      if [[ "${has_updated_apt}" == "false" ]]; then
+        sudo apt-get update
+        has_updated_apt=true
+      fi
       sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
     else
       echo "not found! Will be fetched during compilation..."
@@ -179,6 +188,10 @@ if [[ "${can_check_for_pkgs}" = true ]]; then
   else
     if [[ "${install_opt}" = true ]]; then
       echo "not found! Installing using apt-get..."
+      if [[ "${has_updated_apt}" == "false" ]]; then
+        sudo apt-get update
+        has_updated_apt=true
+      fi
       sudo apt-get install -y libgtest-dev || echo "[BUILD] Failed to get gtest, will be fetched during compilation."
     else
       echo "not found! Will be fetched during compilation..."
@@ -191,6 +204,10 @@ if [[ "${can_check_for_pkgs}" = true ]]; then
   else
     if [[ "${install_opt}" = true ]]; then
       echo "not found! Installing using apt-get..."
+      if [[ "${has_updated_apt}" == "false" ]]; then
+        sudo apt-get update
+        has_updated_apt=true
+      fi
       sudo apt-get install -y libspdlog-dev || echo "[BUILD] Failed to get spdlog, will be fetched during compilation."
     else
       echo "not found! Will be fetched during compilation..."
@@ -213,6 +230,10 @@ if [[ "${can_check_for_pkgs}" = true ]]; then
           git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
         else
           echo "[BUILD] git not installed, installing..."
+          if [[ "${has_updated_apt}" == "false" ]]; then
+            sudo apt-get update
+            has_updated_apt=true
+          fi
           sudo apt-get install -y git
           git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
         fi
