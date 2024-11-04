@@ -38,6 +38,7 @@ As such, this script will install the library manually using the instructions pr
 
 # parse command line options
 OPTSTRING=":b:cdhj:lms:t"
+can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
 benchmarking_opt=""
@@ -85,7 +86,7 @@ while getopts ${OPTSTRING} opt; do
     ;;
   l)
     # exit if library is missing
-    echo "[BUILD] Missing libraries will not be automatically installed."
+    echo "[BUILD] Missing libraries will NOT be automatically installed."
     install_opt=false
     ;;
   m)
@@ -133,70 +134,100 @@ if [ -f "/etc/debian_version" ]; then
   fi
 else
   if [[ "${install_opt}" = true ]]; then
-    echo "[BUILD] Running on non-Debian-based system; required missing packages WON'T be installed automatically!"
+    echo "[BUILD] Running on non-Debian-based system; required missing packages CANNOT be installed automatically!"
     install_opt=0
   fi
 fi
 
-# check if dependencies are installed
+# prereq: check if pkg-config is available to find libraries
+if command -v pkg-config &>/dev/null; then
+  echo "[BUILD] pkg-config is available."
+else
+  echo -n "[BUILD] pkg-config unavailable... "
+
+  # if the user is on a debian-based system and has chosen to install missing packages, install via apt-get
+  if [[ "${install_opt}" = true ]]; then
+    echo "installing."
+    sudo apt-get install -y pkg-config || {
+      echo "[BUILD] Failed to install pkg-config! Will NOT check for missing dependencies!"
+      can_check_for_pkgs=false
+    }
+  else
+    echo "automatic package installation disabled. Will NOT check for missing dependencies!"
+    can_check_for_pkgs=false
+  fi
+fi
+
+# check, if pkg-config is installed, if dependencies are installed
 # if not, install automatically for quicker compilation (unless -l set)
-echo -n "[BUILD] Checking if xerces-c is installed... "
-if pkg-config --list-all | grep -qw xerces; then
-  echo "found."
-else
-  if [[ "${install_opt}" = true ]]; then
-    echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
-  else
-    echo "not found! Will be fetched during compilation..."
-  fi
-fi
-
-echo -n "[BUILD] Checking if gtest is installed... "
-if pkg-config --list-all | grep -qw gtest; then
-  echo "found."
-else
-  if [[ "${install_opt}" = true ]]; then
-    echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libgtest-dev || echo "[BUILD] Failed to get gtest, will be fetched during compilation."
-  else
-    echo "not found! Will be fetched during compilation..."
-  fi
-fi
-
-echo -n "[BUILD] Checking if spdlog is installed... "
-if pkg-config --list-all | grep -qw spdlog; then
-  echo "found."
-else
-  if [[ "${install_opt}" = true ]]; then
-    echo "not found! Installing using apt-get..."
-    sudo apt-get install -y libspdlog-dev || echo "[BUILD] Failed to get spdlog, will be fetched during compilation."
-  else
-    echo "not found! Will be fetched during compilation..."
-  fi
-fi
-
-if [ -n "${benchmarking_opt}" ]; then 
-  echo -n "[BUILD] Checking if benchmark is installed... "
-  if pkg-config --list-all | grep -qw benchmark; then
+if [[ "${can_check_for_pkgs}" = true ]]; then
+  echo -n "[BUILD] Checking if xerces-c is installed... "
+  if pkg-config --list-all | grep -qw xerces; then
     echo "found."
   else
     if [[ "${install_opt}" = true ]]; then
-      echo "not found! Installing manually..."
-      
-      # installation instructions: https://github.com/google/benchmark?tab=readme-ov-file#installation
-      TEMP_DIR=$(mktemp -d)
-      git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
-      cd "$TEMP_DIR/benchmark"
-      cmake -E make_directory "build"
-      cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
-      sudo cmake --build "build" --config Release --target install
-      cd -
-      rm -rf "$TEMP_DIR"
-      
-      echo "[BUILD] Installed benchmark."
+      echo "not found! Installing using apt-get..."
+      sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
     else
       echo "not found! Will be fetched during compilation..."
+    fi
+  fi
+
+  echo -n "[BUILD] Checking if gtest is installed... "
+  if pkg-config --list-all | grep -qw gtest; then
+    echo "found."
+  else
+    if [[ "${install_opt}" = true ]]; then
+      echo "not found! Installing using apt-get..."
+      sudo apt-get install -y libgtest-dev || echo "[BUILD] Failed to get gtest, will be fetched during compilation."
+    else
+      echo "not found! Will be fetched during compilation..."
+    fi
+  fi
+
+  echo -n "[BUILD] Checking if spdlog is installed... "
+  if pkg-config --list-all | grep -qw spdlog; then
+    echo "found."
+  else
+    if [[ "${install_opt}" = true ]]; then
+      echo "not found! Installing using apt-get..."
+      sudo apt-get install -y libspdlog-dev || echo "[BUILD] Failed to get spdlog, will be fetched during compilation."
+    else
+      echo "not found! Will be fetched during compilation..."
+    fi
+  fi
+
+  if [ -n "${benchmarking_opt}" ]; then
+    echo -n "[BUILD] Checking if benchmark is installed... "
+    if pkg-config --list-all | grep -qw benchmark; then
+      echo "found."
+    else
+      if [[ "${install_opt}" = true ]]; then
+        echo "not found! Installing manually..."
+
+        # installation instructions: https://github.com/google/benchmark?tab=readme-ov-file#installation
+        TEMP_DIR=$(mktemp -d)
+
+        # check if the user, somehow, doesn't have git installed
+        if command -v git &>/dev/null; then
+          git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
+        else
+          echo "[BUILD] git not installed, installing..."
+          sudo apt-get install -y git
+          git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
+        fi
+
+        cd "$TEMP_DIR/benchmark"
+        cmake -E make_directory "build"
+        cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+        sudo cmake --build "build" --config Release --target install
+        cd -
+        rm -rf "$TEMP_DIR"
+
+        echo "[BUILD] Installed benchmark."
+      else
+        echo "not found! Will be fetched during compilation..."
+      fi
     fi
   fi
 fi
@@ -210,14 +241,14 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string} || { 
+cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }
 
 # build project
 echo "[BUILD] Building project with ${num_jobs} parallel job(s)..."
-make -j ${num_jobs} || { 
+make -j ${num_jobs} || {
   echo "[BUILD] Build failed! Aborting..."
   exit 1
 }
