@@ -51,7 +51,7 @@ class Verlet : public Simulation {
      *
      * @param args An Arguments struct containing relevant simulation parameters.
      */
-    Verlet(const Arguments &args);
+    explicit Verlet(const Arguments &args);
 
     /// @brief Default destructor destroying data.
     ~Verlet();

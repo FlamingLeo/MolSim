@@ -15,8 +15,8 @@ VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {
 VTKWriter::VTKWriter(const std::string &basename, const std::string &dirname)
     : m_basename{basename}, m_dirname{dirname} {
     SPDLOG_TRACE("Created new VTKWriter with base name {} and directory name {}", basename, dirname);
-};
-VTKWriter::~VTKWriter() { SPDLOG_TRACE("Destroyed VTKWriter."); };
+}
+VTKWriter::~VTKWriter() { SPDLOG_TRACE("Destroyed VTKWriter."); }
 
 void VTKWriter::initializeOutput(int numParticles) {
     // initialize new vtk file

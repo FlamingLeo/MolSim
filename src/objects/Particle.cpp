@@ -3,6 +3,7 @@
 #include "utils/StringUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <string>
 
 Particle::Particle(int type_arg) {
     type = type_arg;
@@ -50,7 +51,7 @@ std::string Particle::toString() const {
 }
 
 bool Particle::operator==(const Particle &other) {
-    return (x == other.x) and (v == other.v) and (f == other.f) and (type == other.type) and (m == other.m) and
+    return (x == other.x) && (v == other.v) && (f == other.f) && (type == other.type) && (m == other.m) &&
            (old_f == other.old_f);
 }
 

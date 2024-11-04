@@ -21,7 +21,7 @@ class NullWriter : public FileWriter {
      * @brief Creates a NullWriter object with a useless base name.
      *
      */
-    NullWriter(const std::string &);
+    explicit NullWriter(const std::string &);
 
     /**
      * @brief Creates a NullWriter object with useless base and directory names.

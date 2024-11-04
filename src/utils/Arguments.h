@@ -49,7 +49,7 @@ struct Arguments {
 static inline std::ostream &operator<<(std::ostream &stream, const Arguments &args) {
     return (stream << "{ t_0: " << args.startTime << ", t_end: " << args.endTime << ", dt: " << args.delta_t
                    << ", itFreq: " << args.itFreq << " }");
-};
+}
 
 /* toString implementation */
 inline std::string Arguments::toString() const {

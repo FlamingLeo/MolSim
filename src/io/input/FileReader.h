@@ -11,6 +11,7 @@
 
 #include "objects/ParticleContainer.h"
 #include <fstream>
+#include <string>
 #include <vector>
 
 /// @brief File reader class which implements functionality to read data from input files.
@@ -28,7 +29,7 @@ class FileReader {
      *
      * @param filename The name of the file to load into m_infile.
      */
-    FileReader(const std::string &filename);
+    explicit FileReader(const std::string &filename);
 
     /// @brief Destroys the FileReader object and automatically closes the input stream.
     virtual ~FileReader();

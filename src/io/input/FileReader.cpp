@@ -10,7 +10,7 @@
 
 FileReader::FileReader() = default;
 
-FileReader::FileReader(const std::string &filename) { openFile(filename); };
+FileReader::FileReader(const std::string &filename) { openFile(filename); }
 
 FileReader::~FileReader() = default;
 
@@ -50,7 +50,7 @@ void FileReader::readFile(ParticleContainer *particles) {
     getline(m_infile, tmp_string);
     SPDLOG_DEBUG("Read line: {}", tmp_string);
 
-    while (tmp_string.empty() or tmp_string[0] == '#') {
+    while (tmp_string.empty() || tmp_string[0] == '#') {
         getline(m_infile, tmp_string);
         SPDLOG_DEBUG("Read line: {}", tmp_string);
     }

@@ -2,8 +2,9 @@
 #include "utils/CLIUtils.h"
 #include <fstream>
 #include <spdlog/spdlog.h>
+#include <string>
 
-FileWriter::FileWriter() { SPDLOG_TRACE("Created new FileWriter (empty)."); };
+FileWriter::FileWriter() { SPDLOG_TRACE("Created new FileWriter (empty)."); }
 FileWriter::FileWriter(const std::string &filename) {
     openFile(filename);
     SPDLOG_TRACE("Created new FileWriter with file {}.", filename);

@@ -143,7 +143,7 @@ class ParticleContainer {
     /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle Particle
     /// entries.
     /// @param num_particles The amount of space to be reserved in the empty ContainerType.
-    ParticleContainer(size_t num_particles);
+    explicit ParticleContainer(size_t num_particles);
 
     /// @brief Destroys the ParticleContainer object.
     virtual ~ParticleContainer();

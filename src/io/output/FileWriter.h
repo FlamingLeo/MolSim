@@ -27,7 +27,7 @@ class FileWriter {
      *
      * @param filename The name of the file to load into the output stream m_file.
      */
-    FileWriter(const std::string &filename);
+    explicit FileWriter(const std::string &filename);
 
     /// @brief Closes the opened file and destroys the FileWriter object.
     virtual ~FileWriter();

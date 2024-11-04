@@ -1,5 +1,7 @@
 #include "SimulationFactory.h"
 #include "utils/CLIUtils.h"
+#include <memory>
+#include <string>
 
 std::unique_ptr<Simulation> createSimulation(SimulationType type, const std::string &filename, const Arguments &args) {
     switch (type) {

@@ -12,6 +12,7 @@
 #include "Verlet.h"
 #include "utils/Arguments.h"
 #include <memory>
+#include <string>
 
 /**
  * @brief Returns a unique pointer to the desired simulation.

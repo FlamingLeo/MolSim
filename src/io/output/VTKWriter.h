@@ -13,6 +13,7 @@
 #include "FileWriter.h"
 #include "io/vtk/vtk-unstructured.h"
 #include "objects/Particle.h"
+#include <string>
 
 /// @brief Class which implements functionality to generate VTK output from particles.
 class VTKWriter : public FileWriter {
@@ -54,7 +55,7 @@ class VTKWriter : public FileWriter {
      *
      * @param basename The base name of the generated files.
      */
-    VTKWriter(const std::string &basename);
+    explicit VTKWriter(const std::string &basename);
 
     /**
      * @brief Creates a new VTKWriter with the given basename for future file outputs in the specified directory.

@@ -14,6 +14,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
 static inline const std::unordered_map<std::string, WriterType> writerTable = {

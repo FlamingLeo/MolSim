@@ -4,26 +4,28 @@
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
+#include <functional>
 #include <spdlog/spdlog.h>
+#include <string>
 
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args)
     : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
       m_itFreq{args.itFreq}, m_type{args.type} {
     SPDLOG_TRACE("Created Verlet simulation with ParticleContainer {} and Arguments {}", pc.toString(),
                  args.toString());
-};
+}
 Verlet::Verlet(const std::string &filename, const Arguments &args)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_type{args.type} {
     m_particles.fromFile(filename);
     SPDLOG_TRACE("Created Verlet simulation from file {} with Arguments {}", filename, args.toString());
-};
+}
 Verlet::Verlet(const Arguments &args)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_type{args.type} {
     SPDLOG_TRACE("Created Verlet simulation with Arguments {}", args.toString());
-};
-Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); };
+}
+Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); }
 
 void Verlet::runSimulation() {
     SPDLOG_DEBUG("Running Verlet simulation (entered function)...");
@@ -69,7 +71,7 @@ void Verlet::calculateF() {
         p1.setFToZero();
         for (auto &p2 : m_particles) {
             // where i index is p1 and j index is p2
-            if (not(p1 == p2)) {
+            if (!(p1 == p2)) {
                 p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
                                         p1.getM() * p2.getM() / std::pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()), 3),
                                         p2.getX() - p1.getX(), std::multiplies<>()));

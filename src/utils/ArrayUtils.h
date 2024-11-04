@@ -13,11 +13,13 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <functional>
 #include <list>
 #include <map>
 #include <numeric>
 #include <set>
 #include <sstream>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -124,7 +126,7 @@ inline Container elementWisePairOp(const Container &lhs, const Container &rhs, F
     auto rhsIter = std::cbegin(rhs);
     const auto rhsEnd = std::cend(rhs);
 
-    for (; lhsIter != lhsEnd and rhsIter != rhsEnd; ++lhsIter, ++rhsIter, ++retIter) {
+    for (; lhsIter != lhsEnd && rhsIter != rhsEnd; ++lhsIter, ++rhsIter, ++retIter) {
         *retIter = binaryFunction(*lhsIter, *rhsIter);
     }
 

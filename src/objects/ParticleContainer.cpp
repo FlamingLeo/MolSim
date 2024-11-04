@@ -3,9 +3,11 @@
 #include "utils/StringUtils.h"
 #include <spdlog/spdlog.h>
 #include <sstream>
+#include <string>
+#include <utility>
 
 /* container constructors and destructor */
-ParticleContainer::ParticleContainer() { SPDLOG_TRACE("Generated ParticleContainer (empty)."); };
+ParticleContainer::ParticleContainer() { SPDLOG_TRACE("Generated ParticleContainer (empty)."); }
 ParticleContainer::ParticleContainer(size_t numParticles) {
     m_particles.reserve(numParticles);
     SPDLOG_TRACE("Generated ParticleContainer with {} spaces.", numParticles);
@@ -64,7 +66,7 @@ void ParticleContainer::fromFile(const std::string &filename) {
     SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);
     FileReader fileReader(filename);
     fileReader.readFile(this);
-};
+}
 void ParticleContainer::reserve(size_t capacity) {
     m_particles.reserve(capacity);
     SPDLOG_TRACE("Reserved {} spaces for ParticleContainer", capacity);

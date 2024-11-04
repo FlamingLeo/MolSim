@@ -4,8 +4,9 @@
 #include <iomanip>
 #include <spdlog/spdlog.h>
 #include <sstream>
+#include <string>
 
-XYZWriter::XYZWriter() { SPDLOG_TRACE("Created new XYZWriter (empty)."); };
+XYZWriter::XYZWriter() { SPDLOG_TRACE("Created new XYZWriter (empty)."); }
 XYZWriter::XYZWriter(const std::string &basename) : m_basename{basename} {
     SPDLOG_TRACE("Created new XYZWriter with base name {}", basename);
 }
@@ -16,14 +17,14 @@ XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname)
 XYZWriter::~XYZWriter() {
     closeFile();
     SPDLOG_TRACE("Destroyed XYZWriter.");
-};
+}
 
 void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration) {
     // create output directory in which to store generated XYZ output files
     if (!(std::filesystem::exists(m_dirname))) {
         if (!(std::filesystem::create_directory(m_dirname))) {
             CLIUtils::error("Error creating XYZ directory!", "", false);
-        };
+        }
     }
 
     // define file name

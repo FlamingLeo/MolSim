@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <string>
 #include <string_view>
 #define OPTSTRING "s:e:d:f:o:t:h"
 #define BOLD_ON "\033[1m"

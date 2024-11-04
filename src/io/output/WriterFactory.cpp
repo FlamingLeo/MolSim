@@ -1,4 +1,5 @@
 #include "WriterFactory.h"
+#include <memory>
 
 std::unique_ptr<FileWriter> createWriter(WriterType type) {
     switch (type) {
@@ -15,4 +16,4 @@ std::unique_ptr<FileWriter> createWriter(WriterType type) {
         CLIUtils::error("Invalid file writer type!", "", false);
     }
     return std::make_unique<XYZWriter>();
-};
+}
