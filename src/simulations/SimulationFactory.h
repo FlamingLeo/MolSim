@@ -10,6 +10,7 @@
 
 #include "Simulation.h"
 #include "Verlet.h"
+#include "LennardJones.h"
 #include "utils/Arguments.h"
 #include <memory>
 #include <string>

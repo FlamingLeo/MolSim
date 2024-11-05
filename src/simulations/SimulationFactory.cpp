@@ -8,6 +8,9 @@ std::unique_ptr<Simulation> createSimulation(SimulationType type, const std::str
     case SimulationType::VERLET:
         SPDLOG_DEBUG("Generating Verlet...");
         return std::make_unique<Verlet>(filename, args);
+    case SimulationType::LJ:
+        SPDLOG_DEBUG("Generating LJ...");
+        return std::make_unique<LennardJones>(filename, args);
     default:
         CLIUtils::error("Invalid Simulation type!", "", false);
     }
