@@ -1,33 +1,33 @@
 //
 // Created by marag on 11/5/2024.
 //
-#include "array"
 #include "ParticleContainer.h"
+#include "array"
 
 #ifndef PSEMOLDYN_GROUPC_CUBOID_H
 #define PSEMOLDYN_GROUPC_CUBOID_H
 
-#endif //PSEMOLDYN_GROUPC_CUBOID_H
+#endif // PSEMOLDYN_GROUPC_CUBOID_H
 
-class Cuboid{
-    private:
+class Cuboid {
+  private:
+    std::array<double, 3> position;
 
-        std::array<double, 3> position;
+    std::array<int, 3> size;
 
-        std::array<int, 3> size;
+    double h;
 
-        double h;
+    double m;
 
-        double m;
+    std::array<double, 3> v;
 
-        std::array<double, 3> v;
+    double mean_velocity;
 
-        double mean_velocity;
+    ParticleContainer particles;
 
-        ParticleContainer particles;
+  public:
+    Cuboid(const ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
+           const std::array<double, 3> &v, double h, double m);
 
-    public:
-        Cuboid(const std::array<double, 3> &position, const std::array<int, 3> &size, const std::array<double, 3> &v, double h, double m);
-
-        ParticleContainer initializeParticles();
+    ParticleContainer initializeParticles();
 };
