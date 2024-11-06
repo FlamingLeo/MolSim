@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 LennardJones::LennardJones(const std::string &filename, const Arguments &args)
-    : particles{ParticleContainer()}, generator{CuboidGenerator(filename)} {
+    : particles{ParticleContainer()}, generator{CuboidGenerator(filename, particles)} {
     SPDLOG_TRACE("Created LJ Simulation");
 };
 
