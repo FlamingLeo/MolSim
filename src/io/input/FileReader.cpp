@@ -86,7 +86,7 @@ void FileReader::readFile(ParticleContainer *particles) {
     SPDLOG_TRACE("Finalized ParticleContainer - {}", particles->toString());
 }
 
-void FileReader::readFile(std::vector<Cuboid> &cuboids) {
+void FileReader::readFile(std::vector<Cuboid> &cuboids, ParticleContainer &particles) {
     // TODO error handling
     // x v N h m
     // {0,0,0};{0,0,0};{40,8,1};1.1225;1
@@ -121,8 +121,8 @@ void FileReader::readFile(std::vector<Cuboid> &cuboids) {
         std::getline(ss, token, ';');
         double m = StringUtils::toDouble(token);
 
-        ParticleContainer pc;
-        Cuboid c{pc, x, N, v, h, m};
+        particles.reserve(particles.size() + N[0] * N[1] * N[2]);
+        Cuboid c{particles, x, N, v, h, m};
         c.initializeParticles();
         cuboids.push_back(c);
     }

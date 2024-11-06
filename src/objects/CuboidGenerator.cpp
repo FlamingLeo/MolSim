@@ -8,7 +8,7 @@
 
 CuboidGenerator::CuboidGenerator(const ParticleContainer &particles) { (void)particles; };
 
-CuboidGenerator::CuboidGenerator(const std::string &filename) : m_filename{filename} {};
+CuboidGenerator::CuboidGenerator(const std::string &filename, const ParticleContainer &particles) : m_filename{filename}, particles{particles} {};
 
 std::vector<Cuboid> CuboidGenerator::generateCuboids() {
     // read arguments from file
@@ -16,7 +16,7 @@ std::vector<Cuboid> CuboidGenerator::generateCuboids() {
     // add cuboid to cuboids vec
     std::vector<Cuboid> cuboids;
     FileReader f(m_filename);
-    f.readFile(cuboids);
+    f.readFile(cuboids, particles);
     return cuboids;
 }
 

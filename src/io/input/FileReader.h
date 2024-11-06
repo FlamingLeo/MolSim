@@ -32,6 +32,7 @@ class FileReader {
      */
     explicit FileReader(const std::string &filename);
 
+
     /// @brief Destroys the FileReader object and automatically closes the input stream.
     virtual ~FileReader();
 
@@ -54,5 +55,5 @@ class FileReader {
      *
      * @param cuboid
      */
-    void readFile(std::vector<Cuboid> &cuboids);
+    void readFile(std::vector<Cuboid> &cuboids, ParticleContainer &particles);
 };
