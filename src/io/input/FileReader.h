@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include "objects/Cuboid.h"
 #include "objects/ParticleContainer.h"
 #include <fstream>
 #include <string>
@@ -47,4 +48,11 @@ class FileReader {
      * @param particles The ParticleContainer to write the input data into.
      */
     void readFile(ParticleContainer *particles);
+
+    /**
+     * @brief Read cuboid data into cuboid.
+     *
+     * @param cuboid
+     */
+    void readFile(std::vector<Cuboid> &cuboids);
 };

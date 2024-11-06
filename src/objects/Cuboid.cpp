@@ -11,6 +11,8 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
+Cuboid::Cuboid() = default;
+
 Cuboid::Cuboid(const ParticleContainer &particles, const std::array<double, 3> &position,
                const std::array<int, 3> &size, const std::array<double, 3> &v, double h, double m)
     : position{position}, size{size}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
@@ -30,4 +32,13 @@ ParticleContainer Cuboid::initializeParticles() {
             }
         }
     }
+    ParticleContainer pc;
+    return pc;
+}
+
+std::string Cuboid::toString() {
+    std::stringstream stream;
+    stream << "{ x: " << position << ", N: " << size << ", v: " << v << ", h: " << h << ", m: " << m
+           << ", particles: " << particles.toString() << " }";
+    return stream.str();
 }

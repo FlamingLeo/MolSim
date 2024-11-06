@@ -87,6 +87,48 @@ static inline double toInt(const std::string &str) {
 }
 
 /**
+ * @brief Converts a string into an integer array.
+ *
+ * @tparam N The length of the array.
+ * @param str The string to be converted, should be formatted as comma-separated integers between curly braces.
+ * @return The corresponding array of integers.
+ */
+template <size_t N> static inline std::array<int, N> toIntArray(const std::string &str) {
+    std::array<int, N> arr;
+    std::string tmp;
+    std::string numbers = str.substr(1, str.size() - 2);
+    std::stringstream ss(numbers);
+
+    for (size_t i = 0; i < N; ++i) {
+        std::getline(ss, tmp, ',');
+        arr[i] = StringUtils::toInt(tmp);
+    }
+
+    return arr;
+}
+
+/**
+ * @brief Converts a string into a double array.
+ *
+ * @tparam N The length of the array.
+ * @param str The string to be converted, should be formatted as comma-separated decimal numbers between curly braces.
+ * @return The corresponding array of doubles.
+ */
+template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str) {
+    std::array<double, N> arr;
+    std::string tmp;
+    std::string numbers = str.substr(1, str.size() - 2);
+    std::stringstream ss(numbers);
+
+    for (size_t i = 0; i < N; ++i) {
+        std::getline(ss, tmp, ',');
+        arr[i] = StringUtils::toDouble(tmp);
+    }
+
+    return arr;
+}
+
+/**
  * @brief Converts a string to a WriterType enum using a dedicated map.
  *
  * @param type The string containing the desired WriterType.

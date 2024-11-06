@@ -1,6 +1,8 @@
 //
 // Created by marag on 11/5/2024.
 //
+#pragma once
+
 #include "ParticleContainer.h"
 #include "array"
 
@@ -26,8 +28,12 @@ class Cuboid {
     ParticleContainer particles;
 
   public:
+    Cuboid();
+
     Cuboid(const ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
            const std::array<double, 3> &v, double h, double m);
 
     ParticleContainer initializeParticles();
+
+    std::string toString();
 };

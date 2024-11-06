@@ -9,9 +9,13 @@
 
 #include "Cuboid.h"
 #include "ParticleContainer.h"
+#include <vector>
 
 class CuboidGenerator {
   private:
+    std::string m_filename;
   public:
-    explicit CuboidGenerator(const ParticleContainer &particles);
+    CuboidGenerator(const ParticleContainer &particles);
+    CuboidGenerator(const std::string &filename);
+    std::vector<Cuboid> generateCuboids();
 };
