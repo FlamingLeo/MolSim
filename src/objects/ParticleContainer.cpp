@@ -32,7 +32,7 @@ ParticleContainer::PairIterator::PairIterator(ContainerType::iterator outer, Con
 std::pair<Particle &, Particle &> ParticleContainer::PairIterator::operator*() const { return {*outer_it, *inner_it}; }
 ParticleContainer::PairIterator &ParticleContainer::PairIterator::operator++() {
     ++inner_it;
-    if (*inner_it == *outer_it) {
+    if (inner_it == outer_it) {
         ++inner_it;
     }
     if (inner_it == container_end) {

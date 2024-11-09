@@ -53,6 +53,8 @@ class ParticleContainer {
         ContainerType::iterator container_begin;
         /// @brief A standard library iterator marking the end of the iteration.
         ContainerType::iterator container_end;
+        /// @brief Checks if the PairIterator has finished iterating through every pair.
+        bool finished;
 
       public:
         /**
