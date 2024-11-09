@@ -151,6 +151,15 @@ class Particle {
      * @return false if both particles have at least one differing attribute.
      */
     bool operator==(const Particle &other);
+
+    /**
+     * @brief Overload of the inequality operator for Particle objects.
+     *
+     * @param other A reference to the Particle object to compare the current object with.
+     * @return true if both particles have at least one differing attribute.
+     * @return false if both particles' data (attributes) contain the same values.
+     */
+    bool operator!=(const Particle &other);
 };
 
 /**

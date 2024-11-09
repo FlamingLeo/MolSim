@@ -5,8 +5,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-Particle::Particle(int type_arg) {
-    type = type_arg;
+Particle::Particle(int type_arg) : type{type_arg} {
     f = {0., 0., 0.};
     old_f = {0., 0., 0.};
     SPDLOG_TRACE("Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
@@ -53,6 +52,11 @@ std::string Particle::toString() const {
 bool Particle::operator==(const Particle &other) {
     return (x == other.x) && (v == other.v) && (f == other.f) && (type == other.type) && (m == other.m) &&
            (old_f == other.old_f);
+}
+
+bool Particle::operator!=(const Particle &other) {
+    return (x != other.x) || (v != other.v) || (f != other.f) || (type != other.type) || (m != other.m) ||
+           (old_f != other.old_f);
 }
 
 std::ostream &operator<<(std::ostream &stream, const Particle &p) {
