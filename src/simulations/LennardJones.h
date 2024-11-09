@@ -26,4 +26,10 @@ class LennardJones : public Simulation {
     ~LennardJones();
 
     void runSimulation() override;
+
+    void LJ_Force();
+
+    void calculateX();
+
+    void calculateV();
 };
