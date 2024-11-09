@@ -24,6 +24,10 @@ jobs:
               run: |
                   find . -regex '.*\.\(cpp\|hpp\|cc\|hh\|c\|h\)' -exec clang-format -i {} \;
 
+            - name: Display uncommited changes
+              run: |
+                  git status && git diff
+
             - name: Check for uncommitted changes
               run: |
                   if [[ $(git status --porcelain) ]]; then
