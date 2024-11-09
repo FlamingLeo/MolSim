@@ -22,7 +22,7 @@ jobs:
 
             - name: Run clang-format
               run: |
-                  find . -regex '.*\.\(cpp\|hpp\|cc\|hh\|c\|h\)' -exec clang-format -i {} \;
+                  cd scripts && chmod +x format.sh && ./format.sh && cd ..
 
             - name: Display uncommited changes
               run: |
