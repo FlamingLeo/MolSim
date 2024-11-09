@@ -11,4 +11,4 @@ LennardJones::LennardJones(const std::string &filename, const Arguments &args)
 
 LennardJones::~LennardJones() { SPDLOG_TRACE("Destroyed LJ object."); };
 
-void LennardJones::runSimulation() {};
+void LennardJones::runSimulation() { SPDLOG_TRACE("Running LJ Simulation..."); }
