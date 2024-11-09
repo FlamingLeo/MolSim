@@ -33,7 +33,9 @@ class Cuboid {
     Cuboid(const ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
            const std::array<double, 3> &v, double h, double m);
 
-    ParticleContainer initializeParticles();
+    void initializeParticles();
+
+    ParticleContainer &getParticles();
 
     std::string toString();
 };

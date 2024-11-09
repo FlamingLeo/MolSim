@@ -2,14 +2,14 @@
 #include <gtest/gtest.h>
 
 // Test initializing an empty particle container.
-TEST(ParticleContainerTest, InitializeEmpty) {
+TEST(ParticleContainerTests, InitializeEmpty) {
     ParticleContainer pc;
     EXPECT_EQ(pc.size(), 0);
     EXPECT_TRUE(pc.isEmpty());
 }
 
 // Test initializing a particle container with a given capacity.
-TEST(ParticleContainerTest, InitializeReserved) {
+TEST(ParticleContainerTests, InitializeReserved) {
     ParticleContainer pc(5);
     EXPECT_EQ(pc.size(), 0);
     EXPECT_EQ(pc.getParticles().capacity(), 5);
@@ -17,7 +17,7 @@ TEST(ParticleContainerTest, InitializeReserved) {
 }
 
 // Test adding pre-existing particles to a particle container.
-TEST(ParticleContainerTest, AddParticlesExisting) {
+TEST(ParticleContainerTests, AddParticlesExisting) {
     ParticleContainer pc(3);
     Particle p0(1);
     Particle p1(2);
@@ -38,7 +38,7 @@ TEST(ParticleContainerTest, AddParticlesExisting) {
 }
 
 // Test adding particles by their attributes to a particle container.
-TEST(ParticleContainerTest, AddParticlesNew) {
+TEST(ParticleContainerTests, AddParticlesNew) {
     ParticleContainer pc(2);
 
     pc.addParticle({0, 0, 0}, {0, 0, 0}, 1);
@@ -53,7 +53,7 @@ TEST(ParticleContainerTest, AddParticlesNew) {
 }
 
 // Test accessing a specific object (in bounds).
-TEST(ParticleContainerTest, GetParticleInBounds) {
+TEST(ParticleContainerTests, GetParticleInBounds) {
     ParticleContainer pc(1);
     Particle p(42);
     pc.addParticle(p);
@@ -62,13 +62,13 @@ TEST(ParticleContainerTest, GetParticleInBounds) {
 }
 
 // Test accessing a specific object (out of bounds).
-TEST(ParticleContainerTest, GetParticleOutOfBounds) {
+TEST(ParticleContainerTests, GetParticleOutOfBounds) {
     ParticleContainer pc;
     EXPECT_DEATH(pc.get(3), "");
 }
 
 // Test iterating through an empty particle container.
-TEST(ParticleContainerTest, IterateEmpty) {
+TEST(ParticleContainerTests, IterateEmpty) {
     ParticleContainer pc;
     for (auto &p : pc) {
         FAIL() << "Should not reach this!";
@@ -76,7 +76,7 @@ TEST(ParticleContainerTest, IterateEmpty) {
 }
 
 // Test iterating through a non-empty particle container.
-TEST(ParticleContainerTest, IterateNonEmpty) {
+TEST(ParticleContainerTests, IterateNonEmpty) {
     ParticleContainer pc(3);
     Particle p0(0);
     Particle p1(1);
@@ -95,7 +95,7 @@ TEST(ParticleContainerTest, IterateNonEmpty) {
 }
 
 // Test iterating through pairs of an empty particle container.
-TEST(ParticleContainerTest, IteratePairEmpty) {
+TEST(ParticleContainerTests, IteratePairEmpty) {
     ParticleContainer pc;
     for (auto pair = pc.beginPairs(); pair != pc.endPairs(); ++pair) {
         FAIL() << "Should not reach this!";
@@ -103,7 +103,7 @@ TEST(ParticleContainerTest, IteratePairEmpty) {
 }
 
 // Test iterating through pairs of a non-empty particle container.
-TEST(ParticleContainerTest, IteratePairNonEmpty) {
+TEST(ParticleContainerTests, IteratePairNonEmpty) {
     ParticleContainer pc(3);
     Particle p0(0);
     Particle p1(1);

@@ -21,7 +21,8 @@ Cuboid::Cuboid(const ParticleContainer &particles, const std::array<double, 3> &
                  mean_velocity);
 }
 
-ParticleContainer Cuboid::initializeParticles() {
+void Cuboid::initializeParticles() {
+    SPDLOG_TRACE("Initializing Particles for Cuboid {}...", this->toString());
     v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 3), std::plus<>());
     std::array<double, 3> xyz;
     for (int i = 0; i < size[2]; i++) {
@@ -32,9 +33,9 @@ ParticleContainer Cuboid::initializeParticles() {
             }
         }
     }
-    ParticleContainer pc;
-    return pc;
 }
+
+ParticleContainer &Cuboid::getParticles() { return particles; }
 
 std::string Cuboid::toString() {
     std::stringstream stream;

@@ -10,6 +10,8 @@
 
 #include "Arguments.h"
 #include "CLIUtils.h"
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -32,6 +34,22 @@ static inline const std::unordered_map<WriterType, std::string> writerStringTabl
     return reverseMap;
 }();
 
+/**
+ * @brief Finds a given substring in a string. Case-insensitive.
+ *
+ * Source: https://stackoverflow.com/a/19839371
+ *
+ * @param haystack The string which may or may not contain the substring.
+ * @param needle The substring to search for in the string.
+ * @return true if the string contains the substring, case-insensitive.
+ * @return false if the string does not contain the substring, case-insensitive.
+ */
+static inline bool findStringIC(const std::string &haystack, const std::string &needle) {
+    auto it = std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end(),
+                          [](unsigned char ch1, unsigned char ch2) { return std::toupper(ch1) == std::toupper(ch2); });
+    return (it != haystack.end());
+}
+
 /// @brief Reverse map containing conversion information for converting a SimulationType enum to a string.
 static inline const std::unordered_map<SimulationType, std::string> simulationStringTable = []() {
     std::unordered_map<SimulationType, std::string> reverseMap;
@@ -50,6 +68,11 @@ namespace StringUtils {
  */
 static inline double toDouble(const std::string &str) {
     try {
+        // invalidate NAN, INF and hex numbers
+        if (findStringIC(str, "inf") || findStringIC(str, "nan") || findStringIC(str, "0x"))
+            throw std::invalid_argument("Invalid number");
+
+        // convert singular passed number as string
         size_t idx = 0;
         double converted = std::stod(str, &idx);
         if (idx != str.length())
@@ -89,11 +112,20 @@ static inline double toInt(const std::string &str) {
 /**
  * @brief Converts a string into an integer array.
  *
+ * The string must be of the format "{_,_,...,_}" (excluding quotes) and contain exactly as many elements as specified.
+ * If the string is empty, however, an empty array will always be returned.
+ *
  * @tparam N The length of the array.
  * @param str The string to be converted, should be formatted as comma-separated integers between curly braces.
  * @return The corresponding array of integers.
  */
 template <size_t N> static inline std::array<int, N> toIntArray(const std::string &str) {
+    if (str.empty())
+        return {};
+
+    if (str.front() != '{' || str.back() != '}')
+        CLIUtils::error("Invalid array syntax", str);
+
     std::array<int, N> arr;
     std::string tmp;
     std::string numbers = str.substr(1, str.size() - 2);
@@ -197,13 +229,13 @@ static inline std::string fromSimulationType(SimulationType simulationType) {
  */
 template <typename T, size_t N> static inline std::string fromArray(const std::array<T, N> &arr) {
     std::stringstream ss;
-    ss << "[";
+    ss << "{";
     for (size_t i = 0; i < N; ++i) {
         ss << arr[i];
         if (i < N - 1)
             ss << ", ";
     }
-    ss << "]";
+    ss << "}";
     return ss.str();
 }
 

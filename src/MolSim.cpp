@@ -14,11 +14,13 @@ int main(int argc, char *argv[]) {
 
 #ifdef NDEBUG
     // when compiling without debug settings, shorten log output to omit uninteresting information
-    spdlog::set_pattern("[%^%l%$] %v");
+    if (SPDLOG_ACTIVE_LEVEL > 1)
+        spdlog::set_pattern("[%^%l%$] %v");
 #endif
 
     // parse command line arguments
     std::string filename = argv[argc - 1];
+
     Arguments args;
     CLIParser::parseArguments(argc, argv, args);
 
