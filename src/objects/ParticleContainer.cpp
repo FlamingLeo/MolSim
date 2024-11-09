@@ -24,11 +24,17 @@ ParticleContainer::ContainerType::const_iterator ParticleContainer::end() const 
 /* pair iterator */
 ParticleContainer::PairIterator::PairIterator(ContainerType::iterator outer, ContainerType::iterator inner,
                                               ContainerType::iterator begin, ContainerType::iterator end)
-    : outer_it(outer), inner_it(inner), container_begin(begin), container_end(end) {}
-
+    : outer_it(outer), inner_it(inner), container_begin(begin), container_end(end) {
+    if (outer_it != container_end) {
+        inner_it = outer_it + 1;
+    }
+}
 std::pair<Particle &, Particle &> ParticleContainer::PairIterator::operator*() const { return {*outer_it, *inner_it}; }
 ParticleContainer::PairIterator &ParticleContainer::PairIterator::operator++() {
     ++inner_it;
+    if (*inner_it == *outer_it) {
+        ++inner_it;
+    }
     if (inner_it == container_end) {
         ++outer_it;
         inner_it = container_begin;

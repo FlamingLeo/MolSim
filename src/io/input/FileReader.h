@@ -32,7 +32,6 @@ class FileReader {
      */
     explicit FileReader(const std::string &filename);
 
-
     /// @brief Destroys the FileReader object and automatically closes the input stream.
     virtual ~FileReader();
 

@@ -15,6 +15,7 @@ class CuboidGenerator {
   private:
     std::string m_filename;
     ParticleContainer particles;
+
   public:
     CuboidGenerator(const ParticleContainer &particles);
     CuboidGenerator(const std::string &filename, const ParticleContainer &particles);
