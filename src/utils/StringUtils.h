@@ -112,28 +112,32 @@ static inline double toInt(const std::string &str) {
 /**
  * @brief Converts a string into an integer array.
  *
- * The string must be of the format "{_,_,...,_}" (excluding quotes) and contain exactly as many elements as specified.
- * If the string is empty, however, an empty array will always be returned.
+ * The string must be of the format "{_, _, ..., _}" (excluding quotes) and contain exactly as many elements as
+ * specified. If the string is empty, however, an empty array will always be returned. If the provided length of array
+ * is longer than the amount of elements read, the remaining array slots will be filled with zeroes. If the provided
+ * length of the array is shorter than the amount of elements read, the array will be truncated.
+ *
+ * Each number may have an arbitrary amount of leading whitespaces. Trailing whitespaces are not allowed.
  *
  * @tparam N The length of the array.
  * @param str The string to be converted, should be formatted as comma-separated integers between curly braces.
  * @return The corresponding array of integers.
  */
 template <size_t N> static inline std::array<int, N> toIntArray(const std::string &str) {
-    if (str.empty())
+    if (str.empty() || N == 0)
         return {};
 
     if (str.front() != '{' || str.back() != '}')
         CLIUtils::error("Invalid array syntax", str);
 
-    std::array<int, N> arr;
+    std::array<int, N> arr = {};
     std::string tmp;
     std::string numbers = str.substr(1, str.size() - 2);
     std::stringstream ss(numbers);
 
-    for (size_t i = 0; i < N; ++i) {
-        std::getline(ss, tmp, ',');
-        arr[i] = StringUtils::toInt(tmp);
+    size_t i = 0;
+    while (i < N && std::getline(ss, tmp, ',')) {
+        arr[i++] = StringUtils::toInt(tmp);
     }
 
     return arr;
@@ -142,19 +146,32 @@ template <size_t N> static inline std::array<int, N> toIntArray(const std::strin
 /**
  * @brief Converts a string into a double array.
  *
+ * The string must be of the format "{_, _, ..., _}" (excluding quotes) and contain exactly as many elements as
+ * specified. If the string is empty, however, an empty array will always be returned. If the provided length of array
+ * is longer than the amount of elements read, the remaining array slots will be filled with zeroes. If the provided
+ * length of the array is shorter than the amount of elements read, the array will be truncated.
+ *
+ * Each number may have an arbitrary amount of leading whitespaces. Trailing whitespaces are not allowed.
+ *
  * @tparam N The length of the array.
  * @param str The string to be converted, should be formatted as comma-separated decimal numbers between curly braces.
  * @return The corresponding array of doubles.
  */
 template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str) {
-    std::array<double, N> arr;
+    if (str.empty() || N == 0)
+        return {};
+
+    if (str.front() != '{' || str.back() != '}')
+        CLIUtils::error("Invalid array syntax", str);
+
+    std::array<double, N> arr = {};
     std::string tmp;
     std::string numbers = str.substr(1, str.size() - 2);
     std::stringstream ss(numbers);
 
-    for (size_t i = 0; i < N; ++i) {
-        std::getline(ss, tmp, ',');
-        arr[i] = StringUtils::toDouble(tmp);
+    size_t i = 0;
+    while (i < N && std::getline(ss, tmp, ',')) {
+        arr[i++] = StringUtils::toDouble(tmp);
     }
 
     return arr;
