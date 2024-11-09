@@ -18,6 +18,13 @@ else()
     message(STATUS "Using build type ${CMAKE_BUILD_TYPE}")
 endif(NOT CMAKE_BUILD_TYPE)
 
+# for debug builds, enable address and undefined behavior sanitizers
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Debug build chosen, compiling with sanitizers.")
+    add_compile_options(-fsanitize=undefined,address)
+    add_link_options(-fsanitize=undefined,address)
+endif()
+
 # include custom cmake modules to check for libraries
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(xerces)
