@@ -11,10 +11,10 @@
 class CuboidGenerator {
   private:
     std::string m_filename;
-    ParticleContainer particles;
+    ParticleContainer &particles;
 
   public:
-    explicit CuboidGenerator(const ParticleContainer &particles);
-    CuboidGenerator(const std::string &filename, const ParticleContainer &particles);
+    //explicit CuboidGenerator(ParticleContainer &particles);
+    CuboidGenerator(const std::string &filename, ParticleContainer &particles);
     std::vector<Cuboid> generateCuboids();
 };

@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-CuboidGenerator::CuboidGenerator(const ParticleContainer &particles) { (void)particles; }
+//CuboidGenerator::CuboidGenerator(ParticleContainer &particles) { (void)particles; }
 
-CuboidGenerator::CuboidGenerator(const std::string &filename, const ParticleContainer &particles)
+CuboidGenerator::CuboidGenerator(const std::string &filename, ParticleContainer &particles)
     : m_filename{filename}, particles{particles} {};
 
 std::vector<Cuboid> CuboidGenerator::generateCuboids() {

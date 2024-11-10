@@ -31,14 +31,6 @@ void LennardJones::runSimulation() {
 
     std::vector<Cuboid> cuboids = generator.generateCuboids();
 
-    for(auto &c : cuboids){
-        //SPDLOG_INFO(c.toString());
-        ParticleContainer cuboid_particles = c.getParticles();
-        for (auto &p : cuboid_particles) {
-            particles.addParticle(p);
-            //SPDLOG_INFO(p.toString());
-        }
-    }
 
     while (current_time < end_time) {
         calculateX();
@@ -92,5 +84,7 @@ void LennardJones::calculateV() {
     for (auto &p : particles) {
         p.setV(p.getV() +
                ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>()));
+        std::array<double, 3> new_v = {p.getV()[0], p.getV()[1], 0};
+        p.setV(new_v);
     }
 }
