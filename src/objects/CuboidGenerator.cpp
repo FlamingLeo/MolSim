@@ -20,8 +20,3 @@ std::vector<Cuboid> CuboidGenerator::generateCuboids() {
     f.readFile(cuboids, particles);
     return cuboids;
 }
-
-/*
-x1 v1 ...
-x2 v2 ...
-*/

@@ -44,13 +44,6 @@ std::array<double, 3> &Cuboid::getV() { return v; }
 double Cuboid::getMeanVelocity() { return mean_velocity; }
 ParticleContainer &Cuboid::getParticles() { return particles; }
 
-void Cuboid::setPosition(const std::array<double, 3> &pos) { position = pos; }
-void Cuboid::setSize(const std::array<int, 3> &s) { size = s; }
-void Cuboid::setH(double hh) { h = hh; }
-void Cuboid::setM(double mm) { m = mm; }
-void Cuboid::setV(const std::array<double, 3> &vel) { v = vel; }
-void Cuboid::setMeanVelocity(double mv) { mean_velocity = mv; }
-
 bool Cuboid::operator==(const Cuboid &other) const {
     return (position == other.position) && (size == other.size) && (h == other.h) && (m == other.m) && (v == other.v) &&
            (mean_velocity == other.mean_velocity) && (particles == other.particles);

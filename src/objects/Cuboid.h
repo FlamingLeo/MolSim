@@ -30,15 +30,6 @@ class Cuboid {
     double getMeanVelocity();
     ParticleContainer &getParticles();
 
-    /* setters */
-    void setPosition(const std::array<double, 3> &pos);
-    void setSize(const std::array<int, 3> &s);
-    void setH(double hh);
-    void setM(double mm);
-    void setV(const std::array<double, 3> &vel);
-    void setMeanVelocity(double mv);
-    // setting particles ommited to prevent broken cuboids
-
     /* utility */
     bool operator==(const Cuboid &other) const;
     bool operator!=(const Cuboid &other) const;
