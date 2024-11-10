@@ -31,11 +31,12 @@ void LennardJones::runSimulation() {
 
     std::vector<Cuboid> cuboids = generator.generateCuboids();
 
-    for (auto &c : cuboids) {
-        c.initializeParticles();
+    for(auto &c : cuboids){
+        //SPDLOG_INFO(c.toString());
         ParticleContainer cuboid_particles = c.getParticles();
         for (auto &p : cuboid_particles) {
             particles.addParticle(p);
+            //SPDLOG_INFO(p.toString());
         }
     }
 
@@ -65,13 +66,18 @@ void LennardJones::LJ_Force() {
         for (auto &p2 : particles) {
             if (!(p1 == p2)) {
                 double L2_Norm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                p1.setF(p1.getF() +
-                        ArrayUtils::elementWiseScalarOp((-24 * epsilon) / std::pow(L2_Norm, 2) *
-                                                            (std::pow((sigma / std::pow(L2_Norm, 2)), 6) -
-                                                             2 * std::pow((sigma / std::pow(L2_Norm, 2)), 12)),
-                                                        p1.getX() - p2.getX(), std::multiplies<>()));
+                if(std::isnan(L2_Norm)){
+                    //SPDLOG_INFO("NaN");
+                    //SPDLOG_INFO(p1.toString());
+                    //SPDLOG_INFO(p2.toString());
+                }
+                p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
+                ((-24 * epsilon)/std::pow(L2_Norm, 2)) * 
+                (std::pow((sigma/std::pow(L2_Norm, 2)), 6) - 2 * std::pow((sigma/std::pow(L2_Norm, 2)), 12)),
+                p1.getX() - p2.getX(), std::multiplies<>()));
             }
         }
+        //SPDLOG_INFO(p1.toString());
     }
 }
 
