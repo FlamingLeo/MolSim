@@ -31,7 +31,6 @@ void LennardJones::runSimulation() {
 
     std::vector<Cuboid> cuboids = generator.generateCuboids();
 
-
     while (current_time < end_time) {
         calculateX();
         LJ_Force();
@@ -39,8 +38,6 @@ void LennardJones::runSimulation() {
 
         iteration++;
         if (iteration % 10 == 0) {
-            // logging done here because otherwise the console output would legitimately become unreadable
-            // this also makes it somewhat more configurable at runtime
             SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, current_time);
             writer->writeParticles(particles, iteration);
         }
@@ -58,18 +55,13 @@ void LennardJones::LJ_Force() {
         for (auto &p2 : particles) {
             if (!(p1 == p2)) {
                 double L2_Norm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                if(std::isnan(L2_Norm)){
-                    //SPDLOG_INFO("NaN");
-                    //SPDLOG_INFO(p1.toString());
-                    //SPDLOG_INFO(p2.toString());
-                }
-                p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
-                ((-24 * epsilon)/std::pow(L2_Norm, 2)) * 
-                (std::pow((sigma/std::pow(L2_Norm, 2)), 6) - 2 * std::pow((sigma/std::pow(L2_Norm, 2)), 12)),
-                p1.getX() - p2.getX(), std::multiplies<>()));
+                p1.setF(p1.getF() +
+                        ArrayUtils::elementWiseScalarOp(((-24 * epsilon) / std::pow(L2_Norm, 2)) *
+                                                            (std::pow((sigma / std::pow(L2_Norm, 2)), 6) -
+                                                             2 * std::pow((sigma / std::pow(L2_Norm, 2)), 12)),
+                                                        p1.getX() - p2.getX(), std::multiplies<>()));
             }
         }
-        //SPDLOG_INFO(p1.toString());
     }
 }
 

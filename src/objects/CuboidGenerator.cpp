@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-//CuboidGenerator::CuboidGenerator(ParticleContainer &particles) { (void)particles; }
-
 CuboidGenerator::CuboidGenerator(const std::string &filename, ParticleContainer &particles)
     : m_filename{filename}, particles{particles} {};
 
