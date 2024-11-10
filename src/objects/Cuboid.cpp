@@ -12,14 +12,8 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-/*
-Cuboid::Cuboid() : particles{ParticleContainer()} {
-    SPDLOG_TRACE("Generated Cuboid (default).");
-}
- */
-
-Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &position,
-               const std::array<int, 3> &size, const std::array<double, 3> &v, double h, double m)
+Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
+               const std::array<double, 3> &v, double h, double m)
     : position{position}, size{size}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
     SPDLOG_TRACE("Generated Cuboid (simple constructor) - position: {}, size: {}, h: {}, m: {}, v: {}, mean_v: {}",
                  StringUtils::fromArray(position), StringUtils::fromArray(size), h, m, StringUtils::fromArray(v),
@@ -33,7 +27,8 @@ void Cuboid::initializeParticles() {
         for (int j = 0; j < size[1]; j++) {
             for (int k = 0; k < size[0]; k++) {
                 xyz = {position[0] + k * h, position[1] + j * h, position[2] + i * h};
-                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 3), std::plus<>());
+                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 3),
+                                                  std::plus<>());
                 v[2] = 0;
                 particles.addParticle(xyz, v, m);
             }

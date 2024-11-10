@@ -18,8 +18,6 @@ class Cuboid {
     ParticleContainer &particles;
 
   public:
-    //Cuboid();
-
     Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
            const std::array<double, 3> &v, double h, double m);
 

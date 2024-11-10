@@ -1,11 +1,14 @@
 #include "objects/Cuboid.h"
 #include "objects/ParticleContainer.h"
 #include <gtest/gtest.h>
-/*
+#define INIT_CUBOID()                                                                                                  \
+    ParticleContainer pc;                                                                                              \
+    Cuboid c{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+
 // Test updating the position of the cuboid.
 TEST(CuboidTests, SetX) {
     constexpr std::array x{1.0, 2.0, 3.0};
-    Cuboid c;
+    INIT_CUBOID();
     c.setPosition(x);
     EXPECT_EQ(c.getPosition(), x);
 }
@@ -13,7 +16,7 @@ TEST(CuboidTests, SetX) {
 // Test updating the size of the cuboid.
 TEST(CuboidTests, SetN) {
     constexpr std::array N{1, 2, 3};
-    Cuboid c;
+    INIT_CUBOID();
     c.setSize(N);
     EXPECT_EQ(c.getSize(), N);
 }
@@ -21,7 +24,7 @@ TEST(CuboidTests, SetN) {
 // Test updating the distance of the cuboid particles.
 TEST(CuboidTests, SetH) {
     constexpr double h = 1.0;
-    Cuboid c;
+    INIT_CUBOID();
     c.setH(h);
     EXPECT_EQ(c.getH(), h);
 }
@@ -29,7 +32,7 @@ TEST(CuboidTests, SetH) {
 // Test updating the mass of one particle.
 TEST(CuboidTests, SetM) {
     constexpr double m = 1.0;
-    Cuboid c;
+    INIT_CUBOID();
     c.setM(m);
     EXPECT_EQ(c.getM(), m);
 }
@@ -37,7 +40,7 @@ TEST(CuboidTests, SetM) {
 // Test updating the velocity of the cuboid particles.
 TEST(CuboidTests, SetV) {
     constexpr std::array v{1.0, 2.0, 3.0};
-    Cuboid c;
+    INIT_CUBOID();
     c.setV(v);
     EXPECT_EQ(c.getV(), v);
 }
@@ -45,15 +48,14 @@ TEST(CuboidTests, SetV) {
 // Test updating the mean velocity.
 TEST(CuboidTests, SetMeanVelocity) {
     constexpr double mv = 1.0;
-    Cuboid c;
+    INIT_CUBOID();
     c.setMeanVelocity(mv);
     EXPECT_EQ(c.getMeanVelocity(), mv);
 }
 
 // Test initializing the cuboid particles.
 TEST(CuboidTests, InitializeParticles) {
-    ParticleContainer pc;
-    Cuboid c{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+    INIT_CUBOID();
     c.initializeParticles();
 
     // TODO: check velocity, independent of executable
@@ -76,4 +78,3 @@ TEST(CuboidTests, InitializeParticles) {
         EXPECT_EQ(p.getM(), 1.0);
     }
 }
- */
