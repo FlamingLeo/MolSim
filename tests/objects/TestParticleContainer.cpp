@@ -96,7 +96,7 @@ TEST(ParticleContainerTests, IterateNonEmpty) {
 
 // Test iterating through pairs of an empty particle container.
 TEST(ParticleContainerTests, IteratePairEmpty) {
-    ParticleContainer pc;
+    ParticleContainer pc(10);
     for (auto pair = pc.beginPairs(); pair != pc.endPairs(); ++pair) {
         FAIL() << "Should not reach this!";
     }
