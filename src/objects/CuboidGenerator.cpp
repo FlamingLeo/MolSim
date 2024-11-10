@@ -5,8 +5,10 @@
 #include "Cuboid.h"
 #include "io/input/FileReader.h"
 #include <iostream>
+#include <string>
+#include <vector>
 
-CuboidGenerator::CuboidGenerator(const ParticleContainer &particles) { (void)particles; };
+CuboidGenerator::CuboidGenerator(const ParticleContainer &particles) { (void)particles; }
 
 CuboidGenerator::CuboidGenerator(const std::string &filename, const ParticleContainer &particles)
     : m_filename{filename}, particles{particles} {};

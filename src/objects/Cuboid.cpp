@@ -7,6 +7,7 @@
 #include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "utils/StringUtils.h"
+#include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>

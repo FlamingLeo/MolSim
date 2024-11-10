@@ -5,7 +5,10 @@
 #include "io/output/WriterFactory.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include <functional>
 #include <spdlog/spdlog.h>
+#include <string>
+#include <vector>
 
 LennardJones::LennardJones(const std::string &filename, const Arguments &args)
     : particles{ParticleContainer()}, generator{CuboidGenerator(filename, particles)} {
@@ -18,7 +21,7 @@ double current_time = 0;
 double end_time = 5;
 double delta_t = 0.0002;
 
-LennardJones::~LennardJones() { SPDLOG_TRACE("Destroyed LJ object."); };
+LennardJones::~LennardJones() { SPDLOG_TRACE("Destroyed LJ object."); }
 
 void LennardJones::runSimulation() {
     SPDLOG_DEBUG("Running LennardJones simulation (entered function)...");
@@ -53,7 +56,7 @@ void LennardJones::runSimulation() {
     }
 
     SPDLOG_INFO("Completed LJ simulation.");
-};
+}
 
 void LennardJones::LJ_Force() {
     for (auto &p1 : particles) {
@@ -70,14 +73,14 @@ void LennardJones::LJ_Force() {
             }
         }
     }
-};
+}
 
 void LennardJones::calculateX() {
     for (auto &p : particles) {
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
     }
-};
+}
 
 void LennardJones::calculateV() {
     for (auto &p : particles) {

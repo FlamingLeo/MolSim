@@ -5,6 +5,7 @@
 
 #include "ParticleContainer.h"
 #include <array>
+#include <string>
 
 class Cuboid {
   private:
