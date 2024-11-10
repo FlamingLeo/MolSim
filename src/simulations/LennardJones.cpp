@@ -2,10 +2,10 @@
 // Created by marag on 11/5/2024.
 //
 #include "LennardJones.h"
-#include <spdlog/spdlog.h>
-#include "utils/CLIUtils.h"
-#include "utils/ArrayUtils.h"
 #include "io/output/WriterFactory.h"
+#include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
+#include <spdlog/spdlog.h>
 
 LennardJones::LennardJones(const std::string &filename, const Arguments &args)
     : particles{ParticleContainer()}, generator{CuboidGenerator(filename, particles)} {
@@ -25,13 +25,13 @@ void LennardJones::runSimulation() {
 
     auto writer = createWriter(WriterType::VTK);
     int iteration = 0;
-    
+
     std::vector<Cuboid> cuboids = generator.generateCuboids();
 
-    for(auto &c : cuboids){
+    for (auto &c : cuboids) {
         c.initializeParticles();
         ParticleContainer cuboid_particles = c.getParticles();
-        for(auto &p : cuboid_particles){
+        for (auto &p : cuboid_particles) {
             particles.addParticle(p);
         }
     }
@@ -55,17 +55,18 @@ void LennardJones::runSimulation() {
     SPDLOG_INFO("Completed LJ simulation.");
 };
 
-void LennardJones::LJ_Force(){
-    for(auto &p1 : particles){
+void LennardJones::LJ_Force() {
+    for (auto &p1 : particles) {
         p1.setOldF(p1.getF());
         p1.setFToZero();
-        for(auto &p2 : particles){
-            if(!(p1 == p2)){
+        for (auto &p2 : particles) {
+            if (!(p1 == p2)) {
                 double L2_Norm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
-                (-24 * epsilon)/std::pow(L2_Norm, 2) * 
-                (std::pow((sigma/std::pow(L2_Norm, 2)), 6) - 2 * std::pow((sigma/std::pow(L2_Norm, 2)), 12)),
-                p1.getX() - p2.getX(), std::multiplies<>()));
+                p1.setF(p1.getF() +
+                        ArrayUtils::elementWiseScalarOp((-24 * epsilon) / std::pow(L2_Norm, 2) *
+                                                            (std::pow((sigma / std::pow(L2_Norm, 2)), 6) -
+                                                             2 * std::pow((sigma / std::pow(L2_Norm, 2)), 12)),
+                                                        p1.getX() - p2.getX(), std::multiplies<>()));
             }
         }
     }
@@ -74,14 +75,13 @@ void LennardJones::LJ_Force(){
 void LennardJones::calculateX() {
     for (auto &p : particles) {
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
-               delta_t * delta_t *
-                   ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
+               delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
     }
 };
 
 void LennardJones::calculateV() {
     for (auto &p : particles) {
-        p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(),
-                                                          std::multiplies<>()));
+        p.setV(p.getV() +
+               ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>()));
     }
 }

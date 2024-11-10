@@ -35,7 +35,21 @@ void Cuboid::initializeParticles() {
     }
 }
 
+std::array<double, 3> &Cuboid::getPosition() { return position; }
+std::array<int, 3> &Cuboid::getSize() { return size; }
+double Cuboid::getH() { return h; }
+double Cuboid::getM() { return m; }
+std::array<double, 3> &Cuboid::getV() { return v; }
+double Cuboid::getMeanVelocity() { return mean_velocity; }
 ParticleContainer &Cuboid::getParticles() { return particles; }
+
+void Cuboid::setPosition(const std::array<double, 3> &pos) { position = pos; }
+void Cuboid::setSize(const std::array<int, 3> &s) { size = s; }
+void Cuboid::setH(double hh) { h = hh; }
+void Cuboid::setM(double mm) { m = mm; }
+void Cuboid::setV(const std::array<double, 3> &vel) { v = vel; }
+void Cuboid::setMeanVelocity(double mv) { mean_velocity = mv; }
+void Cuboid::setParticles(const ParticleContainer &pc) { particles = pc; }
 
 std::string Cuboid::toString() {
     std::stringstream stream;

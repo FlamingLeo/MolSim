@@ -87,7 +87,6 @@ void FileReader::readFile(ParticleContainer *particles) {
 }
 
 void FileReader::readFile(std::vector<Cuboid> &cuboids, ParticleContainer &particles) {
-    // TODO error handling
     // parse file content into cuboid container
     std::array<double, 3> x;
     std::array<double, 3> v;
