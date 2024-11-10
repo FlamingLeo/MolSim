@@ -12,7 +12,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-Cuboid::Cuboid() = default;
+Cuboid::Cuboid() { SPDLOG_TRACE("Generated Cuboid (default)."); }
 
 Cuboid::Cuboid(const ParticleContainer &particles, const std::array<double, 3> &position,
                const std::array<int, 3> &size, const std::array<double, 3> &v, double h, double m)
@@ -50,7 +50,12 @@ void Cuboid::setH(double hh) { h = hh; }
 void Cuboid::setM(double mm) { m = mm; }
 void Cuboid::setV(const std::array<double, 3> &vel) { v = vel; }
 void Cuboid::setMeanVelocity(double mv) { mean_velocity = mv; }
-void Cuboid::setParticles(const ParticleContainer &pc) { particles = pc; }
+
+bool Cuboid::operator==(const Cuboid &other) const {
+    return (position == other.position) && (size == other.size) && (h == other.h) && (m == other.m) && (v == other.v) &&
+           (mean_velocity == other.mean_velocity) && (particles == other.particles);
+}
+bool Cuboid::operator!=(const Cuboid &other) const { return !(*this == other); }
 
 std::string Cuboid::toString() {
     std::stringstream stream;

@@ -150,7 +150,7 @@ class Particle {
      * @return true if both particles' data (attributes) contain the same values.
      * @return false if both particles have at least one differing attribute.
      */
-    bool operator==(const Particle &other);
+    bool operator==(const Particle &other) const;
 
     /**
      * @brief Overload of the inequality operator for Particle objects.
@@ -159,7 +159,7 @@ class Particle {
      * @return true if both particles have at least one differing attribute.
      * @return false if both particles' data (attributes) contain the same values.
      */
-    bool operator!=(const Particle &other);
+    bool operator!=(const Particle &other) const;
 };
 
 /**

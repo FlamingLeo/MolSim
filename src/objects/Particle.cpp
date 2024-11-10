@@ -49,12 +49,12 @@ std::string Particle::toString() const {
     return stream.str();
 }
 
-bool Particle::operator==(const Particle &other) {
+bool Particle::operator==(const Particle &other) const {
     return (x == other.x) && (v == other.v) && (f == other.f) && (type == other.type) && (m == other.m) &&
            (old_f == other.old_f);
 }
 
-bool Particle::operator!=(const Particle &other) {
+bool Particle::operator!=(const Particle &other) const {
     return (x != other.x) || (v != other.v) || (f != other.f) || (type != other.type) || (m != other.m) ||
            (old_f != other.old_f);
 }

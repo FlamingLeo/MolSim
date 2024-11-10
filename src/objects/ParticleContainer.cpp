@@ -94,6 +94,8 @@ const Particle &ParticleContainer::get(size_t index) const {
 size_t ParticleContainer::size() const { return m_particles.size(); }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
+bool ParticleContainer::operator==(const ParticleContainer &other) const { return m_particles == other.m_particles; }
+bool ParticleContainer::operator!=(const ParticleContainer &other) const { return m_particles != other.m_particles; }
 std::string ParticleContainer::toString() const {
     std::stringstream ss;
     ss << "{ ";

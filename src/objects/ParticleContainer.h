@@ -219,6 +219,25 @@ class ParticleContainer {
     ContainerType &getParticles();
 
     /**
+     * @brief Overload of the equality operator. Checks if two ParticleContainers have the same Particle objects.
+     *
+     * @param other The ParticleContainer to compare the current one with.
+     * @return true if both ParticleContainers contain the same particles.
+     * @return false if there is at least one differing particle in one of the containers or the sizes differ.
+     */
+    bool operator==(const ParticleContainer &other) const;
+
+    /**
+     * @brief Overload of the inequality operator. Checks if two ParticleContainers have the at least one differing
+     * Particle object or different sizes.
+     *
+     * @param other The ParticleContainer to compare the current one with.
+     * @return true if there is at least one differing particle in one of the containers or the sizes differ.
+     * @return false if both ParticleContainers contain the same particles.
+     */
+    bool operator!=(const ParticleContainer &other) const;
+
+    /**
      * @brief Returns a string representation of this container.
      *
      * @return A std::string of this container.

@@ -39,9 +39,12 @@ class Cuboid {
     void setM(double mm);
     void setV(const std::array<double, 3> &vel);
     void setMeanVelocity(double mv);
-    void setParticles(const ParticleContainer &pc);
+    // setting particles ommited to prevent broken cuboids
 
     /* utility */
+    bool operator==(const Cuboid &other) const;
+    bool operator!=(const Cuboid &other) const;
+
     void initializeParticles();
     std::string toString();
 };
