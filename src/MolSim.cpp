@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     CLIParser::parseArguments(argc, argv, args);
 
     // run desired simulation based on user choice
-    auto sim = createSimulation(args.sim, filename, args);
+    SimulationFactory sf;
+    auto sim = sf.createSimulation(args.sim, filename, args);
     sim->runSimulation();
 }

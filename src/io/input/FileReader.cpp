@@ -1,6 +1,6 @@
 #include "FileReader.h"
 #include "utils/CLIUtils.h"
-#include "utils/StringUtils.h"
+#include "utils/ArrayUtils.h"
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -152,8 +152,8 @@ void FileReader::readCuboids(ParticleContainer &particles) {
         datastream >> c.h;
         datastream >> c.m;
 
-        SPDLOG_TRACE("Read object data - x : {}, v : {}, N : {}, h : {}, m : {}.", StringUtils::fromArray(c.x),
-                     StringUtils::fromArray(c.v), StringUtils::fromArray(c.N), c.h, c.m);
+        SPDLOG_TRACE("Read object data - x : {}, v : {}, N : {}, h : {}, m : {}.", ArrayUtils::to_string(c.x),
+                     ArrayUtils::to_string(c.v), ArrayUtils::to_string(c.N), c.h, c.m);
 
         cs.push_back(c);
         particlesSize += c.N[0] * c.N[1] * c.N[2];

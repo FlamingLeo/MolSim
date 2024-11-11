@@ -3,6 +3,8 @@
 //
 #include "LennardJones.h"
 #include "io/output/WriterFactory.h"
+#include "strategies/StrategyFactory.h"
+#include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
@@ -22,7 +24,12 @@ LennardJones::~LennardJones() { SPDLOG_TRACE("Destroyed LJ object."); }
 void LennardJones::runSimulation() {
     SPDLOG_TRACE("Running LennardJones simulation (entered function)...");
 
-    auto writer = createWriter(m_type);
+    // initialize writer and physics functions
+    StrategyFactory sf;
+    WriterFactory wf;
+    auto writer = wf.createWriter(m_type);
+    auto [calculateV, calculateX, calculateF] = sf.getSimulationFunctions(SimulationType::LJ);
+
     int iteration = 0;
 
     // log user choices
@@ -39,9 +46,9 @@ void LennardJones::runSimulation() {
     m_generator.generateCuboids();
 
     while (m_currentTime < m_endTime) {
-        calculateX();
-        LJForce();
-        calculateV();
+        calculateX(m_particles, m_delta_t);
+        calculateF(m_particles, m_epsilon, m_sigma);
+        calculateV(m_particles, m_delta_t);
 
         iteration++;
         if (iteration % m_itFreq == 0) {
@@ -53,36 +60,4 @@ void LennardJones::runSimulation() {
     }
 
     SPDLOG_INFO("Completed LJ simulation.");
-}
-
-void LennardJones::LJForce() {
-    for (auto &p1 : m_particles) {
-        p1.setOldF(p1.getF());
-        p1.setFToZero();
-        for (auto &p2 : m_particles) {
-            if (!(p1 == p2)) {
-                double L2_Norm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                p1.setF(p1.getF() +
-                        ArrayUtils::elementWiseScalarOp(((-24 * m_epsilon) / std::pow(L2_Norm, 2)) *
-                                                            (std::pow((m_sigma / std::pow(L2_Norm, 2)), 6) -
-                                                             2 * std::pow((m_sigma / std::pow(L2_Norm, 2)), 12)),
-                                                        p1.getX() - p2.getX(), std::multiplies<>()));
-            }
-        }
-    }
-}
-
-void LennardJones::calculateX() {
-    for (auto &p : m_particles) {
-        p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(m_delta_t, p.getV(), std::multiplies<>()) +
-               m_delta_t * m_delta_t *
-                   ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
-    }
-}
-
-void LennardJones::calculateV() {
-    for (auto &p : m_particles) {
-        p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(m_delta_t / (2 * p.getM()), p.getOldF() + p.getF(),
-                                                          std::multiplies<>()));
-    }
 }

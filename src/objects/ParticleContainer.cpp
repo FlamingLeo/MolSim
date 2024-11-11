@@ -1,6 +1,7 @@
 #include "ParticleContainer.h"
 #include "io/input/FileReader.h"
 #include "utils/StringUtils.h"
+#include "utils/ArrayUtils.h"
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
@@ -69,8 +70,8 @@ void ParticleContainer::addParticle(const Particle &particle) {
 }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m) {
     m_particles.emplace_back(x, v, m);
-    SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", StringUtils::fromArray(x),
-                 StringUtils::fromArray(v), m);
+    SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", ArrayUtils::to_string(x),
+                 ArrayUtils::to_string(v), m);
 }
 void ParticleContainer::fromFile(const std::string &filename) {
     SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);

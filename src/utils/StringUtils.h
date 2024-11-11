@@ -237,26 +237,6 @@ static inline std::string fromSimulationType(SimulationType simulationType) {
 }
 
 /**
- * @brief Converts a generic array to a string.
- *
- * @tparam T The type of the array elements.
- * @tparam N The length of the array.
- * @param arr The array to be converted.
- * @return A string representation of the array elements enclosed in square brackets.
- */
-template <typename T, size_t N> static inline std::string fromArray(const std::array<T, N> &arr) {
-    std::stringstream ss;
-    ss << "{";
-    for (size_t i = 0; i < N; ++i) {
-        ss << arr[i];
-        if (i < N - 1)
-            ss << ", ";
-    }
-    ss << "}";
-    return ss.str();
-}
-
-/**
  * @brief Converts a number to a string.
  *
  * @tparam T The type of the number.

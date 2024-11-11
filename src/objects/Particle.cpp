@@ -1,6 +1,6 @@
 #include "Particle.h"
 #include "utils/ArrayUtils.h"
-#include "utils/StringUtils.h"
+#include "utils/ArrayUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -8,25 +8,25 @@
 Particle::Particle(int type_arg) : type{type_arg} {
     f = {0., 0., 0.};
     old_f = {0., 0., 0.};
-    SPDLOG_TRACE("Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
-                 StringUtils::fromArray(v), StringUtils::fromArray(f), m);
+    SPDLOG_TRACE("Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
+                 ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
 }
 
 Particle::Particle(const Particle &other)
     : x{other.x}, v{other.v}, f{other.f}, old_f{other.old_f}, m{other.m}, type{other.type} {
-    SPDLOG_TRACE("Generated Particle (copy) - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
-                 StringUtils::fromArray(v), StringUtils::fromArray(f), m);
+    SPDLOG_TRACE("Generated Particle (copy) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
+                 ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
 }
 
 Particle::Particle(const std::array<double, 3> &x_arg, const std::array<double, 3> &v_arg, double m_arg, int type_arg)
     : x{x_arg}, v{v_arg}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{m_arg}, type{type_arg} {
-    SPDLOG_TRACE("Generated Particle (arguments) - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
-                 StringUtils::fromArray(v), StringUtils::fromArray(f), m);
+    SPDLOG_TRACE("Generated Particle (arguments) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
+                 ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
 }
 
 Particle::~Particle() {
-    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
-                 StringUtils::fromArray(v), StringUtils::fromArray(f), m);
+    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
+                 ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
 }
 
 const std::array<double, 3> &Particle::getX() const { return x; }

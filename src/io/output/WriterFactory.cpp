@@ -1,7 +1,7 @@
 #include "WriterFactory.h"
 #include <memory>
 
-std::unique_ptr<FileWriter> createWriter(WriterType type) {
+std::unique_ptr<FileWriter> WriterFactory::createWriter(WriterType type) {
     switch (type) {
     case WriterType::XYZ:
         SPDLOG_DEBUG("Generating XYZWriter...");

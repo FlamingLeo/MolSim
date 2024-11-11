@@ -1,6 +1,11 @@
-//
-// Created by marag on 11/5/2024.
-//
+/**
+ * @file LennardJones.h
+ * @brief Simulation of the Lennard-Jones potential.
+ * @date 2024-11-05
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #pragma once
 #include "../objects/CuboidGenerator.h"
 #include "Simulation.h"
@@ -24,7 +29,4 @@ class LennardJones : public Simulation {
     LennardJones(const std::string &filename, const Arguments &args);
     ~LennardJones();
     void runSimulation() override;
-    void LJForce();
-    void calculateX();
-    void calculateV();
 };
