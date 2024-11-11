@@ -1,6 +1,5 @@
 #include "Particle.h"
 #include "utils/ArrayUtils.h"
-#include "utils/ArrayUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -25,8 +24,8 @@ Particle::Particle(const std::array<double, 3> &x_arg, const std::array<double, 
 }
 
 Particle::~Particle() {
-    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
-                 ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
+    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x), ArrayUtils::to_string(v),
+                 ArrayUtils::to_string(f), m);
 }
 
 const std::array<double, 3> &Particle::getX() const { return x; }

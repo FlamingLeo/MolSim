@@ -36,8 +36,8 @@ void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double);
 
 /**
  * @brief TODO
- * 
- * @param particles TODO 
+ *
+ * @param particles TODO
  * @param epsilon TODO
  * @param sigma TODO
  */

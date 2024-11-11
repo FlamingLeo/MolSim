@@ -1,7 +1,7 @@
 #include "ParticleContainer.h"
 #include "io/input/FileReader.h"
-#include "utils/StringUtils.h"
 #include "utils/ArrayUtils.h"
+#include "utils/StringUtils.h"
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>

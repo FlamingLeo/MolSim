@@ -2,9 +2,9 @@
  * @file LennardJones.h
  * @brief Simulation of the Lennard-Jones potential.
  * @date 2024-11-05
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 #pragma once
 #include "../objects/CuboidGenerator.h"

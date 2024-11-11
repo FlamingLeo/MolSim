@@ -3,7 +3,8 @@
 #include <memory>
 #include <string>
 
-std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType type, const std::string &filename, const Arguments &args) {
+std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType type, const std::string &filename,
+                                                                const Arguments &args) {
     switch (type) {
     case SimulationType::VERLET:
         SPDLOG_DEBUG("Generating Verlet...");

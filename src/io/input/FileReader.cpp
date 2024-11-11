@@ -1,6 +1,6 @@
 #include "FileReader.h"
-#include "utils/CLIUtils.h"
 #include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
