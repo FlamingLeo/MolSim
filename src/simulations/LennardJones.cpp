@@ -13,50 +13,68 @@
 #include <string>
 #include <vector>
 
-LennardJones::LennardJones(const std::string &filename, const Arguments &args)
-    : m_particles{ParticleContainer()}, m_generator{CuboidGenerator(filename, m_particles)}, m_epsilon{5}, m_sigma{1},
-      m_currentTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
-      m_type{args.type} {
+LennardJones::LennardJones(const std::string &filename, const Arguments &args, int type)
+    : m_particles{ParticleContainer()}, m_generator{CuboidGenerator(filename, m_particles)}, m_epsilon{args.epsilon},
+      m_sigma{args.sigma}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
+      m_itFreq{args.itFreq}, m_type{args.type} {
     SPDLOG_TRACE("Created LJ Simulation from file {} with Arguments {}", filename, args.toString());
+    initializeSimulation(type);
+}
+LennardJones::LennardJones(const ParticleContainer &pc, const Arguments &args, int type)
+    : m_particles{pc}, m_generator{CuboidGenerator("", m_particles)}, m_epsilon{args.epsilon}, m_sigma{args.sigma},
+      m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
+      m_type{args.type} {
+    SPDLOG_TRACE("Created LJ Simulation from using ParticleContainer {} with Arguments {}", pc.toString(),
+                 args.toString());
+    initializeSimulation(type);
 }
 LennardJones::~LennardJones() { SPDLOG_TRACE("Destroyed LJ object."); }
 
-void LennardJones::runSimulation() {
-    SPDLOG_TRACE("Running LennardJones simulation (entered function)...");
+void LennardJones::initializeSimulation(int type) {
+    SPDLOG_TRACE("Initializing LJ simulation...");
 
     // initialize writer and physics functions
     StrategyFactory sf;
     WriterFactory wf;
-    auto writer = wf.createWriter(m_type);
-    auto [calculateV, calculateX, calculateF] = sf.getSimulationFunctions(SimulationType::LJ);
+    m_writer = wf.createWriter(m_type);
+    auto [cv, cx, cf] = sf.getSimulationFunctions(SimulationType::LJ, type);
+    m_calculateV = cv;
+    m_calculateX = cx;
+    m_calculateF = cf;
 
+    // initialize particles from cuboid data
+    if (m_particles.isEmpty())
+        m_generator.generateCuboids();
+}
+
+void LennardJones::runSimulation() {
+    SPDLOG_TRACE("Running LJ simulation (entered function)...");
+
+    double current_time = m_startTime;
     int iteration = 0;
 
     // log user choices
     SPDLOG_INFO("Running LJ simulation with the following arguments:");
     SPDLOG_INFO("epsilon     : {}", m_epsilon);
     SPDLOG_INFO("sigma       : {}", m_sigma);
-    SPDLOG_INFO("t_0         : {}", m_currentTime);
+    SPDLOG_INFO("t_0         : {}", m_startTime);
     SPDLOG_INFO("t_end       : {}", m_endTime);
     SPDLOG_INFO("dt          : {}", m_delta_t);
     SPDLOG_INFO("Output Freq.: every {} iterations", m_itFreq);
     SPDLOG_INFO("Output Type : {}", StringUtils::fromWriterType(m_type));
 
-    // initialize particles from cuboid data
-    m_generator.generateCuboids();
-
-    while (m_currentTime < m_endTime) {
-        calculateX(m_particles, m_delta_t);
-        calculateF(m_particles, m_epsilon, m_sigma);
-        calculateV(m_particles, m_delta_t);
+    while (current_time < m_endTime) {
+        m_calculateX(m_particles, m_delta_t);
+        m_calculateF(m_particles, m_epsilon, m_sigma);
+        m_calculateV(m_particles, m_delta_t);
 
         iteration++;
         if (iteration % m_itFreq == 0) {
-            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, m_currentTime);
-            writer->writeParticles(m_particles, iteration);
+            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, current_time);
+            m_writer->writeParticles(m_particles, iteration);
         }
 
-        m_currentTime += m_delta_t;
+        current_time += m_delta_t;
     }
 
     SPDLOG_INFO("Completed LJ simulation.");

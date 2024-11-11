@@ -21,9 +21,9 @@ Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &positi
 void Cuboid::initializeParticles() {
     SPDLOG_TRACE("Initializing Particles for Cuboid {}...", this->toString());
     std::array<double, 3> xyz;
-    for (int i = 0; i < size[2]; i++) {
-        for (int j = 0; j < size[1]; j++) {
-            for (int k = 0; k < size[0]; k++) {
+    for (size_t i = 0; i < size[2]; i++) {
+        for (size_t j = 0; j < size[1]; j++) {
+            for (size_t k = 0; k < size[0]; k++) {
                 xyz = {position[0] + k * h, position[1] + j * h, position[2] + i * h};
                 v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2),
                                                   std::plus<>());

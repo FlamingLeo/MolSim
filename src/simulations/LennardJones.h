@@ -7,26 +7,35 @@
  *
  */
 #pragma once
-#include "../objects/CuboidGenerator.h"
 #include "Simulation.h"
+#include "io/output/WriterFactory.h"
+#include "objects/CuboidGenerator.h"
 #include "objects/ParticleContainer.h"
+#include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
+#include <memory>
 #include <string>
 
 class LennardJones : public Simulation {
   private:
     ParticleContainer m_particles;
     CuboidGenerator m_generator;
-    int m_epsilon;        // default: 5
-    int m_sigma;          // default: 1
-    double m_currentTime; // default: 0
-    double m_endTime;     // default: 5
-    double m_delta_t;     // default: 0.0002
+    double m_epsilon;
+    double m_sigma;
+    double m_startTime;
+    double m_endTime;
+    double m_delta_t;
     int m_itFreq;
     WriterType m_type;
+    std::unique_ptr<FileWriter> m_writer;
+    StrategyFactory::VFunc m_calculateV;
+    StrategyFactory::XFunc m_calculateX;
+    StrategyFactory::FFunc m_calculateF;
 
   public:
-    LennardJones(const std::string &filename, const Arguments &args);
+    LennardJones(const std::string &filename, const Arguments &args, int type = 0);
+    LennardJones(const ParticleContainer &pc, const Arguments &args, int type = 0);
     ~LennardJones();
+    void initializeSimulation(int type = 0);
     void runSimulation() override;
 };

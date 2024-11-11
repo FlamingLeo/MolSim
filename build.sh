@@ -17,7 +17,8 @@ help() {
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
--c       : Enables benchmarking (default: benchmarking disabled).
+-c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
+           Logging MUST be set to level 6 to enable benchmarking. If -s is not set, this will be done automatically.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
@@ -25,6 +26,7 @@ help() {
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
+           To enable benchmarking, this option MUST be set to 6 (off). This is done automatically if -s is not set.
 -t       : Automatically runs tests after successful compilation (default: off).
 
 \033[1mNOTES\033[0m:
@@ -54,21 +56,38 @@ while getopts ${OPTSTRING} opt; do
   b)
     # choose build type
     if [[ "${OPTARG}" != "Debug" && "${OPTARG}" != "Release" && "${OPTARG}" != "RelWithDebInfo" && "${OPTARG}" != "MinSizeRel" ]]; then
-      echo "ERROR: Invalid build option: ${OPTARG}"
+      echo "[ERROR] Invalid build option: ${OPTARG}"
+      usage
+    fi
+    # disable benchmarking with debug builds
+    if [[ "${OPTARG}" != "Release" && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
+      echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
     echo "[BUILD] Using build option: ${OPTARG}."
     build_string="-DCMAKE_BUILD_TYPE=${OPTARG}"
     ;;
   c)
-    # enable benchmarking
+    # disable benchmarking with debug builds
+    if [[ "${build_string}" != "" && "${build_string}" != "-DCMAKE_BUILD_TYPE=Release" ]]; then
+      echo "[ERROR] Cannot benchmark with non-release builds!"
+      usage
+    fi
+    # if spdlog isn't set, disable it automatically
+    if [[ "${spdlog_level}" == "" ]]; then
+      echo "[BUILD] Logging automatically disabled when benchmarking."
+      spdlog_level="-DSPDLOG_LEVEL=6"
+    elif [[ "${spdlog_level}" != "-DSPDLOG_LEVEL=6" ]]; then
+      echo "[ERROR] Logging must be disabled when benchmarking!"
+      usage
+    fi
     echo "[BUILD] Benchmarking will be enabled."
     benchmarking_opt="-DENABLE_BENCHMARKING=ON"
     ;;
   d)
     # disable doxygen
     if [[ "${make_documentation}" == "true" ]]; then
-      echo "ERROR: Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
+      echo "[ERROR] Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
       usage
     fi
 
@@ -81,7 +100,7 @@ while getopts ${OPTSTRING} opt; do
       num_jobs=${OPTARG}
       echo "[BUILD] Set number of Makefile jobs: ${OPTARG}"
     else
-      echo "ERROR: Number of Makefile jobs must be a positive integer."
+      echo "[ERROR] Number of Makefile jobs must be a positive integer."
       usage
     fi
     ;;
@@ -93,7 +112,7 @@ while getopts ${OPTSTRING} opt; do
   m)
     # make documentation
     if [[ -n "${doxygen_opt}" ]]; then
-      echo "ERROR: Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
+      echo "[ERROR] Invalid combination - cannot disable Doxygen and simultaneously generate documentation!"
       usage
     fi
 
@@ -107,11 +126,15 @@ while getopts ${OPTSTRING} opt; do
     ;;
   s)
     # spdlog level
-    if [[ "$OPTARG" =~ ^[0-6]$ ]]; then
+    if [[ "${OPTARG}" =~ ^[0-6]$ ]]; then
+      if [[ "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" && ${OPTARG} != "6" ]]; then
+        echo "[ERROR] Logging must be disabled when benchmarking!"
+        usage
+      fi
       spdlog_level="-DSPDLOG_LEVEL=${OPTARG}"
       echo "[BUILD] Set spdlog level: ${OPTARG}"
     else
-      echo "ERROR: Invalid spdlog level; must be between 0 and 6."
+      echo "[ERROR] Invalid spdlog level; must be between 0 and 6."
       usage
     fi
     ;;
@@ -121,7 +144,7 @@ while getopts ${OPTSTRING} opt; do
     ;;
   ?)
     # unknown option
-    echo "ERROR: Invalid option: -${OPTARG}."
+    echo "[ERROR] Invalid option: -${OPTARG}."
     usage
     ;;
   esac

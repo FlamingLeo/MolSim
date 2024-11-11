@@ -28,6 +28,10 @@ struct Arguments {
     double endTime{};
     /// @brief Duration of a timestep (default: simulation-specific).
     double delta_t{};
+    /// @brief Depth of the potential well (LJ parameter, default: 5).
+    double epsilon{5};
+    /// @brief Distance where the LJ potential reaches zero (LJ parameter, default: 1).
+    double sigma{1};
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
     /// @brief Output type (default: VTK).

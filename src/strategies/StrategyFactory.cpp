@@ -8,12 +8,23 @@
 #include <tuple>
 
 std::tuple<StrategyFactory::VFunc, StrategyFactory::XFunc, StrategyFactory::FFunc>
-StrategyFactory::getSimulationFunctions(SimulationType type) {
+StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
     switch (type) {
     case SimulationType::VERLET:
-        SPDLOG_DEBUG("Chose physics calculations for Verlet simulation.");
-        return std::make_tuple(calculateV, calculateX, calculateF_VerletThirdLaw);
+        /*
+        modifier values:
+        0 - calculate force using newton's third law
+        1 - calculate force using naive approach
+        */
+        SPDLOG_DEBUG("Chose physics calculations for Verlet simulation with force calculation: {}",
+                     modifier ? "Naive" : "Newton's Third Law");
+        return std::make_tuple(calculateV, calculateX, modifier ? calculateF_Verlet : calculateF_VerletThirdLaw);
     case SimulationType::LJ:
+        /*
+        modifier values (TBD):
+        0 - calculate force using newton's third law
+        1 - calculate force using naive approach
+        */
         SPDLOG_DEBUG("Chose physics calculations for LJ simulation.");
         return std::make_tuple(calculateV, calculateX, calculateF_LennardJones);
     default:

@@ -15,7 +15,7 @@
 
 /// @brief Factory class for choosing the appropriate functions based on the Simulation.
 class StrategyFactory {
-  private:
+  public:
     /// @brief Typedef for velocity-calculating functions.
     using VFunc = void (*)(ParticleContainer &, double);
     /// @brief Typedef for position-calculating functions.
@@ -23,12 +23,12 @@ class StrategyFactory {
     /// @brief Typedef for force-calculating functions.
     using FFunc = void (*)(ParticleContainer &, double, double);
 
-  public:
     /**
      * @brief Return a 3-tuple of the physics functions corresponding to the chosen simulation.
      *
      * @param type The type of the simulation to be performed.
+     * @param modifier A modifier for which combination of functions get returned (i.e. optimized, non-optimized).
      * @return A 3-tuple of the physics functions corresponding to the chosen simulation.
      */
-    std::tuple<VFunc, XFunc, FFunc> getSimulationFunctions(SimulationType type);
+    std::tuple<VFunc, XFunc, FFunc> getSimulationFunctions(SimulationType type, int modifier);
 };

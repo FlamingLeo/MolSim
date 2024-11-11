@@ -17,7 +17,7 @@
 class CuboidGenerator {
   private:
     /// @brief Filename \f$ m_filename \f$ of the input file
-    std::string m_filename;
+    std::string m_filename = "";
 
     /// @brief Reference \f$ m_particles \f$ to central ParticleContainer to which all particles are added
     ParticleContainer &m_particles;
