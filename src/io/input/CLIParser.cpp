@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 void CLIParser::checkValidity(const Arguments &args) {
+    SPDLOG_TRACE("Checking argument validity...");
     // maybe disallow start and end being the same? or print out some warning?
     if (args.startTime > args.endTime)
         CLIUtils::error("Start time must be before end time!");
@@ -16,6 +17,24 @@ void CLIParser::checkValidity(const Arguments &args) {
         CLIUtils::error("Timestep must be positive!");
     if (args.itFreq <= 0) {
         CLIUtils::error("Output frequency must be positive!");
+    }
+}
+
+void CLIParser::setDefaults(Arguments &args) {
+    SPDLOG_TRACE("Argument bit vector: {}", args.argsSet.to_string());
+    switch (args.sim) {
+    case SimulationType::VERLET:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 1000.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.014;
+        break;
+    case SimulationType::LJ:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 5.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0002;
+        break;
+    default:
+        CLIUtils::error("Cannot set default arguments for unknown simulation type!");
     }
 }
 
@@ -37,14 +56,17 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
         switch (ch) {
         case 's': /* start time */
             args.startTime = StringUtils::toDouble(optarg);
+            args.argsSet.set(0);
             SPDLOG_DEBUG("Set start time to {}.", args.startTime);
             break;
         case 'e': /* end time */
             args.endTime = StringUtils::toDouble(optarg);
+            args.argsSet.set(1);
             SPDLOG_DEBUG("Set end time to {}.", args.endTime);
             break;
         case 'd': /* timestep */
             args.delta_t = StringUtils::toDouble(optarg);
+            args.argsSet.set(2);
             SPDLOG_DEBUG("Set timestep to {}.", args.delta_t);
             break;
         case 'f': /* output frequency */
@@ -93,8 +115,8 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
     if (optind != (argc - 1))
         CLIUtils::error("Invalid syntax - no file input provided!");
 
-    // finally, check numerical argument validity and return arguments if all goes well
-    SPDLOG_TRACE("Checking argument validity...");
+    // finally, set default values and check numerical argument validity and return arguments if all goes well
+    setDefaults(args);
     checkValidity(args);
 
     SPDLOG_DEBUG("Finished parsing command line arguments.");

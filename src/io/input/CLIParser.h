@@ -19,6 +19,13 @@ namespace CLIParser {
 void checkValidity(const Arguments &args);
 
 /**
+ * @brief Set default values for uninitialized Argument attributes based on the chosen Simulation type.
+ *
+ * @param args A reference to the Argument struct to be modified.
+ */
+void setDefaults(Arguments &args);
+
+/**
  * @brief Parse and store CLI arguments in an Arguments struct.
  *
  * @param argc Argument counter, typically passed directly via the main function.

@@ -19,11 +19,11 @@ class Verlet : public Simulation {
     /// @brief The ParticleContainer containing the particles used in the simulation.
     ParticleContainer m_particles;
     /// @brief The start time \f$ t_0 \f$ of the simulation.
-    double m_startTime;
+    double m_startTime; // default: 0
     /// @brief The end time \f$ t_\text{end} \f$ of the simulation.
-    double m_endTime;
+    double m_endTime; // default: 1000
     /// @brief The timestep \f$ \Delta t \f$ used during the simulation.
-    double m_delta_t;
+    double m_delta_t; // default: 0.014
     /// @brief The output (logging) frequency for generating a file output.
     int m_itFreq;
     /// @brief The type of the generated output file.
