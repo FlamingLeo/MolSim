@@ -7,7 +7,6 @@
 #include <array>
 #include <string>
 
-
 /// @brief Cuboid class storing meta-data about the given cuboids
 class Cuboid {
   private:
@@ -115,7 +114,6 @@ class Cuboid {
      * @return false if both particles' data (attributes) contain the same values.
      */
     bool operator!=(const Cuboid &other) const;
-
 
     /// @brief Main function of Cuboid class, initializes the particles based on the cuboid meta-data
     /// and adds them to the given ParticleContainer

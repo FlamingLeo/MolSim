@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-
 /// @brief CuboidGenerator class handling the initialization of all Cuboids
 class CuboidGenerator {
   private:
