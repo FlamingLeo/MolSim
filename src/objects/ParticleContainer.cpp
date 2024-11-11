@@ -75,7 +75,7 @@ void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::a
 void ParticleContainer::fromFile(const std::string &filename) {
     SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);
     FileReader fileReader(filename);
-    fileReader.readFile(this);
+    fileReader.readParticles(this);
 }
 void ParticleContainer::reserve(size_t capacity) {
     m_particles.reserve(capacity);

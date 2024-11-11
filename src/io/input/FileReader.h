@@ -45,14 +45,14 @@ class FileReader {
     /**
      * @brief Reads particle data into a ParticleContainer from a given input file.
      *
-     * @param particles The ParticleContainer to write the input data into.
+     * @param particles The ParticleContainer to read the input data from.
      */
-    void readFile(ParticleContainer *particles);
+    void readParticles(ParticleContainer *particles);
 
     /**
-     * @brief Read cuboid data into cuboid.
+     * @brief Reads and intializes cuboid data into a ParticleContainer from a given input file.
      *
-     * @param cuboid
+     * @param particles The ParticleContainer to read the input data from.
      */
-    void readFile(std::vector<Cuboid> &cuboids, ParticleContainer &particles);
+    void readCuboids(ParticleContainer &particles);
 };

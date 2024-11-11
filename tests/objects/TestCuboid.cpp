@@ -21,8 +21,6 @@ TEST(CuboidTests, InitializeCuboidParticles) {
     for (size_t i = 0; i < 6; ++i) {
         Particle &p = c.getParticles()[i];
 
-        std::cout << p.getV()[0] << ", " << p.getV()[1] << ", " << p.getV()[2] << "\n";
-
         EXPECT_EQ(p.getX()[0], x0[i]);
         EXPECT_EQ(p.getX()[1], x1[i]);
         EXPECT_EQ(p.getX()[2], x2[i]);
@@ -30,4 +28,26 @@ TEST(CuboidTests, InitializeCuboidParticles) {
         EXPECT_EQ(p.getOldF(), oldF);
         EXPECT_EQ(p.getM(), 1.0);
     }
+}
+
+// Test the equality operator on two Cuboid objects.
+TEST(CuboidTests, Equality) {
+    ParticleContainer pc;
+    Cuboid c1{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+    Cuboid c2{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+    Cuboid c3{pc, {4., 5., 6.}, {7, 8, 9}, {10., 11., 12.}, 2., 2.};
+    EXPECT_TRUE(c1 == c2);
+    EXPECT_FALSE(c1 == c3);
+    EXPECT_FALSE(c2 == c3);
+}
+
+// Test the inequality operator on two Cuboid objects.
+TEST(CuboidTests, Inequality) {
+    ParticleContainer pc;
+    Cuboid c1{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+    Cuboid c2{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
+    Cuboid c3{pc, {4., 5., 6.}, {7, 8, 9}, {10., 11., 12.}, 2., 2.};
+    EXPECT_FALSE(c1 != c2);
+    EXPECT_TRUE(c1 != c3);
+    EXPECT_TRUE(c2 != c3);
 }

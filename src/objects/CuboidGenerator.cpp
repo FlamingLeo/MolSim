@@ -9,14 +9,9 @@
 #include <vector>
 
 CuboidGenerator::CuboidGenerator(const std::string &filename, ParticleContainer &particles)
-    : m_filename{filename}, particles{particles} {};
+    : m_filename{filename}, m_particles{particles} {};
 
-std::vector<Cuboid> CuboidGenerator::generateCuboids() {
-    // read arguments from file
-    // create cuboid and call initializeParticles()
-    // add cuboid to cuboids vec
-    std::vector<Cuboid> cuboids;
+void CuboidGenerator::generateCuboids() {
     FileReader f(m_filename);
-    f.readFile(cuboids, particles);
-    return cuboids;
+    f.readCuboids(m_particles);
 }

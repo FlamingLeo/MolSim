@@ -1,12 +1,6 @@
 //
 // Created by marag on 11/5/2024.
 //
-
-#ifndef PSEMOLDYN_GROUPC_LENNARDJONES_H
-#define PSEMOLDYN_GROUPC_LENNARDJONES_H
-
-#endif // PSEMOLDYN_GROUPC_LENNARDJONES_H
-
 #pragma once
 #include "../objects/CuboidGenerator.h"
 #include "Simulation.h"
@@ -16,20 +10,21 @@
 
 class LennardJones : public Simulation {
   private:
-    ParticleContainer particles;
-
-    CuboidGenerator generator;
+    ParticleContainer m_particles;
+    CuboidGenerator m_generator;
+    int m_epsilon;        // default: 5
+    int m_sigma;          // default: 1
+    double m_currentTime; // default: 0
+    double m_endTime;     // default: 5
+    double m_delta_t;     // default: 0.0002
+    int m_itFreq;
+    WriterType m_type;
 
   public:
     LennardJones(const std::string &filename, const Arguments &args);
-
     ~LennardJones();
-
     void runSimulation() override;
-
-    void LJ_Force();
-
+    void LJForce();
     void calculateX();
-
     void calculateV();
 };

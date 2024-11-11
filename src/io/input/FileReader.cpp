@@ -9,6 +9,20 @@
 #include <sstream>
 #include <string>
 
+/// @brief Calls getline(...) and checks for errors.
+/// @param infile A reference to the input file stream.
+/// @param str The buffer to store the file data into.
+static void safeGetline(std::ifstream &infile, std::string &str) {
+    std::getline(infile, str);
+    if (infile.eof()) {
+        CLIUtils::error("Malformed input file! Unexpectedly reached EOF.");
+    }
+    if (infile.fail()) {
+        CLIUtils::error("Malformed input file! Data cannot be interpreted as text.");
+    }
+}
+
+/* documented functions start here */
 FileReader::FileReader() = default;
 
 FileReader::FileReader(const std::string &filename) { openFile(filename); }
@@ -32,7 +46,7 @@ void FileReader::openFile(const std::string &filename) {
     SPDLOG_DEBUG("Opened file {} for reading.", filename);
 }
 
-void FileReader::readFile(ParticleContainer *particles) {
+void FileReader::readParticles(ParticleContainer *particles) {
     // check if file is open and particles is not null
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!", "", false);
@@ -45,29 +59,29 @@ void FileReader::readFile(ParticleContainer *particles) {
     std::array<double, 3> x;
     std::array<double, 3> v;
     double m;
-    int num_particles = 0;
-    std::string tmp_string;
+    int numParticles = 0;
+    std::string tmpString;
 
-    getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read line: {}", tmp_string);
+    safeGetline(m_infile, tmpString);
+    SPDLOG_DEBUG("Read line: {}", tmpString);
 
-    while (tmp_string.empty() || tmp_string[0] == '#') {
-        getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read line: {}", tmp_string);
+    while (tmpString.empty() || tmpString[0] == '#') {
+        safeGetline(m_infile, tmpString);
+        SPDLOG_DEBUG("Read line: {}", tmpString);
     }
 
-    std::istringstream numstream(tmp_string);
-    numstream >> num_particles;
-    SPDLOG_DEBUG("Reading {} Particle objects.", tmp_string);
-    getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read Particle data: {}", tmp_string);
+    std::istringstream numstream(tmpString);
+    numstream >> numParticles;
+    SPDLOG_DEBUG("Reading {} Particle objects.", tmpString);
+    std::getline(m_infile, tmpString);
+    SPDLOG_DEBUG("Read Particle data: {}", tmpString);
 
     // reserve space for particles to avoid expensive copying
-    particles->reserve(num_particles);
+    particles->reserve(numParticles);
 
     // populate particle container
-    for (int i = 0; i < num_particles; i++) {
-        std::istringstream datastream(tmp_string);
+    for (size_t i = 0; i < numParticles; i++) {
+        std::istringstream datastream(tmpString);
 
         for (auto &xj : x)
             datastream >> xj;
@@ -78,63 +92,82 @@ void FileReader::readFile(ParticleContainer *particles) {
         datastream >> m;
         particles->addParticle(x, v, m);
 
-        getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read {}Particle data{}", tmp_string.empty() ? "no more " : "",
-                     tmp_string.empty() ? "." : ": " + tmp_string);
+        std::getline(m_infile, tmpString);
+        SPDLOG_DEBUG("Read {}Particle data{}", tmpString.empty() ? "no more " : "",
+                     tmpString.empty() ? "." : ": " + tmpString);
     }
 
     SPDLOG_TRACE("Finalized ParticleContainer - {}", particles->toString());
 }
 
-void FileReader::readFile(std::vector<Cuboid> &cuboids, ParticleContainer &particles) {
-    // parse file content into cuboid container
-    std::array<double, 3> x;
-    std::array<double, 3> v;
-    std::array<int, 3> N;
-    double h;
-    double m;
-    int num_particles = 0;
-    std::string tmp_string;
+void FileReader::readCuboids(ParticleContainer &particles) {
+    // check if file is open and particles is not null
+    if (!m_infile.is_open())
+        CLIUtils::error("No file opened for reading!", "", false);
 
-    getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read line: {}", tmp_string);
+    // parse file content into particle container
+    struct CuboidData {
+        std::array<double, 3> x;
+        std::array<double, 3> v;
+        std::array<int, 3> N;
+        double h;
+        double m;
+    } c;
 
-    while (tmp_string.empty() || tmp_string[0] == '#') {
-        getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read line: {}", tmp_string);
+    // we use a vector to tally up the total size for reservation
+    // we also use a struct to avoid having to use 5 separate vectors...
+    std::vector<CuboidData> cs;
+
+    int numParticles = 0;
+    size_t particlesSize = particles.size();
+    std::string tmpString;
+
+    safeGetline(m_infile, tmpString);
+    SPDLOG_DEBUG("Read line: {}", tmpString);
+
+    while (tmpString.empty() || tmpString[0] == '#') {
+        safeGetline(m_infile, tmpString);
+        SPDLOG_DEBUG("Read line: {}", tmpString);
     }
 
-    std::istringstream numstream(tmp_string);
-    numstream >> num_particles;
-    SPDLOG_DEBUG("Reading {} Cuboid objects.", tmp_string);
-    getline(m_infile, tmp_string);
-    SPDLOG_DEBUG("Read Cuboid data: {}", tmp_string);
-
-    // reserve space for cuboids to avoid expensive copying
-    cuboids.reserve(num_particles);
+    std::istringstream numstream(tmpString);
+    numstream >> numParticles;
+    SPDLOG_DEBUG("Reading {} Cuboid objects.", tmpString);
+    std::getline(m_infile, tmpString);
+    SPDLOG_DEBUG("Read Cuboid data: {}", tmpString);
 
     // populate cuboid container
-    for (int i = 0; i < num_particles; i++) {
-        std::istringstream datastream(tmp_string);
+    for (size_t i = 0; i < numParticles; i++) {
+        std::istringstream datastream(tmpString);
 
-        for (auto &xj : x)
+        for (auto &xj : c.x)
             datastream >> xj;
-        for (auto &vj : v)
+        for (auto &vj : c.v)
             datastream >> vj;
-        for (auto &Nj : N)
+        for (auto &Nj : c.N)
             datastream >> Nj;
         if (datastream.eof())
             CLIUtils::error("EOF reached unexpectedly reading from line", std::to_string(i), false);
-        datastream >> h;
-        datastream >> m;
+        datastream >> c.h;
+        datastream >> c.m;
 
-        particles.reserve(particles.size() + N[0] * N[1] * N[2]);
-        Cuboid c{particles, x, N, v, h, m};
-        c.initializeParticles();
-        cuboids.push_back(c);
+        SPDLOG_TRACE("Read object data - x : {}, v : {}, N : {}, h : {}, m : {}.", StringUtils::fromArray(c.x),
+                     StringUtils::fromArray(c.v), StringUtils::fromArray(c.N), c.h, c.m);
 
-        getline(m_infile, tmp_string);
-        SPDLOG_DEBUG("Read {}Cuboid data{}", tmp_string.empty() ? "no more " : "",
-                     tmp_string.empty() ? "." : ": " + tmp_string);
+        cs.push_back(c);
+        particlesSize += c.N[0] * c.N[1] * c.N[2];
+
+        std::getline(m_infile, tmpString);
+        SPDLOG_DEBUG("Read {}Cuboid data{}", tmpString.empty() ? "no more " : "",
+                     tmpString.empty() ? "." : ": " + tmpString);
+    }
+
+    // reserve enough space for _all_ particles
+    particles.reserve(particlesSize);
+
+    // initialize cuboid particles
+    for (size_t i = 0; i < cs.size(); ++i) {
+        Cuboid C{particles, cs[i].x, cs[i].N, cs[i].v, cs[i].h, cs[i].m};
+        C.initializeParticles();
     }
 }

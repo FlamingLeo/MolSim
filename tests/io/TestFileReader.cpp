@@ -49,11 +49,18 @@ TEST_F(FileReaderTests, OpenFileInvalid) {
     EXPECT_DEATH({ FileReader f("/dev/null/foo"); }, ""); // non-existent file
 }
 
+// Test reading Particle data from an empty file.
+TEST_F(FileReaderTests, ReadParticleDataEmpty) {
+    ParticleContainer pc;
+    FileReader fr(targetPath + "/testEmpty.txt");
+    EXPECT_DEATH({ fr.readParticles(&pc); }, "");
+}
+
 // Test reading Particle data into a ParticleContainer.
-TEST_F(FileReaderTests, ReadParticleData) {
+TEST_F(FileReaderTests, ReadParticleDataNonEmpty) {
     ParticleContainer pc;
     FileReader fr(targetPath + "/testParticleInput.txt");
-    fr.readFile(&pc);
+    fr.readParticles(&pc);
 
     ASSERT_EQ(pc.size(), 2);
 
@@ -84,33 +91,35 @@ TEST_F(FileReaderTests, ReadParticleData) {
     EXPECT_EQ(pc[1].getType(), type);
 }
 
-// Test reading Cuboid data into a cuboid vector.
-TEST_F(FileReaderTests, ReadCuboidData) {
+// Test reading Cuboid data from an empty file.
+TEST_F(FileReaderTests, ReadCuboidDataEmpty) {
     ParticleContainer pc;
-    std::vector<Cuboid> c;
+    FileReader fr(targetPath + "/testEmpty.txt");
+    EXPECT_DEATH({ fr.readCuboids(pc); }, "");
+}
+
+// Test reading Cuboid data into a ParticleContainer.
+TEST_F(FileReaderTests, ReadCuboidDataNonEmpty) {
+    ParticleContainer pc;
     FileReader fr(targetPath + "/testCuboidInput.txt");
-    fr.readFile(c, pc);
+    fr.readCuboids(pc);
 
-    ASSERT_EQ(c.size(), 2);
+    ASSERT_EQ(pc.size(), 6);
 
-    // velocity checked separately due to initialization
-    constexpr std::array x1 = {0.0, 0.0, 0.0};
-    constexpr std::array N1 = {40, 8, 1};
-    constexpr double h1 = 1.1225;
-    constexpr double m1 = 1.0;
+    constexpr std::array x0 = {0., 0., 0., 0., 0., 0.};
+    constexpr std::array x1 = {0., 1.1225, 0., 1.1225, 0., 1.1225};
+    constexpr std::array x2 = {0., 0., 1.1225, 1.1225, 2.245, 2.245};
+    constexpr std::array f = {0., 0., 0.};
+    constexpr std::array oldF = {0., 0., 0.};
+    constexpr double m = 1.0;
+    constexpr double eps = 0.00001;
 
-    EXPECT_EQ(c[0].getPosition(), x1);
-    EXPECT_EQ(c[0].getSize(), N1);
-    EXPECT_EQ(c[0].getH(), h1);
-    EXPECT_EQ(c[0].getM(), m1);
-
-    constexpr std::array x2 = {0.0, 1.0, 0.0};
-    constexpr std::array N2 = {41, 8, 1};
-    constexpr double h2 = 1.1425;
-    constexpr double m2 = 2.0;
-
-    EXPECT_EQ(c[1].getPosition(), x2);
-    EXPECT_EQ(c[1].getSize(), N2);
-    EXPECT_EQ(c[1].getH(), h2);
-    EXPECT_EQ(c[1].getM(), m2);
+    for (size_t i = 0; i < 6; ++i) {
+        EXPECT_NEAR(pc[i].getX()[0], x0[i], eps);
+        EXPECT_NEAR(pc[i].getX()[1], x1[i], eps);
+        EXPECT_NEAR(pc[i].getX()[2], x2[i], eps);
+        EXPECT_EQ(pc[i].getF(), f);
+        EXPECT_EQ(pc[i].getOldF(), oldF);
+        EXPECT_EQ(pc[i].getM(), m);
+    }
 }

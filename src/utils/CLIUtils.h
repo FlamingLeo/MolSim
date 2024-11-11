@@ -50,6 +50,7 @@ static inline void printHelp() {
                  "  - nil      : Logs to stdout. Used for debugging purposes.\n"
                  "-t <type>  : Sets the desired simulation to be performed (default: Verlet).\n"
                  "  - verlet : Simulates Verlet integration.\n"
+                 "  - lj     : Simulates Lennard-Jones potential.\n"
                  "-h           : Prints out a help message. Doesn't perform any simulation.\n\n"
               << BOLD_ON << "NOTES" << BOLD_OFF
               << ":\n"

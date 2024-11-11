@@ -28,7 +28,7 @@ Verlet::Verlet(const Arguments &args)
 Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); }
 
 void Verlet::runSimulation() {
-    SPDLOG_DEBUG("Running Verlet simulation (entered function)...");
+    SPDLOG_TRACE("Running Verlet simulation (entered function)...");
 
     if (m_particles.isEmpty())
         CLIUtils::error("Cannot run simulation without particles!", "", false);

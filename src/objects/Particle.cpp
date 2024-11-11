@@ -25,7 +25,7 @@ Particle::Particle(const std::array<double, 3> &x_arg, const std::array<double, 
 }
 
 Particle::~Particle() {
-    SPDLOG_TRACE("Destructed Particle - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
+    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}", StringUtils::fromArray(x),
                  StringUtils::fromArray(v), StringUtils::fromArray(f), m);
 }
 
