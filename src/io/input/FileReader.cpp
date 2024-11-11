@@ -8,6 +8,7 @@
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
+#include <vector>
 
 /// @brief Calls getline(...) and checks for errors.
 /// @param infile A reference to the input file stream.

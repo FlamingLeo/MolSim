@@ -1,6 +1,11 @@
-//
-// Created by marag on 11/5/2024.
-//
+/**
+ * @file CuboidGenerator.h
+ * @brief Generator class for creating and initializing Cuboid objects.
+ * @date 2024-11-05
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #pragma once
 
 #include "Cuboid.h"

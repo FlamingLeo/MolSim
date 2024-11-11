@@ -81,7 +81,7 @@ template <typename T> struct is_container {
  * @brief Generates a string representation of a container which fulfills the Container
  * requirement (provide cbegin and cend).
  * @tparam Container Type of Container.
- * @param container.
+ * @param container The container to create the string representation from.
  * @param delimiter String that is put between items.
  * @param surround Strings to be put before and after the listing (e.g.
  * brackets).

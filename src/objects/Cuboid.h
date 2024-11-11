@@ -1,42 +1,48 @@
-//
-// Created by marag on 11/5/2024.
-//
+/**
+ * @file Cuboid.h
+ * @brief Class storing metadata for a 2D / 3D Particle cuboid.
+ * @date 2024-11-05
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #pragma once
 
 #include "ParticleContainer.h"
 #include <array>
 #include <string>
 
-/// @brief Cuboid class storing meta-data about the given cuboids
+/// @brief Cuboid class storing meta-data about the given cuboids.
 class Cuboid {
   private:
-    /// @brief Lower-left corner \f$ position \f$ of the cuboid
+    /// @brief Lower-left corner \f$ position \f$ of the cuboid.
     std::array<double, 3> position;
 
-    /// @brief Dimensions in 3D \f$ size \f$ of the cuboid
+    /// @brief Dimensions in 3D \f$ size \f$ of the cuboid.
     std::array<int, 3> size;
 
-    /// @brief Distance \f$ h \f$ between the particles in the cuboid
+    /// @brief Distance \f$ h \f$ between the particles in the cuboid.
     double h;
 
-    /// @brief Mass \f$ m \f$ of the particles in the cuboid
+    /// @brief Mass \f$ m \f$ of the particles in the cuboid.
     double m;
 
-    /// @brief Starting velocity \f$ v \f$ of the particles in the cuboid (before added Maxwell-Boltzmann perturbations)
+    /// @brief Starting velocity \f$ v \f$ of the particles in the cuboid (before added Maxwell-Boltzmann
+    /// perturbations).
     std::array<double, 3> v;
 
-    /// @brief Mean velocity \f$ mean_velocity \f$ for the Maxwell-Boltzmann distribution
+    /// @brief Mean velocity \f$ mean_velocity \f$ for the Maxwell-Boltzmann distribution.
     double mean_velocity;
 
     /// @brief Reference \f$ particles \f$ to ParticleContainer object from Lennard-Jones Simulation
-    /// (passed by ParticleGenerator)
+    /// (passed by ParticleGenerator).
     ParticleContainer &particles;
 
   public:
     /**
-     * @brief Constructs a new Cuboid object with all the needed meta-data
+     * @brief Constructs a new Cuboid object with all the needed meta-data.
      *
-     * @param particle A reference to the central ParticleContainer \f$ particles \f$ from Lennard-Jones
+     * @param particles A reference to the central ParticleContainer \f$ particles \f$ from Lennard-Jones
      * @param position A reference to the array containing data for the cuboid position \f$ position \f$
      * @param size A reference to the array containing data for the dimensions \f$ size \f$ of the cuboid
      * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the cuboid
@@ -64,28 +70,28 @@ class Cuboid {
     /**
      * @brief Gets the distance \f$ h \f$ between the particles of this cuboid.
      *
-     * @return The distance between the particles of the cuboid
+     * @return The distance between the particles of the cuboid.
      */
     double getH();
 
     /**
      * @brief Gets the mass \f$ m \f$ of the particles of this cuboid.
      *
-     * @return The mass of the particles of the cuboid
+     * @return The mass of the particles of the cuboid.
      */
     double getM();
 
     /**
      * @brief Gets the starting velocity \f$ v \f$ of the particles of this cuboid.
      *
-     * @return A reference of the velocity array of the cuboid
+     * @return A reference of the velocity array of the cuboid.
      */
     std::array<double, 3> &getV();
 
     /**
      * @brief Gets the mean velocity \f$ mean_velocity \f$ for the Maxwell-Boltzmann distribution.
      *
-     * @return The mean velocity field of the cuboid
+     * @return The mean velocity field of the cuboid.
      */
     double getMeanVelocity();
 
@@ -116,7 +122,7 @@ class Cuboid {
     bool operator!=(const Cuboid &other) const;
 
     /// @brief Main function of Cuboid class, initializes the particles based on the cuboid meta-data
-    /// and adds them to the given ParticleContainer
+    /// and adds them to the given ParticleContainer.
     void initializeParticles();
 
     /**

@@ -229,7 +229,7 @@ static inline std::string fromWriterType(WriterType writerType) { return writerS
 /**
  * @brief Converts a SimulationType to a string.
  *
- * @param writerType An instance of the SimulationType enum to be converted.
+ * @param simulationType An instance of the SimulationType enum to be converted.
  * @return The resulting string.
  */
 static inline std::string fromSimulationType(SimulationType simulationType) {
