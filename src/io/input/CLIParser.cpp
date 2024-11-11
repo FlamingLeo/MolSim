@@ -69,6 +69,14 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.argsSet.set(2);
             SPDLOG_DEBUG("Set timestep to {}.", args.delta_t);
             break;
+        case 'E': /* epsilon */
+            args.epsilon = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set epsilon to {}.", args.epsilon);
+            break;
+        case 'S': /* sigma */
+            args.sigma = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set sigma to {}.", args.sigma);
+            break;
         case 'f': /* output frequency */
             args.itFreq = StringUtils::toInt(optarg);
             SPDLOG_DEBUG("Set output frequency to {}.", args.itFreq);
@@ -85,21 +93,16 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
         case '?': /* invalid syntax */
+        {
             SPDLOG_TRACE("[getopt] Found invalid or incomplete option: {}.", StringUtils::fromChar(optopt));
-            if (optopt == 's')
-                CLIUtils::error("Start time not specified!");
-            else if (optopt == 'e')
-                CLIUtils::error("End time not specified!");
-            else if (optopt == 'd')
-                CLIUtils::error("Timestep not specified!");
-            else if (optopt == 'f')
-                CLIUtils::error("Output frequency not specified!");
-            else if (optopt == 'o')
-                CLIUtils::error("Output type not specified!");
-            else if (optopt == 't')
-                CLIUtils::error("Simulation type not specified!");
-            else
+            auto it = CLIUtils::optionNames.find(optopt);
+            if (it != CLIUtils::optionNames.end()) {
+                std::string err = it->second + " not specified!";
+                CLIUtils::error(err.c_str());
+            } else {
                 CLIUtils::error("Unknown option found", StringUtils::fromChar(optopt));
+            }
+        }
         default: /* shouldn't happen... */
             CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }

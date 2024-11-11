@@ -48,6 +48,9 @@ void LennardJones::initializeSimulation(int type) {
 void LennardJones::runSimulation() {
     SPDLOG_TRACE("Running LJ simulation (entered function)...");
 
+    // verify that we have something to work with (compiled out on release builds)
+    assert(!(m_particles.isEmpty()) && "Cannot run simulation without particles!");
+
     double currentTime = m_startTime;
     int iteration = 0;
 

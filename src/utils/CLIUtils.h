@@ -13,7 +13,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <string_view>
-#define OPTSTRING "s:e:d:f:o:t:h"
+#define OPTSTRING "s:e:d:f:o:t:E:S:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 
@@ -23,6 +23,13 @@ namespace CLIUtils {
  * @brief The filename of the executable (default: "./MolSim").
  */
 static inline std::string_view filename{"./MolSim"};
+
+/**
+ * @brief Mapping from getopt option characters to their full names.
+ */
+static inline std::unordered_map<char, std::string> optionNames = {
+    {'s', "Start time"},  {'e', "End time"},        {'d', "Timestep"}, {'f', "Output frequency"},
+    {'o', "Output type"}, {'t', "Simulation type"}, {'E', "Epsilon"},  {'S', "Sigma"}};
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.

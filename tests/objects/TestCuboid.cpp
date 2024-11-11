@@ -2,9 +2,18 @@
 #include "objects/ParticleContainer.h"
 #include <gtest/gtest.h>
 
+// Test initializing an empty cuboid.
+TEST(CuboidTests, InitializeCuboidParticlesEmpty) {
+    ParticleContainer pc;
+    Cuboid c{pc, {0., 0., 0.}, {0, 0, 0}, {0., 0., 0.}, 0., 0.};
+    c.initializeParticles();
+
+    ASSERT_EQ(c.getParticles().size(), 0);
+}
+
 // Test initializing the cuboid particles (i.e. if the positions are correct, if the force effective is 0 and if the
 // masses of all the particles are the same).
-TEST(CuboidTests, InitializeCuboidParticles) {
+TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
     ParticleContainer pc;
     Cuboid c{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
     c.initializeParticles();

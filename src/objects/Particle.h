@@ -36,8 +36,14 @@ class Particle {
     int type;
 
   public:
-    /// @brief Construct a new Particle object by passing its type. Prevents implicit conversions.
-    /// @param type The type of the Particle object to be constructed.
+    /**
+     * @brief Construct a new Particle object by optionally passing its type. Prevents implicit conversions.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
+     *
+     * @param type The type of the Particle object to be constructed.
+     */
     explicit Particle(int type = 0);
 
     /**
@@ -49,6 +55,9 @@ class Particle {
 
     /**
      * @brief Construct a new Particle object using explicit values for each data field.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
      *
      * @param x_arg A reference to the array containing data for the position \f$ x \f$.
      * @param v_arg A reference to the array containing data for the velocity \f$ v \f$.
@@ -135,6 +144,23 @@ class Particle {
 
     /// @brief Resets the force of the particle \f$ F \f$ to 0,0,0.
     void setFToZero();
+
+    /**
+     * @brief Sets the new mass \f$ m \f$ of the particle to a given value.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
+     *
+     * @param new_m The new mass of this particle.
+     */
+    void setM(double new_m);
+
+    /**
+     * @brief Sets the new type of the particle to a given value.
+     *
+     * @param new_type The new type of this particle.
+     */
+    void setType(double new_type);
 
     /**
      * @brief Returns a string representation of this particle.

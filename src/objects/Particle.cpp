@@ -1,13 +1,17 @@
 #include "Particle.h"
 #include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
+#define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
 Particle::Particle(int type_arg)
-    : x{0., 0., 0.}, v{0., 0., 0.}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{0.}, type{type_arg} {
+    : x{0., 0., 0.}, v{0., 0., 0.}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{1.}, type{type_arg} {
     SPDLOG_TRACE("Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
                  ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
+    if (m <= 0)
+        CLIUtils::error(MASS_ERROR);
 }
 
 Particle::Particle(const Particle &other)
@@ -20,6 +24,8 @@ Particle::Particle(const std::array<double, 3> &x_arg, const std::array<double, 
     : x{x_arg}, v{v_arg}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{m_arg}, type{type_arg} {
     SPDLOG_TRACE("Generated Particle (arguments) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
                  ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
+    if (m <= 0)
+        CLIUtils::error(MASS_ERROR);
 }
 
 Particle::~Particle() {
@@ -39,6 +45,12 @@ void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }
 void Particle::setF(const std::array<double, 3> &g) { f = g; }
 void Particle::setOldF(const std::array<double, 3> &g) { old_f = g; }
 void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
+void Particle::setM(double new_m) {
+    if (new_m <= 0)
+        CLIUtils::error(MASS_ERROR, "", false);
+    m = new_m;
+}
+void Particle::setType(double new_type) { type = new_type; }
 
 std::string Particle::toString() const {
     std::stringstream stream;

@@ -4,13 +4,14 @@
 #include "Cuboid.h"
 #include "ParticleContainer.h"
 #include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
 
-Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
+Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<size_t, 3> &size,
                const std::array<double, 3> &v, double h, double m)
     : position{position}, size{size}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
     SPDLOG_TRACE("Generated Cuboid (simple constructor) - position: {}, size: {}, h: {}, m: {}, v: {}, mean_v: {}",
@@ -34,7 +35,7 @@ void Cuboid::initializeParticles() {
 }
 
 std::array<double, 3> &Cuboid::getPosition() { return position; }
-std::array<int, 3> &Cuboid::getSize() { return size; }
+std::array<size_t, 3> &Cuboid::getSize() { return size; }
 double Cuboid::getH() { return h; }
 double Cuboid::getM() { return m; }
 std::array<double, 3> &Cuboid::getV() { return v; }

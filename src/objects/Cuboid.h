@@ -19,7 +19,7 @@ class Cuboid {
     std::array<double, 3> position;
 
     /// @brief Dimensions in 3D \f$ N \f$ of the cuboid.
-    std::array<int, 3> size;
+    std::array<size_t, 3> size;
 
     /// @brief Distance \f$ h \f$ between the particles in the cuboid.
     double h;
@@ -49,7 +49,7 @@ class Cuboid {
      * @param h The distance \f$ h \f$ between the particles in the cuboid
      * @param m The mass \f$ m \f$ of the particles in the cuboid
      */
-    Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<int, 3> &size,
+    Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<size_t, 3> &size,
            const std::array<double, 3> &v, double h, double m);
 
     /* getters */
@@ -65,7 +65,7 @@ class Cuboid {
      *
      * @return A reference to the dimensions array of this cuboid.
      */
-    std::array<int, 3> &getSize();
+    std::array<size_t, 3> &getSize();
 
     /**
      * @brief Gets the distance \f$ h \f$ between the particles of this cuboid.

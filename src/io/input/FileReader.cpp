@@ -60,7 +60,7 @@ void FileReader::readParticles(ParticleContainer *particles) {
     std::array<double, 3> x;
     std::array<double, 3> v;
     double m;
-    int numParticles = 0;
+    size_t numParticles = 0;
     std::string tmpString;
 
     safeGetline(m_infile, tmpString);
@@ -110,7 +110,7 @@ void FileReader::readCuboids(ParticleContainer &particles) {
     struct CuboidData {
         std::array<double, 3> x;
         std::array<double, 3> v;
-        std::array<int, 3> N;
+        std::array<size_t, 3> N;
         double h;
         double m;
     } c;
@@ -119,7 +119,7 @@ void FileReader::readCuboids(ParticleContainer &particles) {
     // we also use a struct to avoid having to use 5 separate vectors...
     std::vector<CuboidData> cs;
 
-    int numParticles = 0;
+    size_t numParticles = 0;
     size_t particlesSize = particles.size();
     std::string tmpString;
 
