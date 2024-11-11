@@ -12,20 +12,20 @@ help() {
 \033[1mUSAGE\033[0m: $0 [options]
 
 \033[1mOPTIONS\033[0m:
--b : Sets the type of the compiled binary (default: Release).
+-b <arg> : Sets the type of the compiled binary (default: Release).
   - Debug          : No optimizations, debug information.
   - Release        : High optimization levels, no debug information.
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
--c : Enables benchmarking (default: benchmarking disabled).
--d : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
--h : Prints out a help message. Doesn't build the program.
--j : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
--l : Disables automatically installing missing libraries (default: installs automatically)
--m : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
--s : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
-     If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
--t : Automatically runs tests after successful compilation (default: off).
+-c       : Enables benchmarking (default: benchmarking disabled).
+-d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-h       : Prints out a help message. Doesn't build the program.
+-j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
+-l       : Disables automatically installing missing libraries (default: installs automatically)
+-m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
+           If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
+-t       : Automatically runs tests after successful compilation (default: off).
 
 \033[1mNOTES\033[0m:
 On Debian-based systems, the script will automatically attempt to install missing libraries (unless -l is set) to speed up the compilation process.

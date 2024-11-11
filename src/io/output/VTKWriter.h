@@ -26,6 +26,15 @@ class VTKWriter : public FileWriter {
     std::string m_dirname = "vtk";
 
     /**
+     * @brief (Re)initializes the output directory.
+     *
+     * First, the function checks if the output directory exists. If it doesn't, it creates it. Otherwise, it deletes
+     * everything inside it.
+     *
+     */
+    void initializeFolder();
+
+    /**
      * @brief Initializes m_vtkFile with necessary metadata for writing purposes. Terminates program execution on error.
      *
      * @param numParticles The total number of particles.

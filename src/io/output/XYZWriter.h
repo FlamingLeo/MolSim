@@ -46,6 +46,15 @@ class XYZWriter : public FileWriter {
     virtual ~XYZWriter();
 
     /**
+     * @brief (Re)initializes the output directory.
+     *
+     * First, the function checks if the output directory exists. If it doesn't, it creates it. Otherwise, it deletes
+     * everything inside it.
+     *
+     */
+    void initializeFolder();
+
+    /**
      * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a XYZ file. Terminates
      * program execution on error.
      *
