@@ -23,7 +23,7 @@ The code has been developed using the following software on separate machines:
 
 Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
 
-### Dependencies 
+### Dependencies
 
 This project uses the following external C++ libraries:
 
@@ -133,6 +133,13 @@ sudo cpupower frequency-set --governor performance # disable CPU scaling
 # run benchmarks...
 sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 ```
+
+## Input Files
+
+Currently, the following input files are included in the repository, inside the `input` directory:
+
+-   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
+-   `input-verlet.txt`: Simulation of Halley's Comet. For use with Verlet integration simulations (`-t verlet`).
 
 ## Documentation
 
