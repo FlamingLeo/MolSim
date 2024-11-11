@@ -2,6 +2,4 @@
 #include <gtest/gtest.h>
 
 // Test calculating the forces between particles.
-TEST(ForceTests, UpdateForceVerlet) {
-    SUCCEED();
-}
+TEST(ForceTests, UpdateForceVerlet) { SUCCEED(); }

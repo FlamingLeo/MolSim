@@ -27,5 +27,5 @@ class SimulationFactory {
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
     static std::unique_ptr<Simulation> createSimulation(SimulationType type, const std::string &filename,
-                                                 const Arguments &args);
+                                                        const Arguments &args);
 };
