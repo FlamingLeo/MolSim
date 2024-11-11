@@ -27,9 +27,8 @@ void Cuboid::initializeParticles() {
         for (int j = 0; j < size[1]; j++) {
             for (int k = 0; k < size[0]; k++) {
                 xyz = {position[0] + k * h, position[1] + j * h, position[2] + i * h};
-                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 3),
+                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2),
                                                   std::plus<>());
-                v[2] = 0;
                 particles.addParticle(xyz, v, m);
             }
         }

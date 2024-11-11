@@ -84,6 +84,5 @@ void LennardJones::calculateV() {
     for (auto &p : m_particles) {
         p.setV(p.getV() + ArrayUtils::elementWiseScalarOp(m_delta_t / (2 * p.getM()), p.getOldF() + p.getF(),
                                                           std::multiplies<>()));
-        p.setV({p.getV()[0], p.getV()[1], 0});
     }
 }
