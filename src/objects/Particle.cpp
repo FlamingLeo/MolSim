@@ -4,9 +4,8 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-Particle::Particle(int type_arg) : type{type_arg} {
-    f = {0., 0., 0.};
-    old_f = {0., 0., 0.};
+Particle::Particle(int type_arg)
+    : x{0., 0., 0.}, v{0., 0., 0.}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{0.}, type{type_arg} {
     SPDLOG_TRACE("Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}", ArrayUtils::to_string(x),
                  ArrayUtils::to_string(v), ArrayUtils::to_string(f), m);
 }

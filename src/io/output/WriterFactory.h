@@ -25,5 +25,5 @@ class WriterFactory {
      * @param type The specified WriterType of the writer object to be instantiated.
      * @return A std::unique_ptr<FileWriter> instance matching the desired type.
      */
-    std::unique_ptr<FileWriter> createWriter(WriterType type);
+    static std::unique_ptr<FileWriter> createWriter(WriterType type);
 };

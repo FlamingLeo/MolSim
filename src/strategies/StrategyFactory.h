@@ -1,5 +1,5 @@
 /**
- * @file StrategyChooser.h
+ * @file StrategyFactory.h
  * @brief Factory class for choosing the appropriate functions based on the Simulation.
  * @date 2024-11-11
  *
@@ -30,5 +30,5 @@ class StrategyFactory {
      * @param modifier A modifier for which combination of functions get returned (i.e. optimized, non-optimized).
      * @return A 3-tuple of the physics functions corresponding to the chosen simulation.
      */
-    std::tuple<VFunc, XFunc, FFunc> getSimulationFunctions(SimulationType type, int modifier);
+    static std::tuple<VFunc, XFunc, FFunc> getSimulationFunctions(SimulationType type, int modifier);
 };

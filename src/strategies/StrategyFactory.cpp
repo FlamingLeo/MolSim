@@ -25,8 +25,9 @@ StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
         0 - calculate force using newton's third law
         1 - calculate force using naive approach
         */
-        SPDLOG_DEBUG("Chose physics calculations for LJ simulation.");
-        return std::make_tuple(calculateV, calculateX, calculateF_LennardJones);
+        SPDLOG_DEBUG("Chose physics calculations for LJ simulation with force calculation: {}",
+                     modifier ? "Naive" : "Newton's Third Law");
+        return std::make_tuple(calculateV, calculateX, modifier ? calculateF_LennardJones : calculateF_LennardJonesThirdLaw);
     default:
         CLIUtils::error("Invalid simulation type!");
     }

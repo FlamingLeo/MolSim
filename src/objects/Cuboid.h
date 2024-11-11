@@ -15,10 +15,10 @@
 /// @brief Cuboid class storing meta-data about the given cuboids.
 class Cuboid {
   private:
-    /// @brief Lower-left corner \f$ position \f$ of the cuboid.
+    /// @brief Lower-left corner \f$ x \f$ of the cuboid.
     std::array<double, 3> position;
 
-    /// @brief Dimensions in 3D \f$ size \f$ of the cuboid.
+    /// @brief Dimensions in 3D \f$ N \f$ of the cuboid.
     std::array<int, 3> size;
 
     /// @brief Distance \f$ h \f$ between the particles in the cuboid.
@@ -31,10 +31,10 @@ class Cuboid {
     /// perturbations).
     std::array<double, 3> v;
 
-    /// @brief Mean velocity \f$ mean_velocity \f$ for the Maxwell-Boltzmann distribution.
+    /// @brief Mean velocity for the Maxwell-Boltzmann distribution.
     double mean_velocity;
 
-    /// @brief Reference \f$ particles \f$ to ParticleContainer object from Lennard-Jones Simulation
+    /// @brief Reference to the ParticleContainer object from Lennard-Jones Simulation
     /// (passed by ParticleGenerator).
     ParticleContainer &particles;
 
@@ -42,9 +42,9 @@ class Cuboid {
     /**
      * @brief Constructs a new Cuboid object with all the needed meta-data.
      *
-     * @param particles A reference to the central ParticleContainer \f$ particles \f$ from Lennard-Jones
-     * @param position A reference to the array containing data for the cuboid position \f$ position \f$
-     * @param size A reference to the array containing data for the dimensions \f$ size \f$ of the cuboid
+     * @param particles A reference to the central ParticleContainer from Lennard-Jones
+     * @param position A reference to the array containing data for the cuboid position \f$ x \f$
+     * @param size A reference to the array containing data for the dimensions \f$ N \f$ of the cuboid
      * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the cuboid
      * @param h The distance \f$ h \f$ between the particles in the cuboid
      * @param m The mass \f$ m \f$ of the particles in the cuboid
@@ -54,14 +54,14 @@ class Cuboid {
 
     /* getters */
     /**
-     * @brief Gets the position \f$ position \f$ of this cuboid.
+     * @brief Gets the position \f$ x \f$ of this cuboid.
      *
      * @return A reference to the position array of this cuboid.
      */
     std::array<double, 3> &getPosition();
 
     /**
-     * @brief Gets the dimensions \f$ size \f$ of this cuboid.
+     * @brief Gets the dimensions \f$ N \f$ of this cuboid.
      *
      * @return A reference to the dimensions array of this cuboid.
      */
@@ -89,14 +89,14 @@ class Cuboid {
     std::array<double, 3> &getV();
 
     /**
-     * @brief Gets the mean velocity \f$ mean_velocity \f$ for the Maxwell-Boltzmann distribution.
+     * @brief Gets the mean velocity for the Maxwell-Boltzmann distribution.
      *
      * @return The mean velocity field of the cuboid.
      */
     double getMeanVelocity();
 
     /**
-     * @brief Gets the reference to the central ParticleContainer \f$ particles \f$.
+     * @brief Gets the reference to the central ParticleContainer.
      *
      * @return The reference for the ParticleContainer stored in this container.
      */

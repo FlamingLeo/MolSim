@@ -13,24 +13,24 @@
 #include <string>
 #include <vector>
 
-/// @brief CuboidGenerator class handling the initialization of all Cuboids
+/// @brief CuboidGenerator class handling the initialization of all Cuboids.
 class CuboidGenerator {
   private:
-    /// @brief Filename \f$ m_filename \f$ of the input file
+    /// @brief Filename of the input file.
     std::string m_filename = "";
 
-    /// @brief Reference \f$ m_particles \f$ to central ParticleContainer to which all particles are added
+    /// @brief Reference to the central ParticleContainer to which all particles are added.
     ParticleContainer &m_particles;
 
   public:
     /**
-     * @brief Construct a new CuboidGenerator object
+     * @brief Construct a new CuboidGenerator object.
      *
-     * @param filename  A reference to the string representing the input file name \f$ m_filename \f$
-     * @param particles A reference to the ParticleContainer \f$ m_particles \f$ for the particles in the cuboids
+     * @param filename  A reference to the string representing the input filename.
+     * @param particles A reference to the ParticleContainer  for the particles in the cuboid(s).
      */
     CuboidGenerator(const std::string &filename, ParticleContainer &particles);
 
-    /// @brief Generates all cuboids from input file by calling readCuboids()
+    /// @brief Generates all cuboids from an input file. Uses an underlying FileReader.
     void generateCuboids();
 };

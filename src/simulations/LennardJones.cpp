@@ -34,10 +34,8 @@ void LennardJones::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing LJ simulation...");
 
     // initialize writer and physics functions
-    StrategyFactory sf;
-    WriterFactory wf;
-    m_writer = wf.createWriter(m_type);
-    auto [cv, cx, cf] = sf.getSimulationFunctions(SimulationType::LJ, type);
+    m_writer = WriterFactory::createWriter(m_type);
+    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
     m_calculateV = cv;
     m_calculateX = cx;
     m_calculateF = cf;
@@ -50,7 +48,7 @@ void LennardJones::initializeSimulation(int type) {
 void LennardJones::runSimulation() {
     SPDLOG_TRACE("Running LJ simulation (entered function)...");
 
-    double current_time = m_startTime;
+    double currentTime = m_startTime;
     int iteration = 0;
 
     // log user choices
@@ -63,18 +61,18 @@ void LennardJones::runSimulation() {
     SPDLOG_INFO("Output Freq.: every {} iterations", m_itFreq);
     SPDLOG_INFO("Output Type : {}", StringUtils::fromWriterType(m_type));
 
-    while (current_time < m_endTime) {
+    while (currentTime < m_endTime) {
         m_calculateX(m_particles, m_delta_t);
         m_calculateF(m_particles, m_epsilon, m_sigma);
         m_calculateV(m_particles, m_delta_t);
 
         iteration++;
         if (iteration % m_itFreq == 0) {
-            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, current_time);
+            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, currentTime);
             m_writer->writeParticles(m_particles, iteration);
         }
 
-        current_time += m_delta_t;
+        currentTime += m_delta_t;
     }
 
     SPDLOG_INFO("Completed LJ simulation.");

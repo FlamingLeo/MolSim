@@ -63,5 +63,5 @@ static void BM_VerletNewton(benchmark::State &state) {
     state.counters["Steps"] = args.endTime / args.delta_t;
 }
 
-BENCHMARK(BM_VerletNaive)->RangeMultiplier(2)->Range(1, 1 << 8);
-BENCHMARK(BM_VerletNewton)->RangeMultiplier(2)->Range(1, 1 << 8);
+BENCHMARK(BM_VerletNaive)->RangeMultiplier(2)->Range(1, 1 << 8)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_VerletNewton)->RangeMultiplier(2)->Range(1, 1 << 8)->Unit(benchmark::kMillisecond);

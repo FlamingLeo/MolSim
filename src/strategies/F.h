@@ -42,3 +42,12 @@ void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double);
  * @param sigma TODO
  */
 void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma);
+
+/**
+ * @brief TODO
+ *
+ * @param particles TODO
+ * @param epsilon TODO
+ * @param sigma TODO
+ */
+void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma);

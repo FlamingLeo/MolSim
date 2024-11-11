@@ -36,9 +36,8 @@ void Verlet::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing Verlet simulation...");
 
     StrategyFactory sf;
-    WriterFactory wf;
-    m_writer = wf.createWriter(m_type);
-    auto [cv, cx, cf] = sf.getSimulationFunctions(SimulationType::VERLET, type);
+    m_writer = WriterFactory::createWriter(m_type);
+    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::VERLET, type);
     m_calculateV = cv;
     m_calculateX = cx;
     m_calculateF = cf;
@@ -50,7 +49,7 @@ void Verlet::runSimulation() {
     // verify that we have something to work with (compiled out on release builds)
     assert(!(m_particles.isEmpty()) && "Cannot run simulation without particles!");
 
-    double current_time = m_startTime;
+    double currentTime = m_startTime;
     int iteration = 0;
 
     // log user choices
@@ -62,7 +61,7 @@ void Verlet::runSimulation() {
     SPDLOG_INFO("Output Type : {}", StringUtils::fromWriterType(m_type));
 
     // for this loop, we assume: current x, current f and current v are known
-    while (current_time < m_endTime) {
+    while (currentTime < m_endTime) {
         m_calculateX(m_particles, m_delta_t);
         m_calculateF(m_particles, 0, 0);
         m_calculateV(m_particles, m_delta_t);
@@ -71,11 +70,11 @@ void Verlet::runSimulation() {
         if (iteration % m_itFreq == 0) {
             // logging done here because otherwise the console output would legitimately become unreadable
             // this also makes it somewhat more configurable at runtime
-            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, current_time);
+            SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, currentTime);
             m_writer->writeParticles(m_particles, iteration);
         }
 
-        current_time += m_delta_t;
+        currentTime += m_delta_t;
     }
 
     SPDLOG_INFO("Completed Verlet simulation.");
