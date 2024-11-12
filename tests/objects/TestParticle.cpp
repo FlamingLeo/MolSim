@@ -119,10 +119,12 @@ TEST(ParticleTests, InEqualityByCopy) {
     constexpr std::array f{7.0, 8.0, 9.0};
     constexpr double m = 10.0;
     constexpr double type = 11.0;
+
     Particle p1(x, v, m, type);
     Particle p2(p1);
     EXPECT_TRUE(p1 == p2);
     EXPECT_FALSE(p1 != p2);
+
     p2.setF(f);
     EXPECT_FALSE(p1 == p2);
     EXPECT_TRUE(p1 != p2);
@@ -135,10 +137,12 @@ TEST(ParticleTests, InEqualityByValues) {
     constexpr std::array f{7.0, 8.0, 9.0};
     constexpr double m = 10.0;
     constexpr double type = 11.0;
+
     Particle p1(x, v, m, type);
     Particle p2(x, v, m, type);
     EXPECT_TRUE(p1 == p2);
     EXPECT_FALSE(p1 != p2);
+
     p2.setF(f);
     EXPECT_FALSE(p1 == p2);
     EXPECT_TRUE(p1 != p2);

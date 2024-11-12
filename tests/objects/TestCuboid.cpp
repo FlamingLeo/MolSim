@@ -18,9 +18,8 @@ TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
     Cuboid c{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
     c.initializeParticles();
 
-    constexpr std::array x0 = {1., 1., 1., 1., 1., 1.};
-    constexpr std::array x1 = {2., 3., 2., 3., 2., 3.};
-    constexpr std::array x2 = {3., 3., 4., 4., 5., 5.};
+    constexpr std::array<std::array<double, 6>, 3> expectedX = {
+        {{1., 1., 1., 1., 1., 1.}, {2., 3., 2., 3., 2., 3.}, {3., 3., 4., 4., 5., 5.}}};
     constexpr std::array f = {0., 0., 0.};
     constexpr std::array oldF = {0., 0., 0.};
     constexpr double eps = 0.00001;
@@ -30,9 +29,9 @@ TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
     for (size_t i = 0; i < 6; ++i) {
         Particle &p = c.getParticles()[i];
 
-        EXPECT_EQ(p.getX()[0], x0[i]);
-        EXPECT_EQ(p.getX()[1], x1[i]);
-        EXPECT_EQ(p.getX()[2], x2[i]);
+        for (size_t j = 0; j < 3; ++j) {
+            EXPECT_EQ(p.getX()[j], expectedX[j][i]);
+        }
         EXPECT_EQ(p.getF(), f);
         EXPECT_EQ(p.getOldF(), oldF);
         EXPECT_EQ(p.getM(), 1.0);

@@ -7,7 +7,7 @@ TEST(VelocityTests, UpdateVelocity) {
     constexpr std::array vAfter{4.17857, 5.25, 6.32143};
     constexpr std::array oldF{1., 2., 3.};
     constexpr std::array f{4., 5., 6.};
-    constexpr double eps = 0.0001;
+    constexpr double eps = 0.00001;
 
     ParticleContainer pc(1);
     pc.addParticle({1., 2., 3.}, vBefore, 7.);
@@ -15,7 +15,7 @@ TEST(VelocityTests, UpdateVelocity) {
     pc[0].setF(f);
     calculateV(pc, 0.5);
 
-    EXPECT_NEAR(pc[0].getV()[0], vAfter[0], eps);
-    EXPECT_NEAR(pc[0].getV()[1], vAfter[1], eps);
-    EXPECT_NEAR(pc[0].getV()[2], vAfter[2], eps);
+    for (size_t i = 0; i < vAfter.size(); ++i) {
+        EXPECT_NEAR(pc[0].getV()[i], vAfter[i], eps);
+    }
 }
