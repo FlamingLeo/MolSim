@@ -80,3 +80,5 @@ void LennardJones::runSimulation() {
 
     SPDLOG_INFO("Completed LJ simulation.");
 }
+
+ParticleContainer &LennardJones::getParticles() { return m_particles; }

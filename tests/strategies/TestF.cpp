@@ -27,15 +27,15 @@ TEST_F(ForceTests, UpdateForceVerlet) {
     calculateF_Verlet(pc1, 0, 0);
     calculateF_VerletThirdLaw(pc2, 0, 0);
 
-    constexpr std::array<std::array<double, 3>, 3> expectedForces = {
+    constexpr std::array<std::array<double, 3>, 3> expectedF = {
         {{0.529238, 0.529238, 0.529238}, {0.7698, 0.7698, 0.7698}, {-1.29904, -1.29904, -1.29904}}};
     constexpr double eps = 0.00001;
 
     EXPECT_EQ(pc1, pc2);
 
-    for (size_t i = 0; i < expectedForces.size(); ++i) {
-        for (size_t j = 0; j < expectedForces[i].size(); ++j) {
-            EXPECT_NEAR(pc1[i].getF()[j], expectedForces[i][j], eps);
+    for (size_t i = 0; i < expectedF.size(); ++i) {
+        for (size_t j = 0; j < expectedF[i].size(); ++j) {
+            EXPECT_NEAR(pc1[i].getF()[j], expectedF[i][j], eps);
         }
     }
 }
@@ -46,15 +46,15 @@ TEST_F(ForceTests, UpdateForceLJ) {
     calculateF_LennardJones(pc1, 5, 1);
     calculateF_LennardJonesThirdLaw(pc2, 5, 1);
 
-    constexpr std::array<std::array<double, 3>, 3> expectedForces = {
+    constexpr std::array<std::array<double, 3>, 3> expectedF = {
         {{1.81296e-06, 1.81296e-06, 1.81296e-06}, {0., 0., 0.}, {-1.81296e-06, -1.81296e-06, -1.81296e-06}}};
     constexpr double eps = 0.00001;
 
     EXPECT_EQ(pc1, pc2);
 
-    for (size_t i = 0; i < expectedForces.size(); ++i) {
-        for (size_t j = 0; j < expectedForces[i].size(); ++j) {
-            EXPECT_NEAR(pc1[i].getF()[j], expectedForces[i][j], eps);
+    for (size_t i = 0; i < expectedF.size(); ++i) {
+        for (size_t j = 0; j < expectedF[i].size(); ++j) {
+            EXPECT_NEAR(pc1[i].getF()[j], expectedF[i][j], eps);
         }
     }
 }

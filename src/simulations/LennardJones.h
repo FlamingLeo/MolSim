@@ -38,4 +38,5 @@ class LennardJones : public Simulation {
     ~LennardJones();
     void initializeSimulation(int type = 0);
     void runSimulation() override;
+    ParticleContainer &getParticles();
 };
