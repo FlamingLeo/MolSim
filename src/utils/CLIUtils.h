@@ -13,6 +13,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #define OPTSTRING "s:e:d:f:o:t:E:S:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"

@@ -6,6 +6,7 @@
 #include <getopt.h>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <string>
 #include <unordered_map>
 
 void CLIParser::checkValidity(const Arguments &args) {

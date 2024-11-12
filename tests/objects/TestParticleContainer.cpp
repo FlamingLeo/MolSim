@@ -122,8 +122,8 @@ TEST(ParticleContainerTests, IteratePairNonEmpty) {
     pc.addParticle(p0);
     pc.addParticle(p1);
     pc.addParticle(p2);
-    const std::array<int, 6> outerTypes{0, 0, 1, 1, 2, 2};
-    const std::array<int, 6> innerTypes{1, 2, 0, 2, 0, 1};
+    constexpr std::array<int, 6> outerTypes{0, 0, 1, 1, 2, 2};
+    constexpr std::array<int, 6> innerTypes{1, 2, 0, 2, 0, 1};
     int index = 0;
 
     for (auto pair = pc.beginPairs(); pair != pc.endPairs(); ++pair) {
