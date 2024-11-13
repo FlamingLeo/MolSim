@@ -5,7 +5,7 @@
 class CuboidGeneratorTests : public ::testing::Test {
   private:
     std::string getTargetPath(const std::string &fullPath, const std::string &targetDir) {
-        size_t pos = fullPath.find(targetDir);
+        size_t pos = fullPath.rfind(targetDir);
         if (pos != std::string::npos) {
             return fullPath.substr(0, pos + targetDir.length());
         }
