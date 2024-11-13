@@ -5,8 +5,6 @@
 
 void calculateF_Verlet(ParticleContainer &particles, double, double) {
     for (auto &p1 : particles) {
-        p1.setOldF(p1.getF());
-        p1.setFToZero();
         for (auto &p2 : particles) {
             if (p1 != p2) {
                 p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
@@ -18,12 +16,6 @@ void calculateF_Verlet(ParticleContainer &particles, double, double) {
 }
 
 void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double) {
-    // set previous f for each particle and reinitialize to zero
-    for (auto &p1 : particles) {
-        p1.setOldF(p1.getF());
-        p1.setFToZero();
-    }
-
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];
@@ -51,8 +43,6 @@ void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double) {
 
 void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma) {
     for (auto &p1 : particles) {
-        p1.setOldF(p1.getF());
-        p1.setFToZero();
         for (auto &p2 : particles) {
             if (p1 != p2) {
                 double distNorm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
@@ -66,12 +56,6 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
 }
 
 void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma) {
-    // set previous f for each particle and reinitialize to zero
-    for (auto &p : particles) {
-        p.setOldF(p.getF());
-        p.setFToZero();
-    }
-
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];
