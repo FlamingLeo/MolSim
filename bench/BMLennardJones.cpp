@@ -13,57 +13,48 @@
 #include <benchmark/benchmark.h>
 #include <spdlog/spdlog.h>
 
-static void BM_LJNaive(benchmark::State &state) {
-    // initialize simulation arguments
-    Arguments args;
-    args.startTime = 0;
-    args.endTime = state.range(0);
-    args.delta_t = 0.025;
-    args.type = WriterType::NIL;
-    args.itFreq = 0x7FFFFFFF;
+#define MULTIPLIER 10
 
-    // initialize LJ simulation
-    ParticleContainer pc(384);
-    Cuboid c1{pc, {0., 0., 0.}, {40, 8, 1}, {0., 0., 0.}, 1.1225, 1};
-    Cuboid c2{pc, {15., 15., 0.}, {8, 8, 1}, {0., -10., 0.}, 1.1225, 1};
-    c1.initializeParticles();
-    c2.initializeParticles();
+class LJFixture : public ::benchmark::Fixture {
+  public:
+    Arguments args;
+    ParticleContainer pc;
+
+    void SetUp(::benchmark::State &state) {
+        // initialize simulation arguments
+        args.startTime = 0;
+        args.endTime = 1;
+        args.delta_t = 0.01;
+        args.type = WriterType::NIL;
+        args.itFreq = 0x7FFFFFFF;
+
+        // initialize LJ simulation
+        size_t len = state.range(0);
+        size_t numParticles = len * MULTIPLIER;
+        pc.reserve(numParticles);
+        Cuboid c{pc, {0., 0., 0.}, {len, MULTIPLIER, 1}, {0., 0., 0.}, 1.1225, 1};
+        c.initializeParticles();
+    }
+
+    void TearDown(::benchmark::State &state) {
+        state.counters["Steps"] = args.endTime / args.delta_t;
+        state.counters["NumParticles"] = state.range(0) * MULTIPLIER;
+    }
+};
+
+BENCHMARK_DEFINE_F(LJFixture, LJNaive)(benchmark::State &st) {
     LennardJones lj{pc, args, 1};
-
-    // run core simulation functionality for some amount of iterations
-    for (auto _ : state) {
+    for (auto _ : st) {
         lj.runSimulation();
     }
-
-    // log total steps
-    state.counters["Steps"] = args.endTime / args.delta_t;
 }
 
-static void BM_LJThirdLaw(benchmark::State &state) {
-    // initialize simulation arguments
-    Arguments args;
-    args.startTime = 0;
-    args.endTime = state.range(0);
-    args.delta_t = 0.025;
-    args.type = WriterType::NIL;
-    args.itFreq = 0x7FFFFFFF;
-
-    // initialize LJ simulation
-    ParticleContainer pc(384);
-    Cuboid c1{pc, {0., 0., 0.}, {40, 8, 1}, {0., 0., 0.}, 1.1225, 1};
-    Cuboid c2{pc, {15., 15., 0.}, {8, 8, 1}, {0., -10., 0.}, 1.1225, 1};
-    c1.initializeParticles();
-    c2.initializeParticles();
+BENCHMARK_DEFINE_F(LJFixture, LJThirdLaw)(benchmark::State &st) {
     LennardJones lj{pc, args, 0};
-
-    // run core simulation functionality for some amount of iterations
-    for (auto _ : state) {
+    for (auto _ : st) {
         lj.runSimulation();
     }
-
-    // log total steps
-    state.counters["Steps"] = args.endTime / args.delta_t;
 }
 
-BENCHMARK(BM_LJNaive)->RangeMultiplier(2)->Range(1, 1 << 5)->Unit(benchmark::kMillisecond);
-BENCHMARK(BM_LJThirdLaw)->RangeMultiplier(2)->Range(1, 1 << 5)->Unit(benchmark::kMillisecond);
+BENCHMARK_REGISTER_F(LJFixture, LJNaive)->DenseRange(1, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_REGISTER_F(LJFixture, LJThirdLaw)->DenseRange(1, 10, 1)->Unit(benchmark::kMillisecond);

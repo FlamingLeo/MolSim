@@ -1,6 +1,3 @@
-//
-// Created by marag on 11/5/2024.
-//
 #include "CuboidGenerator.h"
 #include "Cuboid.h"
 #include "io/input/FileReader.h"

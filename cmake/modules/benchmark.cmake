@@ -9,6 +9,7 @@ if(ENABLE_BENCHMARKING)
     # latest version as of 01.11.2024: 1.9.0
     set(GBENCH_VERSION 1.9.0)
     message(STATUS "Benchmarking ENABLED")
+    
     # if benchmark is not installed, fetch via git repo
     message(CHECK_START "Searching for Benchmark")
 
@@ -28,6 +29,9 @@ if(ENABLE_BENCHMARKING)
     else()
         message(CHECK_PASS "found")
     endif()
+
+    # define benchmarking macro
+    add_compile_definitions(DO_BENCHMARKING)
 else()
     message(STATUS "Benchmarking DISABLED")
 endif()

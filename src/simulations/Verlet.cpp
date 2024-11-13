@@ -67,12 +67,15 @@ void Verlet::runSimulation() {
         m_calculateV(m_particles, m_delta_t);
 
         iteration++;
+
+#ifndef DO_BENCHMARKING
         if (iteration % m_itFreq == 0) {
             // logging done here because otherwise the console output would legitimately become unreadable
             // this also makes it somewhat more configurable at runtime
             SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, currentTime);
             m_writer->writeParticles(m_particles, iteration);
         }
+#endif
 
         currentTime += m_delta_t;
     }

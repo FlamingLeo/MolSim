@@ -1,6 +1,3 @@
-//
-// Created by marag on 11/5/2024.
-//
 #include "LennardJones.h"
 #include "io/output/WriterFactory.h"
 #include "strategies/StrategyFactory.h"
@@ -70,10 +67,13 @@ void LennardJones::runSimulation() {
         m_calculateV(m_particles, m_delta_t);
 
         iteration++;
+
+#ifndef DO_BENCHMARKING
         if (iteration % m_itFreq == 0) {
             SPDLOG_TRACE("Iteration: {}, t_i: {}", iteration, currentTime);
             m_writer->writeParticles(m_particles, iteration);
         }
+#endif
 
         currentTime += m_delta_t;
     }

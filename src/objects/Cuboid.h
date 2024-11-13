@@ -16,10 +16,10 @@
 class Cuboid {
   private:
     /// @brief Lower-left corner \f$ x \f$ of the cuboid.
-    std::array<double, 3> position;
+    std::array<double, 3> x;
 
     /// @brief Dimensions in 3D \f$ N \f$ of the cuboid.
-    std::array<size_t, 3> size;
+    std::array<size_t, 3> N;
 
     /// @brief Distance \f$ h \f$ between the particles in the cuboid.
     double h;
@@ -43,13 +43,13 @@ class Cuboid {
      * @brief Constructs a new Cuboid object with all the needed meta-data.
      *
      * @param particles A reference to the central ParticleContainer from Lennard-Jones
-     * @param position A reference to the array containing data for the cuboid position \f$ x \f$
-     * @param size A reference to the array containing data for the dimensions \f$ N \f$ of the cuboid
+     * @param x A reference to the array containing data for the cuboid position \f$ x \f$
+     * @param N A reference to the array containing data for the dimensions \f$ N \f$ of the cuboid
      * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the cuboid
      * @param h The distance \f$ h \f$ between the particles in the cuboid
      * @param m The mass \f$ m \f$ of the particles in the cuboid
      */
-    Cuboid(ParticleContainer &particles, const std::array<double, 3> &position, const std::array<size_t, 3> &size,
+    Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
            const std::array<double, 3> &v, double h, double m);
 
     /* getters */
@@ -58,14 +58,14 @@ class Cuboid {
      *
      * @return A reference to the position array of this cuboid.
      */
-    std::array<double, 3> &getPosition();
+    std::array<double, 3> &getX();
 
     /**
      * @brief Gets the dimensions \f$ N \f$ of this cuboid.
      *
      * @return A reference to the dimensions array of this cuboid.
      */
-    std::array<size_t, 3> &getSize();
+    std::array<size_t, 3> &getN();
 
     /**
      * @brief Gets the distance \f$ h \f$ between the particles of this cuboid.
