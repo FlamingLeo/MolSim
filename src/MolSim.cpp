@@ -5,12 +5,21 @@
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include "utils/StringUtils.h"
+#include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
 
 int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
+
+#ifdef DO_BENCHMARKING
+    // prevent running main with benchmarking options enabled
+    // file output and logging are both disabled, effectively rendering the program useless
+    std::cerr << "[" << BOLD_ON << "error" << BOLD_OFF
+              << "] Cannot run main program in benchmark mode! Recompile the program and try again.\n";
+    std::exit(EXIT_FAILURE);
+#endif
 
 #ifdef NDEBUG
     // when compiling without debug settings, shorten log output to omit uninteresting information
