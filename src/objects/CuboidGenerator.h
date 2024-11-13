@@ -27,10 +27,10 @@ class CuboidGenerator {
      * @brief Construct a new CuboidGenerator object.
      *
      * @param filename  A reference to the string representing the input filename.
-     * @param particles A reference to the ParticleContainer  for the particles in the cuboid(s).
+     * @param particles A reference to the ParticleContainer for the particles in the cuboid(s).
      */
     CuboidGenerator(const std::string &filename, ParticleContainer &particles);
 
-    /// @brief Generates all cuboids from an input file. Uses an underlying FileReader.
+    /// @brief Generates all cuboid particles from an input file. Uses an underlying FileReader.
     void generateCuboids();
 };

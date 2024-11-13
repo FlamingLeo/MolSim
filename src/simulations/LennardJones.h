@@ -17,80 +17,81 @@
 #include <string>
 
 /// @brief LennardJones class containing functionality and parameters used to run a simple simulation using the
-/// Lennard-Jones Force
+/// Lennard-Jones Force.
 class LennardJones : public Simulation {
   private:
-    /// @brief ParticleContainer containing the particles used in the simulation
+    /// @brief ParticleContainer containing the particles used in the simulation.
     ParticleContainer m_particles;
 
-    /// @brief CuboidGenerator used for initializing the particles from the input file
+    /// @brief CuboidGenerator used for initializing the particles from the input file.
     CuboidGenerator m_generator;
 
-    /// @brief Constant of depth of potential well
+    /// @brief The depth of the potential well \f$ \epsilon \f$.
     double m_epsilon;
 
-    /// @brief Constant of zero crossing
+    /// @brief The constant of zero crossing \f$ \sigma \f$.
     double m_sigma;
 
-    /// @brief Start time of simulation
+    /// @brief The start time \f$ t_0 \f$ of the simulation.
     double m_startTime;
 
-    /// @brief End time of simulation
+    /// @brief The end time \f$ t_\text{end} \f$ of the simulation.
     double m_endTime;
 
-    /// @brief Time step between iterations
+    /// @brief The timestep \f$ \Delta t \f$ used during the simulation.
     double m_delta_t;
 
-    /// @brief Frequency of information logging
+    /// @brief The output (logging) frequency for generating a file output.
     int m_itFreq;
 
-    /// @brief Output type
+    /// @brief The type of the generated output file.
     WriterType m_type;
 
-    /// @brief Object used for writing information to output files
+    /// @brief Object used for writing information to output files.
     std::unique_ptr<FileWriter> m_writer;
 
-    /// @brief Function for calculating velocity of a particle
+    /// @brief Function for calculating the velocity of a particle.
     StrategyFactory::VFunc m_calculateV;
 
-    /// @brief Function for calculating position of a particle
+    /// @brief Function for calculating the position of a particle.
     StrategyFactory::XFunc m_calculateX;
 
-    /// @brief Function for calculating force of a particle
+    /// @brief Function for calculating the force of a particle.
     StrategyFactory::FFunc m_calculateF;
 
   public:
-
-    /** 
+    /**
      * @brief Constructor for initializing a new LennardJones simulation with given filename and arguments
-     * 
-     * @param filename Reference to the input file which is passed to the CuboidGenerator constructor
-     * @param args Arguments containing relevant simulation parameters
-     * @param type Variable used for deciding wether a naive or optimized approach is used for calculating forces of particles (0 or 1)
-    */
+     *
+     * @param filename The name of the input file which is passed to the CuboidGenerator constructor.
+     * @param args Arguments containing relevant simulation parameters.
+     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
+     * particles.
+     */
     LennardJones(const std::string &filename, const Arguments &args, int type = 0);
 
     /**
-     * @brief Constructor for initializing a new LennardJones simulation with given ParticleContainer and arguments
-     * 
-     * @param pc Reference to the ParticleContainer used for storing particles
-     * @param args Arguments containing relevant simulation parameters
-     * @param type Variable used for deciding wether a naive or optimized approach is used for calculating forces of particles (0 or 1)
+     * @brief Constructor for initializing a new LennardJones simulation with given ParticleContainer and arguments.
+     *
+     * @param pc A reference to the ParticleContainer used for storing particles.
+     * @param args Arguments containing relevant simulation parameters.
+     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
+     * particles.
      */
     LennardJones(const ParticleContainer &pc, const Arguments &args, int type = 0);
 
-    /// @brief Default destructor destroying data
+    /// @brief Default destructor.
     ~LennardJones();
 
-    /// @brief Function used for intializating particles, physics functions and particles
-    /// @param type Variable used for deciding wether a naive or optimized approach is used for calculating forces of particles (0 or 1)
+    /// @brief Function used for intializating the particles and physics functions.
+    /// @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
+    /// particles.
     void initializeSimulation(int type = 0);
 
-    /// @brief Function running the simulation
+    /// @brief Runs the Lennard-Jones simulation.
     void runSimulation() override;
 
-    /// @brief Gets the particles used in the simulation
-    
-    /// @return a reference to the main ParticleContainer
+    /// @brief Gets the particles used in the simulation.
+    /// @return A reference to the main ParticleContainer.
     ParticleContainer &getParticles();
 };
