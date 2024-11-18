@@ -44,6 +44,9 @@ class LennardJones : public Simulation {
     /// @brief The output (logging) frequency for generating a file output.
     int m_itFreq;
 
+    /// @brief The total number of iterations for which the simulation will run.
+    int m_totalIt;
+
     /// @brief The type of the generated output file.
     WriterType m_type;
 

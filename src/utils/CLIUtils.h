@@ -69,6 +69,17 @@ static inline void printHelp() {
 }
 
 /**
+ * @brief Gets the percentage as an integer from a fraction x / y.
+ *
+ * @param x The numerator.
+ * @param y The denominator. If this is 0, 100 is returned.
+ * @return The percentage as a truncated integer.
+ */
+static inline int getPercentage(int x, int y) {
+    return static_cast<int>((y != 0 ? static_cast<double>(x) / y : 1.0) * 100.0);
+}
+
+/**
  * @brief Prints an error message to stderr with the prefix "ERROR: ",
  * optionally prints the usage string and exits with EXIT_FAILURE.
  *

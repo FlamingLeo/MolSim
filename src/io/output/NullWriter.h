@@ -39,6 +39,7 @@ class NullWriter : public FileWriter {
      *
      * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a unique log output.
+     * @param total The total number of iterations, used to display the current percentage.
      */
-    void writeParticles(const ParticleContainer &particles, int iteration) override;
+    void writeParticles(const ParticleContainer &particles, int iteration, int total) override;
 };
