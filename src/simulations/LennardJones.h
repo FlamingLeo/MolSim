@@ -50,6 +50,9 @@ class LennardJones : public Simulation {
     /// @brief The type of the generated output file.
     WriterType m_type;
 
+    /// @brief A reference to the basename of the generated files.
+    const std::string &m_basename;
+
     /// @brief Object used for writing information to output files.
     std::unique_ptr<FileWriter> m_writer;
 

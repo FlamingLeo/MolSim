@@ -34,13 +34,15 @@ struct Arguments {
     double sigma{1};
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
+    /// @brief The basename of the output file (default: type-specific).
+    std::string basename{};
     /// @brief Output type (default: VTK).
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: LJ).
     SimulationType sim{SimulationType::LJ};
-    /// @brief Bitset containing flags, whether startTime (0), endTime (1) and delta_t (2) have been manually set by the
-    /// user. If not, use default values depending on the simulation.
-    std::bitset<3> argsSet{0b000};
+    /// @brief Bitset containing flags, whether startTime (0), endTime (1), delta_t (2) and basename (3) have been
+    /// manually set by the user. If not, use default values depending on the simulation.
+    std::bitset<4> argsSet{0b0000};
 
     /// @brief Returns a string representation of the struct.
     /// @return A string representation of the struct.
