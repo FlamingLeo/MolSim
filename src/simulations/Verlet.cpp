@@ -37,7 +37,6 @@ Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); }
 void Verlet::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing Verlet simulation...");
 
-    StrategyFactory sf;
     m_writer = WriterFactory::createWriter(m_type, m_basename);
     auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::VERLET, type);
     m_calculateV = cv;

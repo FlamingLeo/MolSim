@@ -1,5 +1,6 @@
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
+#include "io/input/XMLReader.h"
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
@@ -27,13 +28,20 @@ int main(int argc, char *argv[]) {
         spdlog::set_pattern("[%^%l%$] %v");
 #endif
 
-    // parse command line arguments
     std::string filename = argv[argc - 1];
 
+    // initialize simulation-relevant objects
     Arguments args;
+    ParticleContainer pc;
+
+    // parse XML input file
+    XMLReader r(filename);
+    r.readXML(args, pc);
+
+    // parse command line arguments
     CLIParser::parseArguments(argc, argv, args);
 
     // run desired simulation based on user choice
-    auto sim = SimulationFactory::createSimulation(args.sim, filename, args);
+    auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
     sim->runSimulation();
 }

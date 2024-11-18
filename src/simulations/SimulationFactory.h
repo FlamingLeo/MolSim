@@ -19,7 +19,7 @@
 class SimulationFactory {
   public:
     /**
-     * @brief Returns a unique pointer to the desired simulation.
+     * @brief Returns a unique pointer to the desired simulation while passing a filename as input.
      *
      * @param type The simulation to be performed.
      * @param filename A string containing the path to the particle data for the simulation.
@@ -27,5 +27,16 @@ class SimulationFactory {
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
     static std::unique_ptr<Simulation> createSimulation(SimulationType type, const std::string &filename,
+                                                        const Arguments &args);
+
+    /**
+     * @brief Returns a unique pointer to the desired simulation while passing a ParticleContainer as input.
+     *
+     * @param type The simulation to be performed.
+     * @param pc The ParticleContainer to be used for the simulation.
+     * @param args The program and simulation arguments to be passed to the Simulation constructor.
+     * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
+     */
+    static std::unique_ptr<Simulation> createSimulation(SimulationType type, const ParticleContainer &pc,
                                                         const Arguments &args);
 };

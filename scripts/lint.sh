@@ -9,4 +9,4 @@
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "${SCRIPT_DIR}/../src"
 
-cpplint --filter=-legal,-build/include_order,-whitespace/ending_newline,-whitespace/comments,-whitespace/indent,-build/c++17,-runtime/references --linelength=120 --recursive --exclude=io/vtk/* .
+cpplint --filter=-legal,-build/include_order,-whitespace/ending_newline,-whitespace/comments,-whitespace/indent,-build/c++17,-runtime/references --linelength=120 --recursive --exclude=io/vtk/* --exclude=io/xsd/* .
