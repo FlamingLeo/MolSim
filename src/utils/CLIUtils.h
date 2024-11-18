@@ -52,6 +52,8 @@ static inline void printHelp() {
            "-e <number>  : Sets the end time (decimal) for a specific simulation (default: simulation-specific).\n"
            "-d <number>  : Sets the time interval between two iterations of a simulation (default: "
            "simulation-specific).\n"
+           "-E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).\n"
+           "-S <number>  : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).\n"
            "-f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be "
            "written (default: 10).\n"
            "-o <type>    : Sets the output file type and directory (default: vtk).\n"
