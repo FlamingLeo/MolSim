@@ -10,7 +10,7 @@
 #include "objects/ParticleContainer.h"
 
 /**
- * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a Verlet simulation.
+ * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a Gravity simulation.
  *
  * @details For each particle in the simulation, the method works by first calculating the effective force \f[
  * F_{ij} = \frac{m_i m_j}{(|| x_i - x_j ||_2)^3} (x_j - x_i) \f] between each pair of particles \f$ i \f$ and \f$ j
@@ -19,10 +19,10 @@
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  */
-void calculateF_Verlet(ParticleContainer &particles, double, double);
+void calculateF_Gravity(ParticleContainer &particles, double, double);
 
 /**
- * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a Verlet simulation.
+ * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a Gravity simulation.
  *
  * @details <em> For every action, there is an equal and opposite reaction.</em>
  *
@@ -32,7 +32,7 @@ void calculateF_Verlet(ParticleContainer &particles, double, double);
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  */
-void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double);
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation.

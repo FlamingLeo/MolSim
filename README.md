@@ -107,8 +107,8 @@ Currently, the following options are supported:
   - xyz     : Generates XYZ (.xyz) files.
   - nil     : Logs to stdout. Used for debugging purposes.
 -t <type>   : Sets the desired simulation to be performed (default: lj).
-  - verlet  : Simulates Verlet integration (t_0 = 0, t_end = 1000, dt = 0.014).
-  - lj      : Simulates Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
+  - gravity : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
+  - lj      : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
 -h          : Prints out a help message. Doesn't perform any simulation.
 ```
 
@@ -139,7 +139,7 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 Currently, the following input files are included in the repository, inside the `input` directory:
 
 -   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
--   `input-verlet.txt`: Simulation of Halley's Comet. For use with Verlet integration simulations (`-t verlet`).
+-   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
 
 ## Documentation
 

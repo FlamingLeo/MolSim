@@ -10,15 +10,15 @@
 std::tuple<StrategyFactory::VFunc, StrategyFactory::XFunc, StrategyFactory::FFunc>
 StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
     switch (type) {
-    case SimulationType::VERLET:
+    case SimulationType::GRAVITY:
         /*
         modifier values:
         0 - calculate force using newton's third law
         1 - calculate force using naive approach
         */
-        SPDLOG_DEBUG("Chose physics calculations for Verlet simulation with force calculation: {}",
+        SPDLOG_DEBUG("Chose physics calculations for gravitational simulation with force calculation: {}",
                      modifier ? "Naive" : "Newton's Third Law");
-        return std::make_tuple(calculateV, calculateX, modifier ? calculateF_Verlet : calculateF_VerletThirdLaw);
+        return std::make_tuple(calculateV, calculateX, modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
     case SimulationType::LJ:
         /*
         modifier values (TBD):

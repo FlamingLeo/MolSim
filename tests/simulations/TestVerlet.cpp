@@ -1,7 +1,7 @@
-#include "simulations/Verlet.h"
+#include "simulations/Gravity.h"
 #include <gtest/gtest.h>
 
-class VerletTests : public ::testing::Test {
+class GravityTests : public ::testing::Test {
   protected:
     Arguments args;
     ParticleContainer pc;
@@ -21,10 +21,11 @@ class VerletTests : public ::testing::Test {
     }
 };
 
-// Test the Verlet simulation against both force calculation implementations, aswell as against precomputed values.
-TEST_F(VerletTests, RunSimulation) {
-    Verlet v0{pc, args, 0};
-    Verlet v1{pc, args, 1};
+// Test the gravitational simulation against both force calculation implementations, aswell as against precomputed
+// values.
+TEST_F(GravityTests, RunSimulation) {
+    Gravity v0{pc, args, 0};
+    Gravity v1{pc, args, 1};
 
     v0.runSimulation();
     v1.runSimulation();

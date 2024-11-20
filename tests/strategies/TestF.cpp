@@ -21,11 +21,11 @@ class ForceTests : public ::testing::Test {
     }
 };
 
-// Test calculating the forces between particles when simulating Verlet integration.
+// Test calculating the forces between particles when simulating gravitational orbit.
 // More specifically, test if both the naive approach and the approach using Newton's third law are identical.
-TEST_F(ForceTests, UpdateForceVerlet) {
-    calculateF_Verlet(pc1, 0, 0);
-    calculateF_VerletThirdLaw(pc2, 0, 0);
+TEST_F(ForceTests, UpdateForceGravity) {
+    calculateF_Gravity(pc1, 0, 0);
+    calculateF_GravityThirdLaw(pc2, 0, 0);
 
     constexpr std::array<std::array<double, 3>, 3> expectedF = {
         {{0.529238, 0.529238, 0.529238}, {0.7698, 0.7698, 0.7698}, {-1.29904, -1.29904, -1.29904}}};

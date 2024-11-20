@@ -3,7 +3,7 @@
 #include "utils/ArrayUtils.h"
 #include <functional>
 
-void calculateF_Verlet(ParticleContainer &particles, double, double) {
+void calculateF_Gravity(ParticleContainer &particles, double, double) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
@@ -15,7 +15,7 @@ void calculateF_Verlet(ParticleContainer &particles, double, double) {
     }
 }
 
-void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double) {
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double) {
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];

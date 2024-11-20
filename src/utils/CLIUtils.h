@@ -59,8 +59,8 @@ static inline void printHelp() {
            "  - xyz      : Generates XYZ (.xyz) files.\n"
            "  - nil      : Logs to stdout. Used for debugging purposes.\n"
            "-t <type>    : Sets the desired simulation to be performed (default: lj).\n"
-           "  - verlet   : Simulates Verlet integration (t_0 = 0, t_end = 1000, dt = 0.014).\n"
-           "  - lj       : Simulates Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).\n"
+           "  - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).\n"
+           "  - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).\n"
            "-h           : Prints out a help message. Doesn't perform any simulation.\n\n"
         << BOLD_ON << "NOTES" << BOLD_OFF
         << ":\n"

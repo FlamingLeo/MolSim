@@ -8,9 +8,9 @@
  */
 #pragma once
 
+#include "Gravity.h"
 #include "LennardJones.h"
 #include "Simulation.h"
-#include "Verlet.h"
 #include "utils/Arguments.h"
 #include <memory>
 #include <string>
