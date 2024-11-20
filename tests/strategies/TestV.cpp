@@ -1,4 +1,4 @@
-#include "strategies/V.h"
+#include "strategies/VelocityCalculation.h"
 #include <gtest/gtest.h>
 
 // Test calculating the new velocity of a particle.

@@ -1,7 +1,7 @@
 #include "StrategyFactory.h"
-#include "F.h"
-#include "V.h"
-#include "X.h"
+#include "ForceCalculation.h"
+#include "PositionCalculation.h"
+#include "VelocityCalculation.h"
 #include "utils/Arguments.h"
 #include "utils/CLIUtils.h"
 #include <functional>
@@ -21,7 +21,7 @@ StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
         return std::make_tuple(calculateV, calculateX, modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
     case SimulationType::LJ:
         /*
-        modifier values (TBD):
+        modifier values:
         0 - calculate force using newton's third law
         1 - calculate force using naive approach
         */

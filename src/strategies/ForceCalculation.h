@@ -1,5 +1,5 @@
 /**
- * @file F.h
+ * @file ForceCalculation.h
  * @brief Strategy functions for calculating the force effective on one or more particles.
  * @date 2024-11-11
  *

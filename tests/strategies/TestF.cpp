@@ -1,4 +1,4 @@
-#include "strategies/F.h"
+#include "strategies/ForceCalculation.h"
 #include <gtest/gtest.h>
 
 class ForceTests : public ::testing::Test {
