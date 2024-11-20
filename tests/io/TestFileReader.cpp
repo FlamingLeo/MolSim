@@ -52,7 +52,9 @@ TEST_F(FileReaderTests, OpenFileInvalid) {
 // Test reading Particle data from an empty file.
 TEST_F(FileReaderTests, ReadParticleDataEmpty) {
     ParticleContainer pc;
-    FileReader fr(targetPath + "/testEmpty.txt");
+    std::string tmpFileName = std::tmpnam(nullptr);
+    std::ofstream _output(tmpFileName);
+    FileReader fr(tmpFileName);
     EXPECT_DEATH({ fr.readParticles(&pc); }, "");
 }
 
@@ -94,7 +96,9 @@ TEST_F(FileReaderTests, ReadParticleDataNonEmpty) {
 // Test reading Cuboid data from an empty file.
 TEST_F(FileReaderTests, ReadCuboidDataEmpty) {
     ParticleContainer pc;
-    FileReader fr(targetPath + "/testEmpty.txt");
+    std::string tmpFileName = std::tmpnam(nullptr);
+    std::ofstream _output(tmpFileName);
+    FileReader fr(tmpFileName);
     EXPECT_DEATH({ fr.readCuboids(pc); }, "");
 }
 
