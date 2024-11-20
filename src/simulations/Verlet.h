@@ -92,7 +92,10 @@ class Verlet : public Simulation {
     /// @brief Runs the simulation.
     void runSimulation() override;
 
-    /// @brief Gets a reference to the ParticleContainer storing the simulation's particles.
-    /// @return A reference to the simulation's ParticleContainer.
+    /**
+     * @brief Gets a reference to the ParticleContainer storing the simulation's particles.
+     *
+     * @return A reference to the simulation's ParticleContainer.
+     */
     ParticleContainer &getParticles();
 };

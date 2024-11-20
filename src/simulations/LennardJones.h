@@ -83,15 +83,21 @@ class LennardJones : public Simulation {
     /// @brief Default destructor.
     ~LennardJones();
 
-    /// @brief Function used for intializating the particles and physics functions.
-    /// @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
-    /// particles.
+    /**
+     * @brief Function used for intializating the particles and physics functions.
+     *
+     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
+     * particles.
+     */
     void initializeSimulation(int type = 0);
 
     /// @brief Runs the Lennard-Jones simulation.
     void runSimulation() override;
 
-    /// @brief Gets the particles used in the simulation.
-    /// @return A reference to the main ParticleContainer.
+    /**
+     * @brief Gets the particles used in the simulation.
+     *
+     * @return A reference to the main ParticleContainer.
+     */
     ParticleContainer &getParticles();
 };
