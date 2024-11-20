@@ -18,7 +18,7 @@ class Cuboid {
     /// @brief Lower-left corner \f$ x \f$ of the cuboid.
     std::array<double, 3> x;
 
-    /// @brief Dimensions in 3D \f$ N \f$ of the cuboid.
+    /// @brief 3D Dimensions \f$ N \f$ of the cuboid.
     std::array<size_t, 3> N;
 
     /// @brief Distance \f$ h \f$ between the particles in the cuboid.
@@ -58,49 +58,49 @@ class Cuboid {
      *
      * @return A reference to the position array of this cuboid.
      */
-    std::array<double, 3> &getX();
+    const std::array<double, 3> &getX() const;
 
     /**
      * @brief Gets the dimensions \f$ N \f$ of this cuboid.
      *
      * @return A reference to the dimensions array of this cuboid.
      */
-    std::array<size_t, 3> &getN();
+    const std::array<size_t, 3> &getN() const;
 
     /**
      * @brief Gets the distance \f$ h \f$ between the particles of this cuboid.
      *
      * @return The distance between the particles of the cuboid.
      */
-    double getH();
+    const double getH() const;
 
     /**
      * @brief Gets the mass \f$ m \f$ of the particles of this cuboid.
      *
      * @return The mass of the particles of the cuboid.
      */
-    double getM();
+    const double getM() const;
 
     /**
      * @brief Gets the starting velocity \f$ v \f$ of the particles of this cuboid.
      *
      * @return A reference of the velocity array of the cuboid.
      */
-    std::array<double, 3> &getV();
+    const std::array<double, 3> &getV() const;
 
     /**
      * @brief Gets the mean velocity for the Maxwell-Boltzmann distribution.
      *
      * @return The mean velocity field of the cuboid.
      */
-    double getMeanVelocity();
+    const double getMeanVelocity() const;
 
     /**
      * @brief Gets the reference to the central ParticleContainer.
      *
      * @return The reference for the ParticleContainer stored in this container.
      */
-    ParticleContainer &getParticles();
+    const ParticleContainer &getParticles() const;
 
     /* utility */
     /**
@@ -121,14 +121,18 @@ class Cuboid {
      */
     bool operator!=(const Cuboid &other) const;
 
-    /// @brief Main function of Cuboid class, initializes the particles based on the cuboid meta-data
-    /// and adds them to the given ParticleContainer.
-    void initializeParticles();
+    /**
+     * @brief Main function of Cuboid class, initializes the particles based on the cuboid meta-data and adds them to
+     * the given ParticleContainer.
+     *
+     * @param dimensions The number of dimensions for which to perform the simulation. Must be either 1 or 2.
+     */
+    void initializeParticles(size_t dimensions = 2);
 
     /**
      * @brief Returns a string representation of this Cuboid.
      *
      * @return The formatted Cuboid data as a std::string.
      */
-    std::string toString();
+    std::string toString() const;
 };

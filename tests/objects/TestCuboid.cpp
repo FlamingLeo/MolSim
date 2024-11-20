@@ -27,7 +27,7 @@ TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
     ASSERT_EQ(c.getParticles().size(), 6);
 
     for (size_t i = 0; i < 6; ++i) {
-        Particle &p = c.getParticles()[i];
+        auto p = c.getParticles()[i];
 
         for (size_t j = 0; j < 3; ++j) {
             EXPECT_EQ(p.getX()[j], expectedX[j][i]);
