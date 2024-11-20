@@ -21,7 +21,7 @@ The code has been developed using the following software on separate machines:
 -   [Doxygen](https://www.doxygen.nl/) 1.9.8 (optional)
 -   [Paraview](https://www.paraview.org/) 5.13.1 (less optional)
 
-Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
+Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
 
 ### Dependencies
 
