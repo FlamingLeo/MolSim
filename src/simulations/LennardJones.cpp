@@ -32,9 +32,9 @@ void LennardJones::initializeSimulation(int type) {
 
     // initialize writer and physics functions
     m_writer = WriterFactory::createWriter(m_type);
-    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
-    m_calculateV = cv;
-    m_calculateX = cx;
+    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
+    m_calculateV = cvx.vf;
+    m_calculateX = cvx.xf;
     m_calculateF = cf;
 
     // initialize particles from cuboid data

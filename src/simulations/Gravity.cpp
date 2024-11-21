@@ -35,11 +35,10 @@ Gravity::~Gravity() { SPDLOG_TRACE("Destroyed Gravity object."); }
 void Gravity::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing Gravity simulation...");
 
-    StrategyFactory sf;
     m_writer = WriterFactory::createWriter(m_type);
-    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::GRAVITY, type);
-    m_calculateV = cv;
-    m_calculateX = cx;
+    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::GRAVITY, type);
+    m_calculateV = cvx.vf;
+    m_calculateX = cvx.xf;
     m_calculateF = cf;
 }
 

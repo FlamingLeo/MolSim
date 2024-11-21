@@ -51,10 +51,10 @@ class LennardJones : public Simulation {
     std::unique_ptr<FileWriter> m_writer;
 
     /// @brief Function for calculating the velocity of a particle.
-    StrategyFactory::VFunc m_calculateV;
+    TimeIntegrationFuncs::VFunc m_calculateV;
 
     /// @brief Function for calculating the position of a particle.
-    StrategyFactory::XFunc m_calculateX;
+    TimeIntegrationFuncs::XFunc m_calculateX;
 
     /// @brief Function for calculating the force of a particle.
     StrategyFactory::FFunc m_calculateF;

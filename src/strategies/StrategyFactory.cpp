@@ -7,8 +7,18 @@
 #include <functional>
 #include <tuple>
 
-std::tuple<StrategyFactory::VFunc, StrategyFactory::XFunc, StrategyFactory::FFunc>
-StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
+TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type) {
+    switch (type) {
+    case SimulationType::GRAVITY:
+    case SimulationType::LJ:
+    default:
+        vf = calculateV;
+        xf = calculateX;
+    }
+}
+
+std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSimulationFunctions(SimulationType type,
+                                                                                                 int modifier) {
     switch (type) {
     case SimulationType::GRAVITY:
         /*
@@ -18,7 +28,7 @@ StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
         */
         SPDLOG_DEBUG("Chose physics calculations for gravitational simulation with force calculation: {}",
                      modifier ? "Naive" : "Newton's Third Law");
-        return std::make_tuple(calculateV, calculateX, modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
+        return std::make_tuple(TimeIntegrationFuncs(type), modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
     case SimulationType::LJ:
         /*
         modifier values:
@@ -27,10 +37,10 @@ StrategyFactory::getSimulationFunctions(SimulationType type, int modifier) {
         */
         SPDLOG_DEBUG("Chose physics calculations for LJ simulation with force calculation: {}",
                      modifier ? "Naive" : "Newton's Third Law");
-        return std::make_tuple(calculateV, calculateX,
+        return std::make_tuple(TimeIntegrationFuncs(type),
                                modifier ? calculateF_LennardJones : calculateF_LennardJonesThirdLaw);
     default:
         CLIUtils::error("Invalid simulation type!");
     }
-    return std::make_tuple(calculateV, calculateX, calculateF_LennardJones); // stop compiler warnings
+    return std::make_tuple(TimeIntegrationFuncs(type), calculateF_LennardJones); // stop compiler warnings
 }

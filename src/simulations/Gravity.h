@@ -41,10 +41,10 @@ class Gravity : public Simulation {
     std::unique_ptr<FileWriter> m_writer;
 
     /// @brief Function for calculating the Particle velocities.
-    StrategyFactory::VFunc m_calculateV;
+    TimeIntegrationFuncs::VFunc m_calculateV;
 
     /// @brief Function for calculating the Particle positions.
-    StrategyFactory::XFunc m_calculateX;
+    TimeIntegrationFuncs::XFunc m_calculateX;
 
     /// @brief Function for calculating the force effective on each Particle.
     StrategyFactory::FFunc m_calculateF;
