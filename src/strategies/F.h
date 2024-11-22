@@ -50,6 +50,9 @@ void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double);
  */
 void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma);
 
+//INSERT DISCRIPTION
+void calculateF_LennardJones2(ParticleContainer &particles, ParticleContainer &particles2, double epsilon, double sigma);
+
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
  * simulation.

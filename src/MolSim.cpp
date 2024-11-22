@@ -8,6 +8,7 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
+#include "objects/LinkedCells.h"
 
 int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
@@ -36,4 +37,50 @@ int main(int argc, char *argv[]) {
     // run desired simulation based on user choice
     auto sim = SimulationFactory::createSimulation(args.sim, filename, args);
     sim->runSimulation();
+
+    /*
+    std::cout << "working\n";
+    (void)argc;
+    (void)argv;
+
+    double currentTime = 0;
+    double endTime = 20;
+    double delta_t = 0.0005;
+    int iteration = 0;
+    int m_totalIt = (int) endTime / delta_t;
+    WriterType m_type = WriterType::VTK;
+    std::unique_ptr<FileWriter> m_writer = WriterFactory::createWriter(m_type);
+
+    LinkedCells lc = LinkedCells();
+    std::cout<< lc.getCells().size() << " cells\n";
+    for(Cell &c : lc.getCells()){
+        for(Particle p : c.getParticles()){
+            std::cout<<" start pos " << p.getX() << "\n";
+        }
+    }
+
+    while (currentTime < endTime) {
+        lc.calculatePosition();
+        lc.calculateForce();
+        lc.calculateVelocity();
+
+        iteration++;
+
+        if (iteration % 10 == 0) {
+            std::cout<<"iteration " << iteration << "\n";
+            ParticleContainer pp = ParticleContainer();
+            for(Cell &c : lc.getCells()){
+                for(Particle &p : c.getParticles()){
+                    pp.addParticle(p);
+                    std::cout<<"pos " << p.getX() << "\n";
+                }
+            }
+            std::cout<<pp.toString()<< "\n";
+            m_writer->writeParticles(pp, iteration, m_totalIt);
+        }
+
+        currentTime += delta_t;
+    }
+    */
+    return 0;
 }
