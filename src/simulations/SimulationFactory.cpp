@@ -17,3 +17,18 @@ std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType t
     }
     return std::make_unique<Verlet>(filename, args);
 }
+
+std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType type, const ParticleContainer &pc,
+                                                                const Arguments &args) {
+    switch (type) {
+    case SimulationType::VERLET:
+        SPDLOG_DEBUG("Generating Verlet...");
+        return std::make_unique<Verlet>(pc, args);
+    case SimulationType::LJ:
+        SPDLOG_DEBUG("Generating LJ...");
+        return std::make_unique<LennardJones>(pc, args);
+    default:
+        CLIUtils::error("Invalid Simulation type!", "", false);
+    }
+    return std::make_unique<Verlet>(pc, args);
+}

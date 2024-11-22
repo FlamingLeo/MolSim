@@ -10,18 +10,19 @@
 #include <string>
 #include <vector>
 
+#define TOTAL static_cast<int>((args.endTime - args.startTime) / args.delta_t)
+
 LennardJones::LennardJones(const std::string &filename, const Arguments &args, int type)
     : m_particles{ParticleContainer()}, m_generator{CuboidGenerator(filename, m_particles)}, m_epsilon{args.epsilon},
       m_sigma{args.sigma}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
-      m_itFreq{args.itFreq}, m_totalIt{static_cast<int>((args.endTime - args.startTime) / args.delta_t)},
-      m_type{args.type} {
+      m_itFreq{args.itFreq}, m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     SPDLOG_TRACE("Created LJ Simulation from file {} with Arguments {}", filename, args.toString());
     initializeSimulation(type);
 }
 LennardJones::LennardJones(const ParticleContainer &pc, const Arguments &args, int type)
     : m_particles{pc}, m_generator{CuboidGenerator("", m_particles)}, m_epsilon{args.epsilon}, m_sigma{args.sigma},
       m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
-      m_totalIt{static_cast<int>((args.endTime - args.startTime) / args.delta_t)}, m_type{args.type} {
+      m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     SPDLOG_TRACE("Created LJ Simulation from using ParticleContainer {} with Arguments {}", pc.toString(),
                  args.toString());
     initializeSimulation(type);
@@ -32,7 +33,7 @@ void LennardJones::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing LJ simulation...");
 
     // initialize writer and physics functions
-    m_writer = WriterFactory::createWriter(m_type);
+    m_writer = WriterFactory::createWriter(m_type, m_basename);
     auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
     m_calculateV = cv;
     m_calculateX = cx;

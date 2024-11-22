@@ -10,24 +10,25 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
+#define TOTAL static_cast<int>((args.endTime - args.startTime) / args.delta_t)
+
 Verlet::Verlet(const ParticleContainer &pc, const Arguments &args, int type)
     : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
-      m_itFreq{args.itFreq}, m_totalIt{static_cast<int>((args.endTime - args.startTime) / args.delta_t)},
-      m_type{args.type} {
+      m_itFreq{args.itFreq}, m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     SPDLOG_TRACE("Created Verlet simulation with ParticleContainer {} and Arguments {}", pc.toString(),
                  args.toString());
     initializeSimulation(type);
 }
 Verlet::Verlet(const std::string &filename, const Arguments &args, int type)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
-      m_totalIt{static_cast<int>((args.endTime - args.startTime) / args.delta_t)}, m_type{args.type} {
+      m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     m_particles.fromFile(filename);
     SPDLOG_TRACE("Created Verlet simulation from file {} with Arguments {}", filename, args.toString());
     initializeSimulation(type);
 }
 Verlet::Verlet(const Arguments &args, int type)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
-      m_totalIt{static_cast<int>((args.endTime - args.startTime) / args.delta_t)}, m_type{args.type} {
+      m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     SPDLOG_TRACE("Created Verlet simulation with Arguments {}", args.toString());
     initializeSimulation(type);
 }
@@ -36,8 +37,7 @@ Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); }
 void Verlet::initializeSimulation(int type) {
     SPDLOG_TRACE("Initializing Verlet simulation...");
 
-    StrategyFactory sf;
-    m_writer = WriterFactory::createWriter(m_type);
+    m_writer = WriterFactory::createWriter(m_type, m_basename);
     auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::VERLET, type);
     m_calculateV = cv;
     m_calculateX = cx;

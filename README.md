@@ -101,6 +101,8 @@ Currently, the following options are supported:
 -s <number> : Sets the start time (decimal) for a specific simulation (default: simulation-specific).
 -e <number> : Sets the end time (decimal) for a specific simulation (default: simulation-specific).
 -d <number> : Sets the time interval between two iterations of a simulation (default: simulation-specific).
+-E <number> : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).
+-S <number> : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).
 -f <number> : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
 -o <type>   : Sets the output file type and directory (default: vtk).
   - vtk     : Generates VTK Unstructured Grid (.vtu) files.

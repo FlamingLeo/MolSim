@@ -23,6 +23,8 @@ void CLIParser::checkValidity(const Arguments &args) {
 
 void CLIParser::setDefaults(Arguments &args) {
     SPDLOG_TRACE("Argument bit vector: {}", args.argsSet.to_string());
+
+    // simulation-specific options
     switch (args.sim) {
     case SimulationType::VERLET:
         args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
@@ -36,6 +38,21 @@ void CLIParser::setDefaults(Arguments &args) {
         break;
     default:
         CLIUtils::error("Cannot set default arguments for unknown simulation type!");
+    }
+
+    // type-specific options
+    switch (args.type) {
+    case WriterType::VTK:
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_vtk";
+        break;
+    case WriterType::XYZ:
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_xyz";
+        break;
+    case WriterType::NIL: /* ignored */
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_nil";
+        break;
+    default:
+        CLIUtils::error("Cannot set default arguments for unknown output type!");
     }
 }
 
@@ -69,6 +86,11 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.delta_t = StringUtils::toDouble(optarg);
             args.argsSet.set(2);
             SPDLOG_DEBUG("Set timestep to {}.", args.delta_t);
+            break;
+        case 'b': /* basename */
+            args.basename = optarg;
+            args.argsSet.set(3);
+            SPDLOG_DEBUG("Set basename to {}.", args.basename);
             break;
         case 'E': /* epsilon */
             args.epsilon = StringUtils::toDouble(optarg);

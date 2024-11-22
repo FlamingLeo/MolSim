@@ -17,7 +17,7 @@
 
 /// @brief File reader class which implements functionality to read data from input files.
 class FileReader {
-  private:
+  protected:
     /// @brief Input stream representing the file containing molecule data.
     std::ifstream m_infile;
 

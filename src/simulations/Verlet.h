@@ -40,6 +40,9 @@ class Verlet : public Simulation {
     /// @brief The type of the generated output file.
     WriterType m_type;
 
+    /// @brief A reference to the basename of the generated files.
+    const std::string &m_basename;
+
     /// @brief A pointer to the FileWriter object used for writing file output.
     std::unique_ptr<FileWriter> m_writer;
 
