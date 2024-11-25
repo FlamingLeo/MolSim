@@ -36,8 +36,14 @@ class Particle {
     int type;
 
   public:
-    /// @brief Construct a new Particle object by passing its type. Prevents implicit conversions.
-    /// @param type The type of the Particle object to be constructed.
+    /**
+     * @brief Construct a new Particle object by optionally passing its type. Prevents implicit conversions.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
+     *
+     * @param type The type of the Particle object to be constructed.
+     */
     explicit Particle(int type = 0);
 
     /**
@@ -49,6 +55,9 @@ class Particle {
 
     /**
      * @brief Construct a new Particle object using explicit values for each data field.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
      *
      * @param x_arg A reference to the array containing data for the position \f$ x \f$.
      * @param v_arg A reference to the array containing data for the velocity \f$ v \f$.
@@ -137,6 +146,23 @@ class Particle {
     void setFToZero();
 
     /**
+     * @brief Sets the new mass \f$ m \f$ of the particle to a given value.
+     *
+     * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
+     * not be negative or 0.
+     *
+     * @param new_m The new mass of this particle.
+     */
+    void setM(double new_m);
+
+    /**
+     * @brief Sets the new type of the particle to a given value.
+     *
+     * @param new_type The new type of this particle.
+     */
+    void setType(double new_type);
+
+    /**
      * @brief Returns a string representation of this particle.
      *
      * @return The formatted particle data as a std::string.
@@ -150,7 +176,16 @@ class Particle {
      * @return true if both particles' data (attributes) contain the same values.
      * @return false if both particles have at least one differing attribute.
      */
-    bool operator==(Particle &other);
+    bool operator==(const Particle &other) const;
+
+    /**
+     * @brief Overload of the inequality operator for Particle objects.
+     *
+     * @param other A reference to the Particle object to compare the current object with.
+     * @return true if both particles have at least one differing attribute.
+     * @return false if both particles' data (attributes) contain the same values.
+     */
+    bool operator!=(const Particle &other) const;
 };
 
 /**
@@ -160,4 +195,4 @@ class Particle {
  * @param p A reference to the piped Particle.
  * @return The modified output stream, to allow chaining << operations.
  */
-std::ostream &operator<<(std::ostream &stream, Particle &p);
+std::ostream &operator<<(std::ostream &stream, const Particle &p);

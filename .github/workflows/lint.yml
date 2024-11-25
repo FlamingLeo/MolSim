@@ -1,0 +1,25 @@
+name: Lint Code
+
+on:
+    push:
+        branches:
+            - "Assignment*"
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the repository
+              uses: actions/checkout@v4
+
+            - name: Set up cpplint
+              run: sudo apt-get install -y cpplint
+
+            - name: Run cpplint
+              run: |
+                  cd scripts && chmod +x lint.sh && ./lint.sh && cd ..

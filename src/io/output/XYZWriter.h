@@ -13,6 +13,7 @@
 #include "FileWriter.h"
 #include "objects/Particle.h"
 #include <fstream>
+#include <string>
 
 /// @brief Class which implements functionality to generate VTK output from particles.
 class XYZWriter : public FileWriter {
@@ -31,7 +32,7 @@ class XYZWriter : public FileWriter {
      *
      * @param basename The base name of the generated files.
      */
-    XYZWriter(const std::string &basename);
+    explicit XYZWriter(const std::string &basename);
 
     /**
      * @brief Creates a new XYZWriter with the given basename for future file outputs in the specified directory.
@@ -43,6 +44,15 @@ class XYZWriter : public FileWriter {
 
     /// @brief Destroys the current XYZWriter object.
     virtual ~XYZWriter();
+
+    /**
+     * @brief (Re)initializes the output directory.
+     *
+     * First, the function checks if the output directory exists. If it doesn't, it creates it. Otherwise, it deletes
+     * everything inside it.
+     *
+     */
+    void initializeFolder();
 
     /**
      * @brief Writes the type, mass, position, velocity and force of a ParticleContainer to a XYZ file. Terminates

@@ -13,11 +13,13 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <functional>
 #include <list>
 #include <map>
 #include <numeric>
 #include <set>
 #include <sstream>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -79,7 +81,7 @@ template <typename T> struct is_container {
  * @brief Generates a string representation of a container which fulfills the Container
  * requirement (provide cbegin and cend).
  * @tparam Container Type of Container.
- * @param container.
+ * @param container The container to create the string representation from.
  * @param delimiter String that is put between items.
  * @param surround Strings to be put before and after the listing (e.g.
  * brackets).
@@ -124,7 +126,7 @@ inline Container elementWisePairOp(const Container &lhs, const Container &rhs, F
     auto rhsIter = std::cbegin(rhs);
     const auto rhsEnd = std::cend(rhs);
 
-    for (; lhsIter != lhsEnd and rhsIter != rhsEnd; ++lhsIter, ++rhsIter, ++retIter) {
+    for (; lhsIter != lhsEnd && rhsIter != rhsEnd; ++lhsIter, ++rhsIter, ++retIter) {
         *retIter = binaryFunction(*lhsIter, *rhsIter);
     }
 

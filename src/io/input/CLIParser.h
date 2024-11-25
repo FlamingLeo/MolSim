@@ -19,10 +19,14 @@ namespace CLIParser {
 void checkValidity(const Arguments &args);
 
 /**
- * @brief Parse and store CLI arguments in an Arguments struct.
+ * @brief Set default values for uninitialized Argument attributes based on the chosen Simulation type.
  *
- * @bug The input file path doesn't have to be the last argument passed via the command line. It can be anywhere and it
- * will still work just fine.
+ * @param args A reference to the Argument struct to be modified.
+ */
+void setDefaults(Arguments &args);
+
+/**
+ * @brief Parse and store CLI arguments in an Arguments struct.
  *
  * @param argc Argument counter, typically passed directly via the main function.
  * @param argv Argument vector, typically passed directly via the main function.

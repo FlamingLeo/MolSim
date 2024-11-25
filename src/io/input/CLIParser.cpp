@@ -5,48 +5,38 @@
 #include <cstring>
 #include <getopt.h>
 #include <iostream>
+#include <spdlog/spdlog.h>
+#include <string>
 #include <unordered_map>
 
-/// @brief Map containing conversion information for converting a string to a WriterType enum.
-/// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, WriterType> const writerTable = {{"vtk", WriterType::VTK},
-                                                                        {"xyz", WriterType::XYZ}};
-
-/// @brief Map containing conversion information for converting a string to a SimulationType enum.
-/// Static .cpp utility variable; undocumented in header file.
-static std::unordered_map<std::string, SimulationType> const SimulationTable = {{"verlet", SimulationType::VERLET}};
-
-/// @brief Function to convert a string to a WriterType enum using the above map.
-/// @param type The string containing the desired WriterType.
-/// @return The desired WriterType enum if the type string is valid, otherwise terminate with error.
-static WriterType stringToWriterType(const std::string &type) {
-    auto it = writerTable.find(type);
-    if (it != writerTable.end())
-        return it->second;
-    else
-        CLIUtils::error("Invalid output type", type);
-    return WriterType::VTK; // shouldn't reach this; included to silence warning
-}
-
-/// @brief Function to convert a string to a SimulationType enum using the above map.
-/// @param type The string containing the desired SimulationType.
-/// @return The desired SimulationType enum if the type string is valid, otherwise terminate with error.
-static SimulationType stringToSimulationType(const std::string &type) {
-    auto it = SimulationTable.find(type);
-    if (it != SimulationTable.end())
-        return it->second;
-    else
-        CLIUtils::error("Invalid output type", type);
-    return SimulationType::VERLET; // shouldn't reach this; included to silence warning
-}
-
-/* documented functions start here */
 void CLIParser::checkValidity(const Arguments &args) {
+    SPDLOG_TRACE("Checking argument validity...");
     // maybe disallow start and end being the same? or print out some warning?
     if (args.startTime > args.endTime)
         CLIUtils::error("Start time must be before end time!");
     if (args.delta_t <= 0)
         CLIUtils::error("Timestep must be positive!");
+    if (args.itFreq <= 0) {
+        CLIUtils::error("Output frequency must be positive!");
+    }
+}
+
+void CLIParser::setDefaults(Arguments &args) {
+    SPDLOG_TRACE("Argument bit vector: {}", args.argsSet.to_string());
+    switch (args.sim) {
+    case SimulationType::GRAVITY:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 1000.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.014;
+        break;
+    case SimulationType::LJ:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 5.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0002;
+        break;
+    default:
+        CLIUtils::error("Cannot set default arguments for unknown simulation type!");
+    }
 }
 
 void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
@@ -54,63 +44,84 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
     CLIUtils::filename = argv[0]; // update filename for help and usage strings
     opterr = 0;                   // silence default getopt error messages
 
+    SPDLOG_DEBUG("Parsing command line arguments...");
+
     // check for invalid syntax (not enough args)
     if (argc < 2)
         CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
 
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
+        SPDLOG_TRACE("[getopt] Read option -{} with {}argument {}", StringUtils::fromChar(ch), optarg ? "" : "no ",
+                     optarg ? optarg : "" /* this is really tacky but it works */);
         switch (ch) {
         case 's': /* start time */
             args.startTime = StringUtils::toDouble(optarg);
+            args.argsSet.set(0);
+            SPDLOG_DEBUG("Set start time to {}.", args.startTime);
             break;
         case 'e': /* end time */
             args.endTime = StringUtils::toDouble(optarg);
+            args.argsSet.set(1);
+            SPDLOG_DEBUG("Set end time to {}.", args.endTime);
             break;
         case 'd': /* timestep */
             args.delta_t = StringUtils::toDouble(optarg);
+            args.argsSet.set(2);
+            SPDLOG_DEBUG("Set timestep to {}.", args.delta_t);
+            break;
+        case 'E': /* epsilon */
+            args.epsilon = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set epsilon to {}.", args.epsilon);
+            break;
+        case 'S': /* sigma */
+            args.sigma = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set sigma to {}.", args.sigma);
             break;
         case 'f': /* output frequency */
             args.itFreq = StringUtils::toInt(optarg);
+            SPDLOG_DEBUG("Set output frequency to {}.", args.itFreq);
             break;
         case 'o': /* output type */
-            args.type = stringToWriterType(optarg);
+            args.type = StringUtils::toWriterType(optarg);
+            SPDLOG_DEBUG("Set output type to {}.", optarg);
             break;
         case 't': /* simulation type */
-            args.sim = stringToSimulationType(optarg);
+            args.sim = StringUtils::toSimulationType(optarg);
+            SPDLOG_DEBUG("Set simulation type to {}.", optarg);
             break;
         case 'h': /* help */
             CLIUtils::printHelp();
             std::exit(EXIT_SUCCESS);
         case '?': /* invalid syntax */
-            if (optopt == 's')
-                CLIUtils::error("Start time not specified!");
-            else if (optopt == 'e')
-                CLIUtils::error("End time not specified!");
-            else if (optopt == 'd')
-                CLIUtils::error("Timestep not specified!");
-            else if (optopt == 'f')
-                CLIUtils::error("Output frequency not specified!");
-            else if (optopt == 'o')
-                CLIUtils::error("Output type not specified!");
-            else if (optopt == 't')
-                CLIUtils::error("Simulation type not specified!");
-            else
-                CLIUtils::error("Unknown option found", StringUtils::fromString(optopt));
+        {
+            SPDLOG_TRACE("[getopt] Found invalid or incomplete option: {}.", StringUtils::fromChar(optopt));
+            auto it = CLIUtils::optionNames.find(optopt);
+            if (it != CLIUtils::optionNames.end()) {
+                std::string err = it->second + " not specified!";
+                CLIUtils::error(err.c_str());
+            } else {
+                CLIUtils::error("Unknown option found", StringUtils::fromChar(optopt));
+            }
+        }
         default: /* shouldn't happen... */
-            CLIUtils::error("An unknown error occurred while parsing command "
-                            "line arguments!");
+            CLIUtils::error("An unknown error occurred while parsing command line arguments!");
         }
     }
+    SPDLOG_TRACE("[getopt] Finished iterating through options.");
 
     // handle getopt's special "--" argument
     if (std::strcmp(argv[optind - 1], "--") == 0)
         CLIUtils::error("Invalid option '--'!");
 
     // by this point, following correct syntax, optind should be exactly one less than the argument counter
+    SPDLOG_TRACE("optind: {}, argc: {}", optind, argc);
     if (optind != (argc - 1))
         CLIUtils::error("Invalid syntax - no file input provided!");
 
-    // finally, check numerical argument validity and return arguments if all goes well
+    // finally, set default values and check numerical argument validity and return arguments if all goes well
+    setDefaults(args);
     checkValidity(args);
+
+    SPDLOG_DEBUG("Finished parsing command line arguments.");
 }

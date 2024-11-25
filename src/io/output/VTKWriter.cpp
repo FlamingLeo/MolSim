@@ -1,25 +1,47 @@
 #include "VTKWriter.h"
 #include "utils/CLIUtils.h"
-
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <string>
 
-VTKWriter::VTKWriter() = default;
-VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {};
+VTKWriter::VTKWriter() {
+    SPDLOG_TRACE("Created new VTKWriter (empty).");
+    initializeFolder();
+}
+VTKWriter::VTKWriter(const std::string &basename) : m_basename{basename} {
+    SPDLOG_TRACE("Created new VTKWriter with base name {}", basename);
+    initializeFolder();
+}
 VTKWriter::VTKWriter(const std::string &basename, const std::string &dirname)
-    : m_basename{basename}, m_dirname{dirname} {};
+    : m_basename{basename}, m_dirname{dirname} {
+    SPDLOG_TRACE("Created new VTKWriter with base name {} and directory name {}", basename, dirname);
+    initializeFolder();
+}
+VTKWriter::~VTKWriter() { SPDLOG_TRACE("Destroyed VTKWriter."); }
 
-VTKWriter::~VTKWriter() = default;
+void VTKWriter::initializeFolder() {
+    // create output directory in which to store generated XYZ output files
+    if (!(std::filesystem::exists(m_dirname))) {
+        SPDLOG_DEBUG("Folder {} does not exist, creating...", m_dirname);
+        if (!(std::filesystem::create_directory(m_dirname)))
+            CLIUtils::error("Error creating directory", m_dirname, false);
+    } else {
+        SPDLOG_DEBUG("Folder {} exists, reinitializing...", m_dirname);
+        std::filesystem::remove_all(m_dirname);
+        if (!(std::filesystem::create_directory(m_dirname)))
+            CLIUtils::error("Error reinitializing directory", m_dirname, false);
+    }
+}
 
 void VTKWriter::initializeOutput(int numParticles) {
     // initialize new vtk file
     m_vtkFile = new VTKFile_t("UnstructuredGrid");
     if (!m_vtkFile)
-        CLIUtils::error("Error initializing VTK file!");
+        CLIUtils::error("Error initializing VTK file!", "", false);
 
     // per point, we add type, position, velocity and force
     PointData pointData;
@@ -47,18 +69,14 @@ void VTKWriter::initializeOutput(int numParticles) {
     PieceUnstructuredGrid_t piece(pointData, cellData, points, cells, numParticles, 0);
     UnstructuredGrid_t unstructuredGrid(piece);
     m_vtkFile->UnstructuredGrid(unstructuredGrid);
+
+    SPDLOG_TRACE("Initialized new VTK object.");
 }
 
 void VTKWriter::writeFile(int iteration) {
     // before we do anything, check if there is something valid to write
     if (!m_vtkFile)
-        CLIUtils::error("Cannot write uninitialized VTK file!");
-
-    // create output directory in which to store generated VTK output files
-    if (!(std::filesystem::exists(m_dirname))) {
-        if (!(std::filesystem::create_directory(m_dirname)))
-            CLIUtils::error("Error creating VTK directory!");
-    }
+        CLIUtils::error("Uninitialized VTK file!", "", false);
 
     // generate unique filename based on iteration
     std::stringstream strstr;
@@ -67,17 +85,21 @@ void VTKWriter::writeFile(int iteration) {
     std::ofstream file(strstr.str().c_str());
 
     if (!file)
-        CLIUtils::error("Error opening output file", m_basename);
+        CLIUtils::error("Error opening output file", m_basename, false);
+
+    SPDLOG_TRACE("Opened file {} for writing.", strstr.str());
 
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
+    SPDLOG_INFO("Wrote contents to VTK file {}.", strstr.str());
     delete m_vtkFile;
+    SPDLOG_TRACE("Deleted VTK object.");
 }
 
 void VTKWriter::plotParticle(const Particle &p) {
     // check for valid vtk file
     if (!m_vtkFile || !(m_vtkFile->UnstructuredGrid().present()))
-        CLIUtils::error("VTK file incorrectly initialized!");
+        CLIUtils::error("VTK file incorrectly initialized!", "", false);
 
     // do some dark vtk magic
     PointData::DataArray_sequence &pointDataSequence = m_vtkFile->UnstructuredGrid()->Piece().PointData().DataArray();
@@ -103,6 +125,8 @@ void VTKWriter::plotParticle(const Particle &p) {
     pointsIterator->push_back(p.getX()[0]);
     pointsIterator->push_back(p.getX()[1]);
     pointsIterator->push_back(p.getX()[2]);
+
+    SPDLOG_TRACE("Plotted Particle - {}", p.toString());
 }
 
 void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration) {

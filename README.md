@@ -8,7 +8,7 @@ The codebase for the Molecular Dynamics Bachelor Practical Course @ TUM of Group
 -   [Luca-Dumitru Drîndea](https://github.com/Luky002)
 -   [Mara Godeanu](https://github.com/MaraGodeanu)
 
-## Getting Started
+## Prerequisites
 
 ### Tools Required
 
@@ -21,53 +21,125 @@ The code has been developed using the following software on separate machines:
 -   [Doxygen](https://www.doxygen.nl/) 1.9.8 (optional)
 -   [Paraview](https://www.paraview.org/) 5.13.1 (less optional)
 
-Different compilers (e.g. [G++](https://gcc.gnu.org/)) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
+Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions (e.g. Clang++ [7](https://en.cppreference.com/w/cpp/17)) may work aswell; however, we provide no guarantee aside from what we used ourselves during development.
 
-### Build Instructions
+### Dependencies
 
-Before attempting to build, ensure that you have the [Xerces-C++](https://xerces.apache.org/xerces-c/) library installed via your system's package manager. On Debian-based systems, use `apt-get` to install it:
+This project uses the following external C++ libraries:
 
-```bash
-sudo apt-get install libxerces-c-dev
-```
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
+-   [GoogleTest](https://github.com/google/googletest) 1.15.2
+-   [Benchmark](https://github.com/google/benchmark) 1.9.0
+-   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 
-Afterwards, run the build script to build the executable:
+If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
+
+**NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
+
+## Getting Started
+
+### Build Instructions (Automatic)
+
+The repository provides a simple, configurable shell script to automate the build process.
 
 ```bash
 chmod +x build.sh # required once if you get a 'Permission denied' error
-./build.sh
+./build.sh [options]
 ```
 
-Alternatively, you may build the executable manually (and optionally disable Doxygen support):
+Following options are supported:
+
+```text
+-b <arg> : Sets the type of the compiled binary (default: Release).
+  - Debug          : No optimizations, debug information.
+  - Release        : High optimization levels, no debug information.
+  - RelWithDebInfo : High optimization levels, debug information.
+  - MinSizeRel     : Small file size, no debug information.
+-c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
+           Logging MUST be set to level 6 to enable benchmarking. If -s is not set, this will be done automatically.
+-d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-h       : Prints out a help message. Doesn't build the program.
+-j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
+-l       : Disables automatically installing missing libraries (default: installs automatically)
+-m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
+           If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
+           To enable benchmarking, this option MUST be set to 6 (off). This is done automatically if -s is not set.
+-t       : Automatically runs tests after successful compilation (default: off).
+```
+
+**NOTE**: On Debian-based systems, the script will automatically attempt to install missing libraries (unless `-l` is set) to speed up the compilation process.
+This is done using `sudo apt-get install`. As such, you may be required to enter your password.
+
+### Build Instructions (Manual)
+
+Alternatively, you may build the project manually:
 
 ```bash
 mkdir build
 cd build
-cmake .. # no doxygen: 'cmake .. -DENABLE_DOXYGEN=OFF'
+cmake ..
+# -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
+# -DENABLE_DOXYGEN=<OFF|ON>
+# -DENABLE_BENCHMARKING=<OFF|ON>
+# -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
+# <MolSim|bench|tests|doc_doxygen|all|clean|help>
 ```
 
 ### Run Instructions
 
-After building, the executable will be located in the `build` directory. The syntax from inside the directory is:
+After building, the main executable will be located in the `build/src` directory. The syntax from inside the directory is:
 
-```bash
+```text
 ./MolSim [options] <filename>
 ```
 
 Currently, the following options are supported:
 
 ```text
--s <number>  : Sets the start time (decimal) for a specific simulation (default: 0).
--e <number>  : Sets the end time (decimal) for a specific simulation (default: 1000).
--d <number>  : Sets the time interval between two iterations of a simulation (default: 0.014).
--f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
--o <xyz|vtk> : Sets the output file type and directory (default: vtk).
--t <verlet>  : Sets the desired simulation to be performed (default: Verlet) (WIP).
--h           : Prints out a help message. Doesn't perform any simulation.
+-s <number> : Sets the start time (decimal) for a specific simulation (default: simulation-specific).
+-e <number> : Sets the end time (decimal) for a specific simulation (default: simulation-specific).
+-d <number> : Sets the time interval between two iterations of a simulation (default: simulation-specific).
+-f <number> : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
+-o <type>   : Sets the output file type and directory (default: vtk).
+  - vtk     : Generates VTK Unstructured Grid (.vtu) files.
+  - xyz     : Generates XYZ (.xyz) files.
+  - nil     : Logs to stdout. Used for debugging purposes.
+-t <type>   : Sets the desired simulation to be performed (default: lj).
+  - gravity : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
+  - lj      : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
+-h          : Prints out a help message. Doesn't perform any simulation.
 ```
 
-The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective subdirectory of the `build` folder (e.g. `build/vtk` for VTK output).
+The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective `vtk` or `xyz` subdirectory from which the program executable was called (i.e. if the program was called from `build/src` with VTK output, the output will be in `build/src/vtk`)
+
+**NOTE**: Logging must be configured at compile time. To change the log level, you must recompile the program [accordingly](#build-instructions-automatic).
+
+### Test Instructions
+
+The test executable will be located in the `build/tests` directory. From there, simply run `ctest` to execute the tests.
+
+### Benchmarking Instructions
+
+Benchmarking is **disabled** by default and must be enabled manually using CMake. To perform benchmarking on all simulations, run the built binary inside `build/bench`.
+
+**IMPORTANT**: Logging **must** be disabled when compiling the benchmarks, and you **must** compile a `Release` build. Otherwise, compilation will fail.
+
+**NOTE**: You may need to [disable CPU scaling](https://github.com/google/benchmark/blob/main/docs/user_guide.md#disabling-cpu-frequency-scaling) when benchmarking for more accurate results. You can do this using `cpupower`.
+
+```bash
+sudo cpupower frequency-set --governor performance # disable CPU scaling
+# run benchmarks...
+sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
+```
+
+## Input Files
+
+Currently, the following input files are included in the repository, inside the `input` directory:
+
+-   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
+-   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
 
 ## Documentation
 

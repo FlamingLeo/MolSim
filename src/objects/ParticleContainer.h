@@ -53,6 +53,8 @@ class ParticleContainer {
         ContainerType::iterator container_begin;
         /// @brief A standard library iterator marking the end of the iteration.
         ContainerType::iterator container_end;
+        /// @brief Checks if the PairIterator has finished iterating through every pair.
+        bool finished;
 
       public:
         /**
@@ -103,6 +105,26 @@ class ParticleContainer {
     };
 
     /**
+     * @brief Override of the [] operator.
+     *
+     * Gets a Particle by index. Does NOT perform bounds checking.
+     *
+     * @param index The index of the Particle to get.
+     * @return A reference to the Particle at the specified index.
+     */
+    Particle &operator[](size_t index);
+
+    /**
+     * @brief Override of the [] operator (const).
+     *
+     * Gets a Particle by index. Does NOT perform bounds checking.
+     *
+     * @param index The index of the Particle to get.
+     * @return A const reference to the Particle at the specified index.
+     */
+    const Particle &operator[](size_t index) const;
+
+    /**
      * @brief Function marking the beginning of the pair iteration process.
      *
      * @return A PairIterator pointing to the first possible particle pair.
@@ -123,7 +145,10 @@ class ParticleContainer {
     /// @brief Constructs a ParticleContainer with an empty ContainerType and reserves space for num_particle Particle
     /// entries.
     /// @param num_particles The amount of space to be reserved in the empty ContainerType.
-    ParticleContainer(size_t num_particles);
+    explicit ParticleContainer(size_t num_particles);
+
+    /// @brief Destroys the ParticleContainer object.
+    virtual ~ParticleContainer();
 
     /**
      * @brief Adds an already existing Particle to the container.
@@ -156,6 +181,22 @@ class ParticleContainer {
     void reserve(size_t capacity);
 
     /**
+     * @brief Gets a Particle by index. Performs bounds checking and terminates on invalid index.
+     *
+     * @param index The index of the Particle to get.
+     * @return A reference to the Particle at the specified index.
+     */
+    Particle &get(size_t index);
+
+    /**
+     * @brief Gets a const Particle by index. Performs bounds checking and terminates on invalid index.
+     *
+     * @param index The index of the Particle to get.
+     * @return A const reference to the Particle at the specified index.
+     */
+    const Particle &get(size_t index) const;
+
+    /**
      * @brief Returns the size of the container.
      *
      * @return The size of the container.
@@ -176,4 +217,30 @@ class ParticleContainer {
      * @return A ContainerType& referencing m_particles.
      */
     ContainerType &getParticles();
+
+    /**
+     * @brief Overload of the equality operator. Checks if two ParticleContainers have the same Particle objects.
+     *
+     * @param other The ParticleContainer to compare the current one with.
+     * @return true if both ParticleContainers contain the same particles.
+     * @return false if there is at least one differing particle in one of the containers or the sizes differ.
+     */
+    bool operator==(const ParticleContainer &other) const;
+
+    /**
+     * @brief Overload of the inequality operator. Checks if two ParticleContainers have the at least one differing
+     * Particle object or different sizes.
+     *
+     * @param other The ParticleContainer to compare the current one with.
+     * @return true if there is at least one differing particle in one of the containers or the sizes differ.
+     * @return false if both ParticleContainers contain the same particles.
+     */
+    bool operator!=(const ParticleContainer &other) const;
+
+    /**
+     * @brief Returns a string representation of this container.
+     *
+     * @return A std::string of this container.
+     */
+    std::string toString() const;
 };

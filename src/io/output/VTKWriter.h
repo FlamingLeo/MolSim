@@ -13,6 +13,7 @@
 #include "FileWriter.h"
 #include "io/vtk/vtk-unstructured.h"
 #include "objects/Particle.h"
+#include <string>
 
 /// @brief Class which implements functionality to generate VTK output from particles.
 class VTKWriter : public FileWriter {
@@ -23,6 +24,15 @@ class VTKWriter : public FileWriter {
     std::string m_basename = "MD_vtk";
     /// @brief The name of the directory in which to store the generated files.
     std::string m_dirname = "vtk";
+
+    /**
+     * @brief (Re)initializes the output directory.
+     *
+     * First, the function checks if the output directory exists. If it doesn't, it creates it. Otherwise, it deletes
+     * everything inside it.
+     *
+     */
+    void initializeFolder();
 
     /**
      * @brief Initializes m_vtkFile with necessary metadata for writing purposes. Terminates program execution on error.
@@ -54,7 +64,7 @@ class VTKWriter : public FileWriter {
      *
      * @param basename The base name of the generated files.
      */
-    VTKWriter(const std::string &basename);
+    explicit VTKWriter(const std::string &basename);
 
     /**
      * @brief Creates a new VTKWriter with the given basename for future file outputs in the specified directory.
