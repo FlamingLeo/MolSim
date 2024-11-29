@@ -7,51 +7,50 @@
  *
  */
 #pragma once
-#include "Particle.h"
-#include "ParticleContainer.h"
 #include "../io/input/FileReader.h"
-#include "Cell.h"
-#include <array>
-#include <string>
-#include <utility>
-#include <vector>
-#include <cmath>
+#include "../io/output/WriterFactory.h"
 #include "../strategies/F.h"
 #include "../strategies/V.h"
 #include "../strategies/X.h"
+#include "Cell.h"
+#include "Particle.h"
+#include "ParticleContainer.h"
+#include <array>
+#include <cmath>
 #include <iostream>
-#include "../io/output/WriterFactory.h"
+#include <string>
+#include <utility>
+#include <vector>
 
 class LinkedCells {
 
-    private:
-        std::vector<Cell> cells;
+  private:
+    std::vector<Cell> cells;
 
-        std::vector<Cell*> border_cells;
-        std::vector<Cell*> halo_cells;
+    std::vector<Cell *> border_cells;
+    std::vector<Cell *> halo_cells;
 
-        std::array<double, 3> domainSize;
-        std::array<double, 3> cellSize;
-        std::array<int, 3> numCells;
-        double cutoff;
+    std::array<double, 3> domainSize;
+    std::array<double, 3> cellSize;
+    std::array<int, 3> numCells;
+    double cutoff;
 
-    public:
-        LinkedCells();
+  public:
+    LinkedCells();
 
-        std::vector<Cell> getCells();
+    std::vector<Cell> &getCells();
 
-        int getCellIndex(const std::array<double, 3>& position);
+    int getCellIndex(const std::array<double, 3> &position);
 
-        void deleteParticle(Particle &p);
+    void deleteParticle(Particle &p);
 
-        void addParticle(const Particle& particle);
+    void addParticle(const Particle &particle);
 
-        std::array<int, 3> getVirtualCellCoordinates(int index);
+    std::array<int, 3> getVirtualCellCoordinates(int index);
 
-        std::vector<int> getNeighbors3D(int cellIndex);
+    std::vector<int> getNeighbors3D(int cellIndex);
 
-        void calculateVelocity();
-        void calculateForce();
-        void calculatePosition();
-
+    void calculateVelocity();
+    void calculateForce();
+    void calculatePosition();
 };

@@ -5,11 +5,9 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 
-
-
-Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r,
-               const std::array<double, 3> &v, double h, double m)
-        : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
+           double h, double m)
+    : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
     SPDLOG_TRACE("Generated Disc (simple constructor) - x: {}, r: {}, h: {}, m: {}, v: {}, mean_v: {}",
                  ArrayUtils::to_string(x), r, h, m, ArrayUtils::to_string(v), mean_velocity);
 }
@@ -18,24 +16,22 @@ void Disc::initializeDisc() {
     SPDLOG_TRACE("Initializing Particles for Disc {}...", this->toString());
     const double pi = 3.14159265358979323846;
 
-    //we interpreted radius 1 as already a ring around the centre
-    //radius 0 --> particle in the centre
+    // we interpreted radius 1 as already a ring around the centre
+    // radius 0 --> particle in the centre
     std::array<double, 3> pos = {0, 0, 0};
-    std::array<double, 3> vel = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2),
-                                      std::plus<>());
+    std::array<double, 3> vel =
+        ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
     particles.addParticle(pos, vel, m);
 
-    if(r != 0) {
-
-        //we generate particles in concentric circles
+    if (r != 0) {
+        // we generate particles in concentric circles
         for (int i = 0; i < r; i++) {
-
-            //we take h as arc distance, not euclidean distance for convenience (arc > euclidean)
+            // we take h as arc distance, not euclidean distance for convenience (arc > euclidean)
             double ringRadius = (i + 1) * h;
             double segments = 2 * pi * (i + 1);
             int points = std::floor(segments);
 
-            //initialize the particles along the ring
+            // initialize the particles along the ring
             for (int p = 0; p < points; p++) {
 
                 std::array<double, 3> xyz;
@@ -43,13 +39,10 @@ void Disc::initializeDisc() {
                 xyz[0] = x[0] + std::cos(angle) * ringRadius;
                 xyz[1] = x[1] + std::sin(angle) * ringRadius;
                 xyz[2] = 0;
-                std::array<double, 3> velocity = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2),
-                                                  std::plus<>());
-                std::cout << xyz << "\n";
+                std::array<double, 3> velocity = ArrayUtils::elementWisePairOp(
+                    v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
                 particles.addParticle(xyz, velocity, m);
-
             }
-
         }
     }
 }

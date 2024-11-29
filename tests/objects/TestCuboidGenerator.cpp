@@ -1,28 +1,16 @@
 #include "objects/CuboidGenerator.h"
+#include "utils/PathUtils.h"
 #include <filesystem>
 #include <gtest/gtest.h>
 
 class CuboidGeneratorTests : public ::testing::Test {
-  private:
-    std::string getTargetPath(const std::string &fullPath, const std::string &targetDir) {
-        size_t pos = fullPath.rfind(targetDir);
-        if (pos != std::string::npos) {
-            return fullPath.substr(0, pos + targetDir.length());
-        }
-        return "";
-    }
-
   protected:
     std::string targetPath;
 
     void SetUp() override {
-        std::filesystem::path cwd = std::filesystem::current_path();
-        targetPath = getTargetPath(cwd, "MolSim");
-        if (targetPath.empty())
-            GTEST_SKIP() << "Project root directory not found, skipping tests...";
-        targetPath += "/tests/files";
-        if (!(std::filesystem::exists(targetPath)))
-            GTEST_SKIP() << "Test files not found, skipping tests...";
+        std::string failReason = "";
+        if (!PathUtils::setupFileTests(targetPath, failReason))
+            GTEST_SKIP() << failReason;
     }
 };
 

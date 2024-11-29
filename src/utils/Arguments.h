@@ -7,10 +7,13 @@
  *
  */
 #pragma once
+#include <array>
 #include <bitset>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
+#define INF std::numeric_limits<double>::infinity()
 
 /// @brief Enum containing each (valid) type of output writer.
 enum class WriterType { VTK, XYZ, NIL };
@@ -34,6 +37,10 @@ struct Arguments {
     double sigma{1};
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
+    /// @brief Domain size for linked cells (default: unspecified, will fail if not specified!)
+    std::array<double, 3> domainSize{INF, INF, INF};
+    /// @brief Cutoff radius for linked cells (default: unspecified, will fail if not specified!)
+    double cutoffRadius{INF};
     /// @brief The basename of the output file (default: type-specific).
     std::string basename{};
     /// @brief Output type (default: VTK).

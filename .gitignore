@@ -45,3 +45,6 @@ doxys_documentation/
 # Output folders
 vtk/
 xyz/
+
+# Personal todo file
+todo.*

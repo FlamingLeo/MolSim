@@ -56,25 +56,26 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
     }
 }
 
-void calculateF_LennardJones2(ParticleContainer &particles1,ParticleContainer &particles2, double epsilon, double sigma) {
+void calculateF_LennardJones2(ParticleContainer &particles1, ParticleContainer &particles2, double epsilon,
+                              double sigma) {
     for (auto &p1 : particles1) {
-        //std::cout<<"old F is " << p1.getF() << "\n";
+        // std::cout<<"old F is " << p1.getF() << "\n";
         for (auto &p2 : particles2) {
 
-            //for some reason unequal doesn't work so I implemented the extra distnorm condition. Possibly this causes
-            //the particles to be yeeted?
+            // for some reason unequal doesn't work so I implemented the extra distnorm condition. Possibly this causes
+            // the particles to be yeeted?
             if (p1 != p2) {
                 double distNorm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                if(distNorm != 0) {
-                    //std::cout << "pos1 " << p1.getX() << " pos2 " << p2.getX() << " distnorm " << distNorm << "\n";
-                    p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
-                            ((-24 * epsilon) / std::pow(distNorm, 2)) *
-                            (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12)),
-                            p1.getX() - p2.getX(), std::multiplies<>()));
+                if (distNorm != 0) {
+                    // std::cout << "pos1 " << p1.getX() << " pos2 " << p2.getX() << " distnorm " << distNorm << "\n";
+                    p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                                                            (std::pow((sigma / distNorm), 6) -
+                                                                             2 * std::pow((sigma / distNorm), 12)),
+                                                                        p1.getX() - p2.getX(), std::multiplies<>()));
                 }
             }
         }
-       // std::cout << "new F is " << p1.getF() << "\n";
+        // std::cout << "new F is " << p1.getF() << "\n";
     }
 }
 

@@ -1,6 +1,8 @@
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
     <xs:element name="sim" type="simType"/>
+    
     <xs:complexType name="argsType">
         <xs:sequence>
             <xs:element type="xs:double" name="startTime" minOccurs="0" maxOccurs="1"/>
@@ -11,9 +13,11 @@
             <xs:element type="xs:int" name="frequency" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:string" name="basename" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:string" name="output" minOccurs="0" maxOccurs="1"/>
-            <xs:element type="xs:string" name="simType" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="sizeType" name="domainSize" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:double" name="cutoffRadius" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+    
     <xs:complexType name="positionType">
         <xs:sequence>
             <xs:element type="xs:double" name="x"/>
@@ -21,6 +25,7 @@
             <xs:element type="xs:double" name="z"/>
         </xs:sequence>
     </xs:complexType>
+    
     <xs:complexType name="velocityType">
         <xs:sequence>
             <xs:element type="xs:double" name="x"/>
@@ -28,13 +33,15 @@
             <xs:element type="xs:double" name="z"/>
         </xs:sequence>
     </xs:complexType>
+    
     <xs:complexType name="sizeType">
         <xs:sequence>
-            <xs:element type="xs:long" name="x"/>
-            <xs:element type="xs:long" name="y"/>
-            <xs:element type="xs:long" name="z"/>
+            <xs:element type="xs:double" name="x"/>
+            <xs:element type="xs:double" name="y"/>
+            <xs:element type="xs:double" name="z"/>
         </xs:sequence>
     </xs:complexType>
+    
     <xs:complexType name="cuboidType">
         <xs:sequence>
             <xs:element type="positionType" name="position"/>
@@ -44,16 +51,42 @@
             <xs:element type="xs:double" name="mass"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="objectsType">
+    
+    <xs:complexType name="particleType">
         <xs:sequence>
-            <xs:element type="cuboidType" name="cuboid" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element type="positionType" name="position"/>
+            <xs:element type="velocityType" name="velocity"/>
+            <xs:element type="xs:double" name="mass"/>
+            <xs:element type="xs:int" name="type"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:complexType name="discType">
+        <xs:sequence>
+            <xs:element type="positionType" name="position"/>
+            <xs:element type="velocityType" name="velocity"/>
+            <xs:element type="xs:int" name="radius"/>
+            <xs:element type="xs:double" name="distance"/>
+            <xs:element type="xs:double" name="mass"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="objectsType">
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element type="cuboidType" name="cuboid"/>
+                <xs:element type="particleType" name="particle"/>
+                <xs:element type="discType" name="disc"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    
     <xs:complexType name="simType">
         <xs:sequence>
-            <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1" />
+            <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:string" name="type"/>
             <xs:element type="objectsType" name="objects"/>
+            <xs:element type="xs:long" name="totalParticles" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

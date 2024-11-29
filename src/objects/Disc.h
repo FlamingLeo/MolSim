@@ -14,7 +14,7 @@
 
 /// @brief Cuboid class storing meta-data about the given cuboids.
 class Disc {
-private:
+  private:
     /// @brief Centre \f$ x \f$ of the disc.
     std::array<double, 3> x;
 
@@ -38,7 +38,7 @@ private:
     /// (passed by DiscGenerator).
     ParticleContainer &particles;
 
-public:
+  public:
     /**
      * @brief Constructs a new Disc object with all the needed meta-data.
      *
@@ -49,8 +49,8 @@ public:
      * @param h The distance \f$ h \f$ between the particles in the disc
      * @param m The mass \f$ m \f$ of the particles in the disc
      */
-    Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r,
-           const std::array<double, 3> &v, double h, double m);
+    Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v, double h,
+         double m);
 
     /* getters */
     /**

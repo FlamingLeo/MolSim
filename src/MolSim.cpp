@@ -1,6 +1,7 @@
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
 #include "io/input/XMLReader.h"
+#include "objects/LinkedCells.h"
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
@@ -9,9 +10,9 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
-#include "objects/LinkedCells.h"
 
 int main(int argc, char *argv[]) {
+#if 1
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
 
@@ -45,8 +46,8 @@ int main(int argc, char *argv[]) {
     // run desired simulation based on user choice
     auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
     sim->runSimulation();
-
-    /*
+#endif
+#if 0
     std::cout << "working\n";
     (void)argc;
     (void)argv;
@@ -55,15 +56,15 @@ int main(int argc, char *argv[]) {
     double endTime = 20;
     double delta_t = 0.0005;
     int iteration = 0;
-    int m_totalIt = (int) endTime / delta_t;
+    int m_totalIt = (int)endTime / delta_t;
     WriterType m_type = WriterType::VTK;
-    std::unique_ptr<FileWriter> m_writer = WriterFactory::createWriter(m_type);
+    std::unique_ptr<FileWriter> m_writer = WriterFactory::createWriter(m_type, "base");
 
     LinkedCells lc = LinkedCells();
-    std::cout<< lc.getCells().size() << " cells\n";
-    for(Cell &c : lc.getCells()){
-        for(Particle p : c.getParticles()){
-            std::cout<<" start pos " << p.getX() << "\n";
+    std::cout << lc.getCells().size() << " cells\n";
+    for (Cell &c : lc.getCells()) {
+        for (Particle p : c.getParticles()) {
+            std::cout << " start pos " << p.getX() << "\n";
         }
     }
 
@@ -75,20 +76,20 @@ int main(int argc, char *argv[]) {
         iteration++;
 
         if (iteration % 10 == 0) {
-            std::cout<<"iteration " << iteration << "\n";
+            std::cout << "iteration " << iteration << "\n";
             ParticleContainer pp = ParticleContainer();
-            for(Cell &c : lc.getCells()){
-                for(Particle &p : c.getParticles()){
+            for (Cell &c : lc.getCells()) {
+                for (Particle &p : c.getParticles()) {
                     pp.addParticle(p);
-                    std::cout<<"pos " << p.getX() << "\n";
+                    std::cout << "pos " << p.getX() << "\n";
                 }
             }
-            std::cout<<pp.toString()<< "\n";
+            std::cout << pp.toString() << "\n";
             m_writer->writeParticles(pp, iteration, m_totalIt);
         }
 
         currentTime += delta_t;
     }
-    */
+#endif
     return 0;
 }

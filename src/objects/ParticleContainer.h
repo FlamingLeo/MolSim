@@ -157,12 +157,11 @@ class ParticleContainer {
      */
     void addParticle(const Particle &particle);
 
-
     /**
-    * @brief Removes a already existing Particle from the container.
-    *
-    * @param particle The Particle to be removed to m_particles.
-    */
+     * @brief Removes a already existing Particle from the container.
+     *
+     * @param particle The Particle to be removed to m_particles.
+     */
     void removeParticle(const Particle &particle);
 
     /**

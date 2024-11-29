@@ -69,7 +69,6 @@ void ParticleContainer::addParticle(const Particle &particle) {
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
 
-
 void ParticleContainer::removeParticle(const Particle &particle) {
     m_particles.erase(std::remove(m_particles.begin(), m_particles.end(), particle), m_particles.end());
     SPDLOG_TRACE("Removed Particle from ParticleContainer - {}", particle.toString());
