@@ -1,4 +1,5 @@
 #include "CLIParser.h"
+#include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdlib>
@@ -88,9 +89,17 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.argsSet.set(3);
             SPDLOG_DEBUG("Set basename to {}.", args.basename);
             break;
+        case 'D': /* domain size */
+            args.domainSize = StringUtils::toDoubleArray<3>(optarg, false);
+            SPDLOG_DEBUG("Set domain size to {}.", ArrayUtils::to_string(args.domainSize));
+            break;
         case 'E': /* epsilon */
             args.epsilon = StringUtils::toDouble(optarg);
             SPDLOG_DEBUG("Set epsilon to {}.", args.epsilon);
+            break;
+        case 'R': /* cutoff radius */
+            args.cutoffRadius = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set cutoff radius to {}.", args.cutoffRadius);
             break;
         case 'S': /* sigma */
             args.sigma = StringUtils::toDouble(optarg);

@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         CLIParser::parseArguments(argc, argv, args);
         sim = SimulationFactory::createSimulation(args.sim, pc, args);
     } else {
-        SPDLOG_DEBUG("Input file is NOT an XML file.");
+        SPDLOG_DEBUG("Input file is unspecified or NOT an XML file.");
         CLIParser::parseArguments(argc, argv, args);
         sim = SimulationFactory::createSimulation(args.sim, filename, args);
     }

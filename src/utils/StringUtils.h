@@ -155,18 +155,20 @@ template <size_t N> static inline std::array<int, N> toIntArray(const std::strin
  *
  * @tparam N The length of the array.
  * @param str The string to be converted, should be formatted as comma-separated decimal numbers between curly braces.
+ * @param reqBrackets If specified, the array must be enclosed by curly brackets. Otherwise, the format is simply "_, _,
+ * ..., _".
  * @return The corresponding array of doubles.
  */
-template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str) {
+template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str, bool reqBrackets = true) {
     if (str.empty() || N == 0)
         return {};
 
-    if (str.front() != '{' || str.back() != '}')
+    if (reqBrackets && (str.front() != '{' || str.back() != '}'))
         CLIUtils::error("Invalid array syntax", str);
 
     std::array<double, N> arr = {};
     std::string tmp;
-    std::string numbers = str.substr(1, str.size() - 2);
+    std::string numbers = reqBrackets ? str.substr(1, str.size() - 2) : str;
     std::stringstream ss(numbers);
 
     size_t i = 0;
