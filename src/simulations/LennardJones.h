@@ -20,9 +20,6 @@
 /// Lennard-Jones Force.
 class LennardJones : public Simulation {
   private:
-    /// @brief ParticleContainer containing the particles used in the simulation.
-    ParticleContainer m_particles;
-
     /// @brief CuboidGenerator used for initializing the particles from the input file.
     CuboidGenerator m_generator;
 
@@ -31,39 +28,6 @@ class LennardJones : public Simulation {
 
     /// @brief The constant of zero crossing \f$ \sigma \f$.
     double m_sigma;
-
-    /// @brief The start time \f$ t_0 \f$ of the simulation.
-    double m_startTime;
-
-    /// @brief The end time \f$ t_\text{end} \f$ of the simulation.
-    double m_endTime;
-
-    /// @brief The timestep \f$ \Delta t \f$ used during the simulation.
-    double m_delta_t;
-
-    /// @brief The output (logging) frequency for generating a file output.
-    int m_itFreq;
-
-    /// @brief The total number of iterations for which the simulation will run.
-    int m_totalIt;
-
-    /// @brief The type of the generated output file.
-    WriterType m_type;
-
-    /// @brief A reference to the basename of the generated files.
-    const std::string &m_basename;
-
-    /// @brief Object used for writing information to output files.
-    std::unique_ptr<FileWriter> m_writer;
-
-    /// @brief Function for calculating the velocity of a particle.
-    TimeIntegrationFuncs::VFunc m_calculateV;
-
-    /// @brief Function for calculating the position of a particle.
-    TimeIntegrationFuncs::XFunc m_calculateX;
-
-    /// @brief Function for calculating the force of a particle.
-    StrategyFactory::FFunc m_calculateF;
 
   public:
     /**
@@ -87,23 +51,8 @@ class LennardJones : public Simulation {
     LennardJones(const ParticleContainer &pc, const Arguments &args, int type = 0);
 
     /// @brief Default destructor.
-    ~LennardJones();
-
-    /**
-     * @brief Function used for intializating the particles and physics functions.
-     *
-     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
-     * particles.
-     */
-    void initializeSimulation(int type = 0);
+    ~LennardJones() override;
 
     /// @brief Runs the Lennard-Jones simulation.
     void runSimulation() override;
-
-    /**
-     * @brief Gets the particles used in the simulation.
-     *
-     * @return A reference to the main ParticleContainer.
-     */
-    ParticleContainer &getParticles();
 };

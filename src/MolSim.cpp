@@ -46,8 +46,7 @@ int main(int argc, char *argv[]) {
     // run desired simulation based on user choice
     auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
     sim->runSimulation();
-#endif
-#if 0
+#else
     std::cout << "working\n";
     (void)argc;
     (void)argv;
@@ -91,5 +90,4 @@ int main(int argc, char *argv[]) {
         currentTime += delta_t;
     }
 #endif
-    return 0;
 }

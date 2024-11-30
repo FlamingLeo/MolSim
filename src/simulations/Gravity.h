@@ -18,43 +18,6 @@
 /// @brief Class containing the functionality and parameters required i.a. to run a simulation of Halley's comet using
 /// the Velocity-Störmer-Verlet method.
 class Gravity : public Simulation {
-  private:
-    /// @brief The ParticleContainer containing the particles used in the simulation.
-    ParticleContainer m_particles;
-
-    /// @brief The start time \f$ t_0 \f$ of the simulation.
-    double m_startTime; // default: 0
-
-    /// @brief The end time \f$ t_\text{end} \f$ of the simulation.
-    double m_endTime; // default: 1000
-
-    /// @brief The timestep \f$ \Delta t \f$ used during the simulation.
-    double m_delta_t; // default: 0.014
-
-    /// @brief The output (logging) frequency for generating a file output.
-    int m_itFreq;
-
-    /// @brief The total number of iterations for which the simulation will run.
-    int m_totalIt;
-
-    /// @brief The type of the generated output file.
-    WriterType m_type;
-
-    /// @brief A reference to the basename of the generated files.
-    const std::string &m_basename;
-
-    /// @brief A pointer to the FileWriter object used for writing file output.
-    std::unique_ptr<FileWriter> m_writer;
-
-    /// @brief Function for calculating the Particle velocities.
-    TimeIntegrationFuncs::VFunc m_calculateV;
-
-    /// @brief Function for calculating the Particle positions.
-    TimeIntegrationFuncs::XFunc m_calculateX;
-
-    /// @brief Function for calculating the force effective on each Particle.
-    StrategyFactory::FFunc m_calculateF;
-
   public:
     /**
      * @brief Initialize a new Gravity simulation with specific particles and the given program arguments.
@@ -85,23 +48,9 @@ class Gravity : public Simulation {
      */
     explicit Gravity(const Arguments &args, int type = 0);
 
-    /// @brief Default destructor destroying data.
-    ~Gravity();
-
-    /**
-     * @brief Initializes the writer and the physics functions.
-     *
-     * @param type A modifier for which combination of functions get returned (i.e. optimized, non-optimized).
-     */
-    void initializeSimulation(int type = 0);
+    /// @brief Default destructor.
+    ~Gravity() override;
 
     /// @brief Runs the simulation.
     void runSimulation() override;
-
-    /**
-     * @brief Gets a reference to the ParticleContainer storing the simulation's particles.
-     *
-     * @return A reference to the simulation's ParticleContainer.
-     */
-    ParticleContainer &getParticles();
 };
