@@ -15,14 +15,14 @@ Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, con
                  ArrayUtils::to_string(x), ArrayUtils::to_string(N), h, m, ArrayUtils::to_string(v), mean_velocity);
 }
 
-void Cuboid::initializeParticles() {
+void Cuboid::initializeParticles(size_t dimensions) {
     SPDLOG_TRACE("Initializing Particles for Cuboid {}...", this->toString());
     std::array<double, 3> xyz;
     for (size_t i = 0; i < N[2]; i++) {
         for (size_t j = 0; j < N[1]; j++) {
             for (size_t k = 0; k < N[0]; k++) {
                 xyz = {x[0] + k * h, x[1] + j * h, x[2] + i * h};
-                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2),
+                v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, dimensions),
                                                   std::plus<>());
                 particles.addParticle(xyz, v, m);
             }
@@ -30,13 +30,13 @@ void Cuboid::initializeParticles() {
     }
 }
 
-std::array<double, 3> &Cuboid::getX() { return x; }
-std::array<size_t, 3> &Cuboid::getN() { return N; }
-double Cuboid::getH() { return h; }
-double Cuboid::getM() { return m; }
-std::array<double, 3> &Cuboid::getV() { return v; }
-double Cuboid::getMeanVelocity() { return mean_velocity; }
-ParticleContainer &Cuboid::getParticles() { return particles; }
+const std::array<double, 3> &Cuboid::getX() const { return x; }
+const std::array<size_t, 3> &Cuboid::getN() const { return N; }
+const double Cuboid::getH() const { return h; }
+const double Cuboid::getM() const { return m; }
+const std::array<double, 3> &Cuboid::getV() const { return v; }
+const double Cuboid::getMeanVelocity() const { return mean_velocity; }
+const ParticleContainer &Cuboid::getParticles() const { return particles; }
 
 bool Cuboid::operator==(const Cuboid &other) const {
     return (x == other.x) && (N == other.N) && (h == other.h) && (m == other.m) && (v == other.v) &&
@@ -44,7 +44,7 @@ bool Cuboid::operator==(const Cuboid &other) const {
 }
 bool Cuboid::operator!=(const Cuboid &other) const { return !(*this == other); }
 
-std::string Cuboid::toString() {
+std::string Cuboid::toString() const {
     std::stringstream stream;
     stream << "{ x: " << x << ", N: " << N << ", v: " << v << ", h: " << h << ", m: " << m
            << ", particles: " << particles.toString() << " }";

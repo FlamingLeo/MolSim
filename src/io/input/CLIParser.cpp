@@ -26,7 +26,7 @@ void CLIParser::setDefaults(Arguments &args) {
 
     // simulation-specific options
     switch (args.sim) {
-    case SimulationType::VERLET:
+    case SimulationType::GRAVITY:
         args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
         args.endTime = args.argsSet.test(1) ? args.endTime : 1000.0;
         args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.014;

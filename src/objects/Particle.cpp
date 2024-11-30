@@ -37,8 +37,8 @@ const std::array<double, 3> &Particle::getX() const { return x; }
 const std::array<double, 3> &Particle::getV() const { return v; }
 const std::array<double, 3> &Particle::getF() const { return f; }
 const std::array<double, 3> &Particle::getOldF() const { return old_f; }
-double Particle::getM() const { return m; }
-int Particle::getType() const { return type; }
+const double Particle::getM() const { return m; }
+const int Particle::getType() const { return type; }
 
 void Particle::setX(const std::array<double, 3> &new_x) { x = new_x; }
 void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }

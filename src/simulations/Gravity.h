@@ -1,6 +1,6 @@
 /**
- * @file Verlet.h
- * @brief Simulation of the Velocity-Störmer-Verlet method.
+ * @file Gravity.h
+ * @brief Simulation of gravitational orbit using the Velocity-Störmer-Verlet method.
  * @date 2024-10-22
  *
  * @copyright Copyright (c) 2024
@@ -15,9 +15,9 @@
 #include <memory>
 #include <string>
 
-/// @brief Class containing the functionality and parameters required to run a simulation of the Velocity-Störmer-Verlet
-/// method.
-class Verlet : public Simulation {
+/// @brief Class containing the functionality and parameters required i.a. to run a simulation of Halley's comet using
+/// the Velocity-Störmer-Verlet method.
+class Gravity : public Simulation {
   private:
     /// @brief The ParticleContainer containing the particles used in the simulation.
     ParticleContainer m_particles;
@@ -47,46 +47,46 @@ class Verlet : public Simulation {
     std::unique_ptr<FileWriter> m_writer;
 
     /// @brief Function for calculating the Particle velocities.
-    StrategyFactory::VFunc m_calculateV;
+    TimeIntegrationFuncs::VFunc m_calculateV;
 
     /// @brief Function for calculating the Particle positions.
-    StrategyFactory::XFunc m_calculateX;
+    TimeIntegrationFuncs::XFunc m_calculateX;
 
     /// @brief Function for calculating the force effective on each Particle.
     StrategyFactory::FFunc m_calculateF;
 
   public:
     /**
-     * @brief Initialize a new Verlet simulation with specific particles and the given program arguments.
+     * @brief Initialize a new Gravity simulation with specific particles and the given program arguments.
      *
      * @param m_particles A ParticleContainer containing the particles used in the simulation.
      * @param args An Arguments struct containing relevant simulation parameters.
      * @param type An optional modifier for which combination of functions get returned when the Simulation is
      * initialized (i.e. optimized, non-optimized).
      */
-    Verlet(const ParticleContainer &m_particles, const Arguments &args, int type = 0);
+    Gravity(const ParticleContainer &m_particles, const Arguments &args, int type = 0);
 
     /**
-     * @brief Initialize a new Verlet simulation from a specified file name using the given program arguments.
+     * @brief Initialize a new Gravity simulation from a specified file name using the given program arguments.
      *
      * @param filename The path to the file containing the particle information.
      * @param args An Arguments struct containing relevant simulation parameters.
      * @param type An optional modifier for which combination of functions get returned when the Simulation is
      * initialized (i.e. optimized, non-optimized).
      */
-    Verlet(const std::string &filename, const Arguments &args, int type = 0);
+    Gravity(const std::string &filename, const Arguments &args, int type = 0);
 
     /**
-     * @brief Initialize a new Verlet simulation with the given program arguments.
+     * @brief Initialize a new Gravity simulation with the given program arguments.
      *
      * @param args An Arguments struct containing relevant simulation parameters.
      * @param type An optional modifier for which combination of functions get returned when the Simulation is
      * initialized (i.e. optimized, non-optimized).
      */
-    explicit Verlet(const Arguments &args, int type = 0);
+    explicit Gravity(const Arguments &args, int type = 0);
 
     /// @brief Default destructor destroying data.
-    ~Verlet();
+    ~Gravity();
 
     /**
      * @brief Initializes the writer and the physics functions.
@@ -98,7 +98,10 @@ class Verlet : public Simulation {
     /// @brief Runs the simulation.
     void runSimulation() override;
 
-    /// @brief Gets a reference to the ParticleContainer storing the simulation's particles.
-    /// @return A reference to the simulation's ParticleContainer.
+    /**
+     * @brief Gets a reference to the ParticleContainer storing the simulation's particles.
+     *
+     * @return A reference to the simulation's ParticleContainer.
+     */
     ParticleContainer &getParticles();
 };

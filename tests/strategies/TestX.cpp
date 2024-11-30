@@ -1,4 +1,4 @@
-#include "strategies/X.h"
+#include "strategies/PositionCalculation.h"
 #include <gtest/gtest.h>
 
 // Test calculating the new position of a particle.

@@ -1,4 +1,4 @@
-#include "Verlet.h"
+#include "Gravity.h"
 #include "io/output/WriterFactory.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
@@ -9,43 +9,42 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
-
 #define TOTAL static_cast<int>((args.endTime - args.startTime) / args.delta_t)
 
-Verlet::Verlet(const ParticleContainer &pc, const Arguments &args, int type)
+Gravity::Gravity(const ParticleContainer &pc, const Arguments &args, int type)
     : m_particles{pc}, m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t},
       m_itFreq{args.itFreq}, m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
-    SPDLOG_TRACE("Created Verlet simulation with ParticleContainer {} and Arguments {}", pc.toString(),
+    SPDLOG_TRACE("Created Gravity simulation with ParticleContainer {} and Arguments {}", pc.toString(),
                  args.toString());
     initializeSimulation(type);
 }
-Verlet::Verlet(const std::string &filename, const Arguments &args, int type)
+Gravity::Gravity(const std::string &filename, const Arguments &args, int type)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
     m_particles.fromFile(filename);
-    SPDLOG_TRACE("Created Verlet simulation from file {} with Arguments {}", filename, args.toString());
+    SPDLOG_TRACE("Created Gravity simulation from file {} with Arguments {}", filename, args.toString());
     initializeSimulation(type);
 }
-Verlet::Verlet(const Arguments &args, int type)
+Gravity::Gravity(const Arguments &args, int type)
     : m_startTime{args.startTime}, m_endTime{args.endTime}, m_delta_t{args.delta_t}, m_itFreq{args.itFreq},
       m_totalIt{TOTAL}, m_type{args.type}, m_basename{args.basename} {
-    SPDLOG_TRACE("Created Verlet simulation with Arguments {}", args.toString());
+    SPDLOG_TRACE("Created Gravity simulation with Arguments {}", args.toString());
     initializeSimulation(type);
 }
-Verlet::~Verlet() { SPDLOG_TRACE("Destroyed Verlet object."); }
+Gravity::~Gravity() { SPDLOG_TRACE("Destroyed Gravity object."); }
 
-void Verlet::initializeSimulation(int type) {
-    SPDLOG_TRACE("Initializing Verlet simulation...");
+void Gravity::initializeSimulation(int type) {
+    SPDLOG_TRACE("Initializing Gravity simulation...");
 
     m_writer = WriterFactory::createWriter(m_type, m_basename);
-    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::VERLET, type);
-    m_calculateV = cv;
-    m_calculateX = cx;
+    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::GRAVITY, type);
+    m_calculateV = cvx.vf;
+    m_calculateX = cvx.xf;
     m_calculateF = cf;
 }
 
-void Verlet::runSimulation() {
-    SPDLOG_TRACE("Running Verlet simulation (entered function)...");
+void Gravity::runSimulation() {
+    SPDLOG_TRACE("Running Gravity simulation (entered function)...");
 
     // verify that we have something to work with (compiled out on release builds)
     assert(!(m_particles.isEmpty()) && "Cannot run simulation without particles!");
@@ -54,7 +53,7 @@ void Verlet::runSimulation() {
     int iteration = 0;
 
     // log user choices
-    SPDLOG_INFO("Running Verlet simulation with the following arguments:");
+    SPDLOG_INFO("Running Gravity simulation with the following arguments:");
     SPDLOG_INFO("t_0         : {}", m_startTime);
     SPDLOG_INFO("t_end       : {}", m_endTime);
     SPDLOG_INFO("dt          : {}", m_delta_t);
@@ -81,7 +80,7 @@ void Verlet::runSimulation() {
         currentTime += m_delta_t;
     }
 
-    SPDLOG_INFO("Completed Verlet simulation.");
+    SPDLOG_INFO("Completed Gravity simulation.");
 }
 
-ParticleContainer &Verlet::getParticles() { return m_particles; }
+ParticleContainer &Gravity::getParticles() { return m_particles; }

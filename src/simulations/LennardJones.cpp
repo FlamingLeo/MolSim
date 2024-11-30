@@ -9,7 +9,6 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
-
 #define TOTAL static_cast<int>((args.endTime - args.startTime) / args.delta_t)
 
 LennardJones::LennardJones(const std::string &filename, const Arguments &args, int type)
@@ -34,9 +33,9 @@ void LennardJones::initializeSimulation(int type) {
 
     // initialize writer and physics functions
     m_writer = WriterFactory::createWriter(m_type, m_basename);
-    auto [cv, cx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
-    m_calculateV = cv;
-    m_calculateX = cx;
+    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(SimulationType::LJ, type);
+    m_calculateV = cvx.vf;
+    m_calculateX = cvx.xf;
     m_calculateF = cf;
 
     // initialize particles from cuboid data

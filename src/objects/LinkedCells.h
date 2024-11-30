@@ -7,11 +7,11 @@
  *
  */
 #pragma once
-#include "../io/input/FileReader.h"
-#include "../io/output/WriterFactory.h"
-#include "../strategies/F.h"
-#include "../strategies/V.h"
-#include "../strategies/X.h"
+#include "io/input/FileReader.h"
+#include "io/output/WriterFactory.h"
+#include "strategies/ForceCalculation.h"
+#include "strategies/VelocityCalculation.h"
+#include "strategies/PositionCalculation.h"
 #include "Cell.h"
 #include "Particle.h"
 #include "ParticleContainer.h"

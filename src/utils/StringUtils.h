@@ -24,7 +24,7 @@ static inline const std::unordered_map<std::string, WriterType> writerTable = {
 
 /// @brief Map containing conversion information for converting a string to a SimulationType enum.
 static inline const std::unordered_map<std::string, SimulationType> simulationTable = {
-    {"verlet", SimulationType::VERLET}, {"lj", SimulationType::LJ}};
+    {"gravity", SimulationType::GRAVITY}, {"lj", SimulationType::LJ}};
 
 /// @brief Reverse map containing conversion information for converting a WriterType enum to a string.
 static inline const std::unordered_map<WriterType, std::string> writerStringTable = []() {
@@ -204,7 +204,7 @@ static inline SimulationType toSimulationType(const std::string &type) {
         return it->second;
     else
         CLIUtils::error("Invalid output type", type);
-    return SimulationType::VERLET; // shouldn't reach this; included to silence warning
+    return SimulationType::GRAVITY; // shouldn't reach this; included to silence warning
 }
 
 /**

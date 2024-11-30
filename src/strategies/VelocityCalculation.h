@@ -1,5 +1,5 @@
 /**
- * @file V.h
+ * @file VelocityCalculation.h
  * @brief Strategy functions for calculating the velocity of one or more particles.
  * @date 2024-11-11
  *

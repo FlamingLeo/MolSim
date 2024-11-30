@@ -1,10 +1,9 @@
-#include "F.h"
+#include "ForceCalculation.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <functional>
-#include <iostream>
 
-void calculateF_Verlet(ParticleContainer &particles, double, double) {
+void calculateF_Gravity(ParticleContainer &particles, double, double) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
@@ -16,29 +15,25 @@ void calculateF_Verlet(ParticleContainer &particles, double, double) {
     }
 }
 
-void calculateF_VerletThirdLaw(ParticleContainer &particles, double, double) {
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double) {
     // loop over unique pairs
-    for (size_t i = 0; i < particles.size(); ++i) {
-        auto &p1 = particles[i];
+    for (auto pair = particles.beginPairs(); pair != particles.endPairs(); ++pair) {
+        auto &p1 = (*pair).first;
+        auto &p2 = (*pair).second;
 
-        // avoid recalculating force for pairs which have already been computed
-        for (size_t j = i + 1; j < particles.size(); ++j) {
-            auto &p2 = particles[j];
+        auto distVec = p2.getX() - p1.getX();
+        double distNorm = ArrayUtils::L2Norm(distVec);
 
-            auto distVec = p2.getX() - p1.getX();
-            double distNorm = ArrayUtils::L2Norm(distVec);
+        // prevent division by 0
+        if (distNorm == 0)
+            continue;
 
-            // prevent division by 0
-            if (distNorm == 0)
-                continue;
+        double forceMag = p1.getM() * p2.getM() / std::pow(distNorm, 3);
+        auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
 
-            double forceMag = p1.getM() * p2.getM() / std::pow(distNorm, 3);
-            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
-
-            // use newton's third law to apply force on p1 and opposite force on p2
-            p1.setF(p1.getF() + forceVec);
-            p2.setF(p2.getF() - forceVec);
-        }
+        // use newton's third law to apply force on p1 and opposite force on p2
+        p1.setF(p1.getF() + forceVec);
+        p2.setF(p2.getF() - forceVec);
     }
 }
 

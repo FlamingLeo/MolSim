@@ -57,10 +57,10 @@ class LennardJones : public Simulation {
     std::unique_ptr<FileWriter> m_writer;
 
     /// @brief Function for calculating the velocity of a particle.
-    StrategyFactory::VFunc m_calculateV;
+    TimeIntegrationFuncs::VFunc m_calculateV;
 
     /// @brief Function for calculating the position of a particle.
-    StrategyFactory::XFunc m_calculateX;
+    TimeIntegrationFuncs::XFunc m_calculateX;
 
     /// @brief Function for calculating the force of a particle.
     StrategyFactory::FFunc m_calculateF;
@@ -89,15 +89,21 @@ class LennardJones : public Simulation {
     /// @brief Default destructor.
     ~LennardJones();
 
-    /// @brief Function used for intializating the particles and physics functions.
-    /// @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
-    /// particles.
+    /**
+     * @brief Function used for intializating the particles and physics functions.
+     *
+     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
+     * particles.
+     */
     void initializeSimulation(int type = 0);
 
     /// @brief Runs the Lennard-Jones simulation.
     void runSimulation() override;
 
-    /// @brief Gets the particles used in the simulation.
-    /// @return A reference to the main ParticleContainer.
+    /**
+     * @brief Gets the particles used in the simulation.
+     *
+     * @return A reference to the main ParticleContainer.
+     */
     ParticleContainer &getParticles();
 };

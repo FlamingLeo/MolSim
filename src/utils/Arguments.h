@@ -19,7 +19,7 @@
 enum class WriterType { VTK, XYZ, NIL };
 
 /// @brief Enum containg each possible Simulation to be performed.
-enum class SimulationType { VERLET, LJ };
+enum class SimulationType { GRAVITY, LJ };
 
 /**
  * @brief Struct containing each option configurable via command line arguments.

@@ -105,14 +105,14 @@ class Particle {
      *
      * @return The mass of the particle.
      */
-    double getM() const;
+    const double getM() const;
 
     /**
      * @brief Gets the type of the particle.
      *
      * @return The type of the particle.
      */
-    int getType() const;
+    const int getType() const;
 
     /**
      * @brief Sets the new position \f$ x \f$ of the particle to a given value.
