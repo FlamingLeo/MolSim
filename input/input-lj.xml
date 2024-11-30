@@ -30,5 +30,24 @@
             <distance>1.1225</distance>
             <mass>1.0</mass>
         </cuboid>
+        <cuboid>
+            <position>
+                <x>15.0</x>
+                <y>15.0</y>
+                <z>0.0</z>
+            </position>
+            <velocity>
+                <x>0.0</x>
+                <y>-10.0</y>
+                <z>0.0</z>
+            </velocity>
+            <size>
+                <x>8</x>
+                <y>8</y>
+                <z>1</z>
+            </size>
+            <distance>1.1225</distance>
+            <mass>1.0</mass>
+        </cuboid>
     </objects>
 </sim>

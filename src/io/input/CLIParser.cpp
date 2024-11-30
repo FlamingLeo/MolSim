@@ -63,10 +63,6 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
 
     SPDLOG_DEBUG("Parsing command line arguments...");
 
-    // check for invalid syntax (not enough args)
-    if (argc < 2)
-        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
-
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
         SPDLOG_TRACE("[getopt] Read option -{} with {}argument {}", StringUtils::fromChar(ch), optarg ? "" : "no ",

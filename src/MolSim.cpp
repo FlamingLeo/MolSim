@@ -6,10 +6,13 @@
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
+#include "utils/PathUtils.h"
 #include "utils/StringUtils.h"
+#include <filesystem>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
+namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
 #if 1
@@ -30,21 +33,31 @@ int main(int argc, char *argv[]) {
         spdlog::set_pattern("[%^%l%$] %v");
 #endif
 
+    // check for invalid syntax (not enough args)
+    if (argc < 2)
+        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
+
     std::string filename = argv[argc - 1];
+    std::unique_ptr<Simulation> sim;
 
     // initialize simulation-relevant objects
     Arguments args;
     ParticleContainer pc;
 
-    // parse XML input file
-    XMLReader r(filename);
-    r.readXML(args, pc);
+    // check if the input file is an xml file, otherwise use text file initialization methods
+    if (PathUtils::isXmlFile(filename)) {
+        SPDLOG_DEBUG("Input file is an XML file. Command line arguments will have precedence.");
+        XMLReader r(filename);
+        r.readXML(args, pc);
+        CLIParser::parseArguments(argc, argv, args);
+        sim = SimulationFactory::createSimulation(args.sim, pc, args);
+    } else {
+        SPDLOG_DEBUG("Input file is NOT an XML file.");
+        CLIParser::parseArguments(argc, argv, args);
+        sim = SimulationFactory::createSimulation(args.sim, filename, args);
+    }
 
-    // parse command line arguments
-    CLIParser::parseArguments(argc, argv, args);
-
-    // run desired simulation based on user choice
-    auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
+    // run simulation with parsed arguments
     sim->runSimulation();
 #else
     std::cout << "working\n";

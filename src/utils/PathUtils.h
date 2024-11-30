@@ -8,11 +8,29 @@
  */
 
 #pragma once
+#include <algorithm>
 #include <filesystem>
 #include <string>
 
 /// @brief  Namespace defining utility functions for working with file paths.
 namespace PathUtils {
+/**
+ * @brief Checks if a file is an XML file by verifying its extension in a case-insensitive way.
+ *
+ * @param filename The name of (path to) the file to be checked.
+ * @return true if the file has a .xml extension.
+ * @return false if the file does not have a .xml extension.
+ */
+static inline bool isXmlFile(const std::string &filename) {
+    std::filesystem::path filePath(filename);
+    std::string extension = filePath.extension().string();
+
+    std::transform(extension.begin(), extension.end(), extension.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+    return extension == ".xml";
+}
+
 /**
  * @brief Helper method to get the absolute path of a file or directory contained within a given path.
  *
