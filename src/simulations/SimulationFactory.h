@@ -10,6 +10,7 @@
 
 #include "Gravity.h"
 #include "LennardJones.h"
+#include "LennardJonesLC.h"
 #include "Simulation.h"
 #include "utils/Arguments.h"
 #include <memory>

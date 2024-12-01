@@ -37,6 +37,11 @@ void CLIParser::setDefaults(Arguments &args) {
         args.endTime = args.argsSet.test(1) ? args.endTime : 5.0;
         args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0002;
         break;
+    case SimulationType::LJLC:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 20.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0005;
+        break;
     default:
         CLIUtils::error("Cannot set default arguments for unknown simulation type!");
     }

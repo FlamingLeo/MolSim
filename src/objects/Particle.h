@@ -35,6 +35,11 @@ class Particle {
     /// bodies, matters, and so on).
     int type;
 
+    /// @brief The cell index of the particle, to be used with the linked cell method.
+    int cellIndex;
+
+    bool active{true};
+
   public:
     /**
      * @brief Construct a new Particle object by optionally passing its type. Prevents implicit conversions.
@@ -115,6 +120,17 @@ class Particle {
     const int getType() const;
 
     /**
+     * @brief Get the index of the particle in a CellContainer.
+     *
+     * For use with the linked cell method.
+     *
+     * @return The index of the particle in a grid of cells.
+     */
+    const int getCellIndex() const;
+
+    const bool isActive() const;
+
+    /**
      * @brief Sets the new position \f$ x \f$ of the particle to a given value.
      *
      * @param new_x A reference to the array containing the new position of this particle.
@@ -161,6 +177,17 @@ class Particle {
      * @param new_type The new type of this particle.
      */
     void setType(double new_type);
+
+    /**
+     * @brief Sets the new index in a CellContainer.
+     *
+     * For use with the linked cell method.
+     *
+     * @param new_index The new index in a grid of cells.
+     */
+    void setCellIndex(int new_index);
+
+    void markInactive();
 
     /**
      * @brief Returns a string representation of this particle.

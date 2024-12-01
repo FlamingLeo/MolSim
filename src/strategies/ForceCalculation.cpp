@@ -1,7 +1,9 @@
 #include "ForceCalculation.h"
+#include "objects/LinkedCells.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <functional>
+#include <spdlog/spdlog.h>
 
 void calculateF_Gravity(ParticleContainer &particles, double, double) {
     for (auto &p1 : particles) {
@@ -51,29 +53,6 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
     }
 }
 
-void calculateF_LennardJones2(ParticleContainer &particles1, ParticleContainer &particles2, double epsilon,
-                              double sigma) {
-    for (auto &p1 : particles1) {
-        // std::cout<<"old F is " << p1.getF() << "\n";
-        for (auto &p2 : particles2) {
-
-            // for some reason unequal doesn't work so I implemented the extra distnorm condition. Possibly this causes
-            // the particles to be yeeted?
-            if (p1 != p2) {
-                double distNorm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
-                if (distNorm != 0) {
-                    // std::cout << "pos1 " << p1.getX() << " pos2 " << p2.getX() << " distnorm " << distNorm << "\n";
-                    p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(((-24 * epsilon) / std::pow(distNorm, 2)) *
-                                                                            (std::pow((sigma / distNorm), 6) -
-                                                                             2 * std::pow((sigma / distNorm), 12)),
-                                                                        p1.getX() - p2.getX(), std::multiplies<>()));
-                }
-            }
-        }
-        // std::cout << "new F is " << p1.getF() << "\n";
-    }
-}
-
 void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma) {
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
@@ -97,4 +76,46 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
             p2.setF(p2.getF() - forceVec);
         }
     }
+}
+
+void calculateF_LennardJones_LC(LinkedCells &lc, ParticleContainer &particles, double epsilon, double sigma) {
+    SPDLOG_TRACE("Entered force calculation.");
+
+    // loop over all cells ic
+    for (auto &ic : lc.getCells()) {
+        // loop over all particles i in cell ic
+        for (auto *i : ic.getParticles()) {
+            if (!i->isActive())
+                continue;
+
+            // set F_i to zero
+            i->setFToZero();
+            // loop over all cells kc in N(ic)
+            for (size_t kci : lc.getNeighbors(ic.getIndex())) {
+                Cell &kc = lc.getCells()[kci];
+                // loop over all particles j in cell kc
+                for (auto *j : kc.getParticles()) {
+                    if (!j->isActive())
+                        continue;
+
+                    if (*i != *j) {
+                        double dist = 0;
+                        for (size_t d = 0; d < 2; ++d) { // TODO 3 dimensions (or replace with arrayutils)
+                            dist += (j->getX()[d] - i->getX()[d]) * (j->getX()[d] - i->getX()[d]);
+                        }
+                        if (dist <= lc.getCutoff() * lc.getCutoff()) {
+                            double distNorm = ArrayUtils::L2Norm(j->getX() - i->getX());
+                            i->setF(i->getF() +
+                                    ArrayUtils::elementWiseScalarOp(
+                                        ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                            (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12)),
+                                        i->getX() - j->getX(), std::multiplies<>()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    SPDLOG_TRACE("Finished force calculation.");
 }

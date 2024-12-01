@@ -4,6 +4,7 @@
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <string>
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
            double h, double m)
@@ -33,7 +34,6 @@ void Disc::initializeDisc() {
 
             // initialize the particles along the ring
             for (int p = 0; p < points; p++) {
-
                 std::array<double, 3> xyz;
                 double angle = (2 * pi * h / std::floor(segments)) * p;
                 xyz[0] = x[0] + std::cos(angle) * ringRadius;

@@ -46,5 +46,6 @@ doxys_documentation/
 vtk/
 xyz/
 
-# Personal todo file
+# Personal todo files and logs
 todo.*
+*.log

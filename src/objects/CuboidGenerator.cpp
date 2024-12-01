@@ -7,7 +7,10 @@
 #include <vector>
 
 CuboidGenerator::CuboidGenerator(const std::string &filename, ParticleContainer &particles)
-    : m_filename{filename}, m_particles{particles} {};
+    : m_filename{filename}, m_particles{particles} {
+    if (!filename.empty() && particles.isEmpty())
+        generateCuboids();
+};
 
 void CuboidGenerator::generateCuboids() {
     assert(m_particles.isEmpty() && "Particle container should be empty!");

@@ -37,7 +37,6 @@
     if (xmlArgs._x().present()) {                                                                                      \
         const auto &arr = xmlArgs._x().get();                                                                          \
         args._x = {arr.x(), arr.y(), arr.z()};                                                                         \
-        SPDLOG_TRACE("Loaded {}: {}", ArrayUtils::to_string(args._x));                                                 \
     }
 
 // helper function for reserving a certain amount of spaces in a particle container beforehand, if present
@@ -148,7 +147,7 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc) {
         if (pc.size() == 0)
             CLIUtils::error("No particles added!", "", false);
 
-        SPDLOG_DEBUG("Finished parsing XML file. Total particles: {}", pc.size() - initialParticles);
+        SPDLOG_DEBUG("Finished parsing XML file. Total particles: {}.", pc.size() - initialParticles);
     } catch (const xml_schema::Exception &e) {
         std::stringstream ss;
         ss << e;

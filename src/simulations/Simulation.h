@@ -121,5 +121,5 @@ class Simulation {
      *
      * @return A reference to the simulation's ParticleContainer.
      */
-    inline ParticleContainer &getParticles() { return m_particles; };
+    inline ParticleContainer &getParticles() { return m_particles; }
 };

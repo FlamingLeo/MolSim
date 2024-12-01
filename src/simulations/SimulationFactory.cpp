@@ -12,6 +12,9 @@ std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType t
     case SimulationType::LJ:
         SPDLOG_DEBUG("Generating LJ...");
         return std::make_unique<LennardJones>(filename, args);
+    case SimulationType::LJLC:
+        SPDLOG_DEBUG("Generating LJLC...");
+        return std::make_unique<LennardJonesLC>(filename, args);
     default:
         CLIUtils::error("Invalid Simulation type!", "", false);
     }
@@ -27,6 +30,9 @@ std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType t
     case SimulationType::LJ:
         SPDLOG_DEBUG("Generating LJ...");
         return std::make_unique<LennardJones>(pc, args);
+    case SimulationType::LJLC:
+        SPDLOG_DEBUG("Generating LJLC...");
+        return std::make_unique<LennardJonesLC>(pc, args);
     default:
         CLIUtils::error("Invalid Simulation type!", "", false);
     }

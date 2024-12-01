@@ -7,6 +7,7 @@
  *
  */
 #pragma once
+#include "objects/LinkedCells.h"
 #include "objects/ParticleContainer.h"
 
 /**
@@ -50,10 +51,6 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double);
  */
 void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma);
 
-// INSERT DISCRIPTION
-void calculateF_LennardJones2(ParticleContainer &particles, ParticleContainer &particles2, double epsilon,
-                              double sigma);
-
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
  * simulation.
@@ -69,3 +66,23 @@ void calculateF_LennardJones2(ParticleContainer &particles, ParticleContainer &p
  * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  */
 void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma);
+
+/**
+ * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a linked-cell LennardJones
+ simulation.
+ *
+ * @details For each particle in the simulation, the method works by first calculating the effective force \f[
+ * F_{ij} = -\frac{24 \cdot \epsilon}{\left(\|x_i - x_j\|_2\right)^2} \left( \left( \frac{\sigma}{\|x_i - x_j\|_2}
+ \right)^6 - 2 \left( \frac{\sigma}{\|x_i - x_j\|_2} \right)^{12} \right) (x_i - x_j) \f] between each pair of particles
+ \f$ i \f$ and \f$ j
+ * \f$ in the neighboring (and current) cells. Afterwards, the effective force for a single particle \f$ i \f$ is
+ calculated using the formula \f[ F_i =
+ * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles.
+ *
+ *
+ * @param lc The CellContainer for the linked cells method.
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param epsilon The depth of the potential well \f$ \epsilon \f$
+ * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
+ */
+void calculateF_LennardJones_LC(LinkedCells &lc, ParticleContainer &particles, double epsilon, double sigma);

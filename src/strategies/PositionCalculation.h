@@ -7,6 +7,7 @@
  *
  */
 #pragma once
+#include "objects/LinkedCells.h"
 #include "objects/ParticleContainer.h"
 
 /**
@@ -20,3 +21,20 @@
  * @param delta_t The timestep \f$ \Delta t \f$.
  */
 void calculateX(ParticleContainer &particles, double delta_t);
+
+/**
+ * @brief Calculates the position \f$ x \f$ for all Particle objects in a given ParticleContainer when using the linked
+ * cells method.
+ *
+ * @details The position \f$ x_i \f$ of a given particle \f$ i \f$ at the next unit of time \f$ t_{n+1} \f$ is
+ * calculated using the formula \f[ x_i(t_{n+1}) = x_i(t_n) + \Delta t \cdot v_i(t_n) + (\Delta t)^2
+ * \frac{F_i(t_n)}{2m_i}. \f]
+ *
+ * After each update, the particle may need to be moved to a different cell. The algorithm checks this and updates the
+ * cell correspondence accordingly.
+ *
+ * @param lc The CellContainer for the linked cells method.
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param delta_t The timestep \f$ \Delta t \f$.
+ */
+void calculateX_LC(LinkedCells &lc, ParticleContainer &particles, double delta_t);

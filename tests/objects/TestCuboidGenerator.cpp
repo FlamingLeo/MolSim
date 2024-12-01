@@ -17,12 +17,14 @@ class CuboidGeneratorTests : public ::testing::Test {
 // Test attempting to generate cuboids from an invalid file source.
 TEST_F(CuboidGeneratorTests, InvalidFile) {
     ParticleContainer pc;
-    CuboidGenerator cg0("", pc);
-    CuboidGenerator cg1("/", pc);
-    CuboidGenerator cg2("/dev/null/foo", pc);
-    EXPECT_DEATH({ cg0.generateCuboids(); }, "");
-    EXPECT_DEATH({ cg1.generateCuboids(); }, "");
-    EXPECT_DEATH({ cg2.generateCuboids(); }, "");
+    EXPECT_DEATH(
+        {
+            CuboidGenerator cg0("", pc);
+            cg0.generateCuboids();
+        },
+        "");
+    EXPECT_DEATH({ CuboidGenerator cg1("/", pc); }, "");
+    EXPECT_DEATH({ CuboidGenerator cg2("/dev/null/foo", pc); }, "");
 }
 
 // Test attempting to generate cuboids in a non-empty particle container.
@@ -30,16 +32,13 @@ TEST_F(CuboidGeneratorTests, InvalidFile) {
 TEST_F(CuboidGeneratorTests, NonEmptyParticleContainer) {
     ParticleContainer pc;
     pc.addParticle({1., 2., 3.}, {4., 5., 6.}, 7.);
-    CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc);
-
-    EXPECT_DEBUG_DEATH({ cg.generateCuboids(); }, "");
+    EXPECT_DEBUG_DEATH({ CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc); }, "");
 }
 
 // Test generating cuboids and intializing them into a ParticleContainer from a given source file.
 TEST_F(CuboidGeneratorTests, GenerateCuboids) {
     ParticleContainer pc;
     CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc);
-    cg.generateCuboids();
 
     ASSERT_EQ(pc.size(), 6);
 

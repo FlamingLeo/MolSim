@@ -13,8 +13,6 @@
 LennardJones::LennardJones(const std::string &filename, const Arguments &args, int type)
     : m_generator(filename, m_particles), m_epsilon{args.epsilon}, m_sigma{args.sigma} {
     initializeBase(args, type, SimulationType::LJ);
-    if (m_particles.isEmpty())
-        m_generator.generateCuboids();
     SPDLOG_TRACE("Created LJ Simulation from file {} with Arguments {}", filename, args.toString());
 }
 LennardJones::LennardJones(const ParticleContainer &pc, const Arguments &args, int type)
