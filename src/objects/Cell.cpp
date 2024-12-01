@@ -2,7 +2,7 @@
 #include "ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <algorithm>
-#include <format>
+#include <sstream>
 #include <string>
 
 static std::string typeToString(CellType type) {
@@ -30,6 +30,9 @@ int Cell::getIndex() { return m_index; }
 std::forward_list<Particle *> &Cell::getParticles() { return m_particles; }
 std::string Cell::toString() {
     const std::array<double, 3> to{m_position[0] + m_size[0], m_position[1] + m_size[1], m_position[2] + m_size[2]};
-    return std::format("[Type: {}, Size: {}, Positions (from (incl.) -> to (excl.)): {} -> {}]", typeToString(m_type),
-                       ArrayUtils::to_string(m_size), ArrayUtils::to_string(m_position), ArrayUtils::to_string(to));
+    std::stringstream ss;
+    ss << "[Type: " << typeToString(m_type) << ", Size: " << ArrayUtils::to_string(m_size)
+       << ", Positions (from (incl.) -> to (excl.)): " << ArrayUtils::to_string(m_position) << " -> "
+       << ArrayUtils::to_string(to) << "]";
+    return ss.str();
 }

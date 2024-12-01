@@ -181,7 +181,7 @@ void LinkedCells::printCellIndices() {
                 std::cout << GRN;
                 break;
             }
-            std::cout << std::format("{:3}", i) << " ";
+            std::cout << i << " ";
             std::cout << RST;
         }
         std::cout << "\n";

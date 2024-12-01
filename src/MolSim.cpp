@@ -13,6 +13,7 @@
 #include "utils/StringUtils.h"
 #include <filesystem>
 #include <iostream>
+#include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
 namespace fs = std::filesystem;

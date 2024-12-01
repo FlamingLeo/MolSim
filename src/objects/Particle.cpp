@@ -64,9 +64,10 @@ void Particle::markInactive() {
 }
 
 std::string Particle::toString() const {
-    return std::format("(x: {}, v: {}, f: {}, old_f: {}, m: {}, type: {}, cellIndex: {})", ArrayUtils::to_string(x),
-                       ArrayUtils::to_string(v), ArrayUtils::to_string(f), ArrayUtils::to_string(old_f), m, type,
-                       cellIndex);
+    std::stringstream ss;
+    ss << "{ x: " << x << ", v: " << v << ", f: " << f << ", old_f: " << old_f << ", m: " << m << ", type: " << type
+       << ", cellIndex:" << cellIndex << " }";
+    return ss.str();
 }
 
 bool Particle::operator==(const Particle &other) const {
