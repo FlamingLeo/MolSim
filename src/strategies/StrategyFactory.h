@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/Arguments.h"
 #include <functional>
@@ -18,7 +19,8 @@ struct TimeIntegrationFuncs {
     /// @brief Typedef for velocity-calculating functions.
     using VFunc = void (*)(ParticleContainer &, double);
     /// @brief Typedef for position-calculating functions.
-    using XFunc = void (*)(ParticleContainer &, double);
+    using XFunc = void (*)(ParticleContainer &, double, CellContainer *);
+    /// @brief Typedef for velocity-calculating functions for the linked cell method.
 
     /// @brief The velocity-calculating function.
     VFunc vf;
@@ -33,7 +35,7 @@ struct TimeIntegrationFuncs {
 class StrategyFactory {
   public:
     /// @brief Typedef for force-calculating functions.
-    using FFunc = void (*)(ParticleContainer &, double, double);
+    using FFunc = void (*)(ParticleContainer &, double, double, CellContainer *);
 
     /**
      * @brief Return a 2-tuple of the physics functions corresponding to the chosen simulation.

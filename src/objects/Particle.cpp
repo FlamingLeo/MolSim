@@ -16,7 +16,7 @@ Particle::Particle(int type_arg)
 }
 
 Particle::Particle(const Particle &other)
-    : x{other.x}, v{other.v}, f{other.f}, old_f{other.old_f}, m{other.m}, type{other.type}, cellIndex{-1} {
+    : x{other.x}, v{other.v}, f{other.f}, old_f{other.old_f}, m{other.m}, type{other.type}, cellIndex{other.cellIndex} {
     SPDLOG_TRACE("Generated Particle (copy) - x: {}, v: {}, f: {}, m: {}, cellIndex: {}", ArrayUtils::to_string(x),
                  ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, cellIndex);
 }
@@ -66,18 +66,18 @@ void Particle::markInactive() {
 std::string Particle::toString() const {
     std::stringstream ss;
     ss << "{ x: " << x << ", v: " << v << ", f: " << f << ", old_f: " << old_f << ", m: " << m << ", type: " << type
-       << ", cellIndex:" << cellIndex << " }";
+       << ", cellIndex:" << cellIndex << ", active: " << active << " }";
     return ss.str();
 }
 
 bool Particle::operator==(const Particle &other) const {
     return (x == other.x) && (v == other.v) && (f == other.f) && (type == other.type) && (m == other.m) &&
-           (old_f == other.old_f);
+           (old_f == other.old_f) && (active == other.active);
 }
 
 bool Particle::operator!=(const Particle &other) const {
     return (x != other.x) || (v != other.v) || (f != other.f) || (type != other.type) || (m != other.m) ||
-           (old_f != other.old_f);
+           (old_f != other.old_f) && (active == other.active);
 }
 
 std::ostream &operator<<(std::ostream &stream, const Particle &p) {

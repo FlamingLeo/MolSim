@@ -27,7 +27,7 @@ class Gravity : public Simulation {
      * @param type An optional modifier for which combination of functions get returned when the Simulation is
      * initialized (i.e. optimized, non-optimized).
      */
-    Gravity(const ParticleContainer &m_particles, const Arguments &args, int type = 0);
+    Gravity(ParticleContainer &m_particles, const Arguments &args, int type = 0);
 
     /**
      * @brief Initialize a new Gravity simulation from a specified file name using the given program arguments.

@@ -1,4 +1,4 @@
-#include "LinkedCells.h"
+#include "CellContainer.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
@@ -8,8 +8,9 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
+/* constructor */
 // TODO: (re)make this compatible with 3rd dimension...
-LinkedCells::LinkedCells(const std::array<double, 3> domainSize, double cutoff, ParticleContainer &pc)
+CellContainer::CellContainer(const std::array<double, 3> domainSize, double cutoff, ParticleContainer &pc)
     : domainSize{domainSize}, cutoff{cutoff}, particles{pc} {
     // check that domain size and cutoff are initialized
     if (cutoff == INF)
@@ -17,10 +18,11 @@ LinkedCells::LinkedCells(const std::array<double, 3> domainSize, double cutoff, 
     if (domainSize[0] == INF || domainSize[1] == INF || domainSize[2] == INF)
         CLIUtils::error("Domain size not initialized!");
 
-    SPDLOG_TRACE("Generating LinkedCells with domain size {} and cutoff radius {}", ArrayUtils::to_string(domainSize),
+    SPDLOG_TRACE("Generating CellContainer with domain size {} and cutoff radius {}", ArrayUtils::to_string(domainSize),
                  cutoff);
 
     // determining cell size
+    cellSize = {0, 0, 0};
     for (size_t i = 0; i < 2; i++) {
         if (std::fabs(std::fmod(domainSize[i], cutoff)) < 1e-9) {
             // perfect fit
@@ -39,7 +41,7 @@ LinkedCells::LinkedCells(const std::array<double, 3> domainSize, double cutoff, 
 
     // reserve space for all cells
     size_t totalNumCells = numCells[0] * numCells[1];
-    cells.reserve(numCells[0] * numCells[1]);
+    cells.reserve(totalNumCells);
     SPDLOG_DEBUG("Reserved space for {} cells (X: {}, Y: {}).", totalNumCells, numCells[0], numCells[1]);
 
     // creating cells
@@ -76,11 +78,59 @@ LinkedCells::LinkedCells(const std::array<double, 3> domainSize, double cutoff, 
     }
 
     // add particles to corresponding cells
-    for (size_t i = 0; i < pc.size(); ++i)
-        addParticle(pc[i]);
+    for (Particle &p : pc) {
+        addParticle(p);
+    }
 }
 
-int LinkedCells::getCellIndex(const std::array<double, 3> &position) {
+/* iterators */
+CellContainer::ContainerType::iterator CellContainer::begin() { return cells.begin(); }
+CellContainer::ContainerType::iterator CellContainer::end() { return cells.end(); }
+CellContainer::ContainerType::const_iterator CellContainer::begin() const { return cells.begin(); }
+CellContainer::ContainerType::const_iterator CellContainer::end() const { return cells.end(); }
+
+CellContainer::SpecialParticleIterator::SpecialParticleIterator(std::vector<Cell *>::iterator start,
+                                                                std::vector<Cell *>::iterator end)
+    : cellIt(start), cellEnd(end) {
+    if (cellIt != cellEnd) {
+        particleIt = (*cellIt)->getParticles().begin();
+        particleEnd = (*cellIt)->getParticles().end();
+        advanceToNextCell();
+    }
+}
+void CellContainer::SpecialParticleIterator::advanceToNextCell() {
+    while (cellIt != cellEnd && particleIt == particleEnd) {
+        ++cellIt;
+        if (cellIt != cellEnd) {
+            particleIt = (*cellIt)->getParticles().begin();
+            particleEnd = (*cellIt)->getParticles().end();
+        }
+    }
+}
+Particle &CellContainer::SpecialParticleIterator::operator*() { return **particleIt; }
+CellContainer::SpecialParticleIterator &CellContainer::SpecialParticleIterator::operator++() {
+    ++particleIt;
+    advanceToNextCell();
+    return *this;
+}
+bool CellContainer::SpecialParticleIterator::operator!=(const SpecialParticleIterator &other) const {
+    return cellIt != other.cellIt || (cellIt != cellEnd && particleIt != other.particleIt);
+}
+CellContainer::SpecialParticleIterator CellContainer::boundaryBegin() {
+    return SpecialParticleIterator(borderCells.begin(), borderCells.end());
+}
+CellContainer::SpecialParticleIterator CellContainer::boundaryEnd() {
+    return SpecialParticleIterator(borderCells.end(), borderCells.end());
+}
+CellContainer::SpecialParticleIterator CellContainer::haloBegin() {
+    return SpecialParticleIterator(haloCells.begin(), haloCells.end());
+}
+CellContainer::SpecialParticleIterator CellContainer::haloEnd() {
+    return SpecialParticleIterator(haloCells.end(), haloCells.end());
+}
+
+/* functionality */
+int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     std::array<int, 3> coords{0, 0, 0};
     for (int i = 0; i < 2; ++i) {
         // get coordinates based on position
@@ -96,7 +146,7 @@ int LinkedCells::getCellIndex(const std::array<double, 3> &position) {
 }
 
 // add a particle to the appropriate cell
-bool LinkedCells::addParticle(Particle &p) {
+bool CellContainer::addParticle(Particle &p) {
     int cellIndex = getCellIndex(p.getX());
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
         p.setCellIndex(cellIndex);
@@ -111,7 +161,7 @@ bool LinkedCells::addParticle(Particle &p) {
 
 // remove a particle from a cell
 // TODO: maybe add a check to see if p's cellIndex is -1?
-void LinkedCells::deleteParticle(Particle &p) {
+void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
     cells[cellIndex].removeParticle(&p);
     p.setCellIndex(-1);
@@ -119,22 +169,22 @@ void LinkedCells::deleteParticle(Particle &p) {
 }
 
 // move a particle (or not, idc)
-bool LinkedCells::moveParticle(Particle &p) {
+bool CellContainer::moveParticle(Particle &p) {
     deleteParticle(p);
     return addParticle(p);
 }
 
 // get the (x, y, z) coordinates of a cell from its 1D index
-std::array<int, 3> LinkedCells::getVirtualCellCoordinates(int index) {
+std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) {
     int x = index % numCells[0];
     int y = (index / numCells[0]) % numCells[1];
     return {x, y, 0};
 }
 
-std::vector<Cell> &LinkedCells::getCells() { return cells; }
+std::vector<Cell> &CellContainer::getCells() { return cells; }
 
 // return indices of ALL neighbours (including itself)
-std::vector<int> LinkedCells::getNeighbors(int cellIndex) {
+std::vector<int> CellContainer::getNeighbors(int cellIndex) {
     std::vector<int> neighbors;
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
 
@@ -153,16 +203,16 @@ std::vector<int> LinkedCells::getNeighbors(int cellIndex) {
         }
     }
 
-    // SPDLOG_TRACE("Neighbors of {}: {}", cellIndex, StringUtils::fromVector<int>(neighbors));
     return neighbors;
 }
 
-const std::array<double, 3> &LinkedCells::getDomainSize() { return domainSize; }
-const std::array<double, 3> &LinkedCells::getCellSize() { return cellSize; }
-const std::array<size_t, 3> &LinkedCells::getNumCells() { return numCells; }
-double LinkedCells::getCutoff() { return cutoff; }
+const std::array<double, 3> &CellContainer::getDomainSize() { return domainSize; }
+const std::array<double, 3> &CellContainer::getCellSize() { return cellSize; }
+const std::array<size_t, 3> &CellContainer::getNumCells() { return numCells; }
+double CellContainer::getCutoff() { return cutoff; }
+ParticleContainer &CellContainer::getParticles() { return particles; }
 
-void LinkedCells::printCellIndices() {
+void CellContainer::printCellIndices() {
 #define RED "\e[0;31m"
 #define YEL "\e[0;33m"
 #define GRN "\e[0;32m"
@@ -188,7 +238,7 @@ void LinkedCells::printCellIndices() {
     }
 }
 
-void LinkedCells::printCellContents() {
+void CellContainer::printCellContents() {
     for (size_t i = 0; i < cells.size(); ++i) {
         std::cout << BOLD_ON << "Cell " << i << ":\n";
         for (auto *p : cells[i].getParticles()) {
@@ -197,7 +247,7 @@ void LinkedCells::printCellContents() {
     }
 }
 
-ParticleContainer LinkedCells::reconstructContainer() {
+ParticleContainer CellContainer::reconstructContainer() {
     ParticleContainer pc;
     pc.reserve(particles.size());
     for (size_t i = 0; i < cells.size(); ++i) {

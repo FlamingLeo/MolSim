@@ -87,22 +87,25 @@ class Simulation {
      * @param epsilon An optional parameter based on the Simulation type (currently, only LJ is supported).
      * @param sigma An optional parameter based on the Simulation type (currently, only LJ is supported).
      */
-    inline void runSimulationLoop(double epsilon = 0, double sigma = 0) {
-        assert(!(m_particles.isEmpty()) && "Cannot run simulation without particles!");
+    inline void runSimulationLoop(double epsilon = 0, double sigma = 0, CellContainer *lc = nullptr) {
+        // bandaid fix to ensure working with the correct container when using the linked cell method
+        ParticleContainer &container = (lc ? lc->getParticles() : m_particles);
+
+        assert(!(container.isEmpty()) && "Cannot run simulation without particles!");
 
         double currentTime = m_startTime;
         int iteration = 0;
 
         while (currentTime < m_endTime) {
-            m_calculateX(m_particles, m_delta_t);
-            m_calculateF(m_particles, epsilon, sigma);
-            m_calculateV(m_particles, m_delta_t);
+            m_calculateX(container, m_delta_t, lc);
+            m_calculateF(container, epsilon, sigma, lc);
+            m_calculateV(container, m_delta_t);
 
             iteration++;
 
 #ifndef DO_BENCHMARKING
             if (iteration % m_itFreq == 0) {
-                m_writer->writeParticles(m_particles, iteration, m_totalIt);
+                m_writer->writeParticles(container, iteration, m_totalIt);
             }
 #endif
             currentTime += m_delta_t;

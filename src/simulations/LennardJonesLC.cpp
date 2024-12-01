@@ -12,14 +12,13 @@
 
 LennardJonesLC::LennardJonesLC(const std::string &filename, const Arguments &args, int type)
     : m_generator(filename, m_particles), m_epsilon{args.epsilon}, m_sigma{args.sigma},
-      m_linkedCells{LinkedCells(args.domainSize, args.cutoffRadius, m_particles)} {
+      m_linkedCells{CellContainer(args.domainSize, args.cutoffRadius, m_particles)} {
     initializeBase(args, type, SimulationType::LJLC);
     SPDLOG_TRACE("Created LJLC Simulation from file {} with Arguments {}", filename, args.toString());
 }
-LennardJonesLC::LennardJonesLC(const ParticleContainer &pc, const Arguments &args, int type)
-    : m_generator("", m_particles), m_epsilon{args.epsilon}, m_sigma{args.sigma},
-      m_linkedCells{LinkedCells(args.domainSize, args.cutoffRadius, m_particles)} {
-    m_particles = pc;
+LennardJonesLC::LennardJonesLC(ParticleContainer &pc, const Arguments &args, int type)
+    : m_generator("", pc), m_epsilon{args.epsilon}, m_sigma{args.sigma},
+      m_linkedCells{CellContainer(args.domainSize, args.cutoffRadius, pc)} {
     initializeBase(args, type, SimulationType::LJLC);
     SPDLOG_TRACE("Created LJLC Simulation from using ParticleContainer {} with Arguments {}", pc.toString(),
                  args.toString());
@@ -41,7 +40,7 @@ void LennardJonesLC::runSimulation() {
     SPDLOG_INFO("Output Freq.: every {} iterations", m_itFreq);
     SPDLOG_INFO("Output Type : {}", StringUtils::fromWriterType(m_type));
 
-    runSimulationLoop(m_epsilon, m_sigma);
+    runSimulationLoop(m_epsilon, m_sigma, &m_linkedCells);
 
     SPDLOG_INFO("Completed LJLC simulation.");
 }

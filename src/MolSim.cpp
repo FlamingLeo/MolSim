@@ -1,7 +1,7 @@
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
 #include "io/input/XMLReader.h"
-#include "objects/LinkedCells.h"
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
 #include "strategies/ForceCalculation.h"
@@ -19,7 +19,6 @@
 namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
-#if 1
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
 
@@ -63,31 +62,4 @@ int main(int argc, char *argv[]) {
 
     // run simulation with parsed arguments
     sim->runSimulation();
-#else
-    (void)argc, (void)argv;
-    spdlog::set_level(spdlog::level::info);
-    Arguments args;
-    ParticleContainer pc;
-    std::filesystem::path cwd = std::filesystem::current_path();
-    XMLReader r(PathUtils::getTargetPath(cwd, "MolSim") + "/input/input-lj-w3t2.xml");
-    r.readXML(args, pc);
-    LinkedCells lc{args.domainSize, args.cutoffRadius, pc};
-    VTKWriter w;
-    double currentTime = args.startTime;
-    int iteration = 0;
-
-    while (currentTime < args.endTime) {
-        calculateX_LC(lc, pc, args.delta_t);
-        calculateF_LennardJones_LC(lc, pc, args.epsilon, args.sigma);
-        calculateV(pc, args.delta_t);
-
-        iteration++;
-
-        if (iteration % 100 == 0) {
-            w.writeParticles(pc, iteration, static_cast<int>((args.endTime) / (args.delta_t)));
-        }
-
-        currentTime += args.delta_t;
-    }
-#endif
 }

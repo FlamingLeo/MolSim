@@ -7,7 +7,7 @@
  *
  */
 #pragma once
-#include "objects/LinkedCells.h"
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 
 /**
@@ -19,8 +19,9 @@
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateX(ParticleContainer &particles, double delta_t);
+void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the position \f$ x \f$ for all Particle objects in a given ParticleContainer when using the linked
@@ -33,8 +34,8 @@ void calculateX(ParticleContainer &particles, double delta_t);
  * After each update, the particle may need to be moved to a different cell. The algorithm checks this and updates the
  * cell correspondence accordingly.
  *
- * @param lc The CellContainer for the linked cells method.
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param lc The CellContainer for the linked cells method.
  */
-void calculateX_LC(LinkedCells &lc, ParticleContainer &particles, double delta_t);
+void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *lc);

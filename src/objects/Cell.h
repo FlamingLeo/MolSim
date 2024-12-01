@@ -11,7 +11,6 @@ enum class CellType { INNER, BORDER, HALO };
 class Cell {
   private:
     std::forward_list<Particle *> m_particles{};
-    size_t m_particleCount{0};
     std::array<double, 3> m_size;
     std::array<double, 3> m_position;
     CellType m_type;
@@ -22,11 +21,8 @@ class Cell {
 
     void addParticle(Particle *particle);
     void removeParticle(Particle *particle);
-    void incrementParticleCount();
-    void decrementParticleCount();
 
     const std::array<double, 3> &getX();
-    size_t getParticleCount();
     std::forward_list<Particle *> &getParticles();
     CellType getType();
     int getIndex();

@@ -15,8 +15,8 @@ LennardJones::LennardJones(const std::string &filename, const Arguments &args, i
     initializeBase(args, type, SimulationType::LJ);
     SPDLOG_TRACE("Created LJ Simulation from file {} with Arguments {}", filename, args.toString());
 }
-LennardJones::LennardJones(const ParticleContainer &pc, const Arguments &args, int type)
-    : m_generator("", m_particles), m_epsilon{args.epsilon}, m_sigma{args.sigma} {
+LennardJones::LennardJones(ParticleContainer &pc, const Arguments &args, int type)
+    : m_generator("", pc), m_epsilon{args.epsilon}, m_sigma{args.sigma} {
     m_particles = pc;
     initializeBase(args, type, SimulationType::LJ);
     SPDLOG_TRACE("Created LJ Simulation from using ParticleContainer {} with Arguments {}", pc.toString(),

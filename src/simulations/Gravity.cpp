@@ -10,7 +10,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-Gravity::Gravity(const ParticleContainer &pc, const Arguments &args, int type) {
+Gravity::Gravity(ParticleContainer &pc, const Arguments &args, int type) {
     m_particles = pc;
     initializeBase(args, type, SimulationType::GRAVITY);
     SPDLOG_TRACE("Created Gravity simulation with ParticleContainer {} and Arguments {}", pc.toString(),

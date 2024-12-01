@@ -11,9 +11,15 @@ TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type) {
     switch (type) {
     case SimulationType::GRAVITY:
     case SimulationType::LJ:
-    default:
         vf = calculateV;
         xf = calculateX;
+        break;
+    case SimulationType::LJLC:
+        vf = calculateV;
+        xf = calculateX_LC;
+        break;
+    default:
+        CLIUtils::error("Unknown type!", "", false);
     }
 }
 
@@ -39,6 +45,11 @@ std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSim
                      modifier ? "Naive" : "Newton's Third Law");
         return std::make_tuple(TimeIntegrationFuncs(type),
                                modifier ? calculateF_LennardJones : calculateF_LennardJonesThirdLaw);
+    case SimulationType::LJLC:
+        SPDLOG_DEBUG("Chose physics calculations for LJLC simulation with force calculation: {}",
+                     modifier ? "Naive" : "Newton's Third Law");
+        return std::make_tuple(TimeIntegrationFuncs(type),
+                               modifier ? calculateF_LennardJones_LC : calculateF_LennardJones_LC); // TODO third law
     default:
         CLIUtils::error("Invalid simulation type!");
     }

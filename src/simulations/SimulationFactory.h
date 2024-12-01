@@ -38,6 +38,6 @@ class SimulationFactory {
      * @param args The program and simulation arguments to be passed to the Simulation constructor.
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
-    static std::unique_ptr<Simulation> createSimulation(SimulationType type, const ParticleContainer &pc,
+    static std::unique_ptr<Simulation> createSimulation(SimulationType type, ParticleContainer &pc,
                                                         const Arguments &args);
 };

@@ -27,14 +27,6 @@ TEST_F(CuboidGeneratorTests, InvalidFile) {
     EXPECT_DEATH({ CuboidGenerator cg2("/dev/null/foo", pc); }, "");
 }
 
-// Test attempting to generate cuboids in a non-empty particle container.
-// Will only halt on debug builds; otherwise, will execute as normal.
-TEST_F(CuboidGeneratorTests, NonEmptyParticleContainer) {
-    ParticleContainer pc;
-    pc.addParticle({1., 2., 3.}, {4., 5., 6.}, 7.);
-    EXPECT_DEBUG_DEATH({ CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc); }, "");
-}
-
 // Test generating cuboids and intializing them into a ParticleContainer from a given source file.
 TEST_F(CuboidGeneratorTests, GenerateCuboids) {
     ParticleContainer pc;

@@ -21,10 +21,7 @@ Cell::Cell(const std::array<double, 3> &size, const std::array<double, 3> &posit
 
 void Cell::addParticle(Particle *particle) { m_particles.push_front(particle); }
 void Cell::removeParticle(Particle *particle) { m_particles.remove(particle); }
-void Cell::incrementParticleCount() { m_particleCount++; }
-void Cell::decrementParticleCount() { m_particleCount--; }
 const std::array<double, 3> &Cell::getX() { return m_position; }
-size_t Cell::getParticleCount() { return m_particleCount; }
 CellType Cell::getType() { return m_type; }
 int Cell::getIndex() { return m_index; }
 std::forward_list<Particle *> &Cell::getParticles() { return m_particles; }

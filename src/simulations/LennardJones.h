@@ -48,7 +48,7 @@ class LennardJones : public Simulation {
      * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
      * particles.
      */
-    LennardJones(const ParticleContainer &pc, const Arguments &args, int type = 0);
+    LennardJones(ParticleContainer &pc, const Arguments &args, int type = 0);
 
     /// @brief Default destructor.
     ~LennardJones() override;

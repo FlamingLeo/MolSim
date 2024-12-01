@@ -1,11 +1,11 @@
 #include "ForceCalculation.h"
-#include "objects/LinkedCells.h"
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <functional>
 #include <spdlog/spdlog.h>
 
-void calculateF_Gravity(ParticleContainer &particles, double, double) {
+void calculateF_Gravity(ParticleContainer &particles, double, double, CellContainer *) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
@@ -17,7 +17,7 @@ void calculateF_Gravity(ParticleContainer &particles, double, double) {
     }
 }
 
-void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double) {
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, CellContainer *) {
     // loop over unique pairs
     for (auto pair = particles.beginPairs(); pair != particles.endPairs(); ++pair) {
         auto &p1 = (*pair).first;
@@ -39,7 +39,7 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double) {
     }
 }
 
-void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma) {
+void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma, CellContainer *) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
@@ -53,7 +53,7 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
     }
 }
 
-void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma) {
+void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma, CellContainer *) {
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];
@@ -78,11 +78,9 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
     }
 }
 
-void calculateF_LennardJones_LC(LinkedCells &lc, ParticleContainer &particles, double epsilon, double sigma) {
-    SPDLOG_TRACE("Entered force calculation.");
-
+void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc) {
     // loop over all cells ic
-    for (auto &ic : lc.getCells()) {
+    for (auto &ic : lc->getCells()) {
         // loop over all particles i in cell ic
         for (auto *i : ic.getParticles()) {
             if (!i->isActive())
@@ -90,21 +88,18 @@ void calculateF_LennardJones_LC(LinkedCells &lc, ParticleContainer &particles, d
 
             // set F_i to zero
             i->setFToZero();
+
             // loop over all cells kc in N(ic)
-            for (size_t kci : lc.getNeighbors(ic.getIndex())) {
-                Cell &kc = lc.getCells()[kci];
+            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
+                Cell &kc = lc->getCells()[kci];
                 // loop over all particles j in cell kc
                 for (auto *j : kc.getParticles()) {
                     if (!j->isActive())
                         continue;
 
                     if (*i != *j) {
-                        double dist = 0;
-                        for (size_t d = 0; d < 2; ++d) { // TODO 3 dimensions (or replace with arrayutils)
-                            dist += (j->getX()[d] - i->getX()[d]) * (j->getX()[d] - i->getX()[d]);
-                        }
-                        if (dist <= lc.getCutoff() * lc.getCutoff()) {
-                            double distNorm = ArrayUtils::L2Norm(j->getX() - i->getX());
+                        double distNorm = ArrayUtils::L2Norm(j->getX() - i->getX());
+                        if (distNorm <= lc->getCutoff()) {
                             i->setF(i->getF() +
                                     ArrayUtils::elementWiseScalarOp(
                                         ((-24 * epsilon) / std::pow(distNorm, 2)) *
@@ -116,6 +111,45 @@ void calculateF_LennardJones_LC(LinkedCells &lc, ParticleContainer &particles, d
             }
         }
     }
+}
 
-    SPDLOG_TRACE("Finished force calculation.");
+void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc) {
+    // loop over all cells ic
+    for (auto &ic : lc->getCells()) {
+        // loop over all particles i in cell ic
+        for (auto *i : ic.getParticles()) {
+            if (!i->isActive())
+                continue;
+
+            // set F_i to zero
+            i->setFToZero();
+
+            // loop over all cells kc in N(ic)
+            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
+                Cell &kc = lc->getCells()[kci];
+                // loop over all particles j in cell kc
+                for (auto *j : kc.getParticles()) {
+                    if (!j->isActive())
+                        continue;
+
+                    // only iterate through distinct pairs by comparing (distinct) memory addresses
+                    // in one complete force calculation, either i < j or i >= j will hold, but not both
+                    if (i < j) {
+                        auto distVec = i->getX() - j->getX();
+                        double distNorm = ArrayUtils::L2Norm(distVec);
+                        if (distNorm <= lc->getCutoff()) {
+                            if (distNorm == 0)
+                                continue;
+
+                            double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                              (std::pow(sigma / distNorm, 6) - 2 * std::pow(sigma / distNorm, 12));
+                            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+                            i->setF(i->getF() + forceVec);
+                            j->setF(j->getF() - forceVec);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

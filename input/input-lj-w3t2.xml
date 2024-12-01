@@ -15,7 +15,7 @@
         </domainSize>
         <cutoffRadius>3.0</cutoffRadius>
     </args>
-    <type>lj</type>
+    <type>ljlc</type>
     <objects>
         <cuboid>
             <position>

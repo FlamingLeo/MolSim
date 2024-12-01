@@ -21,7 +21,7 @@ std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType t
     return std::make_unique<Gravity>(filename, args);
 }
 
-std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType type, const ParticleContainer &pc,
+std::unique_ptr<Simulation> SimulationFactory::createSimulation(SimulationType type, ParticleContainer &pc,
                                                                 const Arguments &args) {
     switch (type) {
     case SimulationType::GRAVITY:
