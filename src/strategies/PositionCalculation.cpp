@@ -24,8 +24,6 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
 
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
-
-        p.setOldF(p.getF()); // we probably don't need this
         p.setFToZero();
 
         // check particle index and potentially move it
@@ -69,6 +67,7 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
                     Cell &to = (*lc)[oppIdx];
                     bool flipVert = VEC_CONTAINS(hl, HaloLocation::NORTH) || VEC_CONTAINS(hl, HaloLocation::SOUTH);
                     bool flipHorizontal = VEC_CONTAINS(hl, HaloLocation::EAST) || VEC_CONTAINS(hl, HaloLocation::WEST);
+                    /* for 3D calculations, there will be an additional flipUpDown boolean here... */
                     if (flipVert) {
                         p.setX(lc->getMirrorPosition(p.getX(), from, to, 1));
                         // if the particle can not be moved for some reason, remove it to prevent further errors

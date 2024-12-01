@@ -17,12 +17,15 @@ void Cell::removeParticle(Particle *particle) { m_particles.remove(particle); }
 const std::array<double, 3> &Cell::getSize() const { return m_size; }
 const std::array<double, 3> &Cell::getX() const { return m_position; }
 HaloLocation Cell::getCornerRegion(const Particle &p) {
-    assert(!(this->m_haloLocation.empty())); // verify that this is a corner cell
+    // verify that this is a corner cell
+    assert(!(this->m_haloLocation.empty()));
 
+    // get the relative x and y positions of the particle inside the cell
     double relX = p.getX()[0] - m_position[0];
     double relY = p.getX()[1] - m_position[1];
     assert(relX < 0 || relX > m_size[0] || relY < 0 || relY > m_size[1]);
 
+    // check what type of corner cell this is
     bool NW = VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
     bool SE = VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
     bool NE = VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
@@ -31,6 +34,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) {
     bool NE_SW = NE || SW; // diagonal bottom left -> top right
     assert(NW_SE || NE_SW);
 
+    // handle different diagonal cases
     bool aboveDiagonal = NE_SW ? (relX <= relY) : (relX > relY);
     if (NE) {
         return aboveDiagonal ? HaloLocation::NORTH : HaloLocation::EAST;

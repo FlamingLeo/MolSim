@@ -27,6 +27,15 @@ class Cell {
 
     void addParticle(Particle *particle);
     void removeParticle(Particle *particle);
+
+    /**
+     * @brief
+     *
+     * See the report and presentation slides for more information.
+     *
+     * @param p
+     * @return HaloLocation
+     */
     HaloLocation getCornerRegion(const Particle &p);
     const std::array<double, 3> &getX() const;
     const std::array<double, 3> &getSize() const;

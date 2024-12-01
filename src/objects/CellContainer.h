@@ -40,7 +40,7 @@ class CellContainer {
 
   public:
     CellContainer(const std::array<double, 3> &domainSize, const std::array<BoundaryCondition, 6> &conditions,
-                  double cutoff, ParticleContainer &pc);
+                  double cutoff, ParticleContainer &pc, size_t dim = 2);
 
     /// @brief Standard library iterator function for marking the beginning of the iteration process.
     /// @return An iterator pointing to the first element of cells.
@@ -100,7 +100,7 @@ class CellContainer {
     const std::array<BoundaryCondition, 6> &getConditions();
     ParticleContainer &getParticles();
     double getCutoff();
-    void printCellIndices();
+    void printCellIndices2D();
     void printCellContents();
     ParticleContainer reconstructContainer();
 };

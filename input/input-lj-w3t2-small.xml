@@ -11,7 +11,7 @@
         <domainSize>
             <x>36.0</x>
             <y>18.0</y>
-            <z>0.0</z>
+            <z>1.0</z>
         </domainSize>
         <cutoffRadius>3.0</cutoffRadius>
         <bdConditions>
