@@ -129,6 +129,88 @@ void ArgsType::cutoffRadius(const CutoffRadiusType &x) { this->cutoffRadius_.set
 
 void ArgsType::cutoffRadius(const CutoffRadiusOptional &x) { this->cutoffRadius_ = x; }
 
+const ArgsType::BdConditionsOptional &ArgsType::bdConditions() const { return this->bdConditions_; }
+
+ArgsType::BdConditionsOptional &ArgsType::bdConditions() { return this->bdConditions_; }
+
+void ArgsType::bdConditions(const BdConditionsType &x) { this->bdConditions_.set(x); }
+
+void ArgsType::bdConditions(const BdConditionsOptional &x) { this->bdConditions_ = x; }
+
+void ArgsType::bdConditions(::std::unique_ptr<BdConditionsType> x) { this->bdConditions_.set(std::move(x)); }
+
+// BdConditionsType
+//
+
+const BdConditionsType::NType &BdConditionsType::n() const { return this->n_.get(); }
+
+BdConditionsType::NType &BdConditionsType::n() { return this->n_.get(); }
+
+void BdConditionsType::n(const NType &x) { this->n_.set(x); }
+
+void BdConditionsType::n(::std::unique_ptr<NType> x) { this->n_.set(std::move(x)); }
+
+const BdConditionsType::SType &BdConditionsType::s() const { return this->s_.get(); }
+
+BdConditionsType::SType &BdConditionsType::s() { return this->s_.get(); }
+
+void BdConditionsType::s(const SType &x) { this->s_.set(x); }
+
+void BdConditionsType::s(::std::unique_ptr<SType> x) { this->s_.set(std::move(x)); }
+
+const BdConditionsType::WType &BdConditionsType::w() const { return this->w_.get(); }
+
+BdConditionsType::WType &BdConditionsType::w() { return this->w_.get(); }
+
+void BdConditionsType::w(const WType &x) { this->w_.set(x); }
+
+void BdConditionsType::w(::std::unique_ptr<WType> x) { this->w_.set(std::move(x)); }
+
+const BdConditionsType::EType &BdConditionsType::e() const { return this->e_.get(); }
+
+BdConditionsType::EType &BdConditionsType::e() { return this->e_.get(); }
+
+void BdConditionsType::e(const EType &x) { this->e_.set(x); }
+
+void BdConditionsType::e(::std::unique_ptr<EType> x) { this->e_.set(std::move(x)); }
+
+const BdConditionsType::AType &BdConditionsType::a() const { return this->a_.get(); }
+
+BdConditionsType::AType &BdConditionsType::a() { return this->a_.get(); }
+
+void BdConditionsType::a(const AType &x) { this->a_.set(x); }
+
+void BdConditionsType::a(::std::unique_ptr<AType> x) { this->a_.set(std::move(x)); }
+
+const BdConditionsType::BType &BdConditionsType::b() const { return this->b_.get(); }
+
+BdConditionsType::BType &BdConditionsType::b() { return this->b_.get(); }
+
+void BdConditionsType::b(const BType &x) { this->b_.set(x); }
+
+void BdConditionsType::b(::std::unique_ptr<BType> x) { this->b_.set(std::move(x)); }
+
+// BoundaryConditionType
+//
+
+BoundaryConditionType::BoundaryConditionType(Value v) : ::xml_schema::String(_xsd_BoundaryConditionType_literals_[v]) {}
+
+BoundaryConditionType::BoundaryConditionType(const char *v) : ::xml_schema::String(v) {}
+
+BoundaryConditionType::BoundaryConditionType(const ::std::string &v) : ::xml_schema::String(v) {}
+
+BoundaryConditionType::BoundaryConditionType(const ::xml_schema::String &v) : ::xml_schema::String(v) {}
+
+BoundaryConditionType::BoundaryConditionType(const BoundaryConditionType &v, ::xml_schema::Flags f,
+                                             ::xml_schema::Container *c)
+    : ::xml_schema::String(v, f, c) {}
+
+BoundaryConditionType &BoundaryConditionType::operator=(Value v) {
+    static_cast<::xml_schema::String &>(*this) = ::xml_schema::String(_xsd_BoundaryConditionType_literals_[v]);
+
+    return *this;
+}
+
 // PositionType
 //
 
@@ -364,18 +446,19 @@ void SimType::totalParticles(const TotalParticlesOptional &x) { this->totalParti
 
 ArgsType::ArgsType()
     : ::xml_schema::Type(), startTime_(this), endTime_(this), delta_t_(this), epsilon_(this), sigma_(this),
-      frequency_(this), basename_(this), output_(this), domainSize_(this), cutoffRadius_(this) {}
+      frequency_(this), basename_(this), output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this) {}
 
 ArgsType::ArgsType(const ArgsType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), startTime_(x.startTime_, f, this), endTime_(x.endTime_, f, this),
       delta_t_(x.delta_t_, f, this), epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this),
       frequency_(x.frequency_, f, this), basename_(x.basename_, f, this), output_(x.output_, f, this),
-      domainSize_(x.domainSize_, f, this), cutoffRadius_(x.cutoffRadius_, f, this) {}
+      domainSize_(x.domainSize_, f, this), cutoffRadius_(x.cutoffRadius_, f, this),
+      bdConditions_(x.bdConditions_, f, this) {}
 
 ArgsType::ArgsType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), startTime_(this), endTime_(this), delta_t_(this),
       epsilon_(this), sigma_(this), frequency_(this), basename_(this), output_(this), domainSize_(this),
-      cutoffRadius_(this) {
+      cutoffRadius_(this), bdConditions_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -483,6 +566,17 @@ void ArgsType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags 
             }
         }
 
+        // bdConditions
+        //
+        if (n.name() == "bdConditions" && n.namespace_().empty()) {
+            ::std::unique_ptr<BdConditionsType> r(BdConditionsTraits::create(i, f, this));
+
+            if (!this->bdConditions_) {
+                this->bdConditions_.set(::std::move(r));
+                continue;
+            }
+        }
+
         break;
     }
 }
@@ -504,12 +598,194 @@ ArgsType &ArgsType::operator=(const ArgsType &x) {
         this->output_ = x.output_;
         this->domainSize_ = x.domainSize_;
         this->cutoffRadius_ = x.cutoffRadius_;
+        this->bdConditions_ = x.bdConditions_;
     }
 
     return *this;
 }
 
 ArgsType::~ArgsType() {}
+
+// BdConditionsType
+//
+
+BdConditionsType::BdConditionsType(const NType &n, const SType &s, const WType &w, const EType &e, const AType &a,
+                                   const BType &b)
+    : ::xml_schema::Type(), n_(n, this), s_(s, this), w_(w, this), e_(e, this), a_(a, this), b_(b, this) {}
+
+BdConditionsType::BdConditionsType(const BdConditionsType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), n_(x.n_, f, this), s_(x.s_, f, this), w_(x.w_, f, this), e_(x.e_, f, this),
+      a_(x.a_, f, this), b_(x.b_, f, this) {}
+
+BdConditionsType::BdConditionsType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), n_(this), s_(this), w_(this), e_(this), a_(this),
+      b_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void BdConditionsType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // n
+        //
+        if (n.name() == "n" && n.namespace_().empty()) {
+            ::std::unique_ptr<NType> r(NTraits::create(i, f, this));
+
+            if (!n_.present()) {
+                this->n_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // s
+        //
+        if (n.name() == "s" && n.namespace_().empty()) {
+            ::std::unique_ptr<SType> r(STraits::create(i, f, this));
+
+            if (!s_.present()) {
+                this->s_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // w
+        //
+        if (n.name() == "w" && n.namespace_().empty()) {
+            ::std::unique_ptr<WType> r(WTraits::create(i, f, this));
+
+            if (!w_.present()) {
+                this->w_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // e
+        //
+        if (n.name() == "e" && n.namespace_().empty()) {
+            ::std::unique_ptr<EType> r(ETraits::create(i, f, this));
+
+            if (!e_.present()) {
+                this->e_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // a
+        //
+        if (n.name() == "a" && n.namespace_().empty()) {
+            ::std::unique_ptr<AType> r(ATraits::create(i, f, this));
+
+            if (!a_.present()) {
+                this->a_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // b
+        //
+        if (n.name() == "b" && n.namespace_().empty()) {
+            ::std::unique_ptr<BType> r(BTraits::create(i, f, this));
+
+            if (!b_.present()) {
+                this->b_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!n_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("n", "");
+    }
+
+    if (!s_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("s", "");
+    }
+
+    if (!w_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("w", "");
+    }
+
+    if (!e_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("e", "");
+    }
+
+    if (!a_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("a", "");
+    }
+
+    if (!b_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("b", "");
+    }
+}
+
+BdConditionsType *BdConditionsType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class BdConditionsType(*this, f, c);
+}
+
+BdConditionsType &BdConditionsType::operator=(const BdConditionsType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->n_ = x.n_;
+        this->s_ = x.s_;
+        this->w_ = x.w_;
+        this->e_ = x.e_;
+        this->a_ = x.a_;
+        this->b_ = x.b_;
+    }
+
+    return *this;
+}
+
+BdConditionsType::~BdConditionsType() {}
+
+// BoundaryConditionType
+//
+
+BoundaryConditionType::BoundaryConditionType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f,
+                                             ::xml_schema::Container *c)
+    : ::xml_schema::String(e, f, c) {
+    _xsd_BoundaryConditionType_convert();
+}
+
+BoundaryConditionType::BoundaryConditionType(const ::xercesc::DOMAttr &a, ::xml_schema::Flags f,
+                                             ::xml_schema::Container *c)
+    : ::xml_schema::String(a, f, c) {
+    _xsd_BoundaryConditionType_convert();
+}
+
+BoundaryConditionType::BoundaryConditionType(const ::std::string &s, const ::xercesc::DOMElement *e,
+                                             ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::String(s, e, f, c) {
+    _xsd_BoundaryConditionType_convert();
+}
+
+BoundaryConditionType *BoundaryConditionType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class BoundaryConditionType(*this, f, c);
+}
+
+BoundaryConditionType::Value BoundaryConditionType::_xsd_BoundaryConditionType_convert() const {
+    ::xsd::cxx::tree::enum_comparator<char> c(_xsd_BoundaryConditionType_literals_);
+    const Value *i(
+        ::std::lower_bound(_xsd_BoundaryConditionType_indexes_, _xsd_BoundaryConditionType_indexes_ + 2, *this, c));
+
+    if (i == _xsd_BoundaryConditionType_indexes_ + 2 || _xsd_BoundaryConditionType_literals_[*i] != *this) {
+        throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
+    }
+
+    return *i;
+}
+
+const char *const BoundaryConditionType::_xsd_BoundaryConditionType_literals_[2] = {"outflow", "reflective"};
+
+const BoundaryConditionType::Value BoundaryConditionType::_xsd_BoundaryConditionType_indexes_[2] = {
+    ::BoundaryConditionType::outflow, ::BoundaryConditionType::reflective};
 
 // PositionType
 //
@@ -1609,6 +1885,78 @@ void operator<<(::xercesc::DOMElement &e, const ArgsType &i) {
 
         s << ::xml_schema::AsDouble(*i.cutoffRadius());
     }
+
+    // bdConditions
+    //
+    if (i.bdConditions()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("bdConditions", e));
+
+        s << *i.bdConditions();
+    }
+}
+
+void operator<<(::xercesc::DOMElement &e, const BdConditionsType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // n
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("n", e));
+
+        s << i.n();
+    }
+
+    // s
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("s", e));
+
+        s << i.s();
+    }
+
+    // w
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("w", e));
+
+        s << i.w();
+    }
+
+    // e
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("e", e));
+
+        s << i.e();
+    }
+
+    // a
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("a", e));
+
+        s << i.a();
+    }
+
+    // b
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("b", e));
+
+        s << i.b();
+    }
+}
+
+void operator<<(::xercesc::DOMElement &e, const BoundaryConditionType &i) {
+    e << static_cast<const ::xml_schema::String &>(i);
+}
+
+void operator<<(::xercesc::DOMAttr &a, const BoundaryConditionType &i) {
+    a << static_cast<const ::xml_schema::String &>(i);
+}
+
+void operator<<(::xml_schema::ListStream &l, const BoundaryConditionType &i) {
+    l << static_cast<const ::xml_schema::String &>(i);
 }
 
 void operator<<(::xercesc::DOMElement &e, const PositionType &i) {

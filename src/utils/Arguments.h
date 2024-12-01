@@ -7,6 +7,7 @@
  *
  */
 #pragma once
+#include "CellUtils.h"
 #include <array>
 #include <bitset>
 #include <iostream>
@@ -47,10 +48,13 @@ struct Arguments {
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: LJ).
     SimulationType sim{SimulationType::LJ};
+    /// @brief The type of condition to be applied at each boundary (default: outflow)
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW};
     /// @brief Bitset containing flags, whether startTime (0), endTime (1), delta_t (2) and basename (3) have been
     /// manually set by the user. If not, use default values depending on the simulation.
     std::bitset<4> argsSet{0b0000};
-
     /// @brief Returns a string representation of the struct.
     /// @return A string representation of the struct.
     std::string toString() const;

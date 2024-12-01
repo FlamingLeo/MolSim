@@ -5,6 +5,7 @@
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include "utils/CellUtils.h"
 #include "utils/StringUtils.h"
 #include <array>
 #include <memory>
@@ -61,9 +62,20 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
         LOAD_ARGS_2(frequency, itFreq);
         LOAD_ARGS_SET(basename, 3);
         LOAD_ARGS_TYPE(output);
-        // TODO: incorporate these once linked cells are fixed
         LOAD_ARGS_3DARR(domainSize);
         LOAD_ARGS(cutoffRadius);
+        if (xmlArgs.bdConditions().present()) {
+            auto bdConditions = xmlArgs.bdConditions().get();
+            BoundaryCondition N = CellUtils::toBoundaryCondition(bdConditions.n());
+            BoundaryCondition S = CellUtils::toBoundaryCondition(bdConditions.s());
+            BoundaryCondition W = CellUtils::toBoundaryCondition(bdConditions.w());
+            BoundaryCondition E = CellUtils::toBoundaryCondition(bdConditions.e());
+            BoundaryCondition A = CellUtils::toBoundaryCondition(bdConditions.a());
+            BoundaryCondition B = CellUtils::toBoundaryCondition(bdConditions.b());
+            args.conditions = {N, S, W, E, A, B};
+            SPDLOG_DEBUG("Loaded boundary conditions: n: {}, s: {}, w: {}, e: {}, a: {}, b: {}", bdConditions.n(),
+                         bdConditions.s(), bdConditions.w(), bdConditions.e(), bdConditions.a(), bdConditions.b());
+        }
     }
 }
 

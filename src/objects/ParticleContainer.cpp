@@ -96,6 +96,9 @@ const Particle &ParticleContainer::get(size_t index) const {
     return m_particles[index];
 }
 size_t ParticleContainer::size() const { return m_particles.size(); }
+size_t ParticleContainer::activeSize() const {
+    return std::count_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return p.isActive(); });
+}
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
 bool ParticleContainer::operator==(const ParticleContainer &other) const { return m_particles == other.m_particles; }

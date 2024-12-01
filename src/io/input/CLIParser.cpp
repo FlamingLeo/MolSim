@@ -1,6 +1,7 @@
 #include "CLIParser.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include "utils/CellUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdlib>
 #include <cstring>
@@ -93,6 +94,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.basename = optarg;
             args.argsSet.set(3);
             SPDLOG_DEBUG("Set basename to {}.", args.basename);
+            break;
+        case 'B': /* boundary conditions */
+            args.conditions = CellUtils::stringToBoundaryConditions(optarg);
+            SPDLOG_DEBUG("Set boundary conditions to {}.", optarg);
             break;
         case 'D': /* domain size */
             args.domainSize = StringUtils::toDoubleArray<3>(optarg, false);

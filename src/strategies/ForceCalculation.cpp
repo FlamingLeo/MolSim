@@ -80,18 +80,15 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
 
 void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc) {
     // loop over all cells ic
-    for (auto &ic : lc->getCells()) {
+    for (auto &ic : *lc) {
         // loop over all particles i in cell ic
         for (auto *i : ic.getParticles()) {
             if (!i->isActive())
                 continue;
 
-            // set F_i to zero
-            i->setFToZero();
-
             // loop over all cells kc in N(ic)
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
-                Cell &kc = lc->getCells()[kci];
+                Cell &kc = (*lc)[kci];
                 // loop over all particles j in cell kc
                 for (auto *j : kc.getParticles()) {
                     if (!j->isActive())
@@ -115,38 +112,37 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
 
 void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc) {
     // loop over all cells ic
-    for (auto &ic : lc->getCells()) {
+    for (auto &ic : *lc) {
         // loop over all particles i in cell ic
         for (auto *i : ic.getParticles()) {
             if (!i->isActive())
                 continue;
 
-            // set F_i to zero
-            i->setFToZero();
-
             // loop over all cells kc in N(ic)
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
-                Cell &kc = lc->getCells()[kci];
+                Cell &kc = (*lc)[kci];
                 // loop over all particles j in cell kc
                 for (auto *j : kc.getParticles()) {
-                    if (!j->isActive())
+                    if (!j->isActive() || i >= j)
                         continue;
 
                     // only iterate through distinct pairs by comparing (distinct) memory addresses
                     // in one complete force calculation, either i < j or i >= j will hold, but not both
-                    if (i < j) {
-                        auto distVec = i->getX() - j->getX();
-                        double distNorm = ArrayUtils::L2Norm(distVec);
-                        if (distNorm <= lc->getCutoff()) {
-                            if (distNorm == 0)
-                                continue;
+                    auto distVec = i->getX() - j->getX();
+                    double distNorm = ArrayUtils::L2Norm(distVec);
 
-                            double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
-                                              (std::pow(sigma / distNorm, 6) - 2 * std::pow(sigma / distNorm, 12));
-                            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
-                            i->setF(i->getF() + forceVec);
-                            j->setF(j->getF() - forceVec);
-                        }
+                    if (distNorm <= lc->getCutoff()) {
+                        // i could definitely make this look nicer...
+                        i->setF(i->getF() +
+                                ArrayUtils::elementWiseScalarOp(
+                                    ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                        (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12)),
+                                    i->getX() - j->getX(), std::multiplies<>()));
+                        j->setF(j->getF() -
+                                ArrayUtils::elementWiseScalarOp(
+                                    ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                        (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12)),
+                                    i->getX() - j->getX(), std::multiplies<>()));
                     }
                 }
             }

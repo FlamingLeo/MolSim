@@ -135,10 +135,11 @@ void VTKWriter::plotParticle(const Particle &p) {
 }
 
 void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration, int total) {
-    initializeOutput(particles.size());
+    initializeOutput(particles.activeSize());
 
     for (auto &p : particles)
-        plotParticle(p);
+        if (p.isActive())
+            plotParticle(p);
 
     writeFile(iteration, total);
 }

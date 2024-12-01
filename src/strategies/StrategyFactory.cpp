@@ -49,7 +49,7 @@ std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSim
         SPDLOG_DEBUG("Chose physics calculations for LJLC simulation with force calculation: {}",
                      modifier ? "Naive" : "Newton's Third Law");
         return std::make_tuple(TimeIntegrationFuncs(type),
-                               modifier ? calculateF_LennardJones_LC : calculateF_LennardJones_LC); // TODO third law
+                               modifier ? calculateF_LennardJones_LC : calculateF_LennardJonesThirdLaw_LC);
     default:
         CLIUtils::error("Invalid simulation type!");
     }

@@ -4,14 +4,16 @@
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <vector>
 
 /* constructor */
 // TODO: (re)make this compatible with 3rd dimension...
-CellContainer::CellContainer(const std::array<double, 3> domainSize, double cutoff, ParticleContainer &pc)
-    : domainSize{domainSize}, cutoff{cutoff}, particles{pc} {
+CellContainer::CellContainer(const std::array<double, 3> &domainSize,
+                             const std::array<BoundaryCondition, 6> &conditions, double cutoff, ParticleContainer &pc)
+    : domainSize{domainSize}, conditions{conditions}, cutoff{cutoff}, particles{pc} {
     // check that domain size and cutoff are initialized
     if (cutoff == INF)
         CLIUtils::error("Cutoff radius not initialized!");
@@ -49,10 +51,24 @@ CellContainer::CellContainer(const std::array<double, 3> domainSize, double cuto
     for (int y = 0; y < numCells[1]; y++) {
         for (int x = 0; x < numCells[0]; x++) {
             // set type of cell
-            bool halo = (y == 0 || y == (numCells[1] - 1) || x == 0 || x == (numCells[0] - 1));
+            bool northHalo = (y == numCells[1] - 1);
+            bool southHalo = (y == 0);
+            bool westHalo = (x == 0);
+            bool eastHalo = (x == numCells[0] - 1);
+
+            std::vector<HaloLocation> haloLocation;
+            if (northHalo)
+                haloLocation.push_back(HaloLocation::NORTH);
+            if (southHalo)
+                haloLocation.push_back(HaloLocation::SOUTH);
+            if (westHalo)
+                haloLocation.push_back(HaloLocation::WEST);
+            if (eastHalo)
+                haloLocation.push_back(HaloLocation::EAST);
+
             bool border = (y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2));
             CellType type;
-            if (halo) {
+            if (!haloLocation.empty()) {
                 type = CellType::HALO;
             } else if (border) {
                 type = CellType::BORDER;
@@ -62,7 +78,7 @@ CellContainer::CellContainer(const std::array<double, 3> domainSize, double cuto
 
             // position of lower left corner
             std::array<double, 3> position = {x * cellSize[0], y * cellSize[1], 0};
-            Cell c = Cell(cellSize, position, type, index);
+            Cell c = Cell(cellSize, position, type, index, haloLocation);
             cells.push_back(c);
 
             // add to special cell ref. containers
@@ -130,6 +146,9 @@ CellContainer::SpecialParticleIterator CellContainer::haloEnd() {
 }
 
 /* functionality */
+Cell &CellContainer::operator[](size_t index) { return cells[index]; }
+const Cell &CellContainer::operator[](size_t index) const { return cells[index]; }
+
 int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     std::array<int, 3> coords{0, 0, 0};
     for (int i = 0; i < 2; ++i) {
@@ -160,7 +179,7 @@ bool CellContainer::addParticle(Particle &p) {
 }
 
 // remove a particle from a cell
-// TODO: maybe add a check to see if p's cellIndex is -1?
+// maybe add a check to see if p's cellIndex is -1?
 void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
     cells[cellIndex].removeParticle(&p);
@@ -182,6 +201,48 @@ std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) {
 }
 
 std::vector<Cell> &CellContainer::getCells() { return cells; }
+
+int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) {
+    int idx = cellIndex;
+    for (auto l : directions) {
+        switch (l) {
+        case HaloLocation::NORTH:
+            idx -= numCells[0];
+            SPDLOG_TRACE("North set, getting southern cell index...");
+            break;
+        case HaloLocation::SOUTH:
+            idx += numCells[0];
+            SPDLOG_TRACE("South set, getting northern cell index...");
+            break;
+        case HaloLocation::EAST:
+            idx -= 1;
+            SPDLOG_TRACE("East set, getting western cell index...");
+            break;
+        case HaloLocation::WEST:
+            idx += 1;
+            SPDLOG_TRACE("West set, getting eastern cell index...");
+            break;
+        default:
+            SPDLOG_DEBUG("Not yet implemented!\n");
+            break;
+        }
+    }
+    return idx;
+}
+
+std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 3> &position, const Cell &from,
+                                                       const Cell &to, int direction) {
+    std::array<double, 3> posWithinCell = position - from.getX();
+    if (direction == 1) {
+        // north or south
+        double yOffset = from.getSize()[1] - posWithinCell[1];
+        return {to.getX()[0] + posWithinCell[0], to.getX()[1] + yOffset, to.getX()[2] + posWithinCell[2]};
+    } else {
+        // east or west
+        double xOffset = from.getSize()[0] - posWithinCell[0];
+        return {to.getX()[0] + xOffset, to.getX()[1] + posWithinCell[1], to.getX()[2] + posWithinCell[2]};
+    }
+}
 
 // return indices of ALL neighbours (including itself)
 std::vector<int> CellContainer::getNeighbors(int cellIndex) {
@@ -211,6 +272,7 @@ const std::array<double, 3> &CellContainer::getCellSize() { return cellSize; }
 const std::array<size_t, 3> &CellContainer::getNumCells() { return numCells; }
 double CellContainer::getCutoff() { return cutoff; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
+const std::array<BoundaryCondition, 6> &CellContainer::getConditions() { return conditions; }
 
 void CellContainer::printCellIndices() {
 #define RED "\e[0;31m"
@@ -220,7 +282,8 @@ void CellContainer::printCellIndices() {
     for (int row = cells.size() / numCells[0] - 1; row >= 0; row--) {
         for (int col = 0; col < numCells[0]; col++) {
             int i = row * numCells[0] + col;
-            switch (cells[i].getType()) {
+            CellType type = cells[i].getType();
+            switch (type) {
             case CellType::HALO:
                 std::cout << RED;
                 break;
@@ -231,7 +294,10 @@ void CellContainer::printCellIndices() {
                 std::cout << GRN;
                 break;
             }
-            std::cout << i << " ";
+            std::cout << i
+                      << (type == CellType::HALO ? ("(" + CellUtils::fromHaloVec(cells[i].getHaloLocation()) + ")")
+                                                 : "")
+                      << " ";
             std::cout << RST;
         }
         std::cout << "\n";

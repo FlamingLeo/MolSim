@@ -595,6 +595,8 @@ const XMLCh *const treeNodeKey = ::xsd::cxx::tree::user_data_keys::node;
 // Forward declarations.
 //
 class ArgsType;
+class BdConditionsType;
+class BoundaryConditionType;
 class PositionType;
 class VelocityType;
 class SizeType;
@@ -1266,6 +1268,77 @@ class ArgsType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name bdConditions
+     *
+     * @brief Accessor and modifier functions for the %bdConditions
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BdConditionsType BdConditionsType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<BdConditionsType> BdConditionsOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<BdConditionsType, char> BdConditionsTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const BdConditionsOptional &bdConditions() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    BdConditionsOptional &bdConditions();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void bdConditions(const BdConditionsType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void bdConditions(const BdConditionsOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void bdConditions(::std::unique_ptr<BdConditionsType> p);
+
+    //@}
+
+    /**
      * @name Constructors
      */
     //@{
@@ -1346,6 +1419,546 @@ class ArgsType : public ::xml_schema::Type {
     OutputOptional output_;
     DomainSizeOptional domainSize_;
     CutoffRadiusOptional cutoffRadius_;
+    BdConditionsOptional bdConditions_;
+
+    //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %bdConditionsType schema type.
+ *
+ * @nosubgrouping
+ */
+class BdConditionsType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name n
+     *
+     * @brief Accessor and modifier functions for the %n
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType NType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<NType, char> NTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const NType &n() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    NType &n();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void n(const NType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void n(::std::unique_ptr<NType> p);
+
+    //@}
+
+    /**
+     * @name s
+     *
+     * @brief Accessor and modifier functions for the %s
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType SType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<SType, char> STraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const SType &s() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    SType &s();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void s(const SType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void s(::std::unique_ptr<SType> p);
+
+    //@}
+
+    /**
+     * @name w
+     *
+     * @brief Accessor and modifier functions for the %w
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType WType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<WType, char> WTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const WType &w() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    WType &w();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void w(const WType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void w(::std::unique_ptr<WType> p);
+
+    //@}
+
+    /**
+     * @name e
+     *
+     * @brief Accessor and modifier functions for the %e
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType EType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<EType, char> ETraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const EType &e() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    EType &e();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void e(const EType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void e(::std::unique_ptr<EType> p);
+
+    //@}
+
+    /**
+     * @name a
+     *
+     * @brief Accessor and modifier functions for the %a
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType AType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<AType, char> ATraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const AType &a() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    AType &a();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void a(const AType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void a(::std::unique_ptr<AType> p);
+
+    //@}
+
+    /**
+     * @name b
+     *
+     * @brief Accessor and modifier functions for the %b
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::BoundaryConditionType BType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<BType, char> BTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const BType &b() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    BType &b();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void b(const BType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void b(::std::unique_ptr<BType> p);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    BdConditionsType(const NType &, const SType &, const WType &, const EType &, const AType &, const BType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    BdConditionsType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    BdConditionsType(const BdConditionsType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual BdConditionsType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    BdConditionsType &operator=(const BdConditionsType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~BdConditionsType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<NType> n_;
+    ::xsd::cxx::tree::one<SType> s_;
+    ::xsd::cxx::tree::one<WType> w_;
+    ::xsd::cxx::tree::one<EType> e_;
+    ::xsd::cxx::tree::one<AType> a_;
+    ::xsd::cxx::tree::one<BType> b_;
+
+    //@endcond
+};
+
+/**
+ * @brief Enumeration class corresponding to the %boundaryConditionType
+ * schema type.
+ */
+class BoundaryConditionType : public ::xml_schema::String {
+  public:
+    /**
+     * @brief Underlying enum type.
+     */
+    enum Value { outflow, reflective };
+
+    /**
+     * @brief Create an instance from the underlying enum value.
+     *
+     * @param v A enum value.
+     */
+    BoundaryConditionType(Value v);
+
+    /**
+     * @brief Create an instance from a C string.
+     *
+     * @param v A string value.
+     */
+    BoundaryConditionType(const char *v);
+
+    /**
+     * @brief Create an instance from a string.
+     *
+     * @param v A string value.
+     */
+    BoundaryConditionType(const ::std::string &v);
+
+    /**
+     * @brief Create an instance from the base value.
+     *
+     * @param v A base value.
+     */
+    BoundaryConditionType(const ::xml_schema::String &v);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    BoundaryConditionType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Create an instance from a DOM attribute.
+     *
+     * @param a A DOM attribute to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    BoundaryConditionType(const ::xercesc::DOMAttr &a, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Create an instance from a string fragment.
+     *
+     * @param s A string fragment to extract the data from.
+     * @param e A pointer to DOM element containing the string fragment.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    BoundaryConditionType(const ::std::string &s, const ::xercesc::DOMElement *e, ::xml_schema::Flags f = 0,
+                          ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    BoundaryConditionType(const BoundaryConditionType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+#ifdef XSD_CXX11
+    BoundaryConditionType &operator=(const BoundaryConditionType &) = default;
+#endif
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual BoundaryConditionType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Assign the underlying enum value.
+     *
+     * @param v A enum value.
+     * @return A refernce to the instance.
+     */
+    BoundaryConditionType &operator=(Value v);
+
+    /**
+     * @brief Implicit conversion operator to the underlying
+     * enum value.
+     *
+     * @return A enum value.
+     */
+    virtual operator Value() const { return _xsd_BoundaryConditionType_convert(); }
+
+    //@cond
+
+  protected:
+    Value _xsd_BoundaryConditionType_convert() const;
+
+  public:
+    static const char *const _xsd_BoundaryConditionType_literals_[2];
+    static const Value _xsd_BoundaryConditionType_indexes_[2];
 
     //@endcond
 };
@@ -3947,6 +4560,14 @@ sim(const ::SimType &x, const ::xml_schema::NamespaceInfomap &m = ::xml_schema::
 //@}
 
 void operator<<(::xercesc::DOMElement &, const ArgsType &);
+
+void operator<<(::xercesc::DOMElement &, const BdConditionsType &);
+
+void operator<<(::xercesc::DOMElement &, const BoundaryConditionType &);
+
+void operator<<(::xercesc::DOMAttr &, const BoundaryConditionType &);
+
+void operator<<(::xml_schema::ListStream &, const BoundaryConditionType &);
 
 void operator<<(::xercesc::DOMElement &, const PositionType &);
 

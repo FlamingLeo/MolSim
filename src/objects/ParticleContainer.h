@@ -202,6 +202,13 @@ class ParticleContainer {
     size_t size() const;
 
     /**
+     * @brief Returns the amount of active particles in the container.
+     *
+     * @return The number of active particles in the container.
+     */
+    size_t activeSize() const;
+
+    /**
      * @brief Checks if the container is empty.
      *
      * @return true if there are no Particle objects in the container.

@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#define OPTSTRING "s:e:d:f:b:o:t:D:E:R:S:h"
+#define OPTSTRING "s:e:d:f:b:o:t:B:D:E:R:S:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 
@@ -29,9 +29,9 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Mapping from getopt option characters to their full names.
  */
 static inline std::unordered_map<char, std::string> optionNames = {
-    {'s', "Start time"},  {'e', "End time"},        {'d', "Timestep"},    {'b', "Basename"}, {'f', "Output frequency"},
-    {'o', "Output type"}, {'t', "Simulation type"}, {'D', "Domain Size"}, {'E', "Epsilon"},  {'R', "Cutoff Radius"},
-    {'S', "Sigma"}};
+    {'s', "Start time"},       {'e', "End time"},    {'d', "Timestep"},        {'b', "Basename"},
+    {'f', "Output frequency"}, {'o', "Output type"}, {'t', "Simulation type"}, {'B', "Boundary Conditions"},
+    {'D', "Domain Size"},      {'E', "Epsilon"},     {'R', "Cutoff Radius"},   {'S', "Sigma"}};
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.
@@ -54,6 +54,10 @@ static inline void printHelp() {
            "-d <number>  : Sets the time interval between two iterations of a simulation (default: "
            "simulation-specific).\n"
            "-b <name>    : Sets the base name of the generated files (default: type-specific).\n"
+           "-B <cccccc>  : Sets the conditions to be applied at each boundary (North, South, West, East, Above, "
+           "Below). c is one of:\n"
+           "  - o        : Outflow (particles get deleted once they leave the domain).\n"
+           "  - r        : Reflective (particles are reflected off the domain boundaries).\n"
            "-D <x,y,z>   : Sets the domain size (decimal array) for the linked cell method (MUST be specified if not "
            "present in input!).\n"
            "-E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).\n"

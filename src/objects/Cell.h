@@ -2,27 +2,35 @@
 
 #include "Particle.h"
 #include "ParticleContainer.h"
+#include "utils/CellUtils.h"
+#include <algorithm>
 #include <array>
+#include <bitset>
 #include <forward_list>
+#include <sstream>
 #include <string>
-
-enum class CellType { INNER, BORDER, HALO };
+#include <vector>
+#define VEC_CONTAINS(vec, el) ((std::find((vec).begin(), (vec).end(), (el)) != (vec).end()))
 
 class Cell {
   private:
     std::forward_list<Particle *> m_particles{};
     std::array<double, 3> m_size;
     std::array<double, 3> m_position;
+    std::vector<HaloLocation> m_haloLocation;
     CellType m_type;
     int m_index;
 
   public:
-    Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index);
+    Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
+         const std::vector<HaloLocation> &haloLocation);
 
     void addParticle(Particle *particle);
     void removeParticle(Particle *particle);
-
-    const std::array<double, 3> &getX();
+    HaloLocation getCornerRegion(const Particle &p);
+    const std::array<double, 3> &getX() const;
+    const std::array<double, 3> &getSize() const;
+    std::vector<HaloLocation> &getHaloLocation();
     std::forward_list<Particle *> &getParticles();
     CellType getType();
     int getIndex();

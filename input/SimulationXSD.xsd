@@ -15,8 +15,27 @@
             <xs:element type="xs:string" name="output" minOccurs="0" maxOccurs="1"/>
             <xs:element type="sizeType" name="domainSize" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:double" name="cutoffRadius" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="bdConditionsType" name="bdConditions" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:complexType name="bdConditionsType">
+        <xs:sequence>
+            <xs:element name="n" type="boundaryConditionType"/>
+            <xs:element name="s" type="boundaryConditionType"/>
+            <xs:element name="w" type="boundaryConditionType"/>
+            <xs:element name="e" type="boundaryConditionType"/>
+            <xs:element name="a" type="boundaryConditionType"/>
+            <xs:element name="b" type="boundaryConditionType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="boundaryConditionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="outflow"/>
+            <xs:enumeration value="reflective"/>
+        </xs:restriction>
+    </xs:simpleType>
     
     <xs:complexType name="positionType">
         <xs:sequence>
