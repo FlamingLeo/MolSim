@@ -6,7 +6,6 @@
 #error Logging must be disabled globally!
 #endif
 
-#if 1
 #include "io/output/VTKWriter.h"
 #include "objects/Cuboid.h"
 #include "objects/ParticleContainer.h"
@@ -88,4 +87,3 @@ BENCHMARK_DEFINE_F(LJLCFixture, LJLCThirdLaw)(benchmark::State &st) {
 
 BENCHMARK_REGISTER_F(LJLCFixture, LJLCNaive)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);
 BENCHMARK_REGISTER_F(LJLCFixture, LJLCThirdLaw)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);
-#endif
