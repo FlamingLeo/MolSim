@@ -82,7 +82,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all particles i in cell ic
-        for (auto *i : ic.getParticles()) {
+        for (auto *i : ic) {
             if (!i->isActive())
                 continue;
 
@@ -90,7 +90,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
                 // loop over all particles j in cell kc
-                for (auto *j : kc.getParticles()) {
+                for (auto *j : kc) {
                     if (!j->isActive())
                         continue;
 
@@ -114,7 +114,7 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double eps
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all particles i in cell ic
-        for (auto *i : ic.getParticles()) {
+        for (auto *i : ic) {
             if (!i->isActive())
                 continue;
 
@@ -122,7 +122,7 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double eps
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
                 // loop over all particles j in cell kc
-                for (auto *j : kc.getParticles()) {
+                for (auto *j : kc) {
                     if (!j->isActive() || i >= j)
                         continue;
 

@@ -12,6 +12,9 @@ Cell::Cell(const std::array<double, 3> &size, const std::array<double, 3> &posit
            const std::vector<HaloLocation> &haloLocation)
     : m_type{type}, m_size{size}, m_position{position}, m_index{index}, m_haloLocation{haloLocation} {};
 
+std::forward_list<Particle *>::iterator Cell::begin() { return m_particles.begin(); }
+std::forward_list<Particle *>::iterator Cell::end() { return m_particles.end(); }
+
 void Cell::addParticle(Particle *particle) { m_particles.push_front(particle); }
 void Cell::removeParticle(Particle *particle) { m_particles.remove(particle); }
 const std::array<double, 3> &Cell::getSize() const { return m_size; }

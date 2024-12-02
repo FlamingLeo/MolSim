@@ -11,10 +11,10 @@
 
 /* constructor */
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
-                             const std::array<BoundaryCondition, 6> &conditions, double cutoff, ParticleContainer &pc,
-                             size_t dim)
+                             const std::array<BoundaryCondition, 6> &conditions, double cutoff,
+                             ParticleContainer &particles, size_t dim)
     : domainSize{domainSize}, cellSize{0, 0, 0}, numCells{1, 1, 1}, conditions{conditions}, cutoff{cutoff},
-      particles{pc} {
+      particles{particles} {
     // check correct dimensions (could probably be a boolean instead...)
     if (dim < 2 || dim > 3)
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));
@@ -116,12 +116,14 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
     }
 
     // add particles to corresponding cells
-    for (Particle &p : pc) {
+    for (Particle &p : particles) {
         addParticle(p);
     }
 }
 
 /* iterators */
+ParticleContainer::PairIterator CellContainer::beginPairs() { return particles.beginPairs(); }
+ParticleContainer::PairIterator CellContainer::endPairs() { return particles.endPairs(); }
 CellContainer::ContainerType::iterator CellContainer::begin() { return cells.begin(); }
 CellContainer::ContainerType::iterator CellContainer::end() { return cells.end(); }
 CellContainer::ContainerType::const_iterator CellContainer::begin() const { return cells.begin(); }
@@ -223,6 +225,18 @@ void CellContainer::deleteParticle(Particle &p) {
 bool CellContainer::moveParticle(Particle &p) {
     deleteParticle(p);
     return addParticle(p);
+}
+
+void CellContainer::removeHaloCells() {
+    for (auto &p : particles) {
+        if (p.isActive() && p.getCellIndex() != -1) {
+            if (cells[p.getCellIndex()].getType() == CellType::HALO) {
+                SPDLOG_TRACE("Found active halo particle, removing...");
+                deleteParticle(p);
+                p.markInactive();
+            }
+        }
+    }
 }
 
 // get the (x, y, z) coordinates of a cell from its 1D index
