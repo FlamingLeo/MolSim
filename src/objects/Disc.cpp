@@ -24,8 +24,8 @@ void Disc::initializeDisc() {
         ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
     particles.addParticle(pos, vel, m);
 
-    double circumferance = 2 * pi * r;
-    int numpoints = std::round(circumferance / h);
+    double circumference = 2 * pi * r;
+    int numpoints = std::round(circumference / h);
 
     for (int i = 0; i < numpoints; i++) {
         std::array<double, 3> xyz;
@@ -38,8 +38,8 @@ void Disc::initializeDisc() {
         particles.addParticle(xyz, velocity, m);
     }
 
-    for (int i = x[0] - r; i <= x[0] + r; i++) {
-        for (int j = x[1] - r; j <= x[1] + r; j++) {
+    for (int i = x[0] - r; i <= x[0] + r; i += h) {
+        for (int j = x[1] - r; j <= x[1] + r; j += h) {
             if ((i - x[0]) * (i - x[0]) + (j - x[1]) * (j - x[1]) <= r * r) {
                 std::array<double, 3> xyz;
                 xyz[0] = i;
