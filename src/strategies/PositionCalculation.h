@@ -32,7 +32,11 @@ void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc 
  * \frac{F_i(t_n)}{2m_i}. \f]
  *
  * After each update, the particle may need to be moved to a different cell. The algorithm checks this and updates the
- * cell correspondence accordingly.
+ * cell correspondence accordingly. If the particle enters a halo cell, the appropriate boundary condition will be
+ * applied.
+ *
+ * If a particle enters a corner halo cell where one side has a different boundary condition to the other, the condition
+ * is chosen based on which boundary the particle will hit first. See the report and presentation for more details.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.

@@ -21,7 +21,7 @@
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_Gravity(ParticleContainer &particles, double, double, CellContainer *lc = nullptr);
+void calculateF_Gravity(ParticleContainer &particles, double, double, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a Gravity simulation.
@@ -35,7 +35,7 @@ void calculateF_Gravity(ParticleContainer &particles, double, double, CellContai
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, CellContainer *lc = nullptr);
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation.
@@ -52,7 +52,28 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, Ce
  * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc = nullptr);
+void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma, double,
+                             CellContainer *lc = nullptr);
+
+/**
+ * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation and a
+ specified cutoff radius.
+ *
+ * @details For each particle in the simulation, the method works by first calculating the effective force \f[
+ * F_{ij} = -\frac{24 \cdot \epsilon}{\left(\|x_i - x_j\|_2\right)^2} \left( \left( \frac{\sigma}{\|x_i - x_j\|_2}
+ \right)^6 - 2 \left( \frac{\sigma}{\|x_i - x_j\|_2} \right)^{12} \right) (x_i - x_j) \f] between each pair of particles
+ \f$ i \f$ and \f$ j
+ * \f$ ONLY if the distance between them is less than the cutoff radius. Afterwards, the effective force for a single
+ particle \f$ i \f$ is calculated using the formula \f[ F_i =
+ * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles.
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param epsilon The depth of the potential well \f$ \epsilon \f$
+ * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
+ * @param cutoff The cutoff radius.
+ */
+void calculateF_LennardJonesCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
+                                   CellContainer *);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
@@ -69,12 +90,34 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
  * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma,
+void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma, double,
                                      CellContainer *lc = nullptr);
 
 /**
+ * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
+ * simulation and a cutoff radius.
+ *
+ * @details <em> For every action, there is an equal and opposite reaction.</em>
+ *
+ * Instead of looping through and calculating the force for each individual particle, we avoid recalculating force
+ * for pairs \f$(p_i, p_j)\f$ which have already been computed and apply the reciprocal forces to both particles
+ * simultaneously using Newton's third law: \f[ F_{ij} = -F_{ji}. \f]
+ *
+ * We only take particles that have a distance smaller than (or equal to) the cutoff radius to eachother into
+ * consideration.
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param epsilon The depth of the potential well \f$ \epsilon \f$
+ * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
+ * @param cutoff The cutoff radius.
+ * @param lc Unused. Present to allow calling function without last argument.
+ */
+void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
+                                           CellContainer *lc = nullptr);
+
+/**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a linked-cell LennardJones
- simulation.
+ simulation and a cutoff radius.
  *
  * @details For each particle in the simulation, the method works by first calculating the effective force \f[
  * F_{ij} = -\frac{24 \cdot \epsilon}{\left(\|x_i - x_j\|_2\right)^2} \left( \left( \frac{\sigma}{\|x_i - x_j\|_2}
@@ -82,7 +125,7 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
  \f$ i \f$ and \f$ j
  * \f$ in the neighboring (and current) cells. Afterwards, the effective force for a single particle \f$ i \f$ is
  calculated using the formula \f[ F_i =
- * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles.
+ * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles within the cell's region.
  *
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
@@ -90,11 +133,11 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
  * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc The CellContainer for the linked cells method.
  */
-void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc);
+void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, double, CellContainer *lc);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a linked-cell
- * LennardJones simulation.
+ * LennardJones simulation and a cutoff radius.
  *
  * @details <em> For every action, there is an equal and opposite reaction.</em>
  *
@@ -102,9 +145,13 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
  * recalculating force for pairs \f$(p_i, p_j)\f$ which have already been computed and apply the reciprocal forces to
  * both particles simultaneously using Newton's third law: \f[ F_{ij} = -F_{ji}. \f]
  *
+ * We only take particles that have a distance smaller than (or equal to) the cutoff radius to eachother into
+ * consideration.
+ *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param epsilon The depth of the potential well \f$ \epsilon \f$
  * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc The CellContainer for the linked cells method.
  */
-void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, CellContainer *lc);
+void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, double,
+                                        CellContainer *lc);

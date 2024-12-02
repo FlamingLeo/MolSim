@@ -3,7 +3,7 @@
 
 // Tests the outflow boundary condition using a single particle in a cell container.
 // Upon entering a halo cell, the particle is removed from the cell container and is marked inactive.
-TEST(BoundaryConditionTests, OutflowBasic) {
+TEST(BoundaryConditionTests, Outflow) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
@@ -29,7 +29,7 @@ TEST(BoundaryConditionTests, OutflowBasic) {
 // Tests the reflective boundary condition using a single particle in a cell container.
 // Upon entering a halo cell, the velocity is inverted and the mirrored position of the particle is computed.
 // See the report and the presentation slides for more details.
-TEST(BoundaryConditionTests, ReflectiveBasic) {
+TEST(BoundaryConditionTests, Reflective) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
                                                 BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,

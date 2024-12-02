@@ -1,3 +1,12 @@
+/**
+ * @file CellUtils.h
+ * @brief Utility functions for Cell and CellContainer objects.
+ * @date 2024-12-02
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #pragma once
 #include "CLIUtils.h"
 #include <bitset>
@@ -6,10 +15,14 @@
 #include <unordered_map>
 #include <vector>
 
+/// @brief Enum containing the possible types of boundary conditions.
 enum class BoundaryCondition { OUTFLOW, REFLECTIVE };
+/// @brief Enum containing the possible types of cells.
 enum class CellType { INNER, BORDER, HALO };
+/// @brief Enum containing the possible corner and edge directions of halo cells.
 enum class HaloLocation { NORTH, SOUTH, WEST, EAST, ABOVE, BELOW };
 
+/// @brief Namespace containing utility functions for Cell and CellContainer objects.
 namespace CellUtils {
 /// @brief Map containing conversion information for converting a string to a BoundaryCondition enum.
 static inline const std::unordered_map<std::string, BoundaryCondition> conditionTable = {
