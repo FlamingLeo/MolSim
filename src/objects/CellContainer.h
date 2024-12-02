@@ -56,24 +56,24 @@ class CellContainer {
     ContainerType::const_iterator begin() const;
 
     /// @brief Standard library iterator function for marking the end of the iteration process of a const
-    /// ParticleContainer.
+    /// CellContainer.
     /// @return An iterator pointing to the last element of cells.
     ContainerType::const_iterator end() const;
 
     class SpecialParticleIterator {
       private:
-        std::vector<Cell *>::iterator cellIt;
-        std::vector<Cell *>::iterator cellEnd;
-        std::forward_list<Particle *>::iterator particleIt;
-        std::forward_list<Particle *>::iterator particleEnd;
-
-        void advanceToNextCell();
+        std::vector<Cell *>::iterator outerIt;
+        std::vector<Cell *>::iterator outerEnd;
+        std::forward_list<Particle *>::iterator innerIt;
+        std::forward_list<Particle *>::iterator innerEnd;
+        void advance();
 
       public:
         SpecialParticleIterator(std::vector<Cell *>::iterator start, std::vector<Cell *>::iterator end);
         Particle &operator*();
         SpecialParticleIterator &operator++();
         bool operator!=(const SpecialParticleIterator &other) const;
+        bool operator==(const SpecialParticleIterator &other) const;
     };
 
     SpecialParticleIterator boundaryBegin();
@@ -85,6 +85,8 @@ class CellContainer {
     const Cell &operator[](size_t index) const;
 
     std::vector<Cell> &getCells();
+    std::vector<Cell *> &getBorderCells();
+    std::vector<Cell *> &getHaloCells();
     int getCellIndex(const std::array<double, 3> &position);
     void deleteParticle(Particle &p);
     bool addParticle(Particle &p);
@@ -100,7 +102,6 @@ class CellContainer {
     const std::array<BoundaryCondition, 6> &getConditions();
     ParticleContainer &getParticles();
     double getCutoff();
-    void printCellIndices2D();
-    void printCellContents();
-    ParticleContainer reconstructContainer();
+    size_t size() const;
+    size_t activeSize() const;
 };
