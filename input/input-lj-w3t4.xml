@@ -14,6 +14,14 @@
             <z>1.0</z>
         </domainSize>
         <cutoffRadius>3.0</cutoffRadius>
+        <bdConditions>
+            <n>reflective</n>
+            <s>reflective</s>
+            <w>reflective</w>
+            <e>reflective</e>
+            <a>reflective</a>
+            <b>reflective</b>
+        </bdConditions>
     </args>
     <type>ljlc</type>
     <objects>

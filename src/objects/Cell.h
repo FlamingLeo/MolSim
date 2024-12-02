@@ -13,8 +13,10 @@
 #define VEC_CONTAINS(vec, el) ((std::find((vec).begin(), (vec).end(), (el)) != (vec).end()))
 
 class Cell {
+    using ContainerType = std::forward_list<Particle *>;
+
   private:
-    std::forward_list<Particle *> m_particles{};
+    ContainerType m_particles{};
     std::array<double, 3> m_size;
     std::array<double, 3> m_position;
     std::vector<HaloLocation> m_haloLocation;
@@ -25,23 +27,26 @@ class Cell {
     Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
          const std::vector<HaloLocation> &haloLocation);
 
+    ContainerType::iterator begin();
+    ContainerType::iterator end();
+
     void addParticle(Particle *particle);
     void removeParticle(Particle *particle);
 
     /**
-     * @brief
+     * @brief ...
      *
      * See the report and presentation slides for more information.
      *
      * @param p
      * @return HaloLocation
      */
-    HaloLocation getCornerRegion(const Particle &p);
+    HaloLocation getCornerRegion(const Particle &p) const;
     const std::array<double, 3> &getX() const;
     const std::array<double, 3> &getSize() const;
-    std::vector<HaloLocation> &getHaloLocation();
-    std::forward_list<Particle *> &getParticles();
-    CellType getType();
-    int getIndex();
-    std::string toString();
+    const std::vector<HaloLocation> &getHaloLocation() const;
+    const std::forward_list<Particle *> &getParticles() const;
+    CellType getType() const;
+    int getIndex() const;
+    std::string toString() const;
 };

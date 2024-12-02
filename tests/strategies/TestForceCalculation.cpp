@@ -24,8 +24,8 @@ class ForceTests : public ::testing::Test {
 // Test calculating the forces between particles when simulating gravitational orbit.
 // More specifically, test if both the naive approach and the approach using Newton's third law are identical.
 TEST_F(ForceTests, UpdateForceGravity) {
-    calculateF_Gravity(pc1, 0, 0);
-    calculateF_GravityThirdLaw(pc2, 0, 0);
+    calculateF_Gravity(pc1, 0, 0, 1);
+    calculateF_GravityThirdLaw(pc2, 0, 0, 1);
 
     constexpr std::array<std::array<double, 3>, 3> expectedF = {
         {{0.529238, 0.529238, 0.529238}, {0.7698, 0.7698, 0.7698}, {-1.29904, -1.29904, -1.29904}}};
@@ -43,8 +43,8 @@ TEST_F(ForceTests, UpdateForceGravity) {
 // Test calculating the forces between particles when simulating the LJ potential.
 // More specifically, test if both the naive approach and the approach using Newton's third law are identical.
 TEST_F(ForceTests, UpdateForceLJ) {
-    calculateF_LennardJones(pc1, 5, 1);
-    calculateF_LennardJonesThirdLaw(pc2, 5, 1);
+    calculateF_LennardJones(pc1, 5, 1, 1);
+    calculateF_LennardJonesThirdLaw(pc2, 5, 1, 1);
 
     constexpr std::array<std::array<double, 3>, 3> expectedF = {
         {{1.81296e-06, 1.81296e-06, 1.81296e-06}, {0., 0., 0.}, {-1.81296e-06, -1.81296e-06, -1.81296e-06}}};

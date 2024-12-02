@@ -35,7 +35,7 @@ struct TimeIntegrationFuncs {
 class StrategyFactory {
   public:
     /// @brief Typedef for force-calculating functions.
-    using FFunc = void (*)(ParticleContainer &, double, double, CellContainer *);
+    using FFunc = void (*)(ParticleContainer &, double, double, double, CellContainer *);
 
     /**
      * @brief Return a 2-tuple of the physics functions corresponding to the chosen simulation.

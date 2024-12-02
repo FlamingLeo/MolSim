@@ -86,8 +86,11 @@ class Simulation {
      *
      * @param epsilon An optional parameter based on the Simulation type (currently, only LJ is supported).
      * @param sigma An optional parameter based on the Simulation type (currently, only LJ is supported).
+     * @param lc An optional parameter for linked cell algorithms.
+     * @param cutoff An optional parameter for simulations that use a cutoff radius.
      */
-    inline void runSimulationLoop(double epsilon = 0, double sigma = 0, CellContainer *lc = nullptr) {
+    inline void runSimulationLoop(double epsilon = 0, double sigma = 0, CellContainer *lc = nullptr,
+                                  double cutoff = 1) {
         // bandaid fix to ensure working with the correct container when using the linked cell method
         ParticleContainer &container = (lc ? lc->getParticles() : m_particles);
 
@@ -98,7 +101,7 @@ class Simulation {
 
         while (currentTime < m_endTime) {
             m_calculateX(container, m_delta_t, lc);
-            m_calculateF(container, epsilon, sigma, lc);
+            m_calculateF(container, epsilon, sigma, cutoff, lc);
             m_calculateV(container, m_delta_t);
 
             iteration++;
