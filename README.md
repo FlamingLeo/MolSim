@@ -31,6 +31,7 @@ This project uses the following external C++ libraries:
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
 -   [Benchmark](https://github.com/google/benchmark) 1.9.0
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
+-   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
 
 If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
 
@@ -98,20 +99,26 @@ After building, the main executable will be located in the `build/src` directory
 Currently, the following options are supported:
 
 ```text
--s <number> : Sets the start time (decimal) for a specific simulation (default: simulation-specific).
--e <number> : Sets the end time (decimal) for a specific simulation (default: simulation-specific).
--d <number> : Sets the time interval between two iterations of a simulation (default: simulation-specific).
--E <number> : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).
--S <number> : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).
--f <number> : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
--o <type>   : Sets the output file type and directory (default: vtk).
-  - vtk     : Generates VTK Unstructured Grid (.vtu) files.
-  - xyz     : Generates XYZ (.xyz) files.
-  - nil     : Logs to stdout. Used for debugging purposes.
--t <type>   : Sets the desired simulation to be performed (default: lj).
-  - gravity : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
-  - lj      : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
--h          : Prints out a help message. Doesn't perform any simulation.
+-s <number>  : Sets the start time (decimal) for a specific simulation (default: simulation-specific).
+-e <number>  : Sets the end time (decimal) for a specific simulation (default: simulation-specific).
+-d <number>  : Sets the time interval between two iterations of a simulation (default: simulation-specific).
+-b <name>    : Sets the base name of the generated files (default: type-specific).
+-B <cccccc>  : Sets the conditions to be applied at each boundary (North, South, West, East, Above, Below). c is one of:
+  - o        : Outflow (particles get deleted once they leave the domain).
+  - r        : Reflective (particles are reflected off the domain boundaries).
+-D <x,y,z>   : Sets the domain size (decimal array) for the linked cell method (MUST be specified if not present in input!).
+-E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).
+-R <number>  : Sets the cutoff radius (decimal) for the linked cell method (MUST be specified if not present in input!).
+-S <number>  : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).
+-f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
+-o <type>    : Sets the output file type and directory (default: vtk).
+  - vtk      : Generates VTK Unstructured Grid (.vtu) files.
+  - xyz      : Generates XYZ (.xyz) files.
+  - nil      : Logs to stdout. Used for debugging purposes.
+-t <type>    : Sets the desired simulation to be performed (default: lj).
+  - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
+  - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
+-h           : Prints out a help message. Doesn't perform any simulation.
 ```
 
 The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective `vtk` or `xyz` subdirectory from which the program executable was called (i.e. if the program was called from `build/src` with VTK output, the output will be in `build/src/vtk`)
@@ -138,10 +145,119 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 ## Input Files
 
-Currently, the following input files are included in the repository, inside the `input` directory:
+The program supports XML and formatted raw text input. Currently, the following input files are included in the repository, inside the `input` directory:
 
--   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
--   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
+-   **Text Files**: When reading data from a text file, the type of the simulation must be specified.
+    -   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
+    -   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
+-   **XML Files**: All relevant simulation information should already be provided in the XML file.
+    -   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
+    -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
+    -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
+    -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
+
+**NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
+
+**NOTE 2**: Raw text input files only work for the tasks from the first 2 worksheets. Functionality for processing them is most likely going to be removed in the future.
+
+### XML Input
+
+Complete XML input files have the following structure:
+
+```xml
+<!-- The complete simulation data is wrapped in a "sim" type. -->
+<sim>
+  <!-- (Optional) Simulation arguments are wrapped in "args". This may be omitted, if the simulation can be initialized with default values. -->
+  <args>
+    <startTime><!-- double --></startTime>  <!-- start time -->
+    <endTime><!-- double --></endTime>      <!-- end time -->
+    <delta_t><!-- double --></delta_t>      <!-- time step -->
+    <epsilon><!-- double --></epsilon>      <!-- depth of the potential well -->
+    <sigma><!-- double --></sigma>          <!-- distance where LJ potential reaches zero -->
+    <frequency><!-- int --></frequency>     <!-- output frequency -->
+    <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
+    <output><!-- vtk, xyz, nil --></output> <!-- output type -->
+  </args>
+  <!-- The type of the simulation. Must be specified. -->
+  <type><!-- gravity, lj, ljlc --></type>
+  <!-- (Optional) The total number of particles used in the simulation. -->
+  <!-- Use this to reserve enough space in the ParticleContainer beforehand to potentially speed up initialization. -->
+  <!-- You could theoretically specify any number here, but for optimal memory usage, it should be exact. -->
+  <totalParticles><!-- size_t --></totalParticles>
+  <!-- The simulation molecules. May contain any positive number of "particle", "cuboid" or "disc" entries. -->
+  <objects>
+    <!-- A simple particle. -->
+    <particle>
+      <!-- The particle's coordinates. -->
+      <position>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </position>
+      <!-- The particle's velocity in each direction. -->
+      <velocity>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </velocity>
+      <!-- The particle's mass (positive). -->
+      <mass><!-- double --></mass>
+      <!-- The particle's type. Currently doesn't serve any purpose. -->
+      <type><!-- int --></type>
+    </particle>
+    <!-- A cuboid of particles. -->
+    <cuboid>
+      <!-- The coordinates of the cuboid's lower left origin. -->
+      <position>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </position>
+      <!-- The velocity of each particle. -->
+      <!-- Note that these will be slightly randomized using a Maxwell–Boltzmann distribution. -->
+      <velocity>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </velocity>
+      <!-- The size of the cuboid in each direction. -->
+      <size>
+        <x><!-- size_t --></x>
+        <y><!-- size_t --></y>
+        <z><!-- size_t --></z>
+      </size>
+      <!-- The distance between the cuboid particles. -->
+      <distance><!-- double --></distance>
+      <!-- The mass of each cuboid particle (double). -->
+      <mass><!-- double --></mass>
+    </cuboid>
+    <!-- A 2D disc of particles. -->
+    <disc>
+      <!-- The central origin of the disc. -->
+      <position>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </position>
+      <!-- The velocity of each particle. -->
+      <!-- Note that these will be slightly randomized using a Maxwell–Boltzmann distribution. -->
+      <velocity>
+        <x><!-- double --></x>
+        <y><!-- double --></y>
+        <z><!-- double --></z>
+      </velocity>
+      <!-- The radius of the disc -->
+      <radius><!-- int --></radius>
+      <!-- The distance between the disc particles. -->
+      <distance><!-- double --></distance>
+      <!-- The mass of each disc particle (double). -->
+      <mass><!-- double --></mass>
+    </disc>
+  </objects>
+</sim>
+```
+
+For more information, take a look at the example input files provided in the `input` folder. Alternatively, you can directly look at the XML schema in `input/SimulationXSD.xsd`.
 
 ## Documentation
 
@@ -162,3 +278,7 @@ make doc_doxygen
 ```
 
 The documentation will be available in the `doxys_documentation` folder inside the root directory.
+
+## Miscellaneous
+
+Various miscellaneous scripts are included in the `scripts` directory. **These are merely for development purposes.** There is no guarantee that these scripts will work on any machine.
