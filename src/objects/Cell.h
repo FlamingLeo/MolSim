@@ -34,19 +34,19 @@ class Cell {
     void removeParticle(Particle *particle);
 
     /**
-     * @brief
+     * @brief ...
      *
      * See the report and presentation slides for more information.
      *
      * @param p
      * @return HaloLocation
      */
-    HaloLocation getCornerRegion(const Particle &p);
+    HaloLocation getCornerRegion(const Particle &p) const;
     const std::array<double, 3> &getX() const;
     const std::array<double, 3> &getSize() const;
-    std::vector<HaloLocation> &getHaloLocation();
-    std::forward_list<Particle *> &getParticles();
-    CellType getType();
-    int getIndex();
-    std::string toString();
+    const std::vector<HaloLocation> &getHaloLocation() const;
+    const std::forward_list<Particle *> &getParticles() const;
+    CellType getType() const;
+    int getIndex() const;
+    std::string toString() const;
 };

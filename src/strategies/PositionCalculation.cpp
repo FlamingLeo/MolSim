@@ -35,7 +35,7 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
             // check boundary conditions if particle enters a halo cell
             if (from.getType() == CellType::HALO) {
                 BoundaryCondition bc;
-                std::vector<HaloLocation> &hl = from.getHaloLocation();
+                const std::vector<HaloLocation> &hl = from.getHaloLocation();
 
                 // if the cell has more than one entry in the halo vector, it's a corner halo cell
                 // thus, we need to see which boundary condition takes precedence

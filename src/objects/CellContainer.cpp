@@ -80,21 +80,11 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                         haloLocation.push_back(HaloLocation::BELOW);
                 }
 
-                bool border;
-                if (dim == 3) {
-                    border = z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) || x == 1 ||
-                             x == (numCells[0] - 2);
-                } else {
-                    border = y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2);
-                };
-                CellType type;
-                if (!haloLocation.empty()) {
-                    type = CellType::HALO;
-                } else if (border) {
-                    type = CellType::BORDER;
-                } else {
-                    type = CellType::INNER;
-                }
+                // we don't care about which type of border it is, for now...
+                bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
+                                          x == 1 || x == (numCells[0] - 2))
+                                       : (y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2));
+                CellType type = !haloLocation.empty() ? CellType::HALO : (border ? CellType::BORDER : CellType::INNER);
 
                 // position of lower left corner
                 std::array<double, 3> position = {x * cellSize[0], y * cellSize[1], z * cellSize[2]};
@@ -133,8 +123,8 @@ CellContainer::SpecialParticleIterator::SpecialParticleIterator(std::vector<Cell
                                                                 std::vector<Cell *>::iterator end)
     : outerIt(start), outerEnd(end) {
     if (outerIt != outerEnd) {
-        innerIt = (*outerIt)->getParticles().begin();
-        innerEnd = (*outerIt)->getParticles().end();
+        innerIt = (*outerIt)->begin();
+        innerEnd = (*outerIt)->end();
         advance();
     }
 }
@@ -149,8 +139,8 @@ void CellContainer::SpecialParticleIterator::advance() {
     while (outerIt != outerEnd && innerIt == innerEnd) {
         ++outerIt;
         if (outerIt != outerEnd) {
-            innerIt = (*outerIt)->getParticles().begin();
-            innerEnd = (*outerIt)->getParticles().end();
+            innerIt = (*outerIt)->begin();
+            innerEnd = (*outerIt)->end();
         }
     }
 }
@@ -174,9 +164,6 @@ CellContainer::SpecialParticleIterator CellContainer::haloEnd() {
 }
 
 /* functionality */
-Cell &CellContainer::operator[](size_t index) { return cells[index]; }
-const Cell &CellContainer::operator[](size_t index) const { return cells[index]; }
-
 int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     std::array<int, 3> coords{0, 0, 0};
     for (int i = 0; i < 3; ++i) {
@@ -240,17 +227,13 @@ void CellContainer::removeHaloCells() {
 }
 
 // get the (x, y, z) coordinates of a cell from its 1D index
-std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) {
+std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) const {
     int x = index % numCells[0];
     int y = (index / numCells[0]) % numCells[1];
     int z = cellSize[2] == 0 ? 0 : index / (numCells[0] * numCells[1]);
     return {x, y, z};
 }
-std::vector<Cell> &CellContainer::getCells() { return cells; }
-std::vector<Cell *> &CellContainer::getBorderCells() { return borderCells; }
-std::vector<Cell *> &CellContainer::getHaloCells() { return haloCells; }
-
-int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) {
+int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) const {
     int idx = cellIndex;
     for (auto l : directions) {
         switch (l) {
@@ -279,7 +262,7 @@ int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLoca
 }
 
 std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 3> &position, const Cell &from,
-                                                       const Cell &to, int direction) {
+                                                       const Cell &to, int direction) const {
     std::array<double, 3> posWithinCell = position - from.getX();
     double xOffset = from.getSize()[0] - posWithinCell[0];
     double yOffset = from.getSize()[1] - posWithinCell[1];
@@ -297,10 +280,9 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
 }
 
 // return indices of ALL neighbours (including itself)
-std::vector<int> CellContainer::getNeighbors(int cellIndex) {
+std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
     std::vector<int> neighbors;
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
-
     for (int dz = (cellSize[2] == 0 ? 0 : -1); dz <= (cellSize[2] == 0 ? 0 : 1); ++dz) {
         for (int dy = -1; dy <= 1; ++dy) {
             for (int dx = -1; dx <= 1; ++dx) {
@@ -317,27 +299,34 @@ std::vector<int> CellContainer::getNeighbors(int cellIndex) {
             }
         }
     }
-
     return neighbors;
 }
 
-const std::array<double, 3> &CellContainer::getDomainSize() { return domainSize; }
-const std::array<double, 3> &CellContainer::getCellSize() { return cellSize; }
-const std::array<size_t, 3> &CellContainer::getNumCells() { return numCells; }
-double CellContainer::getCutoff() { return cutoff; }
+Cell &CellContainer::operator[](size_t index) { return cells[index]; }
+const Cell &CellContainer::operator[](size_t index) const { return cells[index]; }
+std::vector<Cell> &CellContainer::getCells() { return cells; }
+const std::vector<Cell> &CellContainer::getCells() const { return cells; }
+std::vector<Cell *> &CellContainer::getBorderCells() { return borderCells; }
+const std::vector<Cell *> &CellContainer::getBorderCells() const { return borderCells; }
+std::vector<Cell *> &CellContainer::getHaloCells() { return haloCells; }
+const std::vector<Cell *> &CellContainer::getHaloCells() const { return haloCells; }
+const std::array<double, 3> &CellContainer::getDomainSize() const { return domainSize; }
+const std::array<double, 3> &CellContainer::getCellSize() const { return cellSize; }
+const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCells; }
+const std::array<BoundaryCondition, 6> &CellContainer::getConditions() const { return conditions; }
+double CellContainer::getCutoff() const { return cutoff; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
-const std::array<BoundaryCondition, 6> &CellContainer::getConditions() { return conditions; }
+const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }
 size_t CellContainer::activeSize() const { return particles.activeSize(); }
 
-void CellContainer::printCellIndices() {
+void CellContainer::printCellIndices() const {
     int maxIndex = cells.size() - 1;
     int width = 0;
     while (maxIndex > 0) {
         maxIndex /= 10;
         width++;
     }
-
     for (int row = cells.size() / numCells[0] - 1; row >= 0; row--) {
         for (int col = 0; col < numCells[0]; col++) {
             int i = row * numCells[0] + col;
@@ -359,8 +348,7 @@ void CellContainer::printCellIndices() {
         std::cout << "\n";
     }
 }
-
-void CellContainer::printCellContents() {
+void CellContainer::printCellContents() const {
     for (size_t i = 0; i < cells.size(); ++i) {
         std::cout << BOLD_ON << "Cell " << i << ":\n";
         for (auto *p : cells[i].getParticles()) {

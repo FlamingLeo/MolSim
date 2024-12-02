@@ -88,26 +88,31 @@ class CellContainer {
     const Cell &operator[](size_t index) const;
 
     std::vector<Cell> &getCells();
+    const std::vector<Cell> &getCells() const;
     std::vector<Cell *> &getBorderCells();
+    const std::vector<Cell *> &getBorderCells() const;
     std::vector<Cell *> &getHaloCells();
+    const std::vector<Cell *> &getHaloCells() const;
+
     void removeHaloCells();
     int getCellIndex(const std::array<double, 3> &position);
     void deleteParticle(Particle &p);
     bool addParticle(Particle &p);
     bool moveParticle(Particle &p);
-    std::array<int, 3> getVirtualCellCoordinates(int index);
+    std::array<int, 3> getVirtualCellCoordinates(int index) const;
     std::array<double, 3> getMirrorPosition(const std::array<double, 3> &position, const Cell &from, const Cell &to,
-                                            int direction);
-    int getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions);
-    std::vector<int> getNeighbors(int cellIndex);
-    const std::array<double, 3> &getDomainSize();
-    const std::array<double, 3> &getCellSize();
-    const std::array<size_t, 3> &getNumCells();
-    const std::array<BoundaryCondition, 6> &getConditions();
+                                            int direction) const;
+    int getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) const;
+    std::vector<int> getNeighbors(int cellIndex) const;
+    const std::array<double, 3> &getDomainSize() const;
+    const std::array<double, 3> &getCellSize() const;
+    const std::array<size_t, 3> &getNumCells() const;
+    const std::array<BoundaryCondition, 6> &getConditions() const;
+    double getCutoff() const;
     ParticleContainer &getParticles();
-    double getCutoff();
+    const ParticleContainer &getParticles() const;
     size_t size() const;
     size_t activeSize() const;
-    void printCellIndices();
-    void printCellContents();
+    void printCellIndices() const;
+    void printCellContents() const;
 };
