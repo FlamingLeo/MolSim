@@ -15,7 +15,7 @@ Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, 
 
 void Disc::initializeDisc() {
     SPDLOG_TRACE("Initializing Particles for Disc {}...", this->toString());
-    const double pi = 3.14159265358979323846;
+    constexpr double pi = 3.14159265358979323846;
 
     // we interpreted radius 1 as already a ring around the centre
     // radius 0 --> particle in the centre
@@ -38,8 +38,8 @@ void Disc::initializeDisc() {
         particles.addParticle(xyz, velocity, m);
     }
 
-    for (int i = x[0] - r; i <= x[0] + r; i += h) {
-        for (int j = x[1] - r; j <= x[1] + r; j += h) {
+    for (double i = x[0] - r; i <= x[0] + r; i += h) {
+        for (double j = x[1] - r; j <= x[1] + r; j += h) {
             if ((i - x[0]) * (i - x[0]) + (j - x[1]) * (j - x[1]) <= r * r) {
                 std::array<double, 3> xyz;
                 xyz[0] = i;
