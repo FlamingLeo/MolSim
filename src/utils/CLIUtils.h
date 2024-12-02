@@ -17,6 +17,10 @@
 #define OPTSTRING "s:e:d:f:b:o:t:B:D:E:R:S:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
+#define RED "\e[0;31m"
+#define YEL "\e[0;33m"
+#define GRN "\e[0;32m"
+#define RST "\e[0m"
 
 /// @brief Namespace defining utility functions for handling console output.
 namespace CLIUtils {

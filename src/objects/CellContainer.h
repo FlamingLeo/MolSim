@@ -108,4 +108,6 @@ class CellContainer {
     double getCutoff();
     size_t size() const;
     size_t activeSize() const;
+    void printCellIndices();
+    void printCellContents();
 };

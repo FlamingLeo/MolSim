@@ -68,23 +68,31 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
                     bool flipVert = VEC_CONTAINS(hl, HaloLocation::NORTH) || VEC_CONTAINS(hl, HaloLocation::SOUTH);
                     bool flipHorizontal = VEC_CONTAINS(hl, HaloLocation::EAST) || VEC_CONTAINS(hl, HaloLocation::WEST);
                     /* for 3D calculations, there will be an additional flipUpDown boolean here... */
-                    if (flipVert) {
-                        p.setX(lc->getMirrorPosition(p.getX(), from, to, 1));
-                        // if the particle can not be moved for some reason, remove it to prevent further errors
+                    if (flipVert && flipHorizontal) {
+                        p.setX(lc->getMirrorPosition(p.getX(), from, to, 2));
                         if (!lc->moveParticle(p)) {
                             p.markInactive();
                             continue;
                         }
+                        SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
+                        p.setV({-p.getV()[0], -p.getV()[1], p.getV()[2]});
+                        SPDLOG_DEBUG("Flipped vertically and horizontally: {}", p.toString());
+                    } else if (flipVert) {
+                        p.setX(lc->getMirrorPosition(p.getX(), from, to, 1));
+                        if (!lc->moveParticle(p)) {
+                            p.markInactive();
+                            continue;
+                        }
+                        SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
                         p.setV({p.getV()[0], -p.getV()[1], p.getV()[2]});
                         SPDLOG_DEBUG("Flipped vertically: {}", p.toString());
-                    }
-                    if (flipHorizontal) {
+                    } else if (flipHorizontal) {
                         p.setX(lc->getMirrorPosition(p.getX(), from, to, 0));
-                        // if the particle can not be moved for some reason, remove it to prevent further errors
                         if (!lc->moveParticle(p)) {
                             p.markInactive();
                             continue;
                         }
+                        SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
                         p.setV({-p.getV()[0], p.getV()[1], p.getV()[2]});
                         SPDLOG_DEBUG("Flipped horizontally: {}", p.toString());
                     }

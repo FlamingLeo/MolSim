@@ -281,16 +281,18 @@ int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLoca
 std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 3> &position, const Cell &from,
                                                        const Cell &to, int direction) {
     std::array<double, 3> posWithinCell = position - from.getX();
-    double offset = from.getSize()[direction] - posWithinCell[direction];
+    double xOffset = from.getSize()[0] - posWithinCell[0];
+    double yOffset = from.getSize()[1] - posWithinCell[1];
+    double zOffset = from.getSize()[2] - posWithinCell[2];
     if (direction == 2) {
-        // above or below
-        return {to.getX()[0] + posWithinCell[0], to.getX()[1] + posWithinCell[1], to.getX()[2] + offset};
+        // north, south, east or west
+        return {to.getX()[0] + xOffset, to.getX()[1] + yOffset, to.getX()[2] + posWithinCell[2]};
     } else if (direction == 1) {
         // north or south
-        return {to.getX()[0] + posWithinCell[0], to.getX()[1] + offset, to.getX()[2] + posWithinCell[2]};
+        return {to.getX()[0] + posWithinCell[0], to.getX()[1] + yOffset, to.getX()[2] + posWithinCell[2]};
     } else {
         // east or west
-        return {to.getX()[0] + offset, to.getX()[1] + posWithinCell[1], to.getX()[2] + posWithinCell[2]};
+        return {to.getX()[0] + xOffset, to.getX()[1] + posWithinCell[1], to.getX()[2] + posWithinCell[2]};
     }
 }
 
@@ -327,3 +329,42 @@ ParticleContainer &CellContainer::getParticles() { return particles; }
 const std::array<BoundaryCondition, 6> &CellContainer::getConditions() { return conditions; }
 size_t CellContainer::size() const { return particles.size(); }
 size_t CellContainer::activeSize() const { return particles.activeSize(); }
+
+void CellContainer::printCellIndices() {
+    int maxIndex = cells.size() - 1;
+    int width = 0;
+    while (maxIndex > 0) {
+        maxIndex /= 10;
+        width++;
+    }
+
+    for (int row = cells.size() / numCells[0] - 1; row >= 0; row--) {
+        for (int col = 0; col < numCells[0]; col++) {
+            int i = row * numCells[0] + col;
+            CellType type = cells[i].getType();
+            switch (type) {
+            case CellType::HALO:
+                std::cout << RED;
+                break;
+            case CellType::BORDER:
+                std::cout << YEL;
+                break;
+            case CellType::INNER:
+                std::cout << GRN;
+                break;
+            }
+
+            std::cout << std::setw(width) << i << " " << RST;
+        }
+        std::cout << "\n";
+    }
+}
+
+void CellContainer::printCellContents() {
+    for (size_t i = 0; i < cells.size(); ++i) {
+        std::cout << BOLD_ON << "Cell " << i << ":\n";
+        for (auto *p : cells[i].getParticles()) {
+            std::cout << "\t" << p->toString() << "\n";
+        }
+    }
+}

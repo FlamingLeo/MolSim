@@ -26,7 +26,9 @@ HaloLocation Cell::getCornerRegion(const Particle &p) {
     // get the relative x and y positions of the particle inside the cell
     double relX = p.getX()[0] - m_position[0];
     double relY = p.getX()[1] - m_position[1];
-    assert(relX < 0 || relX > m_size[0] || relY < 0 || relY > m_size[1]);
+    SPDLOG_DEBUG("posX: {}, posY: {}, relX: {}, relY: {}, sizeX: {}, sizeY: {}", m_position[0], m_position[1], relX,
+                 relY, m_size[0], m_size[1]);
+    assert(!(relX < 0 || relX > m_size[0] || relY < 0 || relY > m_size[1]));
 
     // check what type of corner cell this is
     bool NW = VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
@@ -59,7 +61,8 @@ std::forward_list<Particle *> &Cell::getParticles() { return m_particles; }
 std::string Cell::toString() {
     const std::array<double, 3> to{m_position[0] + m_size[0], m_position[1] + m_size[1], m_position[2] + m_size[2]};
     std::stringstream ss;
-    ss << "[Type: " << CellUtils::fromType(m_type) << ", Size: " << ArrayUtils::to_string(m_size)
+    ss << "[Index: " << m_index << ", Type: " << CellUtils::fromType(m_type)
+       << ", Size: " << ArrayUtils::to_string(m_size)
        << ", Positions (from (incl.) -> to (excl.)): " << ArrayUtils::to_string(m_position) << " -> "
        << ArrayUtils::to_string(to)
        << (!m_haloLocation.empty() ? (", Halo: " + CellUtils::fromHaloVec(m_haloLocation)) : "") << "]";
