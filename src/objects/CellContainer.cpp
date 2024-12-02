@@ -13,8 +13,7 @@
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                              const std::array<BoundaryCondition, 6> &conditions, double cutoff,
                              ParticleContainer &particles, size_t dim)
-    : domainSize{domainSize}, cellSize{0, 0, 0}, numCells{1, 1, 1}, conditions{conditions}, cutoff{cutoff},
-      particles{particles} {
+    : domainSize{domainSize}, conditions{conditions}, cutoff{cutoff}, particles{particles} {
     // check correct dimensions (could probably be a boolean instead...)
     if (dim < 2 || dim > 3)
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));

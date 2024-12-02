@@ -32,8 +32,8 @@ class CellContainer {
     std::vector<Cell *> borderCells;
     std::vector<Cell *> haloCells;
     std::array<double, 3> domainSize;
-    std::array<double, 3> cellSize;
-    std::array<size_t, 3> numCells;
+    std::array<double, 3> cellSize{0, 0, 0};
+    std::array<size_t, 3> numCells{1, 1, 1};
     std::array<BoundaryCondition, 6> conditions;
     double cutoff;
     ParticleContainer &particles;
