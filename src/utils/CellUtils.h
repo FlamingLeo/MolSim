@@ -6,7 +6,6 @@
  * @copyright Copyright (c) 2024
  *
  */
-
 #pragma once
 #include "CLIUtils.h"
 #include <bitset>

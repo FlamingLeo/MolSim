@@ -54,12 +54,15 @@ void Disc::initializeDisc() {
 }
 
 std::array<double, 3> &Disc::getX() { return x; }
-int Disc::getR() { return r; }
-double Disc::getH() { return h; }
-double Disc::getM() { return m; }
+const std::array<double, 3> &Disc::getX() const { return x; }
+int Disc::getR() const { return r; }
+double Disc::getH() const { return h; }
+double Disc::getM() const { return m; }
 std::array<double, 3> &Disc::getV() { return v; }
-double Disc::getMeanVelocity() { return mean_velocity; }
+const std::array<double, 3> &Disc::getV() const { return v; }
+double Disc::getMeanVelocity() const { return mean_velocity; }
 ParticleContainer &Disc::getParticles() { return particles; }
+const ParticleContainer &Disc::getParticles() const { return particles; }
 
 bool Disc::operator==(const Disc &other) const {
     return (x == other.x) && (r == other.r) && (h == other.h) && (m == other.m) && (v == other.v) &&

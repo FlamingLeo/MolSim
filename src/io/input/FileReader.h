@@ -45,12 +45,16 @@ class FileReader {
     /**
      * @brief Reads particle data into a ParticleContainer from a given input file.
      *
+     * @deprecated Raw file input will be removed in the future in favor of XML input.
+     *
      * @param particles The ParticleContainer to read the input data from.
      */
     void readParticles(ParticleContainer *particles);
 
     /**
      * @brief Reads and intializes cuboid data into a ParticleContainer from a given input file.
+     *
+     * @deprecated Raw file input will be removed in the future in favor of XML input.
      *
      * @param particles The ParticleContainer to read the input data from.
      */

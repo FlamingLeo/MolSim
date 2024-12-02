@@ -26,6 +26,8 @@ class CuboidGenerator {
     /**
      * @brief Construct a new CuboidGenerator object.
      *
+     * Automatically generates the cuboid particles if the filename is not empty AND the ParticleContainer is empty.
+     *
      * @param filename  A reference to the string representing the input filename.
      * @param particles A reference to the ParticleContainer for the particles in the cuboid(s).
      */

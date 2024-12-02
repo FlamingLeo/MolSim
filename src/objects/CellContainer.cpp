@@ -3,6 +3,7 @@
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/StringUtils.h"
+#include <cassert>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -166,8 +167,7 @@ CellContainer::SpecialParticleIterator CellContainer::haloEnd() {
 int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     std::array<int, 3> coords{0, 0, 0};
     for (int i = 0; i < 3; ++i) {
-        // prevent division by zero for 2D; could also simply check dim here if it was stored, but i want to keep it as
-        // general as possible
+        // prevent division by zero for 2D; could also simply check dim here if it were stored.
         if (cellSize[i] == 0) {
             coords[i] = 0;
             continue;
@@ -183,8 +183,6 @@ int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     SPDLOG_TRACE("Cell of position {} is at index {}: {}", ArrayUtils::to_string(position), idx, cells[idx].toString());
     return idx;
 }
-
-// add a particle to the appropriate cell
 bool CellContainer::addParticle(Particle &p) {
     int cellIndex = getCellIndex(p.getX());
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
@@ -197,23 +195,18 @@ bool CellContainer::addParticle(Particle &p) {
         return false;
     }
 }
-
-// remove a particle from a cell
-// maybe add a check to see if p's cellIndex is -1?
 void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
+    assert(cellIndex != -1);
     cells[cellIndex].removeParticle(&p);
     p.setCellIndex(-1);
     SPDLOG_TRACE("Removed particle from cell {}: {}", cellIndex, p.toString());
 }
-
-// move a particle (or not, idc)
 bool CellContainer::moveParticle(Particle &p) {
     deleteParticle(p);
     return addParticle(p);
 }
-
-void CellContainer::removeHaloCells() {
+void CellContainer::removeHaloCellParticles() {
     for (auto &p : particles) {
         if (p.isActive() && p.getCellIndex() != -1) {
             if (cells[p.getCellIndex()].getType() == CellType::HALO) {
@@ -224,8 +217,6 @@ void CellContainer::removeHaloCells() {
         }
     }
 }
-
-// get the (x, y, z) coordinates of a cell from its 1D index
 std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) const {
     int x = index % numCells[0];
     int y = (index / numCells[0]) % numCells[1];
@@ -259,7 +250,6 @@ int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLoca
     }
     return idx;
 }
-
 std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 3> &position, const Cell &from,
                                                        const Cell &to, int direction) const {
     std::array<double, 3> posWithinCell = position - from.getX();
@@ -277,8 +267,6 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
         return {to.getX()[0] + xOffset, to.getX()[1] + posWithinCell[1], to.getX()[2] + posWithinCell[2]};
     }
 }
-
-// return indices of ALL neighbours (including itself)
 std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
     std::vector<int> neighbors;
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
@@ -319,6 +307,7 @@ const ParticleContainer &CellContainer::getParticles() const { return particles;
 size_t CellContainer::size() const { return particles.size(); }
 size_t CellContainer::activeSize() const { return particles.activeSize(); }
 
+/* debug functions */
 void CellContainer::printCellIndices() const {
     int maxIndex = cells.size() - 1;
     int width = 0;

@@ -27,9 +27,7 @@ void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc 
  * @brief Calculates the position \f$ x \f$ for all Particle objects in a given ParticleContainer when using the linked
  * cells method.
  *
- * @details The position \f$ x_i \f$ of a given particle \f$ i \f$ at the next unit of time \f$ t_{n+1} \f$ is
- * calculated using the formula \f[ x_i(t_{n+1}) = x_i(t_n) + \Delta t \cdot v_i(t_n) + (\Delta t)^2
- * \frac{F_i(t_n)}{2m_i}. \f]
+ * @details The position update occurs analogously to the default, non-linked-cell function.
  *
  * After each update, the particle may need to be moved to a different cell. The algorithm checks this and updates the
  * cell correspondence accordingly. If the particle enters a halo cell, the appropriate boundary condition will be

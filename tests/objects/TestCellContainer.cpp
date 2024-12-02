@@ -360,7 +360,7 @@ TEST_F(CellContainerTest, RemoveHaloCells) {
     CellContainer c({10, 10, 1}, conditions, 1.0, pc, 2);
 
     // verify that there are no more particles after removal
-    c.removeHaloCells();
+    c.removeHaloCellParticles();
     EXPECT_EQ(c.size(), 3);
     EXPECT_EQ(c.activeSize(), 0);
 }

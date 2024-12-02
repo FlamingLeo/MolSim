@@ -1,3 +1,11 @@
+/**
+ * @file LennardJonesLC.h
+ * @brief Simulation of the Lennard-Jones potential using the linked-cell algorithm.
+ * @date 2024-11-05
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #pragma once
 #include "Simulation.h"
 #include "io/output/WriterFactory.h"

@@ -12,13 +12,13 @@
 #include <array>
 #include <string>
 
-/// @brief Cuboid class storing meta-data about the given cuboids.
+/// @brief Cuboid class storing metadata about a Particle disc.
 class Disc {
   private:
-    /// @brief Centre \f$ x \f$ of the disc.
+    /// @brief Center \f$ x \f$ of the disc.
     std::array<double, 3> x;
 
-    /// @brief Radius in \f$ r \f$ of the disc in particles
+    /// @brief Radius \f$ r \f$ of the disc.
     int r;
 
     /// @brief Distance \f$ h \f$ between the particles in the disc.
@@ -27,32 +27,30 @@ class Disc {
     /// @brief Mass \f$ m \f$ of the particles in the disc.
     double m;
 
-    /// @brief Starting velocity \f$ v \f$ of the particles in the disc (before added Maxwell-Boltzmann
+    /// @brief Starting velocity \f$ v \f$ of the particles in the disc (before adding Maxwell-Boltzmann
     /// perturbations).
     std::array<double, 3> v;
 
     /// @brief Mean velocity for the Maxwell-Boltzmann distribution.
     double mean_velocity;
 
-    /// @brief Reference to the ParticleContainer object from Simulation
-    /// (passed by DiscGenerator).
+    /// @brief Reference to the ParticleContainer object from Simulation (passed by DiscGenerator).
     ParticleContainer &particles;
 
   public:
     /**
-     * @brief Constructs a new Disc object with all the needed meta-data.
+     * @brief Constructs a new Disc object with all the needed metadata.
      *
-     * @param particles A reference to the central ParticleContainer
-     * @param x A reference to the array containing data for the disc position \f$ x \f$
-     * @param r The radius in particles \f$ r \f$ of the disc
-     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the disc
-     * @param h The distance \f$ h \f$ between the particles in the disc
-     * @param m The mass \f$ m \f$ of the particles in the disc
+     * @param particles A reference to the central ParticleContainer.
+     * @param x A reference to the array containing data for the disc position \f$ x \f$.
+     * @param r The radius \f$ r \f$ of the disc.
+     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the disc.
+     * @param h The distance \f$ h \f$ between the particles in the disc.
+     * @param m The mass \f$ m \f$ of the particles in the disc.
      */
     Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v, double h,
          double m);
 
-    /* getters */
     /**
      * @brief Gets the position \f$ x \f$ of this disc.
      *
@@ -61,48 +59,68 @@ class Disc {
     std::array<double, 3> &getX();
 
     /**
-     * @brief Gets the radius in particles \f$ r \f$ of this disc.
+     * @brief Gets the position \f$ x \f$ of this disc (const).
+     *
+     * @return A const reference to the position array of this disc.
+     */
+    const std::array<double, 3> &getX() const;
+
+    /**
+     * @brief Gets the radius \f$ r \f$ of this disc.
      *
      * @return The radius of this disc.
      */
-    int getR();
+    int getR() const;
 
     /**
      * @brief Gets the distance \f$ h \f$ between the particles of this disc.
      *
      * @return The distance between the particles of the disc.
      */
-    double getH();
+    double getH() const;
 
     /**
      * @brief Gets the mass \f$ m \f$ of the particles of this disc.
      *
      * @return The mass of the particles of the disc.
      */
-    double getM();
+    double getM() const;
 
     /**
      * @brief Gets the starting velocity \f$ v \f$ of the particles of this disc.
      *
-     * @return A reference of the velocity array of the disc.
+     * @return A reference to the velocity array of the disc.
      */
     std::array<double, 3> &getV();
+
+    /**
+     * @brief Gets the starting velocity \f$ v \f$ of the particles of this disc (const).
+     *
+     * @return A const reference to the velocity array of the disc.
+     */
+    const std::array<double, 3> &getV() const;
 
     /**
      * @brief Gets the mean velocity for the Maxwell-Boltzmann distribution.
      *
      * @return The mean velocity field of the disc.
      */
-    double getMeanVelocity();
+    double getMeanVelocity() const;
 
     /**
      * @brief Gets the reference to the central ParticleContainer.
      *
-     * @return The reference for the ParticleContainer stored in this container.
+     * @return A reference to the ParticleContainer stored in this container.
      */
     ParticleContainer &getParticles();
 
-    /* utility */
+    /**
+     * @brief Gets the reference to the central ParticleContainer (const).
+     *
+     * @return A const reference to the ParticleContainer stored in this container.
+     */
+    const ParticleContainer &getParticles() const;
+
     /**
      * @brief Overload of the equality operator for Cuboid objects.
      *
@@ -121,7 +139,7 @@ class Disc {
      */
     bool operator!=(const Disc &other) const;
 
-    /// @brief Main function of Disc class, initializes the particles based on the disc meta-data
+    /// @brief Main function of Disc class, initializes the particles based on the disc metadata
     /// and adds them to the given ParticleContainer.
     void initializeDisc();
 

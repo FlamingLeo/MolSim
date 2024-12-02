@@ -38,6 +38,13 @@ class Particle {
     /// @brief The cell index of the particle, to be used with the linked cell method.
     int cellIndex;
 
+    /**
+     * @brief The status of the particle.
+     *
+     * @details If the particle is marked "active", it will be considered in the time integration calculation.
+     * Otherwise, it is ignored.
+     *
+     */
     bool active{true};
 
   public:
@@ -128,6 +135,12 @@ class Particle {
      */
     const int getCellIndex() const;
 
+    /**
+     * @brief Checks if the particle is currently active.
+     *
+     * @return true if the particle is currently active.
+     * @return false if the particle is currently inactive.
+     */
     const bool isActive() const;
 
     /**
@@ -187,6 +200,7 @@ class Particle {
      */
     void setCellIndex(int new_index);
 
+    /// @brief Sets the Particle's active status to "inactive".
     void markInactive();
 
     /**

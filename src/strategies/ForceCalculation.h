@@ -59,13 +59,9 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation and a
  specified cutoff radius.
  *
- * @details For each particle in the simulation, the method works by first calculating the effective force \f[
- * F_{ij} = -\frac{24 \cdot \epsilon}{\left(\|x_i - x_j\|_2\right)^2} \left( \left( \frac{\sigma}{\|x_i - x_j\|_2}
- \right)^6 - 2 \left( \frac{\sigma}{\|x_i - x_j\|_2} \right)^{12} \right) (x_i - x_j) \f] between each pair of particles
- \f$ i \f$ and \f$ j
- * \f$ ONLY if the distance between them is less than the cutoff radius. Afterwards, the effective force for a single
- particle \f$ i \f$ is calculated using the formula \f[ F_i =
- * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles.
+ * @details For each particle in the simulation, the method works by first calculating the effective force between each
+ pair of particles \f$ i \f$ and \f$ j \f$ ONLY if the distance between them is less than the cutoff radius. The rest is
+ analogous to the default naive function.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param epsilon The depth of the potential well \f$ \epsilon \f$
@@ -97,14 +93,8 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
  * simulation and a cutoff radius.
  *
- * @details <em> For every action, there is an equal and opposite reaction.</em>
- *
- * Instead of looping through and calculating the force for each individual particle, we avoid recalculating force
- * for pairs \f$(p_i, p_j)\f$ which have already been computed and apply the reciprocal forces to both particles
- * simultaneously using Newton's third law: \f[ F_{ij} = -F_{ji}. \f]
- *
- * We only take particles that have a distance smaller than (or equal to) the cutoff radius to eachother into
- * consideration.
+ * @details Newton's Third Law is used, but now, the algorithm only takes particles that have a distance smaller than
+ * (or equal to) the cutoff radius to eachother into consideration.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param epsilon The depth of the potential well \f$ \epsilon \f$
@@ -119,13 +109,9 @@ void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double 
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a linked-cell LennardJones
  simulation and a cutoff radius.
  *
- * @details For each particle in the simulation, the method works by first calculating the effective force \f[
- * F_{ij} = -\frac{24 \cdot \epsilon}{\left(\|x_i - x_j\|_2\right)^2} \left( \left( \frac{\sigma}{\|x_i - x_j\|_2}
- \right)^6 - 2 \left( \frac{\sigma}{\|x_i - x_j\|_2} \right)^{12} \right) (x_i - x_j) \f] between each pair of particles
- \f$ i \f$ and \f$ j
- * \f$ in the neighboring (and current) cells. Afterwards, the effective force for a single particle \f$ i \f$ is
- calculated using the formula \f[ F_i =
- * \sum_{j=1, j \neq i}^p F_{ij} \f] where \f$ p \f$ denotes the total number of particles within the cell's region.
+ * @details This is an adaptation of the naive Lennard-Jones force calculation, but instead of iterating through every
+ * particle pair in the entire container, the algorithm only uses particles within the cell neighborhood of the current
+ * particle.
  *
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
@@ -139,14 +125,8 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a linked-cell
  * LennardJones simulation and a cutoff radius.
  *
- * @details <em> For every action, there is an equal and opposite reaction.</em>
- *
- * Instead of looping through and calculating the force for each individual particle in the cell neighborhood, we avoid
- * recalculating force for pairs \f$(p_i, p_j)\f$ which have already been computed and apply the reciprocal forces to
- * both particles simultaneously using Newton's third law: \f[ F_{ij} = -F_{ji}. \f]
- *
- * We only take particles that have a distance smaller than (or equal to) the cutoff radius to eachother into
- * consideration.
+ * @details Newton's Third Law is used, but now, the algorithm only takes particles within a particle's cell
+ * neighborhood that have a distance smaller than (or equal to) the cutoff radius to eachother into consideration.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param epsilon The depth of the potential well \f$ \epsilon \f$

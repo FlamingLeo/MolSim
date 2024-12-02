@@ -165,7 +165,7 @@ The program supports XML and formatted raw text input. Currently, the following 
 Complete XML input files have the following structure:
 
 ```xml
-<!-- The complete simulation data is wrapped in a "sim" type. -->
+<!-- The complete simulation data is wrapped in a "sim" tag. -->
 <sim>
   <!-- (Optional) Simulation arguments are wrapped in "args". This may be omitted, if the simulation can be initialized with default values. -->
   <args>
@@ -228,7 +228,7 @@ Complete XML input files have the following structure:
       </size>
       <!-- The distance between the cuboid particles. -->
       <distance><!-- double --></distance>
-      <!-- The mass of each cuboid particle (double). -->
+      <!-- The mass of each cuboid particle. -->
       <mass><!-- double --></mass>
     </cuboid>
     <!-- A 2D disc of particles. -->
@@ -250,14 +250,14 @@ Complete XML input files have the following structure:
       <radius><!-- int --></radius>
       <!-- The distance between the disc particles. -->
       <distance><!-- double --></distance>
-      <!-- The mass of each disc particle (double). -->
+      <!-- The mass of each disc particle. -->
       <mass><!-- double --></mass>
     </disc>
   </objects>
 </sim>
 ```
 
-For more information, take a look at the example input files provided in the `input` folder. Alternatively, you can directly look at the XML schema in `input/SimulationXSD.xsd`.
+For more information, take a look at the example input files provided in the `input` folder. Alternatively, you can directly look at the XML schema in `input/xsd/SimulationXSD.xsd`.
 
 ## Documentation
 
