@@ -19,25 +19,31 @@ void Disc::initializeDisc() {
 
     // we interpreted radius 1 as already a ring around the centre
     // radius 0 --> particle in the centre
-    std::array<double, 3> pos = {0, 0, 0};
+    std::array<double, 3> pos = x;
     std::array<double, 3> vel =
         ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
     particles.addParticle(pos, vel, m);
 
-    if (r != 0) {
-        // we generate particles in concentric circles
-        for (int i = 0; i < r; i++) {
-            // we take h as arc distance, not euclidean distance for convenience (arc > euclidean)
-            double ringRadius = (i + 1) * h;
-            double segments = 2 * pi * (i + 1);
-            int points = std::floor(segments);
+    double circumferance = 2 * pi * r;
+    int numpoints = std::round(circumferance / h);
 
-            // initialize the particles along the ring
-            for (int p = 0; p < points; p++) {
+    for (int i = 0; i < numpoints; i++) {
+        std::array<double, 3> xyz;
+        double angle = 2 * pi * i / numpoints;
+        xyz[0] = x[0] + std::round(std::cos(angle) * r);
+        xyz[1] = x[1] + std::round(std::sin(angle) * r);
+        xyz[2] = 0;
+        std::array<double, 3> velocity =
+            ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
+        particles.addParticle(xyz, velocity, m);
+    }
+
+    for (int i = x[0] - r; i <= x[0] + r; i++) {
+        for (int j = x[1] - r; j <= x[1] + r; j++) {
+            if ((i - x[0]) * (i - x[0]) + (j - x[1]) * (j - x[1]) <= r * r) {
                 std::array<double, 3> xyz;
-                double angle = (2 * pi * h / std::floor(segments)) * p;
-                xyz[0] = x[0] + std::cos(angle) * ringRadius;
-                xyz[1] = x[1] + std::sin(angle) * ringRadius;
+                xyz[0] = i;
+                xyz[1] = j;
                 xyz[2] = 0;
                 std::array<double, 3> velocity = ArrayUtils::elementWisePairOp(
                     v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
