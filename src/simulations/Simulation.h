@@ -90,23 +90,24 @@ class Simulation {
      * @param cutoff An optional parameter for simulations that use a cutoff radius.
      */
     inline void runSimulationLoop(double epsilon = 0, double sigma = 0, CellContainer *lc = nullptr,
-                                  double cutoff = 1) {
+                                  double cutoff = 3.0) {
         // bandaid fix to ensure working with the correct container when using the linked cell method
         ParticleContainer &container = (lc ? lc->getParticles() : m_particles);
 
         assert(!(container.isEmpty()) && "Cannot run simulation without particles!");
 
         double currentTime = m_startTime;
+#ifndef DO_BENCHMARKING
         int iteration = 0;
+#endif
 
         while (currentTime < m_endTime) {
             m_calculateX(container, m_delta_t, lc);
             m_calculateF(container, epsilon, sigma, cutoff, lc);
             m_calculateV(container, m_delta_t);
 
-            iteration++;
-
 #ifndef DO_BENCHMARKING
+            iteration++;
             if (iteration % m_itFreq == 0) {
                 m_writer->writeParticles(container, iteration, m_totalIt);
             }

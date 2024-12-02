@@ -45,3 +45,5 @@ void LennardJonesLC::runSimulation() {
 
     SPDLOG_INFO("Completed LJLC simulation.");
 }
+
+CellContainer &LennardJonesLC::getCellContainer() { return m_linkedCells; }

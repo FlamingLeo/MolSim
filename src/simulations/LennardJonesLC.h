@@ -9,8 +9,8 @@
 #include <memory>
 #include <string>
 
-/// @brief LennardJones class containing functionality and parameters used to run a simple simulation using the
-/// Lennard-Jones Force.
+/// @brief Linked-cell LennardJones class containing functionality and parameters used to run a simple simulation using
+/// the Lennard-Jones Force.
 class LennardJonesLC : public Simulation {
   private:
     /// @brief CuboidGenerator used for initializing the particles from the input file.
@@ -27,7 +27,7 @@ class LennardJonesLC : public Simulation {
 
   public:
     /**
-     * @brief Constructor for initializing a new LennardJones simulation with given filename and arguments
+     * @brief Constructor for initializing a new LennardJones linked cell simulation with given filename and arguments
      *
      * @param filename The name of the input file which is passed to the CuboidGenerator constructor.
      * @param args Arguments containing relevant simulation parameters.
@@ -37,7 +37,8 @@ class LennardJonesLC : public Simulation {
     LennardJonesLC(const std::string &filename, const Arguments &args, int type = 0);
 
     /**
-     * @brief Constructor for initializing a new LennardJones simulation with given ParticleContainer and arguments.
+     * @brief Constructor for initializing a new LennardJones linked cell simulation with given ParticleContainer and
+     * arguments.
      *
      * @param pc A reference to the ParticleContainer used for storing particles.
      * @param args Arguments containing relevant simulation parameters.
@@ -49,6 +50,13 @@ class LennardJonesLC : public Simulation {
     /// @brief Default destructor.
     ~LennardJonesLC() override;
 
-    /// @brief Runs the Lennard-Jones simulation.
+    /// @brief Runs the Lennard-Jones linked cell simulation.
     void runSimulation() override;
+
+    /**
+     * @brief Get a reference to the CellContainer object.
+     *
+     * @return A reference to the underlying cell container.
+     */
+    CellContainer &getCellContainer();
 };
