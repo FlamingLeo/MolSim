@@ -12,7 +12,10 @@
 #include <array>
 #include <string>
 
-/// @brief Cuboid class storing metadata about a Particle disc.
+/**
+ * @brief Class storing metadata about a Particle disc.
+ *
+ */
 class Disc {
   private:
     /// @brief Center \f$ x \f$ of the disc.
@@ -37,6 +40,18 @@ class Disc {
     /// @brief Reference to the ParticleContainer object from Simulation (passed by DiscGenerator).
     ParticleContainer &particles;
 
+    /**
+     * @brief Helper function to get circle point (Particle) coordinates.
+     *
+     * @param centerX The central X coordinate.
+     * @param centerY The central Y coordinate.
+     * @param radius The radius of the circle.
+     * @param distance The spacing between each point (Particle).
+     * @return A vector containing the coordinate of each point (Particle).
+     */
+    std::vector<std::array<double, 3>> getCircleCoordinates(double centerX, double centerY, double radius,
+                                                            double distance);
+
   public:
     /**
      * @brief Constructs a new Disc object with all the needed metadata.
@@ -44,7 +59,8 @@ class Disc {
      * @param particles A reference to the central ParticleContainer.
      * @param x A reference to the array containing data for the disc position \f$ x \f$.
      * @param r The radius \f$ r \f$ of the disc.
-     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the disc.
+     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the
+     * disc.
      * @param h The distance \f$ h \f$ between the particles in the disc.
      * @param m The mass \f$ m \f$ of the particles in the disc.
      */
@@ -140,7 +156,7 @@ class Disc {
     bool operator!=(const Disc &other) const;
 
     /// @brief Main function of Disc class, initializes the particles based on the disc metadata
-    /// and adds them to the given ParticleContainer.
+    /// in a grid and adds them to the given ParticleContainer.
     void initializeDisc();
 
     /**

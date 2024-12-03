@@ -28,7 +28,13 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
         p.setFToZero();
 
         // check particle index and potentially move it
+        // if the particle somehow goes completely out of bounds, remove it to avoid issues
         int newIdx = lc->getCellIndex(p.getX());
+        if (newIdx == -1) {
+            p.markInactive();
+            p.setCellIndex(-1);
+            continue;
+        }
         if (newIdx != p.getCellIndex()) {
             SPDLOG_DEBUG("Index mismatch (current: {}, expected: {}), moving...", p.getCellIndex(), newIdx);
 

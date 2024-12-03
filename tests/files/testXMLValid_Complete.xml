@@ -76,7 +76,7 @@
                 <z>0.0</z>
             </velocity>
             <radius>1</radius>
-            <distance>0.5</distance>
+            <distance>1</distance>
             <mass>1.0</mass>
         </disc>
     </objects>

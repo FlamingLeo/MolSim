@@ -8,48 +8,39 @@
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
            double h, double m)
-    : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+    : x{x}, r{r}, h{(h < 1) ? 1 : h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
     SPDLOG_TRACE("Generated Disc (simple constructor) - x: {}, r: {}, h: {}, m: {}, v: {}, mean_v: {}",
                  ArrayUtils::to_string(x), r, h, m, ArrayUtils::to_string(v), mean_velocity);
 }
 
-void Disc::initializeDisc() {
-    SPDLOG_TRACE("Initializing Particles for Disc {}...", this->toString());
-    constexpr double pi = 3.14159265358979323846;
-
-    // we interpreted radius 1 as already a ring around the centre
-    // radius 0 --> particle in the centre
-    std::array<double, 3> pos = x;
-    std::array<double, 3> vel =
-        ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
-    particles.addParticle(pos, vel, m);
-
-    double circumference = 2 * pi * r;
-    int numpoints = std::round(circumference / h);
-
-    for (int i = 0; i < numpoints; i++) {
-        std::array<double, 3> xyz;
-        double angle = 2 * pi * i / numpoints;
-        xyz[0] = x[0] + std::round(std::cos(angle) * r);
-        xyz[1] = x[1] + std::round(std::sin(angle) * r);
-        xyz[2] = 0;
-        std::array<double, 3> velocity =
-            ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
-        particles.addParticle(xyz, velocity, m);
-    }
-
-    for (double i = x[0] - r; i <= x[0] + r; i += h) {
-        for (double j = x[1] - r; j <= x[1] + r; j += h) {
-            if ((i - x[0]) * (i - x[0]) + (j - x[1]) * (j - x[1]) <= r * r) {
-                std::array<double, 3> xyz;
-                xyz[0] = i;
-                xyz[1] = j;
-                xyz[2] = 0;
-                std::array<double, 3> velocity = ArrayUtils::elementWisePairOp(
-                    v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
-                particles.addParticle(xyz, velocity, m);
+std::vector<std::array<double, 3>> Disc::getCircleCoordinates(double centerX, double centerY, double radius,
+                                                              double distance) {
+    std::vector<std::array<double, 3>> points;
+    double minX = centerX - radius;
+    double maxX = centerX + radius;
+    double minY = centerY - radius;
+    double maxY = centerY + radius;
+    for (double y = minY; y <= maxY; y += distance) {
+        for (double x = minX; x <= maxX; x += distance) {
+            if ((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY) <= radius * radius) {
+                SPDLOG_TRACE("Position {} is within circle, adding...", ArrayUtils::to_string({x, y, 0.0}));
+                points.push_back({x, y, 0});
+            } else {
+                SPDLOG_TRACE("Position {} is NOT within circle, skipping...", ArrayUtils::to_string({x, y, 0.0}));
             }
         }
+    }
+    return points;
+}
+
+/* documented functions start here  */
+void Disc::initializeDisc() {
+    SPDLOG_TRACE("Initializing Particles for Disc {}...", this->toString());
+    std::vector<std::array<double, 3>> positions = getCircleCoordinates(x[0], x[1], r, h);
+    for (auto &p : positions) {
+        std::array<double, 3> vel =
+            ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
+        particles.addParticle(p, vel, m);
     }
 }
 
