@@ -1,6 +1,8 @@
 #include "Disc.h"
 #include "utils/ArrayUtils.h"
+#include "utils/CLIUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
+#include "utils/StringUtils.h"
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
@@ -8,7 +10,11 @@
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
            double h, double m)
-    : x{x}, r{r}, h{(h < 1) ? 1 : h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+    : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+    if (r < 0)
+        CLIUtils::error("Radius must be 0 or greater, got", StringUtils::fromNumber(r));
+    if (h <= 0)
+        CLIUtils::error("Spacing must be greater than 0, got", StringUtils::fromNumber(h));
     SPDLOG_TRACE("Generated Disc (simple constructor) - x: {}, r: {}, h: {}, m: {}, v: {}, mean_v: {}",
                  ArrayUtils::to_string(x), r, h, m, ArrayUtils::to_string(v), mean_velocity);
 }

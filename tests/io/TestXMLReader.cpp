@@ -20,12 +20,28 @@ class XMLReaderTests : public ::testing::Test {
 
 // Test loading a valid, complete XML file with arguments and multiple different objects into a particle container.
 TEST_F(XMLReaderTests, OpenFileValidComplete) {
+    constexpr std::array domainSize{100.0, 100.0, 0.0};
+    constexpr std::array<std::array<double, 3>, 11> x = {{{3, 3, 0},
+                                                          {4, 3, 0},
+                                                          {3, 4, 0},
+                                                          {4, 4, 0},
+                                                          {5, 5, 0},
+                                                          {6, 6, 0},
+                                                          {10, 9, 0},
+                                                          {9, 10, 0},
+                                                          {10, 10, 0},
+                                                          {11, 10, 0},
+                                                          {10, 11, 0}}};
+
+    constexpr std::array<double, 11> m = {2, 2, 2, 2, 0.5, 0.5, 1, 1, 1, 1, 1};
+    constexpr std::array<double, 3> f = {0., 0., 0.};
+    constexpr std::array<double, 3> oldF = {0., 0., 0.};
+
     Arguments args;
     ParticleContainer pc;
     READ_XML("/testXMLValid_Complete.xml");
 
     // check arguments
-    constexpr std::array domainSize{100.0, 100.0, 0.0};
     EXPECT_DOUBLE_EQ(args.startTime, 0.0);
     EXPECT_DOUBLE_EQ(args.endTime, 10.0);
     EXPECT_DOUBLE_EQ(args.delta_t, 0.01);
@@ -39,26 +55,13 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     EXPECT_EQ(args.sim, SimulationType::LJ);
 
     // check objects
-    // ASSERT_EQ(pc.size(), -1); // TODO: why 0,0,0?
-    // std::cout << pc.toString() << "\n";
-
-    /*
-    { x: [3, 3, 0], v: [-0.0279367, -0.00286395, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 2, type: 0 },
-    { x: [4, 3, 0], v: [-0.0969398, 0.1164, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 2, type: 0 },
-    { x: [3, 4, 0], v: [-0.0161943, -0.0170185, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 2, type: 0 },
-    { x: [4, 4, 0], v: [-0.0644259, -0.035936, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 2, type: 0 },
-
-    { x: [5, 5, 0], v: [0.1, 0.2, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 0.5, type: 1 },
-    { x: [6, 6, 0], v: [0.1, 0.2, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 0.5, type: 1 },
-
-    { x: [0, 0, 0], v: [-0.0809618, -0.198221, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [10.5, 10, 0], v: [-0.0601211, -0.016068, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [10.433, 10.25, 0], v: [-0.140382, -0.324431, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [10.25, 10.433, 0], v: [-0.024801, -0.140229, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [10, 10.5, 0], v: [-0.0865893, -0.438648, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [9.75, 10.433, 0], v: [-0.128889, -0.275648, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 },
-    { x: [9.56699, 10.25, 0], v: [-0.0620944, -0.221427, 0], f: [0, 0, 0], old_f: [0, 0, 0], m: 1, type: 0 }
-    */
+    ASSERT_EQ(pc.size(), 11);
+    for (size_t i = 0; i < pc.size(); ++i) {
+        EXPECT_EQ(pc[i].getX(), x[i]);
+        EXPECT_EQ(pc[i].getM(), m[i]);
+        EXPECT_EQ(pc[i].getF(), f);
+        EXPECT_EQ(pc[i].getOldF(), oldF);
+    }
 }
 
 // Test loading a valid, partial XML file with no arguments and only one object into a particle container.
