@@ -52,7 +52,7 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, do
  * **Complexity:** \f$ O(N^2) \f$
  *
  * The figure below shows a comparison of all LennardJones force calculation functions using a 2D square as input (as
- per Worksheet 3) with the elapsed time in ms on the y-axis and the size of the square's side on the x-axis.
+ per Worksheet 3) with the elapsed time in ms on the y-axis and the number of particles the x-axis.
  *
  * @image html lj-complete.png A comparison of all LJ force calculation functions.
  *
