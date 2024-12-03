@@ -623,6 +623,8 @@ class SimType;
 /**
  * @brief Class corresponding to the %argsType schema type.
  *
+ * Contains the configurable arguments for the simulation.
+ *
  * @nosubgrouping
  */
 class ArgsType : public ::xml_schema::Type {
@@ -632,6 +634,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %startTime
      * optional element.
+     *
+     * The start time of the simulation (optional).
      */
     //@{
 
@@ -693,6 +697,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %endTime
      * optional element.
+     *
+     * The end time of the simulation (optional).
      */
     //@{
 
@@ -754,6 +760,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %delta_t
      * optional element.
+     *
+     * The duration of a simulation timestep (optional).
      */
     //@{
 
@@ -815,6 +823,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %epsilon
      * optional element.
+     *
+     * The depth of the potential well (Lennard-Jones parameter, optional).
      */
     //@{
 
@@ -876,7 +886,9 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %sigma
      * optional element.
-     */
+     *
+     * The distance where the Lennard-Jones potential reaches zero
+    (optional). */
     //@{
 
     /**
@@ -937,6 +949,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %frequency
      * optional element.
+     *
+     * The frequency of logging output (optional).
      */
     //@{
 
@@ -998,6 +1012,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %basename
      * optional element.
+     *
+     * The base name for output files (optional).
      */
     //@{
 
@@ -1069,6 +1085,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %output
      * optional element.
+     *
+     * The output type (vtk / xyz / nil optional).
      */
     //@{
 
@@ -1140,6 +1158,8 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %domainSize
      * optional element.
+     *
+     * The size of the simulation domain (optional).
      */
     //@{
 
@@ -1211,6 +1231,9 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %cutoffRadius
      * optional element.
+     *
+     * The cutoff radius for linked-cell methods (must be specified when
+     * using the linked-cell method).
      */
     //@{
 
@@ -1272,6 +1295,9 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %bdConditions
      * optional element.
+     *
+     * The boundary conditions to be applied at each boundary. (must be
+     * specified when using the linked-cell method).
      */
     //@{
 
@@ -1427,6 +1453,8 @@ class ArgsType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %bdConditionsType schema type.
  *
+ * The boundary conditions for each direction (outflow, reflective).
+ *
  * @nosubgrouping
  */
 class BdConditionsType : public ::xml_schema::Type {
@@ -1436,6 +1464,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %n
      * required element.
+     *
+     * The northern boundary condition.
      */
     //@{
 
@@ -1490,6 +1520,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %s
      * required element.
+     *
+     * The southern boundary condition.
      */
     //@{
 
@@ -1544,6 +1576,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %w
      * required element.
+     *
+     * The western boundary condition.
      */
     //@{
 
@@ -1598,6 +1632,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %e
      * required element.
+     *
+     * The eastern boundary condition.
      */
     //@{
 
@@ -1652,6 +1688,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %a
      * required element.
+     *
+     * The boundary condition above.
      */
     //@{
 
@@ -1706,6 +1744,8 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %b
      * required element.
+     *
+     * The boundary condition below.
      */
     //@{
 
@@ -1839,6 +1879,8 @@ class BdConditionsType : public ::xml_schema::Type {
 /**
  * @brief Enumeration class corresponding to the %boundaryConditionType
  * schema type.
+ *
+ * The type of boundary condition (outflow, reflective).
  */
 class BoundaryConditionType : public ::xml_schema::String {
   public:
@@ -1966,6 +2008,8 @@ class BoundaryConditionType : public ::xml_schema::String {
 /**
  * @brief Class corresponding to the %positionType schema type.
  *
+ * The position of a particle or a cluster in the simulation space.
+ *
  * @nosubgrouping
  */
 class PositionType : public ::xml_schema::Type {
@@ -1975,6 +2019,8 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
+     *
+     * The x coordinate of the position.
      */
     //@{
 
@@ -2019,6 +2065,8 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
+     *
+     * The y coordinate of the position.
      */
     //@{
 
@@ -2063,6 +2111,8 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
+     *
+     * The z coordinate of the position.
      */
     //@{
 
@@ -2183,6 +2233,8 @@ class PositionType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %velocityType schema type.
  *
+ * The velocity of a particle or a cluster in the simulation space.
+ *
  * @nosubgrouping
  */
 class VelocityType : public ::xml_schema::Type {
@@ -2192,6 +2244,8 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
+     *
+     * The velocity in the x direction.
      */
     //@{
 
@@ -2236,6 +2290,8 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
+     *
+     * The velocity in the y direction.
      */
     //@{
 
@@ -2280,6 +2336,8 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
+     *
+     * The velocity in the z direction.
      */
     //@{
 
@@ -2400,6 +2458,8 @@ class VelocityType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %sizeType schema type.
  *
+ * The dimensions of a particle or a cluster in the simulation space.
+ *
  * @nosubgrouping
  */
 class SizeType : public ::xml_schema::Type {
@@ -2409,6 +2469,8 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
+     *
+     * The size along the x axis.
      */
     //@{
 
@@ -2453,6 +2515,8 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
+     *
+     * The size along the y axis.
      */
     //@{
 
@@ -2497,6 +2561,8 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
+     *
+     * The size along the z axis.
      */
     //@{
 
@@ -2617,6 +2683,8 @@ class SizeType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %cuboidType schema type.
  *
+ * A cuboid of particles.
+ *
  * @nosubgrouping
  */
 class CuboidType : public ::xml_schema::Type {
@@ -2626,6 +2694,8 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
+     *
+     * The lower-left corner (origin) of the cuboid.
      */
     //@{
 
@@ -2680,6 +2750,9 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
+     *
+     * The core velocity of the cuboid particles before applying the
+     * Maxwell-Boltzmann distribution.
      */
     //@{
 
@@ -2734,6 +2807,8 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %size
      * required element.
+     *
+     * The dimensions of the cuboid.
      */
     //@{
 
@@ -2788,6 +2863,8 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %distance
      * required element.
+     *
+     * The spacing between particles in the cuboid.
      */
     //@{
 
@@ -2832,6 +2909,8 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
+     *
+     * The mass of the cuboid particles.
      */
     //@{
 
@@ -2965,6 +3044,8 @@ class CuboidType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %particleType schema type.
  *
+ * An individual particle.
+ *
  * @nosubgrouping
  */
 class ParticleType : public ::xml_schema::Type {
@@ -2974,6 +3055,8 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
+     *
+     * The position of the particle.
      */
     //@{
 
@@ -3028,6 +3111,8 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
+     *
+     * The velocity of the particle.
      */
     //@{
 
@@ -3082,6 +3167,8 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
+     *
+     * The mass of the particle.
      */
     //@{
 
@@ -3126,6 +3213,8 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %type
      * required element.
+     *
+     * The type of the particle (currently unused).
      */
     //@{
 
@@ -3257,6 +3346,8 @@ class ParticleType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %discType schema type.
  *
+ * A 2D disc of particles in a grid formation.
+ *
  * @nosubgrouping
  */
 class DiscType : public ::xml_schema::Type {
@@ -3266,6 +3357,8 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
+     *
+     * The position of the disc's center.
      */
     //@{
 
@@ -3320,6 +3413,9 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
+     *
+     * The core velocity of the disc particles before applying the
+     * Maxwell-Boltzmann distribution..
      */
     //@{
 
@@ -3374,6 +3470,8 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %radius
      * required element.
+     *
+     * The radius of the disc.
      */
     //@{
 
@@ -3418,6 +3516,8 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %distance
      * required element.
+     *
+     * The spacing between the disc particles.
      */
     //@{
 
@@ -3462,6 +3562,8 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
+     *
+     * The mass of the disc particles.
      */
     //@{
 
@@ -3595,6 +3697,8 @@ class DiscType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %objectsType schema type.
  *
+ * The clusters used in the simulation (cuboid, particle, disc).
+ *
  * @nosubgrouping
  */
 class ObjectsType : public ::xml_schema::Type {
@@ -3604,6 +3708,8 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %cuboid
      * sequence element.
+     *
+     * A cuboid of particles.
      */
     //@{
 
@@ -3665,6 +3771,8 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %particle
      * sequence element.
+     *
+     * A particle.
      */
     //@{
 
@@ -3726,6 +3834,8 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %disc
      * sequence element.
+     *
+     * A disc of particles.
      */
     //@{
 
@@ -3863,6 +3973,8 @@ class ObjectsType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %simType schema type.
  *
+ * The simulation configuration, including arguments, type, and objects.
+ *
  * @nosubgrouping
  */
 class SimType : public ::xml_schema::Type {
@@ -3872,6 +3984,8 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %args
      * optional element.
+     *
+     * Configurable arguments for the simulation (optional).
      */
     //@{
 
@@ -3943,6 +4057,8 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %type
      * required element.
+     *
+     * The type of simulation to be performed (gravity, lj, ljlc).
      */
     //@{
 
@@ -3997,6 +4113,8 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %objects
      * required element.
+     *
+     * The collection of objects in the simulation.
      */
     //@{
 
@@ -4051,6 +4169,8 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %totalParticles
      * optional element.
+     *
+     * The total number of particles in the simulation (optional).
      */
     //@{
 
@@ -4204,6 +4324,8 @@ class SimType : public ::xml_schema::Type {
 
 /**
  * @name Parsing functions for the %sim document root.
+ *
+ * The root element representing the simulation configuration.
  */
 //@{
 
@@ -4428,6 +4550,8 @@ class SimType : public ::xml_schema::Type {
 
 /**
  * @name Serialization functions for the %sim document root.
+ *
+ * The root element representing the simulation configuration.
  */
 //@{
 

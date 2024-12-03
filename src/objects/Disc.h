@@ -11,6 +11,7 @@
 #include "ParticleContainer.h"
 #include <array>
 #include <string>
+#include <vector>
 
 /**
  * @brief Class storing metadata about a Particle disc.

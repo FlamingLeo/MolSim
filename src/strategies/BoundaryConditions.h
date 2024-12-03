@@ -27,10 +27,6 @@
 bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc);
 
 /**
- * Determines the boundary condition for a particle entering a halo cell.
- */
-
-/**
  * @brief Determines the boundary condition for a particle entering a halo cell.
  *
  * @param p The particle entering a halo cell.

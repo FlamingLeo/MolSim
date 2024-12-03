@@ -7,6 +7,7 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <vector>
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
            double h, double m)
