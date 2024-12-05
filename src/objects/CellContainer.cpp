@@ -38,8 +38,9 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                          cutoff, i);
         } else {
             // we round up cellsize so that cell > cutoff and we only search adjacent cells
-            cellSize[i] = domainSize[i] / std::floor(domainSize[i] / cutoff);
-            numCells[i] = std::round(domainSize[i] / cellSize[i]) + 2;
+            numCells[i] = std::floor(domainSize[i] / cellSize[i]);
+            cellSize[i] = domainSize[i] / numCells[i] ;
+            numCells[i] += 2; // 2 halo cells
             SPDLOG_DEBUG("Cutoff does NOT perfectly divide domain size, using {} as cell size for dimension {}.",
                          cellSize[i], i);
         }
