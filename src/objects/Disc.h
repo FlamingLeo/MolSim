@@ -22,7 +22,8 @@ class Disc {
     /// @brief Center \f$ x \f$ of the disc.
     std::array<double, 3> x;
 
-    /// @brief Radius \f$ r \f$ of the disc.
+    /// @brief Radius \f$ r \f$ of the disc in terms of number of particles.
+
     int r;
 
     /// @brief Distance \f$ h \f$ between the particles in the disc.
