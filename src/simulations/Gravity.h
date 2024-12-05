@@ -30,16 +30,6 @@ class Gravity : public Simulation {
     Gravity(ParticleContainer &m_particles, const Arguments &args, int type = 0);
 
     /**
-     * @brief Initialize a new Gravity simulation from a specified file name using the given program arguments.
-     *
-     * @param filename The path to the file containing the particle information.
-     * @param args An Arguments struct containing relevant simulation parameters.
-     * @param type An optional modifier for which combination of functions get returned when the Simulation is
-     * initialized (i.e. optimized, non-optimized).
-     */
-    Gravity(const std::string &filename, const Arguments &args, int type = 0);
-
-    /**
      * @brief Initialize a new Gravity simulation with the given program arguments.
      *
      * @param args An Arguments struct containing relevant simulation parameters.

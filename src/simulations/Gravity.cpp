@@ -16,11 +16,6 @@ Gravity::Gravity(ParticleContainer &pc, const Arguments &args, int type) {
     SPDLOG_TRACE("Created Gravity simulation with ParticleContainer {} and Arguments {}", pc.toString(),
                  args.toString());
 }
-Gravity::Gravity(const std::string &filename, const Arguments &args, int type) {
-    m_particles.fromFile(filename);
-    initializeBase(args, type, SimulationType::GRAVITY);
-    SPDLOG_TRACE("Created Gravity simulation from file {} with Arguments {}", filename, args.toString());
-}
 Gravity::Gravity(const Arguments &args, int type) {
     initializeBase(args, type, SimulationType::GRAVITY);
     SPDLOG_TRACE("Created Gravity simulation with Arguments {}", args.toString());

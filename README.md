@@ -145,22 +145,16 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 ## Input Files
 
-The program supports XML and formatted raw text input. Currently, the following input files are included in the repository, inside the `input` directory:
+The program supports XML input files. Currently, the following input files are included in the repository, inside the `input` directory:
 
--   **Text Files**: When reading data from a text file, the type of the simulation must be specified.
-    -   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
-    -   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
--   **XML Files**: All relevant simulation information should already be provided in the XML file.
-    -   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
-    -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
-    -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
-    -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
+  -   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
+  -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
+  -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
+  -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
-**NOTE 2**: Raw text input files only work for the tasks from the first 2 worksheets. Functionality for processing them is most likely going to be removed in the future.
-
-### XML Input
+### XML Structure
 
 Complete XML input files have the following structure:
 

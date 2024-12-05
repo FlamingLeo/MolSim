@@ -10,7 +10,6 @@
 #include "Simulation.h"
 #include "io/output/WriterFactory.h"
 #include "objects/CellContainer.h"
-#include "objects/CuboidGenerator.h"
 #include "objects/ParticleContainer.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
@@ -21,9 +20,6 @@
 /// the Lennard-Jones Force.
 class LennardJonesLC : public Simulation {
   private:
-    /// @brief CuboidGenerator used for initializing the particles from the input file.
-    CuboidGenerator m_generator;
-
     /// @brief CellContainer used to partition the domain.
     CellContainer m_linkedCells;
 
@@ -34,16 +30,6 @@ class LennardJonesLC : public Simulation {
     double m_sigma;
 
   public:
-    /**
-     * @brief Constructor for initializing a new LennardJones linked cell simulation with given filename and arguments
-     *
-     * @param filename The name of the input file which is passed to the CuboidGenerator constructor.
-     * @param args Arguments containing relevant simulation parameters.
-     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
-     * particles.
-     */
-    LennardJonesLC(const std::string &filename, const Arguments &args, int type = 0);
-
     /**
      * @brief Constructor for initializing a new LennardJones linked cell simulation with given ParticleContainer and
      * arguments.

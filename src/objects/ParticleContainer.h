@@ -165,13 +165,6 @@ class ParticleContainer {
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m);
 
     /**
-     * @brief Reads particles from a given file into the container.
-     *
-     * @param filename The path to the file from which the particles will be read.
-     */
-    void fromFile(const std::string &filename);
-
-    /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.
      *
      * @param capacity The amount of contiguous spaces to reserve in m_particles.

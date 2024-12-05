@@ -76,11 +76,6 @@ void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::a
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", ArrayUtils::to_string(x),
                  ArrayUtils::to_string(v), m);
 }
-void ParticleContainer::fromFile(const std::string &filename) {
-    SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);
-    FileReader fileReader(filename);
-    fileReader.readParticles(this);
-}
 void ParticleContainer::reserve(size_t capacity) {
     m_particles.reserve(capacity);
     SPDLOG_TRACE("Reserved {} spaces for ParticleContainer", capacity);

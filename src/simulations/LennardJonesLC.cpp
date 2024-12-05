@@ -10,14 +10,8 @@
 #include <string>
 #include <vector>
 
-LennardJonesLC::LennardJonesLC(const std::string &filename, const Arguments &args, int type)
-    : m_generator(filename, m_particles), m_epsilon{args.epsilon}, m_sigma{args.sigma},
-      m_linkedCells{CellContainer(args.domainSize, args.conditions, args.cutoffRadius, m_particles)} {
-    initializeBase(args, type, SimulationType::LJLC);
-    SPDLOG_TRACE("Created LJLC Simulation from file {} with Arguments {}", filename, args.toString());
-}
 LennardJonesLC::LennardJonesLC(ParticleContainer &pc, const Arguments &args, int type)
-    : m_generator("", pc), m_epsilon{args.epsilon}, m_sigma{args.sigma},
+    : m_epsilon{args.epsilon}, m_sigma{args.sigma},
       m_linkedCells{CellContainer(args.domainSize, args.conditions, args.cutoffRadius, pc)} {
     initializeBase(args, type, SimulationType::LJLC);
     SPDLOG_TRACE("Created LJLC Simulation from using ParticleContainer {} with Arguments {}", pc.toString(),

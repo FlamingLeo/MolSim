@@ -37,28 +37,21 @@ int main(int argc, char *argv[]) {
 #endif
 
     // check for invalid syntax (not enough args)
-    if (argc < 2)
-        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
+    CLIParser::checkArgc(argc);
 
-    std::string filename = argv[argc - 1];
-    std::unique_ptr<Simulation> sim;
+    // check if "-h" is passed
+    // running '$ ./MolSim -h' should still be valid, even if no file input is given
+    CLIParser::checkHelpString(argc, argv);
 
     // initialize simulation-relevant objects
     Arguments args;
     ParticleContainer pc;
 
-    // check if the input file is an xml file, otherwise use text file initialization methods
-    if (PathUtils::isXmlFile(filename)) {
-        SPDLOG_DEBUG("Input file is an XML file. Command line arguments will have precedence.");
-        XMLReader r(filename);
-        r.readXML(args, pc);
-        CLIParser::parseArguments(argc, argv, args);
-        sim = SimulationFactory::createSimulation(args.sim, pc, args);
-    } else {
-        SPDLOG_DEBUG("Input file is unspecified or NOT an XML file.");
-        CLIParser::parseArguments(argc, argv, args);
-        sim = SimulationFactory::createSimulation(args.sim, filename, args);
-    }
+    // parse xml file first, then parse command line arguments
+    XMLReader r(argv[argc - 1]);
+    r.readXML(args, pc);
+    CLIParser::parseArguments(argc, argv, args);
+    auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
 
     // run simulation with parsed arguments
     sim->runSimulation();

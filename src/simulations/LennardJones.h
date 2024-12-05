@@ -9,7 +9,6 @@
 #pragma once
 #include "Simulation.h"
 #include "io/output/WriterFactory.h"
-#include "objects/CuboidGenerator.h"
 #include "objects/ParticleContainer.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
@@ -20,9 +19,6 @@
 /// Lennard-Jones Force.
 class LennardJones : public Simulation {
   private:
-    /// @brief CuboidGenerator used for initializing the particles from the input file.
-    CuboidGenerator m_generator;
-
     /// @brief The depth of the potential well \f$ \epsilon \f$.
     double m_epsilon;
 

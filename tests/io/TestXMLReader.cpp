@@ -88,6 +88,8 @@ TEST_F(XMLReaderTests, OpenFilesInvalid) {
     Arguments args;
     ParticleContainer pc;
 
+    EXPECT_DEATH({ READ_XML("/testXMLInvalid_IncorrectStructure.xml"); }, "");
+    EXPECT_DEATH({ READ_XML("/testXMLInvalid_NotXML.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_WrongTypes.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_GarbageTags.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_MissingType.xml"); }, "");

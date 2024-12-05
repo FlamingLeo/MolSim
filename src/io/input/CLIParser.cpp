@@ -2,6 +2,7 @@
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/CellUtils.h"
+#include "utils/PathUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdlib>
 #include <cstring>
@@ -10,6 +11,20 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <unordered_map>
+
+void CLIParser::checkArgc(int argc) {
+    if (argc < 2)
+        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
+}
+
+void CLIParser::checkHelpString(int argc, char **argv) {
+    for (int i = 0; i < argc; ++i) {
+        if (std::strcmp(argv[i], "-h") == 0) {
+            CLIUtils::printHelp();
+            std::exit(EXIT_SUCCESS);
+        }
+    }
+}
 
 void CLIParser::checkValidity(const Arguments &args) {
     SPDLOG_TRACE("Checking argument validity...");
@@ -128,8 +143,8 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             SPDLOG_DEBUG("Set simulation type to {}.", optarg);
             break;
         case 'h': /* help */
-            CLIUtils::printHelp();
-            std::exit(EXIT_SUCCESS);
+            // we already handled this case...
+            break;
         case '?': /* invalid syntax */
         {
             SPDLOG_TRACE("[getopt] Found invalid or incomplete option: {}.", StringUtils::fromChar(optopt));
