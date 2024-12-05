@@ -23,7 +23,7 @@
 /// @brief Class for storing data of a single Cell in a domain split into cells.
 class Cell {
     /// @brief Typedef for the container type used to store pointers to a Cell's Particle objects.
-    using ContainerType = std::forward_list<Particle *>;
+    using ContainerType = std::forward_list<std::reference_wrapper<Particle>>;
 
   private:
     /// @brief A forward list of pointers to Particle objects contained within the current Cell.
@@ -70,18 +70,18 @@ class Cell {
     ContainerType::iterator end();
 
     /**
-     * @brief Adds a Particle pointer to the front of the forward list.
+     * @brief Adds a Particle reference to the front of the forward list.
      *
-     * @param particle The Particle pointer to be added.
+     * @param particle The Particle reference to be added.
      */
-    void addParticle(Particle *particle);
+    void addParticle(Particle &particle);
 
     /**
-     * @brief Removes a Particle pointer from the forward list.
+     * @brief Removes a Particle reference from the forward list.
      *
-     * @param particle The Particle pointer to be removed.
+     * @param particle The Particle reference to be removed.
      */
-    void removeParticle(Particle *particle);
+    void removeParticle(Particle &particle);
 
     /**
      * @brief If this Cell is a corner Halo Cell, check if a Particle is above or below the diagonal line separating the
@@ -121,7 +121,7 @@ class Cell {
      *
      * @return A const reference to the Cell's Particle pointer forward list.
      */
-    const std::forward_list<Particle *> &getParticles() const;
+    const std::forward_list<std::reference_wrapper<Particle>> &getParticles() const;
 
     /**
      * @brief Gets the type of this Cell.

@@ -35,9 +35,9 @@ class CellContainer {
     /// @brief The container of Cell objects itself.
     ContainerType cells;
     /// @brief Container of pointers to border cells.
-    std::vector<Cell *> borderCells;
+    std::vector<std::reference_wrapper<Cell>> borderCells;
     /// @brief Container of pointers to halo cells.
-    std::vector<Cell *> haloCells;
+    std::vector<std::reference_wrapper<Cell>> haloCells;
     /// @brief The size of the domain in each dimension.
     std::array<double, 3> domainSize;
     /// @brief The size of each cell in each dimension (default: 0, 0, 0).
@@ -115,13 +115,13 @@ class CellContainer {
     class SpecialParticleIterator {
       private:
         /// @brief The outer iterator, iterating over each Cell pointer.
-        std::vector<Cell *>::iterator outerIt;
+        std::vector<std::reference_wrapper<Cell>>::iterator outerIt;
         /// @brief The end of the outer iterator, iterating over each Cell pointer.
-        std::vector<Cell *>::iterator outerEnd;
+        std::vector<std::reference_wrapper<Cell>>::iterator outerEnd;
         /// @brief The inner iterator, iterating over each Particle pointer in a Cell.
-        std::forward_list<Particle *>::iterator innerIt;
+        std::forward_list<std::reference_wrapper<Particle>>::iterator innerIt;
         /// @brief The end of the inner iterator, iterating over each Particle pointer in a Cell.
-        std::forward_list<Particle *>::iterator innerEnd;
+        std::forward_list<std::reference_wrapper<Particle>>::iterator innerEnd;
         /// @brief Helper function to move to the next Cell which contains at least one particle. Stops when no further
         /// cells can be searched.
         void advance();
@@ -134,7 +134,8 @@ class CellContainer {
          * particle.
          * @param end The end of the iterator (one past the final cell).
          */
-        SpecialParticleIterator(std::vector<Cell *>::iterator start, std::vector<Cell *>::iterator end);
+        SpecialParticleIterator(std::vector<std::reference_wrapper<Cell>>::iterator start,
+                                std::vector<std::reference_wrapper<Cell>>::iterator end);
 
         /**
          * @brief Overload of the dereference operator.
@@ -240,28 +241,28 @@ class CellContainer {
      *
      * @return A reference to the border Cell container.
      */
-    std::vector<Cell *> &getBorderCells();
+    std::vector<std::reference_wrapper<Cell>> &getBorderCells();
 
     /**
      * @brief Gets a const reference to the border Cell container.
      *
      * @return A const reference to the border Cell container.
      */
-    const std::vector<Cell *> &getBorderCells() const;
+    const std::vector<std::reference_wrapper<Cell>> &getBorderCells() const;
 
     /**
      * @brief Gets a reference to the halo Cell container.
      *
      * @return A reference to the halo Cell container.
      */
-    std::vector<Cell *> &getHaloCells();
+    std::vector<std::reference_wrapper<Cell>> &getHaloCells();
 
     /**
      * @brief Gets a const reference to the halo Cell container.
      *
      * @return A const reference to the halo Cell container.
      */
-    const std::vector<Cell *> &getHaloCells() const;
+    const std::vector<std::reference_wrapper<Cell>> &getHaloCells() const;
 
     /**
      * @brief Removes the active halo Cell Particle objects.

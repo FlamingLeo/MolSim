@@ -249,7 +249,7 @@ TEST_F(CellContainerTest, HaloIteratorOneElement) {
 TEST_F(CellContainerTest, CellIterator) {
     size_t total = 0;
     for (auto &cell : container) {
-        for (auto *p : cell.getParticles()) {
+        for (auto &p : cell.getParticles()) {
             total++;
         }
     }

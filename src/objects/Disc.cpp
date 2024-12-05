@@ -30,10 +30,10 @@ std::vector<std::array<double, 3>> Disc::getCircleCoordinates(double centerX, do
     for (double y = minY; y <= maxY; y += distance) {
         for (double x = minX; x <= maxX; x += distance) {
             if ((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY) <= radius * radius) {
-                SPDLOG_TRACE("Position {} is within circle, adding...", ArrayUtils::to_string({x, y, 0.0}));
+                SPDLOG_TRACE("Position ({}, {}) is within circle, adding...", x, y);
                 points.push_back({x, y, 0});
             } else {
-                SPDLOG_TRACE("Position {} is NOT within circle, skipping...", ArrayUtils::to_string({x, y, 0.0}));
+                SPDLOG_TRACE("Position ({}, {}) is NOT within circle, skipping...", x, y);
             }
         }
     }

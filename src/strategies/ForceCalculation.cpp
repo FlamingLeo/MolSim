@@ -124,20 +124,22 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all particles i in cell ic
-        for (auto *i : ic) {
-            if (!i->isActive())
+        for (auto &ri : ic) {
+            Particle &i = ri;
+            if (!i.isActive())
                 continue;
 
             // loop over all cells kc in N(ic)
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
                 // loop over all particles j in cell kc
-                for (auto *j : kc) {
-                    if (!j->isActive())
+                for (auto &rj : kc) {
+                    Particle &j = rj;
+                    if (!j.isActive())
                         continue;
 
-                    if (*i != *j) {
-                        auto distVec = i->getX() - j->getX();
+                    if (i != j) {
+                        auto distVec = i.getX() - j.getX();
                         double distNorm = ArrayUtils::L2Norm(distVec);
 
                         // compute force if distance is less than cutoff
@@ -145,7 +147,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
                             double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
                                               (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
                             auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
-                            i->setF(i->getF() + forceVec);
+                            i.setF(i.getF() + forceVec);
                         }
                     }
                 }
@@ -159,22 +161,24 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double eps
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
-        for (auto *i : ic) {
-            if (!i->isActive())
+        for (auto &ri : ic) {
+            Particle &i = ri;
+            if (!i.isActive())
                 continue;
 
             // loop over all cells kc in N(ic)
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
                 // loop over all active  particles j in cell kc
-                for (auto *j : kc) {
-                    if (!j->isActive() || i >= j)
+                for (auto &rj : kc) {
+                    Particle &j = rj;
+                    if (!j.isActive() || &i >= &j)
                         continue;
 
                     // only iterate through distinct pairs by comparing (distinct) memory addresses
                     // in one complete force calculation, either i < j or i >= j will hold, but not both
                     // this _may_ be changed if, somehow, the container where the particles are stored becomes dynamic
-                    auto distVec = i->getX() - j->getX();
+                    auto distVec = i.getX() - j.getX();
                     double distNorm = ArrayUtils::L2Norm(distVec);
 
                     // compute force if distance is less than cutoff
@@ -184,8 +188,8 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double eps
                         auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
 
                         // apply force on particle i and opposite force on particle j
-                        i->setF(i->getF() + forceVec);
-                        j->setF(j->getF() - forceVec);
+                        i.setF(i.getF() + forceVec);
+                        j.setF(j.getF() - forceVec);
                     }
                 }
             }
