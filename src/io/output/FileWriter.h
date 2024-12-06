@@ -49,8 +49,10 @@ class FileWriter {
      * @param content The string to be written inside of the file.
      * @param filename An optional filename to be used with spdlog to display the name of the file currently being
      * written to.
+     * @param iteration The optional current iteration of the simulation.
+     * @param total The optional total number of iterations, used to display the current percentage.
      */
-    void writeFile(const std::string &content, const std::string &filename = "");
+    void writeFile(const std::string &content, const std::string &filename = "", int iteration = -1, int total = -1);
 
     /**
      * @brief Interface function for writing the type, mass, position, velocity and force of a ParticleContainer to a
@@ -58,6 +60,7 @@ class FileWriter {
      *
      * @param particles The ParticleContainer.
      * @param iteration The number of the current iteration, used to generate a unique filename.
+     * @param total The total number of iterations, used to display the current percentage.
      */
-    virtual void writeParticles(const ParticleContainer &particles, int iteration) = 0;
+    virtual void writeParticles(const ParticleContainer &particles, int iteration, int total) = 0;
 };

@@ -13,8 +13,6 @@
 #include <benchmark/benchmark.h>
 #include <spdlog/spdlog.h>
 
-#define MULTIPLIER 10
-
 class LJFixture : public ::benchmark::Fixture {
   public:
     Arguments args;
@@ -30,15 +28,15 @@ class LJFixture : public ::benchmark::Fixture {
 
         // initialize LJ simulation
         size_t len = state.range(0);
-        size_t numParticles = len * MULTIPLIER;
+        size_t numParticles = len * len;
         pc.reserve(numParticles);
-        Cuboid c{pc, {0., 0., 0.}, {len, MULTIPLIER, 1}, {0., 0., 0.}, 1.1225, 1};
+        Cuboid c{pc, {0., 0., 0.}, {len, len, 1}, {0., 0., 0.}, 1.1225, 1};
         c.initializeParticles();
     }
 
     void TearDown(::benchmark::State &state) {
         state.counters["Steps"] = args.endTime / args.delta_t;
-        state.counters["NumParticles"] = state.range(0) * MULTIPLIER;
+        state.counters["NumParticles"] = state.range(0) * state.range(0);
     }
 };
 
@@ -56,5 +54,20 @@ BENCHMARK_DEFINE_F(LJFixture, LJThirdLaw)(benchmark::State &st) {
     }
 }
 
-BENCHMARK_REGISTER_F(LJFixture, LJNaive)->DenseRange(1, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_REGISTER_F(LJFixture, LJThirdLaw)->DenseRange(1, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_DEFINE_F(LJFixture, LJNaiveCutoff)(benchmark::State &st) {
+    LennardJones lj{pc, args, 3};
+    for (auto _ : st) {
+        lj.runSimulation();
+    }
+}
+BENCHMARK_DEFINE_F(LJFixture, LJThirdLawCutoff)(benchmark::State &st) {
+    LennardJones lj{pc, args, 2};
+    for (auto _ : st) {
+        lj.runSimulation();
+    }
+}
+
+BENCHMARK_REGISTER_F(LJFixture, LJNaive)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK_REGISTER_F(LJFixture, LJThirdLaw)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK_REGISTER_F(LJFixture, LJNaiveCutoff)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK_REGISTER_F(LJFixture, LJThirdLawCutoff)->DenseRange(10, 50, 10)->Unit(benchmark::kMillisecond);

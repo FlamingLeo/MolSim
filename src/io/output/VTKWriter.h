@@ -45,8 +45,9 @@ class VTKWriter : public FileWriter {
      * @brief Writes the contents of m_vtkFile into a given VTK file. Terminates program execution on error.
      *
      * @param iteration The current iteration of the simulation.
+     * @param total The total number of iterations, used to display the current percentage.
      */
-    void writeFile(int iteration);
+    void writeFile(int iteration, int total);
 
     /**
      * @brief Plots a single particle to m_vtkFile. Terminates program execution on error.
@@ -82,8 +83,8 @@ class VTKWriter : public FileWriter {
      * program execution on error.
      *
      * @param particles The ParticleContainer.
-     * @param iteration The number of the current iteration, used to generate a
-     * unique filename.
+     * @param iteration The number of the current iteration, used to generate a unique filename.
+     * @param total The total number of iterations, used to display the current percentage.
      */
-    void writeParticles(const ParticleContainer &particles, int iteration) override;
+    void writeParticles(const ParticleContainer &particles, int iteration, int total) override;
 };

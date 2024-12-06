@@ -1,0 +1,19 @@
+<sim>
+    <type>lj</type>
+    <objects>
+        <particle>
+            <position>
+                <x>abc</x>
+                <y>1337</y>
+                <z>2001-10-25</z>
+            </position>
+            <velocity>
+                <x>en-US</x>
+                <y>1996-12-03T14:30:59</y>
+                <z>U3RyaW5nRGF0YQ==</z>
+            </velocity>
+            <mass>---25</mass>
+            <type>i am running out of ideas</type>
+        </particle>
+    </objects>
+</sim>

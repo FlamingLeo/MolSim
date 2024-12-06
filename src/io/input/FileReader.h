@@ -17,7 +17,7 @@
 
 /// @brief File reader class which implements functionality to read data from input files.
 class FileReader {
-  private:
+  protected:
     /// @brief Input stream representing the file containing molecule data.
     std::ifstream m_infile;
 
@@ -45,12 +45,16 @@ class FileReader {
     /**
      * @brief Reads particle data into a ParticleContainer from a given input file.
      *
+     * @deprecated Raw file input will be removed in the future in favor of XML input.
+     *
      * @param particles The ParticleContainer to read the input data from.
      */
     void readParticles(ParticleContainer *particles);
 
     /**
      * @brief Reads and intializes cuboid data into a ParticleContainer from a given input file.
+     *
+     * @deprecated Raw file input will be removed in the future in favor of XML input.
      *
      * @param particles The ParticleContainer to read the input data from.
      */

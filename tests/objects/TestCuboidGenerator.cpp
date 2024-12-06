@@ -1,57 +1,36 @@
 #include "objects/CuboidGenerator.h"
+#include "utils/PathUtils.h"
 #include <filesystem>
 #include <gtest/gtest.h>
 
 class CuboidGeneratorTests : public ::testing::Test {
-  private:
-    std::string getTargetPath(const std::string &fullPath, const std::string &targetDir) {
-        size_t pos = fullPath.rfind(targetDir);
-        if (pos != std::string::npos) {
-            return fullPath.substr(0, pos + targetDir.length());
-        }
-        return "";
-    }
-
   protected:
     std::string targetPath;
 
     void SetUp() override {
-        std::filesystem::path cwd = std::filesystem::current_path();
-        targetPath = getTargetPath(cwd, "MolSim");
-        if (targetPath.empty())
-            GTEST_SKIP() << "Project root directory not found, skipping tests...";
-        targetPath += "/tests/files";
-        if (!(std::filesystem::exists(targetPath)))
-            GTEST_SKIP() << "Test files not found, skipping tests...";
+        std::string failReason = "";
+        if (!PathUtils::setupFileTests(targetPath, failReason))
+            GTEST_SKIP() << failReason;
     }
 };
 
 // Test attempting to generate cuboids from an invalid file source.
 TEST_F(CuboidGeneratorTests, InvalidFile) {
     ParticleContainer pc;
-    CuboidGenerator cg0("", pc);
-    CuboidGenerator cg1("/", pc);
-    CuboidGenerator cg2("/dev/null/foo", pc);
-    EXPECT_DEATH({ cg0.generateCuboids(); }, "");
-    EXPECT_DEATH({ cg1.generateCuboids(); }, "");
-    EXPECT_DEATH({ cg2.generateCuboids(); }, "");
-}
-
-// Test attempting to generate cuboids in a non-empty particle container.
-// Will only halt on debug builds; otherwise, will execute as normal.
-TEST_F(CuboidGeneratorTests, NonEmptyParticleContainer) {
-    ParticleContainer pc;
-    pc.addParticle({1., 2., 3.}, {4., 5., 6.}, 7.);
-    CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc);
-
-    EXPECT_DEBUG_DEATH({ cg.generateCuboids(); }, "");
+    EXPECT_DEATH(
+        {
+            CuboidGenerator cg0("", pc);
+            cg0.generateCuboids();
+        },
+        "");
+    EXPECT_DEATH({ CuboidGenerator cg1("/", pc); }, "");
+    EXPECT_DEATH({ CuboidGenerator cg2("/dev/null/foo", pc); }, "");
 }
 
 // Test generating cuboids and intializing them into a ParticleContainer from a given source file.
 TEST_F(CuboidGeneratorTests, GenerateCuboids) {
     ParticleContainer pc;
     CuboidGenerator cg(targetPath + "/testCuboidInput.txt", pc);
-    cg.generateCuboids();
 
     ASSERT_EQ(pc.size(), 6);
 

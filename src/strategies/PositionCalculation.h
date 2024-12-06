@@ -7,6 +7,7 @@
  *
  */
 #pragma once
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 
 /**
@@ -18,5 +19,25 @@
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateX(ParticleContainer &particles, double delta_t);
+void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc = nullptr);
+
+/**
+ * @brief Calculates the position \f$ x \f$ for all Particle objects in a given ParticleContainer when using the linked
+ * cells method.
+ *
+ * @details The position update occurs analogously to the default, non-linked-cell function.
+ *
+ * After each update, the particle may need to be moved to a different cell. The algorithm checks this and updates the
+ * cell correspondence accordingly. If the particle enters a halo cell, the appropriate boundary condition will be
+ * applied.
+ *
+ * If a particle enters a corner halo cell where one side has a different boundary condition to the other, the condition
+ * is chosen based on which boundary the particle will hit first. See the report and presentation for more details.
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param lc The CellContainer for the linked cells method.
+ */
+void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *lc);

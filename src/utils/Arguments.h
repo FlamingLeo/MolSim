@@ -7,16 +7,20 @@
  *
  */
 #pragma once
+#include "CellUtils.h"
+#include <array>
 #include <bitset>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
+#define INF std::numeric_limits<double>::infinity()
 
 /// @brief Enum containing each (valid) type of output writer.
 enum class WriterType { VTK, XYZ, NIL };
 
 /// @brief Enum containg each possible Simulation to be performed.
-enum class SimulationType { GRAVITY, LJ };
+enum class SimulationType { GRAVITY, LJ, LJLC };
 
 /**
  * @brief Struct containing each option configurable via command line arguments.
@@ -34,14 +38,23 @@ struct Arguments {
     double sigma{1};
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
+    /// @brief Domain size for linked cells (default: unspecified, will fail if not specified!)
+    std::array<double, 3> domainSize{INF, INF, INF};
+    /// @brief Cutoff radius for linked cells (default: unspecified, will fail if not specified!)
+    double cutoffRadius{INF};
+    /// @brief The basename of the output file (default: type-specific).
+    std::string basename{};
     /// @brief Output type (default: VTK).
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: LJ).
     SimulationType sim{SimulationType::LJ};
-    /// @brief Bitset containing flags, whether startTime (0), endTime (1) and delta_t (2) have been manually set by the
-    /// user. If not, use default values depending on the simulation.
-    std::bitset<3> argsSet{0b000};
-
+    /// @brief The type of condition to be applied at each boundary (default: outflow)
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW};
+    /// @brief Bitset containing flags, whether startTime (0), endTime (1), delta_t (2) and basename (3) have been
+    /// manually set by the user. If not, use default values depending on the simulation.
+    std::bitset<4> argsSet{0b0000};
     /// @brief Returns a string representation of the struct.
     /// @return A string representation of the struct.
     std::string toString() const;

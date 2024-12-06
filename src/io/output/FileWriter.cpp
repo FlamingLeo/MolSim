@@ -1,5 +1,6 @@
 #include "FileWriter.h"
 #include "utils/CLIUtils.h"
+#include "utils/StringUtils.h"
 #include <fstream>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -35,7 +36,7 @@ void FileWriter::openFile(const std::string &filename) {
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
 
-void FileWriter::writeFile(const std::string &content, const std::string &filename) {
+void FileWriter::writeFile(const std::string &content, const std::string &filename, int iteration, int total) {
     if (!(m_file.is_open()))
         CLIUtils::error("No file opened for writing!", "", false);
 
@@ -44,5 +45,9 @@ void FileWriter::writeFile(const std::string &content, const std::string &filena
     if (m_file.bad())
         CLIUtils::error("Failed to write contents to file stream!", "", false);
 
-    SPDLOG_INFO("Wrote contents to file{}.", filename.empty() ? "" : " " + filename);
+    SPDLOG_INFO("Wrote contents to file{}{}.", filename.empty() ? "" : " " + filename,
+                (iteration == -1 || total == -1)
+                    ? ""
+                    : (" (" + StringUtils::fromNumber(iteration) + " / " + StringUtils::fromNumber(total) + ") (" +
+                       StringUtils::fromNumber(CLIUtils::getPercentage(iteration, total)) + "%)"));
 }

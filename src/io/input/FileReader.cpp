@@ -133,6 +133,7 @@ void FileReader::readCuboids(ParticleContainer &particles) {
 
     std::istringstream numstream(tmpString);
     numstream >> numParticles;
+    cs.reserve(numParticles);
     SPDLOG_DEBUG("Reading {} Cuboid objects.", tmpString);
     std::getline(m_infile, tmpString);
     SPDLOG_DEBUG("Read Cuboid data: {}", tmpString);

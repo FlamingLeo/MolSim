@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 /// @brief Map containing conversion information for converting a string to a WriterType enum.
 static inline const std::unordered_map<std::string, WriterType> writerTable = {
@@ -24,7 +25,7 @@ static inline const std::unordered_map<std::string, WriterType> writerTable = {
 
 /// @brief Map containing conversion information for converting a string to a SimulationType enum.
 static inline const std::unordered_map<std::string, SimulationType> simulationTable = {
-    {"gravity", SimulationType::GRAVITY}, {"lj", SimulationType::LJ}};
+    {"gravity", SimulationType::GRAVITY}, {"lj", SimulationType::LJ}, {"ljlc", SimulationType::LJLC}};
 
 /// @brief Reverse map containing conversion information for converting a WriterType enum to a string.
 static inline const std::unordered_map<WriterType, std::string> writerStringTable = []() {
@@ -155,18 +156,20 @@ template <size_t N> static inline std::array<int, N> toIntArray(const std::strin
  *
  * @tparam N The length of the array.
  * @param str The string to be converted, should be formatted as comma-separated decimal numbers between curly braces.
+ * @param reqBrackets If specified, the array must be enclosed by curly brackets. Otherwise, the format is simply "_, _,
+ * ..., _".
  * @return The corresponding array of doubles.
  */
-template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str) {
+template <size_t N> static inline std::array<double, N> toDoubleArray(const std::string &str, bool reqBrackets = true) {
     if (str.empty() || N == 0)
         return {};
 
-    if (str.front() != '{' || str.back() != '}')
+    if (reqBrackets && (str.front() != '{' || str.back() != '}'))
         CLIUtils::error("Invalid array syntax", str);
 
     std::array<double, N> arr = {};
     std::string tmp;
-    std::string numbers = str.substr(1, str.size() - 2);
+    std::string numbers = reqBrackets ? str.substr(1, str.size() - 2) : str;
     std::stringstream ss(numbers);
 
     size_t i = 0;
@@ -244,5 +247,23 @@ static inline std::string fromSimulationType(SimulationType simulationType) {
  * @return A string representation of the number.
  */
 template <typename T> std::string static inline fromNumber(T number) { return std::to_string(number); }
+
+/**
+ * @brief Converts a vector to a string.
+ *
+ * @tparam T The type of the vector elements.
+ * @param vec The vector to stringify.
+ */
+template <typename T> static inline std::string fromVector(const std::vector<T> &vec) {
+    std::stringstream ss;
+    ss << "[";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        ss << vec[i];
+        if (i != vec.size() - 1)
+            ss << ", ";
+    }
+    ss << "]";
+    return ss.str();
+}
 
 } // namespace StringUtils

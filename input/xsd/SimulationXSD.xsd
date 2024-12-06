@@ -1,0 +1,454 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="sim" type="simType">
+        <xs:annotation>
+            <xs:documentation>
+                The root element representing the simulation configuration.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="argsType">
+        <xs:annotation>
+            <xs:documentation>
+                Contains the configurable arguments for the simulation.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:double" name="startTime" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The start time of the simulation (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="endTime" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The end time of the simulation (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="delta_t" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The duration of a simulation timestep (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="epsilon" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The depth of the potential well (Lennard-Jones parameter, optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="sigma" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The distance where the Lennard-Jones potential reaches zero (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:int" name="frequency" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The frequency of logging output (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="basename" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The base name for output files (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="output" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The output type (vtk / xyz / nil optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="sizeType" name="domainSize" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The size of the simulation domain (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="cutoffRadius" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The cutoff radius for linked-cell methods (must be specified when using the linked-cell method).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="bdConditionsType" name="bdConditions" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The boundary conditions to be applied at each boundary. (must be specified when using the linked-cell method).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="bdConditionsType">
+        <xs:annotation>
+            <xs:documentation>
+                The boundary conditions for each direction (outflow, reflective).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="n" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The northern boundary condition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="s" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The southern boundary condition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="w" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The western boundary condition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="e" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The eastern boundary condition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="a" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The boundary condition above.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="b" type="boundaryConditionType">
+                <xs:annotation>
+                    <xs:documentation>
+                        The boundary condition below.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="boundaryConditionType">
+        <xs:annotation>
+            <xs:documentation>
+                The type of boundary condition (outflow, reflective).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="outflow"/>
+            <xs:enumeration value="reflective"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="positionType">
+        <xs:annotation>
+            <xs:documentation>
+                The position of a particle or a cluster in the simulation space.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:double" name="x">
+                <xs:annotation>
+                    <xs:documentation>
+                        The x coordinate of the position.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="y">
+                <xs:annotation>
+                    <xs:documentation>
+                        The y coordinate of the position.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="z">
+                <xs:annotation>
+                    <xs:documentation>
+                        The z coordinate of the position.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="velocityType">
+        <xs:annotation>
+            <xs:documentation>
+                The velocity of a particle or a cluster in the simulation space.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:double" name="x">
+                <xs:annotation>
+                    <xs:documentation>
+                        The velocity in the x direction.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="y">
+                <xs:annotation>
+                    <xs:documentation>
+                        The velocity in the y direction.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="z">
+                <xs:annotation>
+                    <xs:documentation>
+                        The velocity in the z direction.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="sizeType">
+        <xs:annotation>
+            <xs:documentation>
+                The dimensions of a particle or a cluster in the simulation space.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:double" name="x">
+                <xs:annotation>
+                    <xs:documentation>
+                        The size along the x axis.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="y">
+                <xs:annotation>
+                    <xs:documentation>
+                        The size along the y axis.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="z">
+                <xs:annotation>
+                    <xs:documentation>
+                        The size along the z axis.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="cuboidType">
+        <xs:annotation>
+            <xs:documentation>
+                A cuboid of particles.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="positionType" name="position">
+                <xs:annotation>
+                    <xs:documentation>
+                        The lower-left corner (origin) of the cuboid.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="velocityType" name="velocity">
+                <xs:annotation>
+                    <xs:documentation>
+                        The core velocity of the cuboid particles before applying the Maxwell-Boltzmann distribution.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="sizeType" name="size">
+                <xs:annotation>
+                    <xs:documentation>
+                        The dimensions of the cuboid.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="distance">
+                <xs:annotation>
+                    <xs:documentation>
+                        The spacing between particles in the cuboid.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="mass">
+                <xs:annotation>
+                    <xs:documentation>
+                        The mass of the cuboid particles.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="particleType">
+        <xs:annotation>
+            <xs:documentation>
+                An individual particle.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="positionType" name="position">
+                <xs:annotation>
+                    <xs:documentation>
+                        The position of the particle.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="velocityType" name="velocity">
+                <xs:annotation>
+                    <xs:documentation>
+                        The velocity of the particle.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="mass">
+                <xs:annotation>
+                    <xs:documentation>
+                        The mass of the particle.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:int" name="type">
+                <xs:annotation>
+                    <xs:documentation>
+                        The type of the particle (currently unused).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="discType">
+        <xs:annotation>
+            <xs:documentation>
+                A 2D disc of particles in a grid formation.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="positionType" name="position">
+                <xs:annotation>
+                    <xs:documentation>
+                        The position of the disc's center.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="velocityType" name="velocity">
+                <xs:annotation>
+                    <xs:documentation>
+                        The core velocity of the disc particles before applying the Maxwell-Boltzmann distribution..
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:int" name="radius">
+                <xs:annotation>
+                    <xs:documentation>
+                        The radius of the disc.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="distance">
+                <xs:annotation>
+                    <xs:documentation>
+                        The spacing between the disc particles.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="mass">
+                <xs:annotation>
+                    <xs:documentation>
+                        The mass of the disc particles.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="objectsType">
+        <xs:annotation>
+            <xs:documentation>
+                The clusters used in the simulation (cuboid, particle, disc).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element type="cuboidType" name="cuboid">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A cuboid of particles.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element type="particleType" name="particle">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A particle.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element type="discType" name="disc">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A disc of particles.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="simType">
+        <xs:annotation>
+            <xs:documentation>
+                The simulation configuration, including arguments, type, and objects.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Configurable arguments for the simulation (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="type">
+                <xs:annotation>
+                    <xs:documentation>
+                        The type of simulation to be performed (gravity, lj, ljlc).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="objectsType" name="objects">
+                <xs:annotation>
+                    <xs:documentation>
+                        The collection of objects in the simulation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:long" name="totalParticles" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The total number of particles in the simulation (optional).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

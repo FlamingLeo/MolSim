@@ -38,17 +38,7 @@ void XYZWriter::initializeFolder() {
     }
 }
 
-void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration) {
-    // create output directory in which to store generated XYZ output files
-    if (!(std::filesystem::exists(m_dirname))) {
-        SPDLOG_DEBUG("Folder {} does not exist, creating...", m_dirname);
-        if (!(std::filesystem::create_directory(m_dirname)))
-            CLIUtils::error("Error creating XYZ directory!", "", false);
-    } else {
-        SPDLOG_DEBUG("Folder {} exists, deleting...", m_dirname);
-        std::filesystem::remove_all(m_dirname);
-    }
-
+void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration, int total) {
     // define file name
     std::stringstream strstr, content;
     strstr << m_dirname << "/" << m_basename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
@@ -77,5 +67,5 @@ void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration
     }
 
     // finalize output
-    writeFile(content.str(), strstr.str());
+    writeFile(content.str(), strstr.str(), iteration, total);
 }

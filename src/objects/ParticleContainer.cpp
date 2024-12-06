@@ -70,6 +70,7 @@ void ParticleContainer::addParticle(const Particle &particle) {
     m_particles.push_back(particle);
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
+
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m) {
     m_particles.emplace_back(x, v, m);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", ArrayUtils::to_string(x),
@@ -95,6 +96,9 @@ const Particle &ParticleContainer::get(size_t index) const {
     return m_particles[index];
 }
 size_t ParticleContainer::size() const { return m_particles.size(); }
+size_t ParticleContainer::activeSize() const {
+    return std::count_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return p.isActive(); });
+}
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
 bool ParticleContainer::operator==(const ParticleContainer &other) const { return m_particles == other.m_particles; }

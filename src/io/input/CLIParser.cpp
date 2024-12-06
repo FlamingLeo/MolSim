@@ -1,5 +1,7 @@
 #include "CLIParser.h"
+#include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
+#include "utils/CellUtils.h"
 #include "utils/StringUtils.h"
 #include <cstdlib>
 #include <cstring>
@@ -23,6 +25,8 @@ void CLIParser::checkValidity(const Arguments &args) {
 
 void CLIParser::setDefaults(Arguments &args) {
     SPDLOG_TRACE("Argument bit vector: {}", args.argsSet.to_string());
+
+    // simulation-specific options
     switch (args.sim) {
     case SimulationType::GRAVITY:
         args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
@@ -34,8 +38,28 @@ void CLIParser::setDefaults(Arguments &args) {
         args.endTime = args.argsSet.test(1) ? args.endTime : 5.0;
         args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0002;
         break;
+    case SimulationType::LJLC:
+        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
+        args.endTime = args.argsSet.test(1) ? args.endTime : 20.0;
+        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0005;
+        break;
     default:
         CLIUtils::error("Cannot set default arguments for unknown simulation type!");
+    }
+
+    // type-specific options
+    switch (args.type) {
+    case WriterType::VTK:
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_vtk";
+        break;
+    case WriterType::XYZ:
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_xyz";
+        break;
+    case WriterType::NIL: /* ignored */
+        args.basename = args.argsSet.test(3) ? args.basename : "MD_nil";
+        break;
+    default:
+        CLIUtils::error("Cannot set default arguments for unknown output type!");
     }
 }
 
@@ -45,10 +69,6 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
     opterr = 0;                   // silence default getopt error messages
 
     SPDLOG_DEBUG("Parsing command line arguments...");
-
-    // check for invalid syntax (not enough args)
-    if (argc < 2)
-        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
 
     // loop over all of the options
     while ((ch = getopt(argc, argv, OPTSTRING)) != -1) {
@@ -70,9 +90,26 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.argsSet.set(2);
             SPDLOG_DEBUG("Set timestep to {}.", args.delta_t);
             break;
+        case 'b': /* basename */
+            args.basename = optarg;
+            args.argsSet.set(3);
+            SPDLOG_DEBUG("Set basename to {}.", args.basename);
+            break;
+        case 'B': /* boundary conditions */
+            args.conditions = CellUtils::stringToBoundaryConditions(optarg);
+            SPDLOG_DEBUG("Set boundary conditions to {}.", optarg);
+            break;
+        case 'D': /* domain size */
+            args.domainSize = StringUtils::toDoubleArray<3>(optarg, false);
+            SPDLOG_DEBUG("Set domain size to {}.", ArrayUtils::to_string(args.domainSize));
+            break;
         case 'E': /* epsilon */
             args.epsilon = StringUtils::toDouble(optarg);
             SPDLOG_DEBUG("Set epsilon to {}.", args.epsilon);
+            break;
+        case 'R': /* cutoff radius */
+            args.cutoffRadius = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set cutoff radius to {}.", args.cutoffRadius);
             break;
         case 'S': /* sigma */
             args.sigma = StringUtils::toDouble(optarg);

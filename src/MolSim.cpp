@@ -1,13 +1,22 @@
 #include "io/input/CLIParser.h"
 #include "io/input/FileReader.h"
+#include "io/input/XMLReader.h"
+#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
+#include "strategies/ForceCalculation.h"
+#include "strategies/PositionCalculation.h"
+#include "strategies/VelocityCalculation.h"
 #include "utils/Arguments.h"
 #include "utils/ArrayUtils.h"
+#include "utils/PathUtils.h"
 #include "utils/StringUtils.h"
+#include <filesystem>
 #include <iostream>
+#include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
+namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
@@ -27,13 +36,30 @@ int main(int argc, char *argv[]) {
         spdlog::set_pattern("[%^%l%$] %v");
 #endif
 
-    // parse command line arguments
+    // check for invalid syntax (not enough args)
+    if (argc < 2)
+        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
+
     std::string filename = argv[argc - 1];
+    std::unique_ptr<Simulation> sim;
 
+    // initialize simulation-relevant objects
     Arguments args;
-    CLIParser::parseArguments(argc, argv, args);
+    ParticleContainer pc;
 
-    // run desired simulation based on user choice
-    auto sim = SimulationFactory::createSimulation(args.sim, filename, args);
+    // check if the input file is an xml file, otherwise use text file initialization methods
+    if (PathUtils::isXmlFile(filename)) {
+        SPDLOG_DEBUG("Input file is an XML file. Command line arguments will have precedence.");
+        XMLReader r(filename);
+        r.readXML(args, pc);
+        CLIParser::parseArguments(argc, argv, args);
+        sim = SimulationFactory::createSimulation(args.sim, pc, args);
+    } else {
+        SPDLOG_DEBUG("Input file is unspecified or NOT an XML file.");
+        CLIParser::parseArguments(argc, argv, args);
+        sim = SimulationFactory::createSimulation(args.sim, filename, args);
+    }
+
+    // run simulation with parsed arguments
     sim->runSimulation();
 }

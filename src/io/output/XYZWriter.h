@@ -59,8 +59,8 @@ class XYZWriter : public FileWriter {
      * program execution on error.
      *
      * @param particles The ParticleContainer.
-     * @param iteration The number of the current iteration, used to generate a
-     * unique filename.
+     * @param iteration The number of the current iteration, used to generate a unique filename.
+     * @param total The total number of iterations, used to display the current percentage.
      */
-    void writeParticles(const ParticleContainer &particles, int iteration) override;
+    void writeParticles(const ParticleContainer &particles, int iteration, int total) override;
 };

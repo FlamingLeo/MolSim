@@ -1,5 +1,6 @@
 #include "VTKWriter.h"
 #include "utils/CLIUtils.h"
+#include "utils/StringUtils.h"
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -73,10 +74,13 @@ void VTKWriter::initializeOutput(int numParticles) {
     SPDLOG_TRACE("Initialized new VTK object.");
 }
 
-void VTKWriter::writeFile(int iteration) {
+void VTKWriter::writeFile(int iteration, int total) {
     // before we do anything, check if there is something valid to write
     if (!m_vtkFile)
         CLIUtils::error("Uninitialized VTK file!", "", false);
+
+    // get passed percentage
+    const int percentage = CLIUtils::getPercentage(iteration, total);
 
     // generate unique filename based on iteration
     std::stringstream strstr;
@@ -91,7 +95,8 @@ void VTKWriter::writeFile(int iteration) {
 
     // write file using vtk library
     VTKFile(file, *m_vtkFile);
-    SPDLOG_INFO("Wrote contents to VTK file {}.", strstr.str());
+    SPDLOG_INFO("Wrote contents to VTK file {} ({} / {}) ({}%).", strstr.str(), StringUtils::fromNumber(iteration),
+                StringUtils::fromNumber(total), StringUtils::fromNumber(percentage));
     delete m_vtkFile;
     SPDLOG_TRACE("Deleted VTK object.");
 }
@@ -129,11 +134,12 @@ void VTKWriter::plotParticle(const Particle &p) {
     SPDLOG_TRACE("Plotted Particle - {}", p.toString());
 }
 
-void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration) {
-    initializeOutput(particles.size());
+void VTKWriter::writeParticles(const ParticleContainer &particles, int iteration, int total) {
+    initializeOutput(particles.activeSize());
 
     for (auto &p : particles)
-        plotParticle(p);
+        if (p.isActive())
+            plotParticle(p);
 
-    writeFile(iteration);
+    writeFile(iteration, total);
 }
