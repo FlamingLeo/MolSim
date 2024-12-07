@@ -8,6 +8,7 @@
 #include <vector>
 
 void calculateX(ParticleContainer &particles, double delta_t, CellContainer *) {
+    SPDLOG_TRACE("Calculating new position...");
     for (auto &p : particles) {
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
@@ -19,6 +20,7 @@ void calculateX(ParticleContainer &particles, double delta_t, CellContainer *) {
 }
 
 void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *lc) {
+    SPDLOG_TRACE("Calculating new position (linked cells)...");
     for (auto &p : particles) {
         if (!p.isActive())
             continue;

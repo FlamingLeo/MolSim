@@ -27,6 +27,15 @@ class Cuboid {
     /// @brief Mass \f$ m \f$ of the particles in the cuboid.
     double m;
 
+    /// @brief Type of the particles in the cuboid.
+    int type;
+
+    /// @brief Depth \f$ \epsilon \f$ of the potential well of the particles in the cuboid.
+    double epsilon;
+
+    /// @brief Distance \f$ \sigma \f$ where the Lennard-Jones potential reaches zero of the particles in the cuboid.
+    double sigma;
+
     /// @brief Starting velocity \f$ v \f$ of the particles in the cuboid (before added Maxwell-Boltzmann
     /// perturbations).
     std::array<double, 3> v;
@@ -48,9 +57,13 @@ class Cuboid {
      * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the cuboid
      * @param h The distance \f$ h \f$ between the particles in the cuboid
      * @param m The mass \f$ m \f$ of the particles in the cuboid
+     * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
-           const std::array<double, 3> &v, double h, double m);
+           const std::array<double, 3> &v, double h, double m, int type = TYPE_DEFAULT,
+           double epsilon = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /* getters */
     /**

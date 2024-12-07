@@ -20,7 +20,7 @@
 enum class WriterType { VTK, XYZ, NIL };
 
 /// @brief Enum containg each possible Simulation to be performed.
-enum class SimulationType { GRAVITY, LJ, LJLC };
+enum class SimulationType { GRAVITY, LJ };
 
 /**
  * @brief Struct containing each option configurable via command line arguments.
@@ -32,22 +32,20 @@ struct Arguments {
     double endTime{};
     /// @brief Duration of a timestep (default: simulation-specific).
     double delta_t{};
-    /// @brief Depth of the potential well (LJ parameter, default: 5).
-    double epsilon{5};
-    /// @brief Distance where the LJ potential reaches zero (LJ parameter, default: 1).
-    double sigma{1};
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
     /// @brief Domain size for linked cells (default: unspecified, will fail if not specified!)
     std::array<double, 3> domainSize{INF, INF, INF};
-    /// @brief Cutoff radius for linked cells (default: unspecified, will fail if not specified!)
-    double cutoffRadius{INF};
+    /// @brief Cutoff radius for linked cells (default: 3.0)
+    double cutoffRadius{3.0};
     /// @brief The basename of the output file (default: type-specific).
     std::string basename{};
     /// @brief Output type (default: VTK).
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: LJ).
     SimulationType sim{SimulationType::LJ};
+    /// @brief Decide, whether or not to use the linked cell method (default: true)
+    bool linkedCells{true};
     /// @brief The type of condition to be applied at each boundary (default: outflow)
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,

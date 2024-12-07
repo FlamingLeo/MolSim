@@ -45,8 +45,6 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     EXPECT_DOUBLE_EQ(args.startTime, 0.0);
     EXPECT_DOUBLE_EQ(args.endTime, 10.0);
     EXPECT_DOUBLE_EQ(args.delta_t, 0.01);
-    EXPECT_DOUBLE_EQ(args.epsilon, 1.0);
-    EXPECT_DOUBLE_EQ(args.sigma, 1.0);
     EXPECT_EQ(args.itFreq, 100);
     EXPECT_EQ(args.basename, "MD_vtk");
     EXPECT_EQ(args.type, WriterType::VTK);

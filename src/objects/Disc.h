@@ -32,6 +32,15 @@ class Disc {
     /// @brief Mass \f$ m \f$ of the particles in the disc.
     double m;
 
+    /// @brief Type of the particles in the disc.
+    int type;
+
+    /// @brief Depth \f$ \epsilon \f$ of the potential well of the particles in the disc.
+    double epsilon;
+
+    /// @brief Distance \f$ \sigma \f$ where the Lennard-Jones potential reaches zero of the particles in the disc.
+    double sigma;
+
     /// @brief Starting velocity \f$ v \f$ of the particles in the disc (before adding Maxwell-Boltzmann
     /// perturbations).
     std::array<double, 3> v;
@@ -65,9 +74,12 @@ class Disc {
      * disc.
      * @param h The distance \f$ h \f$ between the particles in the disc.
      * @param m The mass \f$ m \f$ of the particles in the disc.
+     * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v, double h,
-         double m);
+         double m, int type = TYPE_DEFAULT, double epsilon = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /**
      * @brief Gets the position \f$ x \f$ of this disc.

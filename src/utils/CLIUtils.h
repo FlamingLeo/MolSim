@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#define OPTSTRING "s:e:d:f:b:o:t:B:D:E:R:S:h"
+#define OPTSTRING "s:e:d:f:b:o:t:B:D:R:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 #define RED "\e[0;31m"
@@ -33,9 +33,9 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Mapping from getopt option characters to their full names.
  */
 static inline std::unordered_map<char, std::string> optionNames = {
-    {'s', "Start time"},       {'e', "End time"},    {'d', "Timestep"},        {'b', "Basename"},
-    {'f', "Output frequency"}, {'o', "Output type"}, {'t', "Simulation type"}, {'B', "Boundary Conditions"},
-    {'D', "Domain Size"},      {'E', "Epsilon"},     {'R', "Cutoff Radius"},   {'S', "Sigma"}};
+    {'s', "Start time"},       {'e', "End time"},     {'d', "Timestep"},        {'b', "Basename"},
+    {'f', "Output frequency"}, {'o', "Output type"},  {'t', "Simulation type"}, {'B', "Boundary Conditions"},
+    {'D', "Domain Size"},      {'R', "Cutoff Radius"}};
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.
@@ -64,10 +64,8 @@ static inline void printHelp() {
            "  - r        : Reflective (particles are reflected off the domain boundaries).\n"
            "-D <x,y,z>   : Sets the domain size (decimal array) for the linked cell method (MUST be specified if not "
            "present in input!).\n"
-           "-E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).\n"
            "-R <number>  : Sets the cutoff radius (decimal) for the linked cell method (MUST be specified if not "
            "present in input!).\n"
-           "-S <number>  : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).\n"
            "-f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be "
            "written (default: 10).\n"
            "-o <type>    : Sets the output file type and directory (default: vtk).\n"

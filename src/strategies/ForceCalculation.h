@@ -21,7 +21,7 @@
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_Gravity(ParticleContainer &particles, double, double, double, CellContainer *lc = nullptr);
+void calculateF_Gravity(ParticleContainer &particles, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a Gravity simulation.
@@ -35,7 +35,7 @@ void calculateF_Gravity(ParticleContainer &particles, double, double, double, Ce
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, double, CellContainer *lc = nullptr);
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation.
@@ -57,12 +57,9 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, do
  * @image html lj-complete.png A comparison of all LJ force calculation functions.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma, double,
-                             CellContainer *lc = nullptr);
+void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a LennardJones simulation and a
@@ -80,12 +77,9 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
  * @image html lj-cutoff.png A comparison of the cutoff LJ force calculation methods alongside the linked cell variants.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param cutoff The cutoff radius.
  */
-void calculateF_LennardJonesCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
-                                   CellContainer *);
+void calculateF_LennardJonesCutoff(ParticleContainer &particles, double cutoff, CellContainer *);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
@@ -100,12 +94,9 @@ void calculateF_LennardJonesCutoff(ParticleContainer &particles, double epsilon,
  * **Complexity:** \f$ O(N^2) \f$
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma, double,
-                                     CellContainer *lc = nullptr);
+void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a LennardJones
@@ -117,13 +108,10 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
  * **Complexity:** \f$ O(N^2) \f$
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param cutoff The cutoff radius.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
-                                           CellContainer *lc = nullptr);
+void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double cutoff, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a linked-cell LennardJones
@@ -141,11 +129,9 @@ void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double 
  * @image html lj-lc.png A comparison of the linked-cell LJ methods.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc The CellContainer for the linked cells method.
  */
-void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, double, CellContainer *lc);
+void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc);
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a linked-cell
@@ -157,9 +143,6 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
  * **Complexity:** \f$ O(N) \f$
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
- * @param epsilon The depth of the potential well \f$ \epsilon \f$
- * @param sigma The distance \f$ \sigma \f$ at which the particle-particle potential energy is zero.
  * @param lc The CellContainer for the linked cells method.
  */
-void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, double,
-                                        CellContainer *lc);
+void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, CellContainer *lc);

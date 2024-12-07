@@ -10,8 +10,9 @@
 #include <vector>
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
-           double h, double m)
-    : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+           double h, double m, int type, double epsilon, double sigma)
+    : x{x}, r{r}, h{h}, m{m}, type{type}, epsilon{epsilon}, sigma{sigma}, v{v}, mean_velocity{0.1},
+      particles{particles} {
     if (r < 0)
         CLIUtils::error("Radius must be 0 or greater, got", StringUtils::fromNumber(r));
     if (h <= 0)
@@ -47,7 +48,7 @@ void Disc::initializeDisc() {
     for (auto &p : positions) {
         std::array<double, 3> vel =
             ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
-        particles.addParticle(p, vel, m);
+        particles.addParticle(p, vel, m, type, epsilon, sigma);
     }
 }
 

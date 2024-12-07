@@ -5,7 +5,7 @@
 #include <functional>
 #include <spdlog/spdlog.h>
 
-void calculateF_Gravity(ParticleContainer &particles, double, double, double, CellContainer *) {
+void calculateF_Gravity(ParticleContainer &particles, double, CellContainer *) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
@@ -17,7 +17,7 @@ void calculateF_Gravity(ParticleContainer &particles, double, double, double, Ce
     }
 }
 
-void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, double, CellContainer *) {
+void calculateF_GravityThirdLaw(ParticleContainer &particles, double, CellContainer *) {
     // loop over unique pairs
     for (auto pair = particles.beginPairs(); pair != particles.endPairs(); ++pair) {
         auto &p1 = (*pair).first;
@@ -39,10 +39,12 @@ void calculateF_GravityThirdLaw(ParticleContainer &particles, double, double, do
     }
 }
 
-void calculateF_LennardJones(ParticleContainer &particles, double epsilon, double sigma, double, CellContainer *) {
+void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer *) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
+                double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
+                double sigma = (p1.getSigma() + p2.getSigma()) / 2;
                 double distNorm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
                 p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(
                                         ((-24 * epsilon) / std::pow(distNorm, 2)) *
@@ -53,11 +55,12 @@ void calculateF_LennardJones(ParticleContainer &particles, double epsilon, doubl
     }
 }
 
-void calculateF_LennardJonesCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
-                                   CellContainer *) {
+void calculateF_LennardJonesCutoff(ParticleContainer &particles, double cutoff, CellContainer *) {
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
+                double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
+                double sigma = (p1.getSigma() + p2.getSigma()) / 2;
                 double distNorm = ArrayUtils::L2Norm(p1.getX() - p2.getX());
                 if (distNorm <= cutoff) {
                     p1.setF(p1.getF() + ArrayUtils::elementWiseScalarOp(((-24 * epsilon) / std::pow(distNorm, 2)) *
@@ -70,8 +73,7 @@ void calculateF_LennardJonesCutoff(ParticleContainer &particles, double epsilon,
     }
 }
 
-void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilon, double sigma, double,
-                                     CellContainer *) {
+void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double, CellContainer *) {
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];
@@ -85,6 +87,9 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
             if (distNorm == 0)
                 continue;
 
+            double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
+            double sigma = (p1.getSigma() + p2.getSigma()) / 2;
+
             double forceMag = (-24 * epsilon / std::pow(distNorm, 2)) *
                               (std::pow(sigma / distNorm, 6) - 2 * std::pow(sigma / distNorm, 12));
             auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
@@ -96,8 +101,7 @@ void calculateF_LennardJonesThirdLaw(ParticleContainer &particles, double epsilo
     }
 }
 
-void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double epsilon, double sigma, double cutoff,
-                                           CellContainer *) {
+void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double cutoff, CellContainer *) {
     // loop over unique pairs
     for (size_t i = 0; i < particles.size(); ++i) {
         auto &p1 = particles[i];
@@ -108,6 +112,9 @@ void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double 
             double distNorm = ArrayUtils::L2Norm(distVec);
 
             if (distNorm <= cutoff) {
+                double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
+                double sigma = (p1.getSigma() + p2.getSigma()) / 2;
+
                 double forceMag = (-24 * epsilon / std::pow(distNorm, 2)) *
                                   (std::pow(sigma / distNorm, 6) - 2 * std::pow(sigma / distNorm, 12));
                 auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
@@ -120,7 +127,7 @@ void calculateF_LennardJonesThirdLawCutoff(ParticleContainer &particles, double 
     }
 }
 
-void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, double sigma, double, CellContainer *lc) {
+void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all particles i in cell ic
@@ -144,6 +151,9 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
 
                         // compute force if distance is less than cutoff
                         if (distNorm <= lc->getCutoff()) {
+                            double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
+                            double sigma = (i.getSigma() + j.getSigma()) / 2;
+
                             double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
                                               (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
                             auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
@@ -156,8 +166,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double epsilon, do
     }
 }
 
-void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double epsilon, double sigma, double,
-                                        CellContainer *lc) {
+void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
@@ -183,6 +192,9 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double eps
 
                     // compute force if distance is less than cutoff
                     if (distNorm <= lc->getCutoff()) {
+                        double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
+                        double sigma = (i.getSigma() + j.getSigma()) / 2;
+
                         double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
                                           (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
                         auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());

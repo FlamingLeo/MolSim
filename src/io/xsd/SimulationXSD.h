@@ -623,8 +623,6 @@ class SimType;
 /**
  * @brief Class corresponding to the %argsType schema type.
  *
- * Contains the configurable arguments for the simulation.
- *
  * @nosubgrouping
  */
 class ArgsType : public ::xml_schema::Type {
@@ -634,8 +632,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %startTime
      * optional element.
-     *
-     * The start time of the simulation (optional).
      */
     //@{
 
@@ -697,8 +693,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %endTime
      * optional element.
-     *
-     * The end time of the simulation (optional).
      */
     //@{
 
@@ -760,8 +754,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %delta_t
      * optional element.
-     *
-     * The duration of a simulation timestep (optional).
      */
     //@{
 
@@ -819,138 +811,10 @@ class ArgsType : public ::xml_schema::Type {
     //@}
 
     /**
-     * @name epsilon
-     *
-     * @brief Accessor and modifier functions for the %epsilon
-     * optional element.
-     *
-     * The depth of the potential well (Lennard-Jones parameter, optional).
-     */
-    //@{
-
-    /**
-     * @brief Element type.
-     */
-    typedef ::xml_schema::Double EpsilonType;
-
-    /**
-     * @brief Element optional container type.
-     */
-    typedef ::xsd::cxx::tree::optional<EpsilonType> EpsilonOptional;
-
-    /**
-     * @brief Element traits type.
-     */
-    typedef ::xsd::cxx::tree::traits<EpsilonType, char, ::xsd::cxx::tree::schema_type::double_> EpsilonTraits;
-
-    /**
-     * @brief Return a read-only (constant) reference to the element
-     * container.
-     *
-     * @return A constant reference to the optional container.
-     */
-    const EpsilonOptional &epsilon() const;
-
-    /**
-     * @brief Return a read-write reference to the element container.
-     *
-     * @return A reference to the optional container.
-     */
-    EpsilonOptional &epsilon();
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x A new value to set.
-     *
-     * This function makes a copy of its argument and sets it as
-     * the new value of the element.
-     */
-    void epsilon(const EpsilonType &x);
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x An optional container with the new value to set.
-     *
-     * If the value is present in @a x then this function makes a copy
-     * of this value and sets it as the new value of the element.
-     * Otherwise the element container is set the 'not present' state.
-     */
-    void epsilon(const EpsilonOptional &x);
-
-    //@}
-
-    /**
-     * @name sigma
-     *
-     * @brief Accessor and modifier functions for the %sigma
-     * optional element.
-     *
-     * The distance where the Lennard-Jones potential reaches zero
-    (optional). */
-    //@{
-
-    /**
-     * @brief Element type.
-     */
-    typedef ::xml_schema::Double SigmaType;
-
-    /**
-     * @brief Element optional container type.
-     */
-    typedef ::xsd::cxx::tree::optional<SigmaType> SigmaOptional;
-
-    /**
-     * @brief Element traits type.
-     */
-    typedef ::xsd::cxx::tree::traits<SigmaType, char, ::xsd::cxx::tree::schema_type::double_> SigmaTraits;
-
-    /**
-     * @brief Return a read-only (constant) reference to the element
-     * container.
-     *
-     * @return A constant reference to the optional container.
-     */
-    const SigmaOptional &sigma() const;
-
-    /**
-     * @brief Return a read-write reference to the element container.
-     *
-     * @return A reference to the optional container.
-     */
-    SigmaOptional &sigma();
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x A new value to set.
-     *
-     * This function makes a copy of its argument and sets it as
-     * the new value of the element.
-     */
-    void sigma(const SigmaType &x);
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x An optional container with the new value to set.
-     *
-     * If the value is present in @a x then this function makes a copy
-     * of this value and sets it as the new value of the element.
-     * Otherwise the element container is set the 'not present' state.
-     */
-    void sigma(const SigmaOptional &x);
-
-    //@}
-
-    /**
      * @name frequency
      *
      * @brief Accessor and modifier functions for the %frequency
      * optional element.
-     *
-     * The frequency of logging output (optional).
      */
     //@{
 
@@ -1012,8 +876,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %basename
      * optional element.
-     *
-     * The base name for output files (optional).
      */
     //@{
 
@@ -1085,8 +947,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %output
      * optional element.
-     *
-     * The output type (vtk / xyz / nil optional).
      */
     //@{
 
@@ -1158,8 +1018,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %domainSize
      * optional element.
-     *
-     * The size of the simulation domain (optional).
      */
     //@{
 
@@ -1231,9 +1089,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %cutoffRadius
      * optional element.
-     *
-     * The cutoff radius for linked-cell methods (must be specified when
-     * using the linked-cell method).
      */
     //@{
 
@@ -1295,9 +1150,6 @@ class ArgsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %bdConditions
      * optional element.
-     *
-     * The boundary conditions to be applied at each boundary. (must be
-     * specified when using the linked-cell method).
      */
     //@{
 
@@ -1438,8 +1290,6 @@ class ArgsType : public ::xml_schema::Type {
     StartTimeOptional startTime_;
     EndTimeOptional endTime_;
     Delta_tOptional delta_t_;
-    EpsilonOptional epsilon_;
-    SigmaOptional sigma_;
     FrequencyOptional frequency_;
     BasenameOptional basename_;
     OutputOptional output_;
@@ -1453,8 +1303,6 @@ class ArgsType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %bdConditionsType schema type.
  *
- * The boundary conditions for each direction (outflow, reflective).
- *
  * @nosubgrouping
  */
 class BdConditionsType : public ::xml_schema::Type {
@@ -1464,8 +1312,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %n
      * required element.
-     *
-     * The northern boundary condition.
      */
     //@{
 
@@ -1520,8 +1366,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %s
      * required element.
-     *
-     * The southern boundary condition.
      */
     //@{
 
@@ -1576,8 +1420,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %w
      * required element.
-     *
-     * The western boundary condition.
      */
     //@{
 
@@ -1632,8 +1474,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %e
      * required element.
-     *
-     * The eastern boundary condition.
      */
     //@{
 
@@ -1688,8 +1528,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %a
      * required element.
-     *
-     * The boundary condition above.
      */
     //@{
 
@@ -1744,8 +1582,6 @@ class BdConditionsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %b
      * required element.
-     *
-     * The boundary condition below.
      */
     //@{
 
@@ -1879,8 +1715,6 @@ class BdConditionsType : public ::xml_schema::Type {
 /**
  * @brief Enumeration class corresponding to the %boundaryConditionType
  * schema type.
- *
- * The type of boundary condition (outflow, reflective).
  */
 class BoundaryConditionType : public ::xml_schema::String {
   public:
@@ -2008,8 +1842,6 @@ class BoundaryConditionType : public ::xml_schema::String {
 /**
  * @brief Class corresponding to the %positionType schema type.
  *
- * The position of a particle or a cluster in the simulation space.
- *
  * @nosubgrouping
  */
 class PositionType : public ::xml_schema::Type {
@@ -2019,8 +1851,6 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
-     *
-     * The x coordinate of the position.
      */
     //@{
 
@@ -2065,8 +1895,6 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
-     *
-     * The y coordinate of the position.
      */
     //@{
 
@@ -2111,8 +1939,6 @@ class PositionType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
-     *
-     * The z coordinate of the position.
      */
     //@{
 
@@ -2233,8 +2059,6 @@ class PositionType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %velocityType schema type.
  *
- * The velocity of a particle or a cluster in the simulation space.
- *
  * @nosubgrouping
  */
 class VelocityType : public ::xml_schema::Type {
@@ -2244,8 +2068,6 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
-     *
-     * The velocity in the x direction.
      */
     //@{
 
@@ -2290,8 +2112,6 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
-     *
-     * The velocity in the y direction.
      */
     //@{
 
@@ -2336,8 +2156,6 @@ class VelocityType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
-     *
-     * The velocity in the z direction.
      */
     //@{
 
@@ -2458,8 +2276,6 @@ class VelocityType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %sizeType schema type.
  *
- * The dimensions of a particle or a cluster in the simulation space.
- *
  * @nosubgrouping
  */
 class SizeType : public ::xml_schema::Type {
@@ -2469,8 +2285,6 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %x
      * required element.
-     *
-     * The size along the x axis.
      */
     //@{
 
@@ -2515,8 +2329,6 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %y
      * required element.
-     *
-     * The size along the y axis.
      */
     //@{
 
@@ -2561,8 +2373,6 @@ class SizeType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %z
      * required element.
-     *
-     * The size along the z axis.
      */
     //@{
 
@@ -2683,8 +2493,6 @@ class SizeType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %cuboidType schema type.
  *
- * A cuboid of particles.
- *
  * @nosubgrouping
  */
 class CuboidType : public ::xml_schema::Type {
@@ -2694,8 +2502,6 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
-     *
-     * The lower-left corner (origin) of the cuboid.
      */
     //@{
 
@@ -2750,9 +2556,6 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
-     *
-     * The core velocity of the cuboid particles before applying the
-     * Maxwell-Boltzmann distribution.
      */
     //@{
 
@@ -2807,8 +2610,6 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %size
      * required element.
-     *
-     * The dimensions of the cuboid.
      */
     //@{
 
@@ -2863,8 +2664,6 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %distance
      * required element.
-     *
-     * The spacing between particles in the cuboid.
      */
     //@{
 
@@ -2909,8 +2708,6 @@ class CuboidType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
-     *
-     * The mass of the cuboid particles.
      */
     //@{
 
@@ -2947,6 +2744,189 @@ class CuboidType : public ::xml_schema::Type {
      * the new value of the element.
      */
     void mass(const MassType &x);
+
+    //@}
+
+    /**
+     * @name epsilon
+     *
+     * @brief Accessor and modifier functions for the %epsilon
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double EpsilonType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<EpsilonType> EpsilonOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<EpsilonType, char, ::xsd::cxx::tree::schema_type::double_> EpsilonTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const EpsilonOptional &epsilon() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    EpsilonOptional &epsilon();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void epsilon(const EpsilonType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void epsilon(const EpsilonOptional &x);
+
+    //@}
+
+    /**
+     * @name sigma
+     *
+     * @brief Accessor and modifier functions for the %sigma
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double SigmaType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<SigmaType> SigmaOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<SigmaType, char, ::xsd::cxx::tree::schema_type::double_> SigmaTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const SigmaOptional &sigma() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    SigmaOptional &sigma();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void sigma(const SigmaType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void sigma(const SigmaOptional &x);
+
+    //@}
+
+    /**
+     * @name type
+     *
+     * @brief Accessor and modifier functions for the %type
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TypeType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TypeOptional &type() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TypeOptional &type();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
 
     //@}
 
@@ -3037,14 +3017,15 @@ class CuboidType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<SizeType> size_;
     ::xsd::cxx::tree::one<DistanceType> distance_;
     ::xsd::cxx::tree::one<MassType> mass_;
+    EpsilonOptional epsilon_;
+    SigmaOptional sigma_;
+    TypeOptional type_;
 
     //@endcond
 };
 
 /**
  * @brief Class corresponding to the %particleType schema type.
- *
- * An individual particle.
  *
  * @nosubgrouping
  */
@@ -3055,8 +3036,6 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
-     *
-     * The position of the particle.
      */
     //@{
 
@@ -3111,8 +3090,6 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
-     *
-     * The velocity of the particle.
      */
     //@{
 
@@ -3167,8 +3144,6 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
-     *
-     * The mass of the particle.
      */
     //@{
 
@@ -3209,12 +3184,132 @@ class ParticleType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name epsilon
+     *
+     * @brief Accessor and modifier functions for the %epsilon
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double EpsilonType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<EpsilonType> EpsilonOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<EpsilonType, char, ::xsd::cxx::tree::schema_type::double_> EpsilonTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const EpsilonOptional &epsilon() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    EpsilonOptional &epsilon();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void epsilon(const EpsilonType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void epsilon(const EpsilonOptional &x);
+
+    //@}
+
+    /**
+     * @name sigma
+     *
+     * @brief Accessor and modifier functions for the %sigma
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double SigmaType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<SigmaType> SigmaOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<SigmaType, char, ::xsd::cxx::tree::schema_type::double_> SigmaTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const SigmaOptional &sigma() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    SigmaOptional &sigma();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void sigma(const SigmaType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void sigma(const SigmaOptional &x);
+
+    //@}
+
+    /**
      * @name type
      *
      * @brief Accessor and modifier functions for the %type
-     * required element.
-     *
-     * The type of the particle (currently unused).
+     * optional element.
      */
     //@{
 
@@ -3224,23 +3319,29 @@ class ParticleType : public ::xml_schema::Type {
     typedef ::xml_schema::Int TypeType;
 
     /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
      * @brief Element traits type.
      */
     typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
 
     /**
-     * @brief Return a read-only (constant) reference to the element.
+     * @brief Return a read-only (constant) reference to the element
+     * container.
      *
-     * @return A constant reference to the element.
+     * @return A constant reference to the optional container.
      */
-    const TypeType &type() const;
+    const TypeOptional &type() const;
 
     /**
-     * @brief Return a read-write reference to the element.
+     * @brief Return a read-write reference to the element container.
      *
-     * @return A reference to the element.
+     * @return A reference to the optional container.
      */
-    TypeType &type();
+    TypeOptional &type();
 
     /**
      * @brief Set the element value.
@@ -3251,6 +3352,17 @@ class ParticleType : public ::xml_schema::Type {
      * the new value of the element.
      */
     void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
 
     //@}
 
@@ -3263,7 +3375,7 @@ class ParticleType : public ::xml_schema::Type {
      * @brief Create an instance from the ultimate base and
      * initializers for required elements and attributes.
      */
-    ParticleType(const PositionType &, const VelocityType &, const MassType &, const TypeType &);
+    ParticleType(const PositionType &, const VelocityType &, const MassType &);
 
     /**
      * @brief Create an instance from the ultimate base and
@@ -3273,7 +3385,7 @@ class ParticleType : public ::xml_schema::Type {
      * This constructor will try to use the passed values directly
      * instead of making copies.
      */
-    ParticleType(::std::unique_ptr<PositionType>, ::std::unique_ptr<VelocityType>, const MassType &, const TypeType &);
+    ParticleType(::std::unique_ptr<PositionType>, ::std::unique_ptr<VelocityType>, const MassType &);
 
     /**
      * @brief Create an instance from a DOM element.
@@ -3338,15 +3450,15 @@ class ParticleType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<PositionType> position_;
     ::xsd::cxx::tree::one<VelocityType> velocity_;
     ::xsd::cxx::tree::one<MassType> mass_;
-    ::xsd::cxx::tree::one<TypeType> type_;
+    EpsilonOptional epsilon_;
+    SigmaOptional sigma_;
+    TypeOptional type_;
 
     //@endcond
 };
 
 /**
  * @brief Class corresponding to the %discType schema type.
- *
- * A 2D disc of particles in a grid formation.
  *
  * @nosubgrouping
  */
@@ -3357,8 +3469,6 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %position
      * required element.
-     *
-     * The position of the disc's center.
      */
     //@{
 
@@ -3413,9 +3523,6 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %velocity
      * required element.
-     *
-     * The core velocity of the disc particles before applying the
-     * Maxwell-Boltzmann distribution..
      */
     //@{
 
@@ -3470,8 +3577,6 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %radius
      * required element.
-     *
-     * The radius of the disc.
      */
     //@{
 
@@ -3516,8 +3621,6 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %distance
      * required element.
-     *
-     * The spacing between the disc particles.
      */
     //@{
 
@@ -3562,8 +3665,6 @@ class DiscType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %mass
      * required element.
-     *
-     * The mass of the disc particles.
      */
     //@{
 
@@ -3600,6 +3701,189 @@ class DiscType : public ::xml_schema::Type {
      * the new value of the element.
      */
     void mass(const MassType &x);
+
+    //@}
+
+    /**
+     * @name epsilon
+     *
+     * @brief Accessor and modifier functions for the %epsilon
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double EpsilonType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<EpsilonType> EpsilonOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<EpsilonType, char, ::xsd::cxx::tree::schema_type::double_> EpsilonTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const EpsilonOptional &epsilon() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    EpsilonOptional &epsilon();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void epsilon(const EpsilonType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void epsilon(const EpsilonOptional &x);
+
+    //@}
+
+    /**
+     * @name sigma
+     *
+     * @brief Accessor and modifier functions for the %sigma
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double SigmaType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<SigmaType> SigmaOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<SigmaType, char, ::xsd::cxx::tree::schema_type::double_> SigmaTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const SigmaOptional &sigma() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    SigmaOptional &sigma();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void sigma(const SigmaType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void sigma(const SigmaOptional &x);
+
+    //@}
+
+    /**
+     * @name type
+     *
+     * @brief Accessor and modifier functions for the %type
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TypeType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TypeOptional &type() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TypeOptional &type();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
 
     //@}
 
@@ -3690,14 +3974,15 @@ class DiscType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<RadiusType> radius_;
     ::xsd::cxx::tree::one<DistanceType> distance_;
     ::xsd::cxx::tree::one<MassType> mass_;
+    EpsilonOptional epsilon_;
+    SigmaOptional sigma_;
+    TypeOptional type_;
 
     //@endcond
 };
 
 /**
  * @brief Class corresponding to the %objectsType schema type.
- *
- * The clusters used in the simulation (cuboid, particle, disc).
  *
  * @nosubgrouping
  */
@@ -3708,8 +3993,6 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %cuboid
      * sequence element.
-     *
-     * A cuboid of particles.
      */
     //@{
 
@@ -3771,8 +4054,6 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %particle
      * sequence element.
-     *
-     * A particle.
      */
     //@{
 
@@ -3834,8 +4115,6 @@ class ObjectsType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %disc
      * sequence element.
-     *
-     * A disc of particles.
      */
     //@{
 
@@ -3973,8 +4252,6 @@ class ObjectsType : public ::xml_schema::Type {
 /**
  * @brief Class corresponding to the %simType schema type.
  *
- * The simulation configuration, including arguments, type, and objects.
- *
  * @nosubgrouping
  */
 class SimType : public ::xml_schema::Type {
@@ -3984,8 +4261,6 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %args
      * optional element.
-     *
-     * Configurable arguments for the simulation (optional).
      */
     //@{
 
@@ -4057,8 +4332,6 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %type
      * required element.
-     *
-     * The type of simulation to be performed (gravity, lj, ljlc).
      */
     //@{
 
@@ -4109,12 +4382,71 @@ class SimType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name linkedCells
+     *
+     * @brief Accessor and modifier functions for the %linkedCells
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Boolean LinkedCellsType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<LinkedCellsType> LinkedCellsOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<LinkedCellsType, char> LinkedCellsTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const LinkedCellsOptional &linkedCells() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    LinkedCellsOptional &linkedCells();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void linkedCells(const LinkedCellsType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void linkedCells(const LinkedCellsOptional &x);
+
+    //@}
+
+    /**
      * @name objects
      *
      * @brief Accessor and modifier functions for the %objects
      * required element.
-     *
-     * The collection of objects in the simulation.
      */
     //@{
 
@@ -4169,8 +4501,6 @@ class SimType : public ::xml_schema::Type {
      *
      * @brief Accessor and modifier functions for the %totalParticles
      * optional element.
-     *
-     * The total number of particles in the simulation (optional).
      */
     //@{
 
@@ -4310,6 +4640,7 @@ class SimType : public ::xml_schema::Type {
   protected:
     ArgsOptional args_;
     ::xsd::cxx::tree::one<TypeType> type_;
+    LinkedCellsOptional linkedCells_;
     ::xsd::cxx::tree::one<ObjectsType> objects_;
     TotalParticlesOptional totalParticles_;
 
@@ -4324,8 +4655,6 @@ class SimType : public ::xml_schema::Type {
 
 /**
  * @name Parsing functions for the %sim document root.
- *
- * The root element representing the simulation configuration.
  */
 //@{
 
@@ -4550,8 +4879,6 @@ class SimType : public ::xml_schema::Type {
 
 /**
  * @name Serialization functions for the %sim document root.
- *
- * The root element representing the simulation configuration.
  */
 //@{
 

@@ -57,8 +57,6 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
         LOAD_ARGS_SET(startTime, 0);
         LOAD_ARGS_SET(endTime, 1);
         LOAD_ARGS_SET(delta_t, 2);
-        LOAD_ARGS(epsilon);
-        LOAD_ARGS(sigma);
         LOAD_ARGS_2(frequency, itFreq);
         LOAD_ARGS_SET(basename, 3);
         LOAD_ARGS_TYPE(output);
@@ -88,11 +86,15 @@ void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc)
                                    static_cast<size_t>(cuboid.size().z())};
         double distance = cuboid.distance();
         double mass = cuboid.mass();
+        int type = cuboid.type().present() ? cuboid.type().get() : TYPE_DEFAULT;
+        double epsilon = cuboid.epsilon().present() ? cuboid.epsilon().get() : EPSILON_DEFAULT;
+        double sigma = cuboid.sigma().present() ? cuboid.sigma().get() : SIGMA_DEFAULT;
 
-        SPDLOG_TRACE("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}", ArrayUtils::to_string(position),
-                     ArrayUtils::to_string(velocity), ArrayUtils::to_string(size), distance, mass);
+        SPDLOG_TRACE("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}",
+                     ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), ArrayUtils::to_string(size),
+                     distance, mass, epsilon, sigma);
 
-        Cuboid cuboidObj{pc, position, size, velocity, distance, mass};
+        Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma};
         cuboidObj.initializeParticles();
     }
 }
@@ -103,12 +105,14 @@ void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleContainer &p
         std::array<double, 3> position{particle.position().x(), particle.position().y(), particle.position().z()};
         std::array<double, 3> velocity{particle.velocity().x(), particle.velocity().y(), particle.velocity().z()};
         double mass = particle.mass();
-        int type = particle.type();
+        int type = particle.type().present() ? particle.type().get() : TYPE_DEFAULT;
+        double epsilon = particle.epsilon().present() ? particle.epsilon().get() : EPSILON_DEFAULT;
+        double sigma = particle.sigma().present() ? particle.sigma().get() : SIGMA_DEFAULT;
 
-        SPDLOG_TRACE("Adding particle with x: {}, v: {}, m: {}, type: {}", ArrayUtils::to_string(position),
-                     ArrayUtils::to_string(velocity), mass, type);
+        SPDLOG_TRACE("Adding particle with x: {}, v: {}, m: {}, type: {}, eps: {}, sigma: {}",
+                     ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), mass, type, epsilon, sigma);
 
-        pc.addParticle(Particle(position, velocity, mass, type));
+        pc.addParticle(position, velocity, mass, type, epsilon, sigma);
     }
 }
 
@@ -120,11 +124,15 @@ void parseDiscs(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
         int radius = disc.radius();
         double distance = disc.distance();
         double mass = disc.mass();
+        int type = disc.type().present() ? disc.type().get() : TYPE_DEFAULT;
+        double epsilon = disc.epsilon().present() ? disc.epsilon().get() : EPSILON_DEFAULT;
+        double sigma = disc.sigma().present() ? disc.sigma().get() : SIGMA_DEFAULT;
 
-        SPDLOG_TRACE("Initializing disc with x: {}, v: {}, r: {}, h: {}, m: {}", ArrayUtils::to_string(position),
-                     ArrayUtils::to_string(velocity), radius, distance, mass);
+        SPDLOG_TRACE("Initializing disc with x: {}, v: {}, r: {}, h: {}, m: {}, eps: {}, sigma: {}",
+                     ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), radius, distance, mass, epsilon,
+                     sigma);
 
-        Disc discObj{pc, position, radius, velocity, distance, mass};
+        Disc discObj{pc, position, radius, velocity, distance, mass, type, epsilon, sigma};
         discObj.initializeDisc();
     }
 }
@@ -148,6 +156,11 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc) {
 
         args.sim = StringUtils::toSimulationType(xmlInput->type());
         SPDLOG_DEBUG("Loaded simulation: {}", xmlInput->type());
+
+        if (xmlInput->linkedCells().present()) {
+            args.linkedCells = xmlInput->linkedCells().get();
+            SPDLOG_DEBUG("Using linked cells?: {}", args.linkedCells);
+        }
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?

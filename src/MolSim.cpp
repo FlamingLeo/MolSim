@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     XMLReader r(argv[argc - 1]);
     r.readXML(args, pc);
     CLIParser::parseArguments(argc, argv, args);
-    auto sim = SimulationFactory::createSimulation(args.sim, pc, args);
+    auto sim = SimulationFactory::createSimulation(pc, args);
 
     // run simulation with parsed arguments
     sim->runSimulation();

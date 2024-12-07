@@ -9,8 +9,9 @@
 #include <string>
 
 Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
-               const std::array<double, 3> &v, double h, double m)
-    : x{x}, N{N}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+               const std::array<double, 3> &v, double h, double m, int type, double epsilon, double sigma)
+    : x{x}, N{N}, h{h}, m{m}, type{type}, epsilon{epsilon}, sigma{sigma}, v{v}, mean_velocity{0.1},
+      particles{particles} {
     SPDLOG_TRACE("Generated Cuboid (simple constructor) - x: {}, N: {}, h: {}, m: {}, v: {}, mean_v: {}",
                  ArrayUtils::to_string(x), ArrayUtils::to_string(N), h, m, ArrayUtils::to_string(v), mean_velocity);
 }
@@ -24,7 +25,7 @@ void Cuboid::initializeParticles(size_t dimensions) {
                 xyz = {x[0] + k * h, x[1] + j * h, x[2] + i * h};
                 v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, dimensions),
                                                   std::plus<>());
-                particles.addParticle(xyz, v, m);
+                particles.addParticle(xyz, v, m, type, epsilon, sigma);
             }
         }
     }

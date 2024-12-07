@@ -3,13 +3,12 @@
         <startTime>0.0</startTime>
         <endTime>5.0</endTime>
         <delta_t>0.0002</delta_t>
-        <epsilon>5.0</epsilon>
-        <sigma>1.0</sigma>
         <frequency>10</frequency>
         <basename>MD_vtk_LJ</basename>
         <output>vtk</output>
     </args>
     <type>lj</type>
+    <linkedCells>false</linkedCells>
     <objects>
         <cuboid>
             <position>
@@ -29,6 +28,8 @@
             </size>
             <distance>1.1225</distance>
             <mass>1.0</mass>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
         </cuboid>
         <cuboid>
             <position>
@@ -48,6 +49,8 @@
             </size>
             <distance>1.1225</distance>
             <mass>1.0</mass>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
         </cuboid>
     </objects>
 </sim>

@@ -107,9 +107,7 @@ Currently, the following options are supported:
   - o        : Outflow (particles get deleted once they leave the domain).
   - r        : Reflective (particles are reflected off the domain boundaries).
 -D <x,y,z>   : Sets the domain size (decimal array) for the linked cell method (MUST be specified if not present in input!).
--E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).
 -R <number>  : Sets the cutoff radius (decimal) for the linked cell method (MUST be specified if not present in input!).
--S <number>  : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).
 -f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
 -o <type>    : Sets the output file type and directory (default: vtk).
   - vtk      : Generates VTK Unstructured Grid (.vtu) files.
@@ -147,10 +145,10 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 The program supports XML input files. Currently, the following input files are included in the repository, inside the `input` directory:
 
-  -   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
-  -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
-  -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
-  -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
+-   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
+-   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
+-   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
+-   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
@@ -166,14 +164,15 @@ Complete XML input files have the following structure:
     <startTime><!-- double --></startTime>  <!-- start time -->
     <endTime><!-- double --></endTime>      <!-- end time -->
     <delta_t><!-- double --></delta_t>      <!-- time step -->
-    <epsilon><!-- double --></epsilon>      <!-- depth of the potential well -->
-    <sigma><!-- double --></sigma>          <!-- distance where LJ potential reaches zero -->
     <frequency><!-- int --></frequency>     <!-- output frequency -->
     <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
     <output><!-- vtk, xyz, nil --></output> <!-- output type -->
   </args>
   <!-- The type of the simulation. Must be specified. -->
-  <type><!-- gravity, lj, ljlc --></type>
+  <type><!-- gravity, lj --></type>
+  <!-- (Optional) Specify whether the simulation should use the linked cells method. -->
+  <!-- Currently, the gravitational simulation is unsupported with the linked cells method -->
+  <linkedCells><!-- bool --></linkedCells>
   <!-- (Optional) The total number of particles used in the simulation. -->
   <!-- Use this to reserve enough space in the ParticleContainer beforehand to potentially speed up initialization. -->
   <!-- You could theoretically specify any number here, but for optimal memory usage, it should be exact. -->
@@ -196,7 +195,11 @@ Complete XML input files have the following structure:
       </velocity>
       <!-- The particle's mass (positive). -->
       <mass><!-- double --></mass>
-      <!-- The particle's type. Currently doesn't serve any purpose. -->
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
       <type><!-- int --></type>
     </particle>
     <!-- A cuboid of particles. -->
@@ -224,6 +227,12 @@ Complete XML input files have the following structure:
       <distance><!-- double --></distance>
       <!-- The mass of each cuboid particle. -->
       <mass><!-- double --></mass>
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
+      <type><!-- int --></type>
     </cuboid>
     <!-- A 2D disc of particles. -->
     <disc>
@@ -246,6 +255,12 @@ Complete XML input files have the following structure:
       <distance><!-- double --></distance>
       <!-- The mass of each disc particle. -->
       <mass><!-- double --></mass>
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
+      <type><!-- int --></type>
     </disc>
   </objects>
 </sim>

@@ -161,8 +161,12 @@ class ParticleContainer {
      * @param x The position of the new particle.
      * @param v The velocity of the new particle.
      * @param m The mass of the new particle.
+     * @param type The type of the new particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
-    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m);
+    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
+                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.

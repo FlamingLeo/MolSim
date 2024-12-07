@@ -7,31 +7,17 @@
 #include <functional>
 #include <tuple>
 
-TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type) {
-    switch (type) {
-    case SimulationType::GRAVITY:
-    case SimulationType::LJ:
-        vf = calculateV;
-        xf = calculateX;
-        break;
-    case SimulationType::LJLC:
-        vf = calculateV;
-        xf = calculateX_LC;
-        break;
-    default:
-        CLIUtils::error("Unknown type!", "", false);
-    }
-}
-
-std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSimulationFunctions(SimulationType type,
-                                                                                                 int modifier) {
+static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFunctions_nonLC(SimulationType type,
+                                                                                             int modifier) {
+    SPDLOG_DEBUG("Getting physics functions for non-linked cell simulation...");
     switch (type) {
     case SimulationType::GRAVITY:
         SPDLOG_DEBUG("Chose physics calculations for gravitational simulation with force calculation: {}",
                      modifier ? "Naive" : "Newton's Third Law");
-        return std::make_tuple(TimeIntegrationFuncs(type), modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
+        return std::make_tuple(TimeIntegrationFuncs(type, false),
+                               modifier ? calculateF_Gravity : calculateF_GravityThirdLaw);
     case SimulationType::LJ:
-        FFunc f;
+        StrategyFactory::FFunc f;
         switch (modifier) {
         case 0:
             f = calculateF_LennardJonesThirdLaw;
@@ -54,15 +40,57 @@ std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSim
             CLIUtils::error("Unknown function modifier!", "", false);
             break;
         }
-
-        return std::make_tuple(TimeIntegrationFuncs(type), f);
-    case SimulationType::LJLC:
-        SPDLOG_DEBUG("Chose physics calculations for LJLC simulation with force calculation: {}",
-                     modifier ? "Naive" : "Newton's Third Law");
-        return std::make_tuple(TimeIntegrationFuncs(type),
-                               modifier ? calculateF_LennardJones_LC : calculateF_LennardJonesThirdLaw_LC);
+        return std::make_tuple(TimeIntegrationFuncs(type, false), f);
     default:
         CLIUtils::error("Invalid simulation type!");
     }
-    return std::make_tuple(TimeIntegrationFuncs(type), calculateF_LennardJones); // stop compiler warnings
+    return std::make_tuple(TimeIntegrationFuncs(type, false), calculateF_LennardJones); // stop compiler warnings
+}
+
+static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFunctions_LC(SimulationType type,
+                                                                                          int modifier) {
+    SPDLOG_DEBUG("Getting physics functions for linked cell simulation...");
+    switch (type) {
+    case SimulationType::GRAVITY:
+        CLIUtils::error("Linked cells method is currently unsupported with gravitational simulation!", "", false);
+        break;
+    case SimulationType::LJ:
+        StrategyFactory::FFunc f;
+        switch (modifier) {
+        case 0:
+            f = calculateF_LennardJonesThirdLaw_LC;
+            SPDLOG_DEBUG(
+                "Chose physics calculations for linked cell LJ simulation with force calculation: Newton's Third Law");
+            break;
+        case 1:
+            f = calculateF_LennardJones_LC;
+            SPDLOG_DEBUG("Chose physics calculations for linked cell LJ simulation with force calculation: Naive");
+            break;
+        default:
+            CLIUtils::error("Unknown function modifier!", "", false);
+            break;
+        }
+        return std::make_tuple(TimeIntegrationFuncs(type, true), f);
+    default:
+        CLIUtils::error("Invalid simulation type!");
+    }
+    return std::make_tuple(TimeIntegrationFuncs(type, true), calculateF_LennardJones_LC); // stop compiler warnings
+}
+
+TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type, bool lc) {
+    switch (type) {
+    case SimulationType::GRAVITY:
+    case SimulationType::LJ:
+        vf = calculateV;
+        xf = lc ? calculateX_LC : calculateX;
+        break;
+    default:
+        CLIUtils::error("Unknown type!", "", false);
+    }
+}
+
+std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSimulationFunctions(Arguments &args,
+                                                                                                 int modifier) {
+    return args.linkedCells ? getSimulationFunctions_LC(args.sim, modifier)
+                            : getSimulationFunctions_nonLC(args.sim, modifier);
 }
