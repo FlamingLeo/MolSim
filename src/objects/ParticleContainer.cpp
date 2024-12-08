@@ -65,15 +65,19 @@ ParticleContainer::PairIterator ParticleContainer::endPairs() {
 /* container functions */
 Particle &ParticleContainer::operator[](size_t index) { return m_particles[index]; }
 const Particle &ParticleContainer::operator[](size_t index) const { return m_particles[index]; }
-
 void ParticleContainer::addParticle(const Particle &particle) {
     m_particles.push_back(particle);
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
-
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type,
                                     double eps, double sigma) {
     m_particles.emplace_back(x, v, m, type, eps, sigma);
+    SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
+}
+void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v,
+                                    const std::array<double, 3> &f, const std::array<double, 3> &old_f, double m,
+                                    int type, double eps, double sigma, int cellIndex) {
+    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, cellIndex);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::reserve(size_t capacity) {

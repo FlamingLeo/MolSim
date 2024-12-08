@@ -75,7 +75,7 @@ class Particle {
     Particle(const Particle &other);
 
     /**
-     * @brief Construct a new Particle object using explicit values for each data field.
+     * @brief Construct a new Particle object using explicit values for each new data field.
      *
      * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
      * not be negative or 0.
@@ -89,6 +89,24 @@ class Particle {
      */
     Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
              double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
+
+    /**
+     * @brief Construct a new Particle object using explicit values for every data field.
+     *
+     * There are no default parameters here; every value must be initialized.
+     *
+     * @param x A reference to the array containing data for the position \f$ x \f$.
+     * @param v A reference to the array containing data for the velocity \f$ v \f$.
+     * @param f A reference to the array containing data for the force \f$ F \f$ effective on this particle.
+     * @param old_f A reference to the array containing data for the old force \f$ F \f$ effective on this particle.
+     * @param m The mass \f$ m \f$ of the particle.
+     * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
+     */
+    Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
+             const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
 
     /// @brief Destroys the Particle object.
     virtual ~Particle();

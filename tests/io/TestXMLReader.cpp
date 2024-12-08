@@ -32,10 +32,29 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
                                                           {10, 10, 0},
                                                           {11, 10, 0},
                                                           {10, 11, 0}}};
-
     constexpr std::array<double, 11> m = {2, 2, 2, 2, 0.5, 0.5, 1, 1, 1, 1, 1};
-    constexpr std::array<double, 3> f = {0., 0., 0.};
-    constexpr std::array<double, 3> oldF = {0., 0., 0.};
+    constexpr std::array<std::array<double, 3>, 11> f = {{{0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {1., 2., 3.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.}}};
+    constexpr std::array<std::array<double, 3>, 11> oldF = {{{0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {4., 5., 6.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.}}};
 
     Arguments args;
     ParticleContainer pc;
@@ -57,8 +76,8 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     for (size_t i = 0; i < pc.size(); ++i) {
         EXPECT_EQ(pc[i].getX(), x[i]);
         EXPECT_EQ(pc[i].getM(), m[i]);
-        EXPECT_EQ(pc[i].getF(), f);
-        EXPECT_EQ(pc[i].getOldF(), oldF);
+        EXPECT_EQ(pc[i].getF(), f[i]);
+        EXPECT_EQ(pc[i].getOldF(), oldF[i]);
     }
 }
 

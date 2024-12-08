@@ -1,4 +1,5 @@
 #include "SimulationLC.h"
+#include "io/output/XMLWriter.h"
 #include "utils/StringUtils.h"
 
 SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args)
@@ -15,6 +16,10 @@ void SimulationLC::runSimulation() {
 
     initializeBase(0);
     runSimulationLoop(&m_cellContainer);
+
+    // serialize output for future runs
+    XMLWriter xmlw{m_args.basename + "_results.xml"};
+    xmlw.serialize(m_particles, m_args);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

@@ -1,6 +1,6 @@
 /**
  * @file FileWriter.h
- * @brief General class used to create some sort of file output from given input
+ * @brief General class used to strictly write particle data to some output file.
  * data.
  * @date 2024-10-23
  *

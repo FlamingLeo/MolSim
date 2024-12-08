@@ -63,10 +63,21 @@
                 <y>0.2</y>
                 <z>0.0</z>
             </velocity>
+            <force>
+                <x>1</x>
+                <y>2</y>
+                <z>3</z>
+            </force>
+            <oldForce>
+                <x>4</x>
+                <y>5</y>
+                <z>6</z>
+            </oldForce>
             <mass>0.5</mass>
             <type>1</type>
             <epsilon>5.0</epsilon>
             <sigma>1.0</sigma>
+            <cellIndex>42</cellIndex>
         </particle>
         <disc>
             <position>

@@ -182,7 +182,7 @@ int CellContainer::getCellIndex(const std::array<double, 3> &position) {
     return idx;
 }
 bool CellContainer::addParticle(Particle &p) {
-    int cellIndex = getCellIndex(p.getX());
+    int cellIndex = p.getCellIndex() == -1 ? getCellIndex(p.getX()) : p.getCellIndex();
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
         p.setCellIndex(cellIndex);
         cells[cellIndex].addParticle(p);

@@ -1,4 +1,5 @@
 #include "Simulation.h"
+#include "io/output/XMLWriter.h"
 #include "utils/StringUtils.h"
 
 Simulation::Simulation(ParticleContainer &pc, Arguments &args) : m_particles{pc}, m_args{args} {
@@ -58,6 +59,10 @@ void Simulation::runSimulation() {
 
     initializeBase(0);          // we should let the user choose this...
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
+
+    // serialize output for future runs
+    XMLWriter xmlw{m_args.basename + "_results.xml"};
+    xmlw.serialize(m_particles, m_args);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

@@ -237,6 +237,27 @@ VelocityType::ZType &VelocityType::z() { return this->z_.get(); }
 
 void VelocityType::z(const ZType &x) { this->z_.set(x); }
 
+// ForceType
+//
+
+const ForceType::XType &ForceType::x() const { return this->x_.get(); }
+
+ForceType::XType &ForceType::x() { return this->x_.get(); }
+
+void ForceType::x(const XType &x) { this->x_.set(x); }
+
+const ForceType::YType &ForceType::y() const { return this->y_.get(); }
+
+ForceType::YType &ForceType::y() { return this->y_.get(); }
+
+void ForceType::y(const YType &x) { this->y_.set(x); }
+
+const ForceType::ZType &ForceType::z() const { return this->z_.get(); }
+
+ForceType::ZType &ForceType::z() { return this->z_.get(); }
+
+void ForceType::z(const ZType &x) { this->z_.set(x); }
+
 // SizeType
 //
 
@@ -297,6 +318,14 @@ CuboidType::MassType &CuboidType::mass() { return this->mass_.get(); }
 
 void CuboidType::mass(const MassType &x) { this->mass_.set(x); }
 
+const CuboidType::TypeOptional &CuboidType::type() const { return this->type_; }
+
+CuboidType::TypeOptional &CuboidType::type() { return this->type_; }
+
+void CuboidType::type(const TypeType &x) { this->type_.set(x); }
+
+void CuboidType::type(const TypeOptional &x) { this->type_ = x; }
+
 const CuboidType::EpsilonOptional &CuboidType::epsilon() const { return this->epsilon_; }
 
 CuboidType::EpsilonOptional &CuboidType::epsilon() { return this->epsilon_; }
@@ -312,14 +341,6 @@ CuboidType::SigmaOptional &CuboidType::sigma() { return this->sigma_; }
 void CuboidType::sigma(const SigmaType &x) { this->sigma_.set(x); }
 
 void CuboidType::sigma(const SigmaOptional &x) { this->sigma_ = x; }
-
-const CuboidType::TypeOptional &CuboidType::type() const { return this->type_; }
-
-CuboidType::TypeOptional &CuboidType::type() { return this->type_; }
-
-void CuboidType::type(const TypeType &x) { this->type_.set(x); }
-
-void CuboidType::type(const TypeOptional &x) { this->type_ = x; }
 
 // ParticleType
 //
@@ -340,11 +361,39 @@ void ParticleType::velocity(const VelocityType &x) { this->velocity_.set(x); }
 
 void ParticleType::velocity(::std::unique_ptr<VelocityType> x) { this->velocity_.set(std::move(x)); }
 
+const ParticleType::ForceOptional &ParticleType::force() const { return this->force_; }
+
+ParticleType::ForceOptional &ParticleType::force() { return this->force_; }
+
+void ParticleType::force(const ForceType &x) { this->force_.set(x); }
+
+void ParticleType::force(const ForceOptional &x) { this->force_ = x; }
+
+void ParticleType::force(::std::unique_ptr<ForceType> x) { this->force_.set(std::move(x)); }
+
+const ParticleType::OldForceOptional &ParticleType::oldForce() const { return this->oldForce_; }
+
+ParticleType::OldForceOptional &ParticleType::oldForce() { return this->oldForce_; }
+
+void ParticleType::oldForce(const OldForceType &x) { this->oldForce_.set(x); }
+
+void ParticleType::oldForce(const OldForceOptional &x) { this->oldForce_ = x; }
+
+void ParticleType::oldForce(::std::unique_ptr<OldForceType> x) { this->oldForce_.set(std::move(x)); }
+
 const ParticleType::MassType &ParticleType::mass() const { return this->mass_.get(); }
 
 ParticleType::MassType &ParticleType::mass() { return this->mass_.get(); }
 
 void ParticleType::mass(const MassType &x) { this->mass_.set(x); }
+
+const ParticleType::TypeOptional &ParticleType::type() const { return this->type_; }
+
+ParticleType::TypeOptional &ParticleType::type() { return this->type_; }
+
+void ParticleType::type(const TypeType &x) { this->type_.set(x); }
+
+void ParticleType::type(const TypeOptional &x) { this->type_ = x; }
 
 const ParticleType::EpsilonOptional &ParticleType::epsilon() const { return this->epsilon_; }
 
@@ -362,13 +411,13 @@ void ParticleType::sigma(const SigmaType &x) { this->sigma_.set(x); }
 
 void ParticleType::sigma(const SigmaOptional &x) { this->sigma_ = x; }
 
-const ParticleType::TypeOptional &ParticleType::type() const { return this->type_; }
+const ParticleType::CellIndexOptional &ParticleType::cellIndex() const { return this->cellIndex_; }
 
-ParticleType::TypeOptional &ParticleType::type() { return this->type_; }
+ParticleType::CellIndexOptional &ParticleType::cellIndex() { return this->cellIndex_; }
 
-void ParticleType::type(const TypeType &x) { this->type_.set(x); }
+void ParticleType::cellIndex(const CellIndexType &x) { this->cellIndex_.set(x); }
 
-void ParticleType::type(const TypeOptional &x) { this->type_ = x; }
+void ParticleType::cellIndex(const CellIndexOptional &x) { this->cellIndex_ = x; }
 
 // DiscType
 //
@@ -407,6 +456,14 @@ DiscType::MassType &DiscType::mass() { return this->mass_.get(); }
 
 void DiscType::mass(const MassType &x) { this->mass_.set(x); }
 
+const DiscType::TypeOptional &DiscType::type() const { return this->type_; }
+
+DiscType::TypeOptional &DiscType::type() { return this->type_; }
+
+void DiscType::type(const TypeType &x) { this->type_.set(x); }
+
+void DiscType::type(const TypeOptional &x) { this->type_ = x; }
+
 const DiscType::EpsilonOptional &DiscType::epsilon() const { return this->epsilon_; }
 
 DiscType::EpsilonOptional &DiscType::epsilon() { return this->epsilon_; }
@@ -422,14 +479,6 @@ DiscType::SigmaOptional &DiscType::sigma() { return this->sigma_; }
 void DiscType::sigma(const SigmaType &x) { this->sigma_.set(x); }
 
 void DiscType::sigma(const SigmaOptional &x) { this->sigma_ = x; }
-
-const DiscType::TypeOptional &DiscType::type() const { return this->type_; }
-
-DiscType::TypeOptional &DiscType::type() { return this->type_; }
-
-void DiscType::type(const TypeType &x) { this->type_.set(x); }
-
-void DiscType::type(const TypeOptional &x) { this->type_ = x; }
 
 // ObjectsType
 //
@@ -987,6 +1036,88 @@ VelocityType &VelocityType::operator=(const VelocityType &x) {
 
 VelocityType::~VelocityType() {}
 
+// ForceType
+//
+
+ForceType::ForceType(const XType &x, const YType &y, const ZType &z)
+    : ::xml_schema::Type(), x_(x, this), y_(y, this), z_(z, this) {}
+
+ForceType::ForceType(const ForceType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), x_(x.x_, f, this), y_(x.y_, f, this), z_(x.z_, f, this) {}
+
+ForceType::ForceType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), x_(this), y_(this), z_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void ForceType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // x
+        //
+        if (n.name() == "x" && n.namespace_().empty()) {
+            if (!x_.present()) {
+                this->x_.set(XTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // y
+        //
+        if (n.name() == "y" && n.namespace_().empty()) {
+            if (!y_.present()) {
+                this->y_.set(YTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // z
+        //
+        if (n.name() == "z" && n.namespace_().empty()) {
+            if (!z_.present()) {
+                this->z_.set(ZTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!x_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("x", "");
+    }
+
+    if (!y_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("y", "");
+    }
+
+    if (!z_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("z", "");
+    }
+}
+
+ForceType *ForceType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class ForceType(*this, f, c);
+}
+
+ForceType &ForceType::operator=(const ForceType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->x_ = x.x_;
+        this->y_ = x.y_;
+        this->z_ = x.z_;
+    }
+
+    return *this;
+}
+
+ForceType::~ForceType() {}
+
 // SizeType
 //
 
@@ -1075,22 +1206,22 @@ SizeType::~SizeType() {}
 CuboidType::CuboidType(const PositionType &position, const VelocityType &velocity, const SizeType &size,
                        const DistanceType &distance, const MassType &mass)
     : ::xml_schema::Type(), position_(position, this), velocity_(velocity, this), size_(size, this),
-      distance_(distance, this), mass_(mass, this), epsilon_(this), sigma_(this), type_(this) {}
+      distance_(distance, this), mass_(mass, this), type_(this), epsilon_(this), sigma_(this) {}
 
 CuboidType::CuboidType(::std::unique_ptr<PositionType> position, ::std::unique_ptr<VelocityType> velocity,
                        ::std::unique_ptr<SizeType> size, const DistanceType &distance, const MassType &mass)
     : ::xml_schema::Type(), position_(std::move(position), this), velocity_(std::move(velocity), this),
-      size_(std::move(size), this), distance_(distance, this), mass_(mass, this), epsilon_(this), sigma_(this),
-      type_(this) {}
+      size_(std::move(size), this), distance_(distance, this), mass_(mass, this), type_(this), epsilon_(this),
+      sigma_(this) {}
 
 CuboidType::CuboidType(const CuboidType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), position_(x.position_, f, this), velocity_(x.velocity_, f, this),
-      size_(x.size_, f, this), distance_(x.distance_, f, this), mass_(x.mass_, f, this), epsilon_(x.epsilon_, f, this),
-      sigma_(x.sigma_, f, this), type_(x.type_, f, this) {}
+      size_(x.size_, f, this), distance_(x.distance_, f, this), mass_(x.mass_, f, this), type_(x.type_, f, this),
+      epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this) {}
 
 CuboidType::CuboidType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), position_(this), velocity_(this), size_(this),
-      distance_(this), mass_(this), epsilon_(this), sigma_(this), type_(this) {
+      distance_(this), mass_(this), type_(this), epsilon_(this), sigma_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1153,6 +1284,15 @@ void CuboidType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flag
             }
         }
 
+        // type
+        //
+        if (n.name() == "type" && n.namespace_().empty()) {
+            if (!this->type_) {
+                this->type_.set(TypeTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         // epsilon
         //
         if (n.name() == "epsilon" && n.namespace_().empty()) {
@@ -1167,15 +1307,6 @@ void CuboidType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flag
         if (n.name() == "sigma" && n.namespace_().empty()) {
             if (!this->sigma_) {
                 this->sigma_.set(SigmaTraits::create(i, f, this));
-                continue;
-            }
-        }
-
-        // type
-        //
-        if (n.name() == "type" && n.namespace_().empty()) {
-            if (!this->type_) {
-                this->type_.set(TypeTraits::create(i, f, this));
                 continue;
             }
         }
@@ -1216,9 +1347,9 @@ CuboidType &CuboidType::operator=(const CuboidType &x) {
         this->size_ = x.size_;
         this->distance_ = x.distance_;
         this->mass_ = x.mass_;
+        this->type_ = x.type_;
         this->epsilon_ = x.epsilon_;
         this->sigma_ = x.sigma_;
-        this->type_ = x.type_;
     }
 
     return *this;
@@ -1230,21 +1361,22 @@ CuboidType::~CuboidType() {}
 //
 
 ParticleType::ParticleType(const PositionType &position, const VelocityType &velocity, const MassType &mass)
-    : ::xml_schema::Type(), position_(position, this), velocity_(velocity, this), mass_(mass, this), epsilon_(this),
-      sigma_(this), type_(this) {}
+    : ::xml_schema::Type(), position_(position, this), velocity_(velocity, this), force_(this), oldForce_(this),
+      mass_(mass, this), type_(this), epsilon_(this), sigma_(this), cellIndex_(this) {}
 
 ParticleType::ParticleType(::std::unique_ptr<PositionType> position, ::std::unique_ptr<VelocityType> velocity,
                            const MassType &mass)
-    : ::xml_schema::Type(), position_(std::move(position), this), velocity_(std::move(velocity), this),
-      mass_(mass, this), epsilon_(this), sigma_(this), type_(this) {}
+    : ::xml_schema::Type(), position_(std::move(position), this), velocity_(std::move(velocity), this), force_(this),
+      oldForce_(this), mass_(mass, this), type_(this), epsilon_(this), sigma_(this), cellIndex_(this) {}
 
 ParticleType::ParticleType(const ParticleType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), position_(x.position_, f, this), velocity_(x.velocity_, f, this),
-      mass_(x.mass_, f, this), epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this), type_(x.type_, f, this) {}
+      force_(x.force_, f, this), oldForce_(x.oldForce_, f, this), mass_(x.mass_, f, this), type_(x.type_, f, this),
+      epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this), cellIndex_(x.cellIndex_, f, this) {}
 
 ParticleType::ParticleType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
-    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), position_(this), velocity_(this), mass_(this),
-      epsilon_(this), sigma_(this), type_(this) {
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), position_(this), velocity_(this), force_(this),
+      oldForce_(this), mass_(this), type_(this), epsilon_(this), sigma_(this), cellIndex_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1278,11 +1410,42 @@ void ParticleType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Fl
             }
         }
 
+        // force
+        //
+        if (n.name() == "force" && n.namespace_().empty()) {
+            ::std::unique_ptr<ForceType> r(ForceTraits::create(i, f, this));
+
+            if (!this->force_) {
+                this->force_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // oldForce
+        //
+        if (n.name() == "oldForce" && n.namespace_().empty()) {
+            ::std::unique_ptr<OldForceType> r(OldForceTraits::create(i, f, this));
+
+            if (!this->oldForce_) {
+                this->oldForce_.set(::std::move(r));
+                continue;
+            }
+        }
+
         // mass
         //
         if (n.name() == "mass" && n.namespace_().empty()) {
             if (!mass_.present()) {
                 this->mass_.set(MassTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // type
+        //
+        if (n.name() == "type" && n.namespace_().empty()) {
+            if (!this->type_) {
+                this->type_.set(TypeTraits::create(i, f, this));
                 continue;
             }
         }
@@ -1305,11 +1468,11 @@ void ParticleType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Fl
             }
         }
 
-        // type
+        // cellIndex
         //
-        if (n.name() == "type" && n.namespace_().empty()) {
-            if (!this->type_) {
-                this->type_.set(TypeTraits::create(i, f, this));
+        if (n.name() == "cellIndex" && n.namespace_().empty()) {
+            if (!this->cellIndex_) {
+                this->cellIndex_.set(CellIndexTraits::create(i, f, this));
                 continue;
             }
         }
@@ -1339,10 +1502,13 @@ ParticleType &ParticleType::operator=(const ParticleType &x) {
         static_cast<::xml_schema::Type &>(*this) = x;
         this->position_ = x.position_;
         this->velocity_ = x.velocity_;
+        this->force_ = x.force_;
+        this->oldForce_ = x.oldForce_;
         this->mass_ = x.mass_;
+        this->type_ = x.type_;
         this->epsilon_ = x.epsilon_;
         this->sigma_ = x.sigma_;
-        this->type_ = x.type_;
+        this->cellIndex_ = x.cellIndex_;
     }
 
     return *this;
@@ -1356,21 +1522,21 @@ ParticleType::~ParticleType() {}
 DiscType::DiscType(const PositionType &position, const VelocityType &velocity, const RadiusType &radius,
                    const DistanceType &distance, const MassType &mass)
     : ::xml_schema::Type(), position_(position, this), velocity_(velocity, this), radius_(radius, this),
-      distance_(distance, this), mass_(mass, this), epsilon_(this), sigma_(this), type_(this) {}
+      distance_(distance, this), mass_(mass, this), type_(this), epsilon_(this), sigma_(this) {}
 
 DiscType::DiscType(::std::unique_ptr<PositionType> position, ::std::unique_ptr<VelocityType> velocity,
                    const RadiusType &radius, const DistanceType &distance, const MassType &mass)
     : ::xml_schema::Type(), position_(std::move(position), this), velocity_(std::move(velocity), this),
-      radius_(radius, this), distance_(distance, this), mass_(mass, this), epsilon_(this), sigma_(this), type_(this) {}
+      radius_(radius, this), distance_(distance, this), mass_(mass, this), type_(this), epsilon_(this), sigma_(this) {}
 
 DiscType::DiscType(const DiscType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), position_(x.position_, f, this), velocity_(x.velocity_, f, this),
-      radius_(x.radius_, f, this), distance_(x.distance_, f, this), mass_(x.mass_, f, this),
-      epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this), type_(x.type_, f, this) {}
+      radius_(x.radius_, f, this), distance_(x.distance_, f, this), mass_(x.mass_, f, this), type_(x.type_, f, this),
+      epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this) {}
 
 DiscType::DiscType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), position_(this), velocity_(this), radius_(this),
-      distance_(this), mass_(this), epsilon_(this), sigma_(this), type_(this) {
+      distance_(this), mass_(this), type_(this), epsilon_(this), sigma_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1431,6 +1597,15 @@ void DiscType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags 
             }
         }
 
+        // type
+        //
+        if (n.name() == "type" && n.namespace_().empty()) {
+            if (!this->type_) {
+                this->type_.set(TypeTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         // epsilon
         //
         if (n.name() == "epsilon" && n.namespace_().empty()) {
@@ -1445,15 +1620,6 @@ void DiscType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags 
         if (n.name() == "sigma" && n.namespace_().empty()) {
             if (!this->sigma_) {
                 this->sigma_.set(SigmaTraits::create(i, f, this));
-                continue;
-            }
-        }
-
-        // type
-        //
-        if (n.name() == "type" && n.namespace_().empty()) {
-            if (!this->type_) {
-                this->type_.set(TypeTraits::create(i, f, this));
                 continue;
             }
         }
@@ -1494,9 +1660,9 @@ DiscType &DiscType::operator=(const DiscType &x) {
         this->radius_ = x.radius_;
         this->distance_ = x.distance_;
         this->mass_ = x.mass_;
+        this->type_ = x.type_;
         this->epsilon_ = x.epsilon_;
         this->sigma_ = x.sigma_;
-        this->type_ = x.type_;
     }
 
     return *this;
@@ -2126,6 +2292,34 @@ void operator<<(::xercesc::DOMElement &e, const VelocityType &i) {
     }
 }
 
+void operator<<(::xercesc::DOMElement &e, const ForceType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // x
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("x", e));
+
+        s << ::xml_schema::AsDouble(i.x());
+    }
+
+    // y
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("y", e));
+
+        s << ::xml_schema::AsDouble(i.y());
+    }
+
+    // z
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("z", e));
+
+        s << ::xml_schema::AsDouble(i.z());
+    }
+}
+
 void operator<<(::xercesc::DOMElement &e, const SizeType &i) {
     e << static_cast<const ::xml_schema::Type &>(i);
 
@@ -2197,6 +2391,14 @@ void operator<<(::xercesc::DOMElement &e, const CuboidType &i) {
         s << ::xml_schema::AsDouble(i.mass());
     }
 
+    // type
+    //
+    if (i.type()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
+
+        s << *i.type();
+    }
+
     // epsilon
     //
     if (i.epsilon()) {
@@ -2211,14 +2413,6 @@ void operator<<(::xercesc::DOMElement &e, const CuboidType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("sigma", e));
 
         s << ::xml_schema::AsDouble(*i.sigma());
-    }
-
-    // type
-    //
-    if (i.type()) {
-        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
-
-        s << *i.type();
     }
 }
 
@@ -2241,12 +2435,36 @@ void operator<<(::xercesc::DOMElement &e, const ParticleType &i) {
         s << i.velocity();
     }
 
+    // force
+    //
+    if (i.force()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("force", e));
+
+        s << *i.force();
+    }
+
+    // oldForce
+    //
+    if (i.oldForce()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("oldForce", e));
+
+        s << *i.oldForce();
+    }
+
     // mass
     //
     {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("mass", e));
 
         s << ::xml_schema::AsDouble(i.mass());
+    }
+
+    // type
+    //
+    if (i.type()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
+
+        s << *i.type();
     }
 
     // epsilon
@@ -2265,12 +2483,12 @@ void operator<<(::xercesc::DOMElement &e, const ParticleType &i) {
         s << ::xml_schema::AsDouble(*i.sigma());
     }
 
-    // type
+    // cellIndex
     //
-    if (i.type()) {
-        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
+    if (i.cellIndex()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("cellIndex", e));
 
-        s << *i.type();
+        s << *i.cellIndex();
     }
 }
 
@@ -2317,6 +2535,14 @@ void operator<<(::xercesc::DOMElement &e, const DiscType &i) {
         s << ::xml_schema::AsDouble(i.mass());
     }
 
+    // type
+    //
+    if (i.type()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
+
+        s << *i.type();
+    }
+
     // epsilon
     //
     if (i.epsilon()) {
@@ -2331,14 +2557,6 @@ void operator<<(::xercesc::DOMElement &e, const DiscType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("sigma", e));
 
         s << ::xml_schema::AsDouble(*i.sigma());
-    }
-
-    // type
-    //
-    if (i.type()) {
-        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("type", e));
-
-        s << *i.type();
     }
 }
 

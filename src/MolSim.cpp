@@ -1,22 +1,10 @@
 #include "io/input/CLIParser.h"
-#include "io/input/FileReader.h"
 #include "io/input/XMLReader.h"
-#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
-#include "strategies/ForceCalculation.h"
-#include "strategies/PositionCalculation.h"
-#include "strategies/VelocityCalculation.h"
 #include "utils/Arguments.h"
-#include "utils/ArrayUtils.h"
-#include "utils/PathUtils.h"
-#include "utils/StringUtils.h"
-#include <filesystem>
 #include <iostream>
-#include <memory>
 #include <spdlog/spdlog.h>
-#include <string>
-namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level

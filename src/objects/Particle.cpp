@@ -7,6 +7,7 @@
 #include <string>
 #define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
+/* constructors */
 Particle::Particle(int type_arg)
     : x{0., 0., 0.}, v{0., 0., 0.}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{1.}, type{type_arg}, epsilon{1}, sigma{1},
       cellIndex{-1} {
@@ -35,12 +36,23 @@ Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &
         CLIUtils::error(MASS_ERROR);
 }
 
+Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
+                   const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex)
+    : x{x}, v{v}, f{f}, old_f{old_f}, m{m}, type{type}, epsilon{eps}, sigma{sigma}, cellIndex{cellIndex} {
+    SPDLOG_TRACE("Generated Particle (complete) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
+                 ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
+                 cellIndex);
+    if (m <= 0)
+        CLIUtils::error(MASS_ERROR);
+}
+
 Particle::~Particle() {
     SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
 }
 
+/* functionality */
 const std::array<double, 3> &Particle::getX() const { return x; }
 const std::array<double, 3> &Particle::getV() const { return v; }
 const std::array<double, 3> &Particle::getF() const { return f; }

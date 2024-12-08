@@ -599,6 +599,7 @@ class BdConditionsType;
 class BoundaryConditionType;
 class PositionType;
 class VelocityType;
+class ForceType;
 class SizeType;
 class CuboidType;
 class ParticleType;
@@ -2274,6 +2275,223 @@ class VelocityType : public ::xml_schema::Type {
 };
 
 /**
+ * @brief Class corresponding to the %forceType schema type.
+ *
+ * @nosubgrouping
+ */
+class ForceType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name x
+     *
+     * @brief Accessor and modifier functions for the %x
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double XType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<XType, char, ::xsd::cxx::tree::schema_type::double_> XTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const XType &x() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    XType &x();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void x(const XType &x);
+
+    //@}
+
+    /**
+     * @name y
+     *
+     * @brief Accessor and modifier functions for the %y
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double YType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<YType, char, ::xsd::cxx::tree::schema_type::double_> YTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const YType &y() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    YType &y();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void y(const YType &x);
+
+    //@}
+
+    /**
+     * @name z
+     *
+     * @brief Accessor and modifier functions for the %z
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double ZType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ZType, char, ::xsd::cxx::tree::schema_type::double_> ZTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const ZType &z() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    ZType &z();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void z(const ZType &x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    ForceType(const XType &, const YType &, const ZType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    ForceType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    ForceType(const ForceType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual ForceType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    ForceType &operator=(const ForceType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ForceType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<XType> x_;
+    ::xsd::cxx::tree::one<YType> y_;
+    ::xsd::cxx::tree::one<ZType> z_;
+
+    //@endcond
+};
+
+/**
  * @brief Class corresponding to the %sizeType schema type.
  *
  * @nosubgrouping
@@ -2748,6 +2966,67 @@ class CuboidType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name type
+     *
+     * @brief Accessor and modifier functions for the %type
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TypeType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TypeOptional &type() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TypeOptional &type();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
+
+    //@}
+
+    /**
      * @name epsilon
      *
      * @brief Accessor and modifier functions for the %epsilon
@@ -2870,67 +3149,6 @@ class CuboidType : public ::xml_schema::Type {
     //@}
 
     /**
-     * @name type
-     *
-     * @brief Accessor and modifier functions for the %type
-     * optional element.
-     */
-    //@{
-
-    /**
-     * @brief Element type.
-     */
-    typedef ::xml_schema::Int TypeType;
-
-    /**
-     * @brief Element optional container type.
-     */
-    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
-
-    /**
-     * @brief Element traits type.
-     */
-    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
-
-    /**
-     * @brief Return a read-only (constant) reference to the element
-     * container.
-     *
-     * @return A constant reference to the optional container.
-     */
-    const TypeOptional &type() const;
-
-    /**
-     * @brief Return a read-write reference to the element container.
-     *
-     * @return A reference to the optional container.
-     */
-    TypeOptional &type();
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x A new value to set.
-     *
-     * This function makes a copy of its argument and sets it as
-     * the new value of the element.
-     */
-    void type(const TypeType &x);
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x An optional container with the new value to set.
-     *
-     * If the value is present in @a x then this function makes a copy
-     * of this value and sets it as the new value of the element.
-     * Otherwise the element container is set the 'not present' state.
-     */
-    void type(const TypeOptional &x);
-
-    //@}
-
-    /**
      * @name Constructors
      */
     //@{
@@ -3017,9 +3235,9 @@ class CuboidType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<SizeType> size_;
     ::xsd::cxx::tree::one<DistanceType> distance_;
     ::xsd::cxx::tree::one<MassType> mass_;
+    TypeOptional type_;
     EpsilonOptional epsilon_;
     SigmaOptional sigma_;
-    TypeOptional type_;
 
     //@endcond
 };
@@ -3140,6 +3358,148 @@ class ParticleType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name force
+     *
+     * @brief Accessor and modifier functions for the %force
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::ForceType ForceType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<ForceType> ForceOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ForceType, char> ForceTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const ForceOptional &force() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    ForceOptional &force();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void force(const ForceType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void force(const ForceOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void force(::std::unique_ptr<ForceType> p);
+
+    //@}
+
+    /**
+     * @name oldForce
+     *
+     * @brief Accessor and modifier functions for the %oldForce
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::ForceType OldForceType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<OldForceType> OldForceOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<OldForceType, char> OldForceTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const OldForceOptional &oldForce() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    OldForceOptional &oldForce();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void oldForce(const OldForceType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void oldForce(const OldForceOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void oldForce(::std::unique_ptr<OldForceType> p);
+
+    //@}
+
+    /**
      * @name mass
      *
      * @brief Accessor and modifier functions for the %mass
@@ -3180,6 +3540,67 @@ class ParticleType : public ::xml_schema::Type {
      * the new value of the element.
      */
     void mass(const MassType &x);
+
+    //@}
+
+    /**
+     * @name type
+     *
+     * @brief Accessor and modifier functions for the %type
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TypeType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TypeOptional &type() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TypeOptional &type();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
 
     //@}
 
@@ -3306,9 +3727,9 @@ class ParticleType : public ::xml_schema::Type {
     //@}
 
     /**
-     * @name type
+     * @name cellIndex
      *
-     * @brief Accessor and modifier functions for the %type
+     * @brief Accessor and modifier functions for the %cellIndex
      * optional element.
      */
     //@{
@@ -3316,17 +3737,17 @@ class ParticleType : public ::xml_schema::Type {
     /**
      * @brief Element type.
      */
-    typedef ::xml_schema::Int TypeType;
+    typedef ::xml_schema::Int CellIndexType;
 
     /**
      * @brief Element optional container type.
      */
-    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+    typedef ::xsd::cxx::tree::optional<CellIndexType> CellIndexOptional;
 
     /**
      * @brief Element traits type.
      */
-    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+    typedef ::xsd::cxx::tree::traits<CellIndexType, char> CellIndexTraits;
 
     /**
      * @brief Return a read-only (constant) reference to the element
@@ -3334,14 +3755,14 @@ class ParticleType : public ::xml_schema::Type {
      *
      * @return A constant reference to the optional container.
      */
-    const TypeOptional &type() const;
+    const CellIndexOptional &cellIndex() const;
 
     /**
      * @brief Return a read-write reference to the element container.
      *
      * @return A reference to the optional container.
      */
-    TypeOptional &type();
+    CellIndexOptional &cellIndex();
 
     /**
      * @brief Set the element value.
@@ -3351,7 +3772,7 @@ class ParticleType : public ::xml_schema::Type {
      * This function makes a copy of its argument and sets it as
      * the new value of the element.
      */
-    void type(const TypeType &x);
+    void cellIndex(const CellIndexType &x);
 
     /**
      * @brief Set the element value.
@@ -3362,7 +3783,7 @@ class ParticleType : public ::xml_schema::Type {
      * of this value and sets it as the new value of the element.
      * Otherwise the element container is set the 'not present' state.
      */
-    void type(const TypeOptional &x);
+    void cellIndex(const CellIndexOptional &x);
 
     //@}
 
@@ -3449,10 +3870,13 @@ class ParticleType : public ::xml_schema::Type {
   protected:
     ::xsd::cxx::tree::one<PositionType> position_;
     ::xsd::cxx::tree::one<VelocityType> velocity_;
+    ForceOptional force_;
+    OldForceOptional oldForce_;
     ::xsd::cxx::tree::one<MassType> mass_;
+    TypeOptional type_;
     EpsilonOptional epsilon_;
     SigmaOptional sigma_;
-    TypeOptional type_;
+    CellIndexOptional cellIndex_;
 
     //@endcond
 };
@@ -3705,6 +4129,67 @@ class DiscType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name type
+     *
+     * @brief Accessor and modifier functions for the %type
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TypeType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TypeOptional &type() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TypeOptional &type();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void type(const TypeType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void type(const TypeOptional &x);
+
+    //@}
+
+    /**
      * @name epsilon
      *
      * @brief Accessor and modifier functions for the %epsilon
@@ -3827,67 +4312,6 @@ class DiscType : public ::xml_schema::Type {
     //@}
 
     /**
-     * @name type
-     *
-     * @brief Accessor and modifier functions for the %type
-     * optional element.
-     */
-    //@{
-
-    /**
-     * @brief Element type.
-     */
-    typedef ::xml_schema::Int TypeType;
-
-    /**
-     * @brief Element optional container type.
-     */
-    typedef ::xsd::cxx::tree::optional<TypeType> TypeOptional;
-
-    /**
-     * @brief Element traits type.
-     */
-    typedef ::xsd::cxx::tree::traits<TypeType, char> TypeTraits;
-
-    /**
-     * @brief Return a read-only (constant) reference to the element
-     * container.
-     *
-     * @return A constant reference to the optional container.
-     */
-    const TypeOptional &type() const;
-
-    /**
-     * @brief Return a read-write reference to the element container.
-     *
-     * @return A reference to the optional container.
-     */
-    TypeOptional &type();
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x A new value to set.
-     *
-     * This function makes a copy of its argument and sets it as
-     * the new value of the element.
-     */
-    void type(const TypeType &x);
-
-    /**
-     * @brief Set the element value.
-     *
-     * @param x An optional container with the new value to set.
-     *
-     * If the value is present in @a x then this function makes a copy
-     * of this value and sets it as the new value of the element.
-     * Otherwise the element container is set the 'not present' state.
-     */
-    void type(const TypeOptional &x);
-
-    //@}
-
-    /**
      * @name Constructors
      */
     //@{
@@ -3974,9 +4398,9 @@ class DiscType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<RadiusType> radius_;
     ::xsd::cxx::tree::one<DistanceType> distance_;
     ::xsd::cxx::tree::one<MassType> mass_;
+    TypeOptional type_;
     EpsilonOptional epsilon_;
     SigmaOptional sigma_;
-    TypeOptional type_;
 
     //@endcond
 };
@@ -5023,6 +5447,8 @@ void operator<<(::xml_schema::ListStream &, const BoundaryConditionType &);
 void operator<<(::xercesc::DOMElement &, const PositionType &);
 
 void operator<<(::xercesc::DOMElement &, const VelocityType &);
+
+void operator<<(::xercesc::DOMElement &, const ForceType &);
 
 void operator<<(::xercesc::DOMElement &, const SizeType &);
 
