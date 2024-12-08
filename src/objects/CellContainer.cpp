@@ -266,7 +266,6 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
     }
 }
 
-
 std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
     std::vector<int> neighbors;
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
@@ -289,16 +288,16 @@ std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
     return neighbors;
 }
 
-int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location){
-    //currently in 2D
+int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
+    // currently in 2D
     int cellIndex = from.getIndex();
-    if(location == HaloLocation::NORTH){
+    if (location == HaloLocation::NORTH) {
         return cellIndex - numCells[0] * (numCells[1] - 2);
-    } else if (location == HaloLocation::SOUTH){
+    } else if (location == HaloLocation::SOUTH) {
         return cellIndex + numCells[0] * (numCells[1] - 2);
-    } else if(location == HaloLocation::WEST){
+    } else if (location == HaloLocation::WEST) {
         return cellIndex + (numCells[0] - 2);
-    } else if(location == HaloLocation::EAST){
+    } else if (location == HaloLocation::EAST) {
         return cellIndex - (numCells[0] - 2);
     }
     return -1;

@@ -1,10 +1,9 @@
+#pragma once
 #include "ParticleContainer.h"
 
 class Thermostat {
-
-    private:
-
-    double dimension;
+  private:
+    int dimension;
 
     double kineticEnergy;
 
@@ -16,8 +15,7 @@ class Thermostat {
 
     ParticleContainer &particles;
 
-    public:
-
+  public:
     Thermostat(ParticleContainer &particles, int dimension);
 
     void calculateKineticEnergy();
@@ -28,7 +26,7 @@ class Thermostat {
 
     void setTempViaVelocityScaling();
 
-    void setTemoViaGradualScaling();
+    void setTempViaGradualScaling();
 
     double getKineticEnergy();
 
@@ -38,5 +36,5 @@ class Thermostat {
 
     double getScalingFactor();
 
-    ParticleContainer& getParticles();
+    ParticleContainer &getParticles();
 };

@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#define OPTSTRING "s:e:d:f:b:o:t:B:D:R:h"
+#define OPTSTRING "s:e:d:f:g:b:o:t:B:D:R:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 #define RED "\e[0;31m"
@@ -33,9 +33,9 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Mapping from getopt option characters to their full names.
  */
 static inline std::unordered_map<char, std::string> optionNames = {
-    {'s', "Start time"},       {'e', "End time"},     {'d', "Timestep"},        {'b', "Basename"},
-    {'f', "Output frequency"}, {'o', "Output type"},  {'t', "Simulation type"}, {'B', "Boundary Conditions"},
-    {'D', "Domain Size"},      {'R', "Cutoff Radius"}};
+    {'s', "Start time"},          {'e', "End time"},    {'d', "Timestep"},     {'b', "Basename"},
+    {'f', "Output frequency"},    {'g', "Gravity"},     {'o', "Output type"},  {'t', "Simulation type"},
+    {'B', "Boundary Conditions"}, {'D', "Domain Size"}, {'R', "Cutoff Radius"}};
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.
@@ -57,6 +57,8 @@ static inline void printHelp() {
            "-e <number>  : Sets the end time (decimal) for a specific simulation (default: simulation-specific).\n"
            "-d <number>  : Sets the time interval between two iterations of a simulation (default: "
            "simulation-specific).\n"
+           "-g <number>  : Sets the gravitational force (decimal) effective on each particle in the simulation "
+           "(default: -12.44).\n"
            "-b <name>    : Sets the base name of the generated files (default: type-specific).\n"
            "-B <cccccc>  : Sets the conditions to be applied at each boundary (North, South, West, East, Above, "
            "Below). c is one of:\n"

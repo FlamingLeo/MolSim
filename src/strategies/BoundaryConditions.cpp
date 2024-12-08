@@ -76,24 +76,26 @@ void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc) {
     }
 }
 
-void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc){
+void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
     const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
     HaloLocation location;
 
-    if(haloLocations.size() == 1){
+    if (haloLocations.size() == 1) {
         location = haloLocations[0];
-    } else if (haloLocations.size() > 1){
+    } else if (haloLocations.size() > 1) {
         location = targetCell.getCornerRegion(p);
-    } else{
-        location = HaloLocation::NORTH; //just something so location is initialized
+    } else {
+        location = HaloLocation::NORTH; // just something so location is initialized
         SPDLOG_DEBUG("Could not determine direction for periodic conditions: {}", p.toString());
     }
 
     Cell &newCell = lc->getCells()[lc->getOppositeOfHalo(targetCell, location)];
-    std::array<double, 3> inCell = {p.getX()[0] - targetCell.getX()[0], p.getX()[1] - targetCell.getX()[1], p.getX()[2] - targetCell.getX()[2]};
-    std::array<double, 3> newPos = {newCell.getX()[0] + inCell[0], newCell.getX()[1] + inCell[1], newCell.getX()[2] + inCell[2]};
+    std::array<double, 3> inCell = {p.getX()[0] - targetCell.getX()[0], p.getX()[1] - targetCell.getX()[1],
+                                    p.getX()[2] - targetCell.getX()[2]};
+    std::array<double, 3> newPos = {newCell.getX()[0] + inCell[0], newCell.getX()[1] + inCell[1],
+                                    newCell.getX()[2] + inCell[2]};
 
-    //we set the particles new position and move it to the proper cell
+    // we set the particles new position and move it to the proper cell
     p.setX(newPos);
     if (!lc->moveParticle(p)) {
         p.markInactive();

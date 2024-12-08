@@ -38,6 +38,8 @@ struct Arguments {
     std::array<double, 3> domainSize{INF, INF, INF};
     /// @brief Cutoff radius for linked cells (default: 3.0)
     double cutoffRadius{3.0};
+    /// @brief The gravity that the particles are exposed to (default: -12.44).
+    double gravity{-12.44};
     /// @brief The basename of the output file (default: type-specific).
     std::string basename{};
     /// @brief Output type (default: VTK).

@@ -209,12 +209,10 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
     }
 }
 
-void addGravitationalForce(ParticleContainer &particles, double g_grav){
-
-    //go over all particles and add gravity along the y-axis
-    for(auto &p : particles){
-
-        if(!p.isActive()){
+void addGravitationalForce(ParticleContainer &particles, double g_grav) {
+    // go over all particles and add gravity along the y-axis
+    for (auto &p : particles) {
+        if (!p.isActive()) {
             continue;
         }
 

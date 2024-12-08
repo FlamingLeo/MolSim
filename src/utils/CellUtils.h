@@ -25,7 +25,9 @@ enum class HaloLocation { NORTH, SOUTH, WEST, EAST, ABOVE, BELOW };
 namespace CellUtils {
 /// @brief Map containing conversion information for converting a string to a BoundaryCondition enum.
 static inline const std::unordered_map<std::string, BoundaryCondition> conditionTable = {
-    {"outflow", BoundaryCondition::OUTFLOW}, {"reflective", BoundaryCondition::REFLECTIVE}};
+    {"outflow", BoundaryCondition::OUTFLOW},
+    {"reflective", BoundaryCondition::REFLECTIVE},
+    {"periodic", BoundaryCondition::PERIODIC}};
 
 /// @brief Map containing conversion information for converting a string to a CellType enum.
 static inline const std::unordered_map<std::string, CellType> typeTable = {

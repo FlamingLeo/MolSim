@@ -74,6 +74,7 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
             SPDLOG_DEBUG("Loaded boundary conditions: n: {}, s: {}, w: {}, e: {}, a: {}, b: {}", bdConditions.n(),
                          bdConditions.s(), bdConditions.w(), bdConditions.e(), bdConditions.a(), bdConditions.b());
         }
+        LOAD_ARGS(xmlArgs, args, gravity);
     }
 }
 

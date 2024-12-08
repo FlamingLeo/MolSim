@@ -359,7 +359,6 @@ class CellContainer {
      */
     std::vector<int> getNeighbors(int cellIndex) const;
 
-
     /**
      * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
      *

@@ -105,6 +105,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.argsSet.set(3);
             SPDLOG_DEBUG("Set basename to {}.", args.basename);
             break;
+        case 'g': /* gravity */
+            args.gravity = StringUtils::toDouble(optarg);
+            SPDLOG_DEBUG("Set gravity to {}.", args.gravity);
+            break;
         case 'B': /* boundary conditions */
             args.conditions = CellUtils::stringToBoundaryConditions(optarg);
             SPDLOG_DEBUG("Set boundary conditions to {}.", optarg);

@@ -55,7 +55,8 @@ void handleOutflowCondition(Particle &p, Cell &targetCell, CellContainer *lc);
 void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc);
 
 /**
- * @brief Handles the periodic condition where the particle is moved from the halo cell to the appropriate border cell on the other side.
+ * @brief Handles the periodic condition where the particle is moved from the halo cell to the appropriate border cell
+ * on the other side.
  *
  * @param p The particle entering a halo cell.
  * @param fromCell The current cell of the particle.

@@ -123,6 +123,14 @@ void ArgsType::bdConditions(const BdConditionsOptional &x) { this->bdConditions_
 
 void ArgsType::bdConditions(::std::unique_ptr<BdConditionsType> x) { this->bdConditions_.set(std::move(x)); }
 
+const ArgsType::GravityOptional &ArgsType::gravity() const { return this->gravity_; }
+
+ArgsType::GravityOptional &ArgsType::gravity() { return this->gravity_; }
+
+void ArgsType::gravity(const GravityType &x) { this->gravity_.set(x); }
+
+void ArgsType::gravity(const GravityOptional &x) { this->gravity_ = x; }
+
 // BdConditionsType
 //
 
@@ -553,17 +561,18 @@ void SimType::totalParticles(const TotalParticlesOptional &x) { this->totalParti
 
 ArgsType::ArgsType()
     : ::xml_schema::Type(), startTime_(this), endTime_(this), delta_t_(this), frequency_(this), basename_(this),
-      output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this) {}
+      output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this), gravity_(this) {}
 
 ArgsType::ArgsType(const ArgsType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), startTime_(x.startTime_, f, this), endTime_(x.endTime_, f, this),
       delta_t_(x.delta_t_, f, this), frequency_(x.frequency_, f, this), basename_(x.basename_, f, this),
       output_(x.output_, f, this), domainSize_(x.domainSize_, f, this), cutoffRadius_(x.cutoffRadius_, f, this),
-      bdConditions_(x.bdConditions_, f, this) {}
+      bdConditions_(x.bdConditions_, f, this), gravity_(x.gravity_, f, this) {}
 
 ArgsType::ArgsType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), startTime_(this), endTime_(this), delta_t_(this),
-      frequency_(this), basename_(this), output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this) {
+      frequency_(this), basename_(this), output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this),
+      gravity_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -664,6 +673,15 @@ void ArgsType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags 
             }
         }
 
+        // gravity
+        //
+        if (n.name() == "gravity" && n.namespace_().empty()) {
+            if (!this->gravity_) {
+                this->gravity_.set(GravityTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         break;
     }
 }
@@ -684,6 +702,7 @@ ArgsType &ArgsType::operator=(const ArgsType &x) {
         this->domainSize_ = x.domainSize_;
         this->cutoffRadius_ = x.cutoffRadius_;
         this->bdConditions_ = x.bdConditions_;
+        this->gravity_ = x.gravity_;
     }
 
     return *this;
@@ -2169,6 +2188,14 @@ void operator<<(::xercesc::DOMElement &e, const ArgsType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("bdConditions", e));
 
         s << *i.bdConditions();
+    }
+
+    // gravity
+    //
+    if (i.gravity()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("gravity", e));
+
+        s << ::xml_schema::AsDouble(*i.gravity());
     }
 }
 
