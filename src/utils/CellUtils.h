@@ -15,7 +15,7 @@
 #include <vector>
 
 /// @brief Enum containing the possible types of boundary conditions.
-enum class BoundaryCondition { OUTFLOW, REFLECTIVE };
+enum class BoundaryCondition { OUTFLOW, REFLECTIVE, PERIODIC };
 /// @brief Enum containing the possible types of cells.
 enum class CellType { INNER, BORDER, HALO };
 /// @brief Enum containing the possible corner and edge directions of halo cells.

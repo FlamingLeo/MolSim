@@ -23,6 +23,10 @@ bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
         handleReflectiveCondition(p, targetCell, lc);
         return true;
 
+    case BoundaryCondition::PERIODIC:
+        handlePeriodicCondition(p, targetCell, lc);
+        return true;
+
     default:
         return false;
     }
@@ -70,6 +74,32 @@ void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc) {
         p.setV({-p.getV()[0], p.getV()[1], p.getV()[2]});
         SPDLOG_DEBUG("Flipped horizontally: {}", p.toString());
     }
+}
+
+void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc){
+    const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
+    HaloLocation location;
+
+    if(haloLocations.size() == 1){
+        location = haloLocations[0];
+    } else if (haloLocations.size() > 1){
+        location = targetCell.getCornerRegion(p);
+    } else{
+        location = HaloLocation::NORTH; //just something so location is initialized
+        SPDLOG_DEBUG("Could not determine direction for periodic conditions: {}", p.toString());
+    }
+
+    Cell &newCell = lc->getCells()[lc->getOppositeOfHalo(targetCell, location)];
+    std::array<double, 3> inCell = {p.getX()[0] - targetCell.getX()[0], p.getX()[1] - targetCell.getX()[1], p.getX()[2] - targetCell.getX()[2]};
+    std::array<double, 3> newPos = {newCell.getX()[0] + inCell[0], newCell.getX()[1] + inCell[1], newCell.getX()[2] + inCell[2]};
+
+    //we set the particles new position and move it to the proper cell
+    p.setX(newPos);
+    if (!lc->moveParticle(p)) {
+        p.markInactive();
+        return;
+    }
+    SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
 }
 
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension) {
