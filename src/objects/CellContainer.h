@@ -359,6 +359,16 @@ class CellContainer {
      */
     std::vector<int> getNeighbors(int cellIndex) const;
 
+
+    /**
+     * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
+     *
+     * @param from The Cell for which the opposite border cell should be determined
+     * @param location The orientation of the Halo Cell
+     * @return The index of the opposite border cell
+     */
+    int getOppositeOfHalo(const Cell &from, HaloLocation location);
+
     /**
      * @brief Gets a const reference to the CellContainer's domain size.
      *

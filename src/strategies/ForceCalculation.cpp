@@ -208,3 +208,17 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
         }
     }
 }
+
+void addGravitationalForce(ParticleContainer &particles, double g_grav){
+
+    //go over all particles and add gravity along the y-axis
+    for(auto &p : particles){
+
+        if(!p.isActive()){
+            continue;
+        }
+
+        std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
+        p.setF(p.getF() + gravity);
+    }
+}

@@ -146,3 +146,11 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
  * @param lc The CellContainer for the linked cells method.
  */
 void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, CellContainer *lc);
+
+/**
+ * @brief Adds the gravitional force m*g to all active particles in the ParticleContainer.
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param g_grav The precise gravitational force specified by XML.
+ */
+void addGravitationalForce(ParticleContainer &particles, double g_grav);
