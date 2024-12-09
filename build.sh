@@ -23,6 +23,7 @@ help() {
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -35,10 +36,11 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdhj:lms:t"
+OPTSTRING=":b:cdhj:lmps:t"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
+profiling_opt=""
 benchmarking_opt=""
 spdlog_level=""
 install_opt=true
@@ -69,6 +71,13 @@ while getopts ${OPTSTRING} opt; do
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
+
+    # disable simultaneous benchmarking and profiling
+    if [[ "${profiling_opt}" == "-DENABLE_PROFILING=ON" ]]; then
+      echo "[ERROR] Cannot benchmark and profile simultaneously!"
+      usage
+    fi
+
     echo "[BUILD] Benchmarking will be enabled."
     benchmarking_opt="-DENABLE_BENCHMARKING=ON"
     ;;
@@ -107,6 +116,32 @@ while getopts ${OPTSTRING} opt; do
     echo "[BUILD] Documentation will be built after compilation."
     make_documentation=true
     ;;
+  p)
+    # disable profiling with debug builds
+    if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
+      echo "[ERROR] Cannot profile with non-release builds!"
+      usage
+    fi
+
+    # disable simultaneous benchmarking and profiling
+    if [[ "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
+      echo "[ERROR] Cannot benchmark and profile simultaneously!"
+      usage
+    fi
+
+    # if spdlog isn't set, disable it automatically
+    if [[ "${spdlog_level}" == "" ]]; then
+      echo "[BUILD] Logging automatically disabled when profiling."
+      spdlog_level="-DSPDLOG_LEVEL=6"
+    elif [[ "${spdlog_level}" != "-DSPDLOG_LEVEL=6" ]]; then
+      echo "[ERROR] Logging must be disabled when profiling!"
+      usage
+    fi
+
+    # enable profiling
+    echo "[BUILD] Profiling will be enabled."
+    profiling_opt="-DENABLE_PROFILING=ON"
+    ;;
   t)
     # run tests
     echo "[BUILD] Tests will automatically be executed after compilation."
@@ -115,6 +150,11 @@ while getopts ${OPTSTRING} opt; do
   s)
     # spdlog level
     if [[ "${OPTARG}" =~ ^[0-6]$ ]]; then
+      if [[ "${profiling_opt}" == "-DENABLE_PROFILING=ON" && ${OPTARG} != "6" ]]; then
+        echo "[ERROR] Logging must be disabled when profiling!"
+        usage
+      fi
+
       spdlog_level="-DSPDLOG_LEVEL=${OPTARG}"
       echo "[BUILD] Set spdlog level: ${OPTARG}"
     else
@@ -231,14 +271,14 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${doxygen_opt} ${build_string} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${build_string} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }
 
 # build project
 echo "[BUILD] Building project with ${num_jobs} parallel job(s)..."
-make -j ${num_jobs} || {
+make -j ${num_jobs} VERBOSE=1 || {
   echo "[BUILD] Build failed! Aborting..."
   exit 1
 }

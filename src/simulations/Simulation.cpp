@@ -11,8 +11,10 @@ void Simulation::initializeBase(int type) {
     // get total number of iterations
     m_totalIt = static_cast<int>((m_args.endTime - m_args.startTime) / m_args.delta_t);
 
+#if !defined(DO_BENCHMARKING) && !defined(DO_PROFILING)
     // initialize output writer
     m_writer = WriterFactory::createWriter(m_args.type, m_args.basename);
+#endif
 
     // initialize physics functions
     auto [cvx, cf] = StrategyFactory::getSimulationFunctions(m_args, type);
@@ -34,7 +36,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
     // perform time integration
     double currentTime = m_args.startTime;
-#ifndef DO_BENCHMARKING
+#if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
     int iteration = 0;
 #endif
 
@@ -43,7 +45,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 
-#ifndef DO_BENCHMARKING
+#if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
         iteration++;
         if (iteration % m_args.itFreq == 0) {
             m_writer->writeParticles(m_particles, iteration, m_totalIt);

@@ -3,6 +3,7 @@
 #include "objects/ParticleContainer.h"
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
+#include "utils/CLIUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
 
@@ -10,12 +11,19 @@ int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
 
+#if defined(DO_BENCHMARKING) && defined(DO_PROFILING)
+    // prevent benchmarking and profiling simultaneously to avoid measuring I/O when timing runtime
+    CLIUtils::error("Cannot do benchmarking and profiling at the same time!", "", false);
+#endif
+
+#if defined(DO_PROFILING) && SPDLOG_ACTIVE_LEVEL < 6
+    // prevent profiling with logging enabled
+    CLIUtils::error("Cannot do profiling with logging turned on!", "", false);
+#endif
+
 #if defined(DO_BENCHMARKING) && SPDLOG_ACTIVE_LEVEL < 2
-    // prevent running main with benchmarking options enabled
-    // file output and logging are both disabled, effectively rendering the program useless
-    SPDLOG_ERROR("Cannot perform benchmarking with debug log information! Recompile with SPDLOG_LEVEL greater than 1 "
-                 "and try again.");
-    std::exit(EXIT_FAILURE);
+    // prevent benchmarking with debug logging information
+    CLIUtils::error("Cannot perform benchmarking with debug log information!", "", false);
 #endif
 
 #ifdef NDEBUG
