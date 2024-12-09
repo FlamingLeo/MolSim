@@ -29,7 +29,6 @@ This project uses the following external C++ libraries:
 
 -   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
--   [Benchmark](https://github.com/google/benchmark) 1.9.0
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
 
@@ -57,7 +56,6 @@ Following options are supported:
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
-           Logging MUST be set to level 6 to enable benchmarking. If -s is not set, this will be done automatically.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
@@ -65,7 +63,6 @@ Following options are supported:
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
-           To enable benchmarking, this option MUST be set to 6 (off). This is done automatically if -s is not set.
 -t       : Automatically runs tests after successful compilation (default: off).
 ```
 
@@ -129,11 +126,11 @@ The test executable will be located in the `build/tests` directory. From there, 
 
 ### Benchmarking Instructions
 
-Benchmarking is **disabled** by default and must be enabled manually using CMake. To perform benchmarking on all simulations, run the built binary inside `build/bench`.
+Benchmarking is **disabled** by default and must be enabled manually using CMake. When enabled, benchmarking is done automatically when running a simulation in the main executable.
 
-**IMPORTANT**: Logging **must** be disabled when compiling the benchmarks, and you **must** compile a `Release` build. Otherwise, compilation will fail.
+**IMPORTANT**: The log level **must** be at least `INFO`, and you **must** compile a `Release` build. Otherwise, compilation and / or execution will fail.
 
-**NOTE**: You may need to [disable CPU scaling](https://github.com/google/benchmark/blob/main/docs/user_guide.md#disabling-cpu-frequency-scaling) when benchmarking for more accurate results. You can do this using `cpupower`.
+**NOTE**: You may need to disable CPU scaling when benchmarking for more accurate results. You can do this using `cpupower`.
 
 ```bash
 sudo cpupower frequency-set --governor performance # disable CPU scaling

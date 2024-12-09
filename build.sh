@@ -18,7 +18,6 @@ help() {
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
-           Logging MUST be set to level 6 to enable benchmarking. If -s is not set, this will be done automatically.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
@@ -26,14 +25,11 @@ help() {
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
-           To enable benchmarking, this option MUST be set to 6 (off). This is done automatically if -s is not set.
 -t       : Automatically runs tests after successful compilation (default: off).
 
 \033[1mNOTES\033[0m:
 On Debian-based systems, the script will automatically attempt to install missing libraries (unless -l is set) to speed up the compilation process.
 This is done using 'sudo apt-get install'. As such, you may be required to enter your password.
-Additionally, this project depends on libbenchmark-dev for benchmarking, but installing it via apt-get will install a DEBUG build.
-As such, this script will install the library manually using the instructions provided in the repository.
 "
   exit 0
 }
@@ -60,7 +56,7 @@ while getopts ${OPTSTRING} opt; do
       usage
     fi
     # disable benchmarking with debug builds
-    if [[ "${OPTARG}" != "Release" && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
+    if [[ ("${OPTARG}" != "Release" || "${OPTARG}" != "RelWithDebInfo") && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
@@ -69,16 +65,8 @@ while getopts ${OPTSTRING} opt; do
     ;;
   c)
     # disable benchmarking with debug builds
-    if [[ "${build_string}" != "" && "${build_string}" != "-DCMAKE_BUILD_TYPE=Release" ]]; then
+    if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
-      usage
-    fi
-    # if spdlog isn't set, disable it automatically
-    if [[ "${spdlog_level}" == "" ]]; then
-      echo "[BUILD] Logging automatically disabled when benchmarking."
-      spdlog_level="-DSPDLOG_LEVEL=6"
-    elif [[ "${spdlog_level}" != "-DSPDLOG_LEVEL=6" ]]; then
-      echo "[ERROR] Logging must be disabled when benchmarking!"
       usage
     fi
     echo "[BUILD] Benchmarking will be enabled."
@@ -127,10 +115,6 @@ while getopts ${OPTSTRING} opt; do
   s)
     # spdlog level
     if [[ "${OPTARG}" =~ ^[0-6]$ ]]; then
-      if [[ "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" && ${OPTARG} != "6" ]]; then
-        echo "[ERROR] Logging must be disabled when benchmarking!"
-        usage
-      fi
       spdlog_level="-DSPDLOG_LEVEL=${OPTARG}"
       echo "[BUILD] Set spdlog level: ${OPTARG}"
     else
@@ -234,44 +218,6 @@ if [[ "${can_check_for_pkgs}" = true ]]; then
       sudo apt-get install -y libspdlog-dev || echo "[BUILD] Failed to get spdlog, will be fetched during compilation."
     else
       echo "not found! Will be fetched during compilation..."
-    fi
-  fi
-
-  if [ -n "${benchmarking_opt}" ]; then
-    echo -n "[BUILD] Checking if benchmark is installed... "
-    if pkg-config --list-all | grep -qw benchmark; then
-      echo "found."
-    else
-      if [[ "${install_opt}" = true ]]; then
-        echo "not found! Installing manually..."
-
-        # installation instructions: https://github.com/google/benchmark?tab=readme-ov-file#installation
-        TEMP_DIR=$(mktemp -d)
-
-        # check if the user, somehow, doesn't have git installed
-        if command -v git &>/dev/null; then
-          git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
-        else
-          echo "[BUILD] git not installed, installing..."
-          if [[ "${has_updated_apt}" == "false" ]]; then
-            sudo apt-get update
-            has_updated_apt=true
-          fi
-          sudo apt-get install -y git
-          git clone https://github.com/google/benchmark.git "$TEMP_DIR/benchmark"
-        fi
-
-        cd "$TEMP_DIR/benchmark"
-        cmake -E make_directory "build"
-        cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
-        sudo cmake --build "build" --config Release --target install
-        cd -
-        rm -rf "$TEMP_DIR"
-
-        echo "[BUILD] Installed benchmark."
-      else
-        echo "not found! Will be fetched during compilation..."
-      fi
     fi
   fi
 fi

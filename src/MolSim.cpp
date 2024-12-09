@@ -10,11 +10,11 @@ int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
 
-#ifdef DO_BENCHMARKING
+#if defined(DO_BENCHMARKING) && SPDLOG_ACTIVE_LEVEL < 2
     // prevent running main with benchmarking options enabled
     // file output and logging are both disabled, effectively rendering the program useless
-    std::cerr << "[" << BOLD_ON << "error" << BOLD_OFF
-              << "] Cannot run main program in benchmark mode! Recompile the program and try again.\n";
+    SPDLOG_ERROR("Cannot perform benchmarking with debug log information! Recompile with SPDLOG_LEVEL greater than 1 "
+                 "and try again.");
     std::exit(EXIT_FAILURE);
 #endif
 

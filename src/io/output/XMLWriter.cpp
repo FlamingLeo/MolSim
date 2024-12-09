@@ -81,4 +81,5 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args) {
 
     // write output to file
     sim(m_file, s);
+    SPDLOG_INFO("Serialized simulation results to XML.");
 }

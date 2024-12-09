@@ -12,6 +12,7 @@
 #include "objects/ParticleContainer.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
+#include "utils/Timer.h"
 #include <cassert>
 #include <memory>
 #include <string>
@@ -39,6 +40,9 @@ class Simulation {
 
     /// @brief Function for calculating the force effective on each Particle.
     StrategyFactory::FFunc m_calculateF;
+
+    /// @brief Timer used to measure simulation runtime and log molecule updates per second (MUPS).
+    Timer m_timer;
 
     /**
      * @brief Base function for initializing Simulation parameters.

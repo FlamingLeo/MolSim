@@ -36,4 +36,3 @@ include(spdlog)
 # use cmake files in each subdirectory
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(bench)
