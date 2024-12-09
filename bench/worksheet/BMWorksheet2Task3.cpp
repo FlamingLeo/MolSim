@@ -35,8 +35,8 @@ class LJFixture : public ::benchmark::Fixture {
         pc.reserve(384);
         Cuboid c1{pc, {0., 0., 0.}, {40, 8, 1}, {0., 0., 0.}, 1.1225, 1};
         Cuboid c2{pc, {15., 15., 0.}, {8, 8, 1}, {0., -10., 0.}, 1.1225, 1};
-        c1.initializeParticles();
-        c2.initializeParticles();
+        c1.initialize();
+        c2.initialize();
     }
 
     void TearDown(::benchmark::State &state) { (void)0; }

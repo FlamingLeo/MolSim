@@ -96,7 +96,7 @@ void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc)
                      distance, mass, epsilon, sigma);
 
         Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma};
-        cuboidObj.initializeParticles();
+        cuboidObj.initialize();
     }
 }
 
@@ -150,7 +150,7 @@ void parseDiscs(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
                      sigma);
 
         Disc discObj{pc, position, radius, velocity, distance, mass, type, epsilon, sigma};
-        discObj.initializeDisc();
+        discObj.initialize();
     }
 }
 

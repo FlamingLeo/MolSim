@@ -37,7 +37,7 @@ class LJLCFixture : public ::benchmark::Fixture {
         size_t numParticles = len * len;
         pc.reserve(numParticles);
         Cuboid c{pc, {0., 0., 0.}, {len, len, 1}, {0., 0., 0.}, 1.1225, 1};
-        c.initializeParticles();
+        c.initialize();
     }
 
     void TearDown(::benchmark::State &state) {
