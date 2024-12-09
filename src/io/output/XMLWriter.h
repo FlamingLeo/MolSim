@@ -19,6 +19,8 @@ class XMLWriter {
   private:
     /// @brief Output stream containing the XML file to write contents to.
     std::ofstream m_file;
+    /// @brief The name of the output file.
+    std::string m_filename;
 
     /**
      * @brief Opens a new file for writing.

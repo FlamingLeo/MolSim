@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-XMLWriter::XMLWriter(const std::string &filename) {
+XMLWriter::XMLWriter(const std::string &filename) : m_filename{filename} {
     openFile(filename);
     SPDLOG_TRACE("Created new XMLWriter with file {}.", filename);
 }
@@ -81,4 +81,5 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args) {
 
     // write output to file
     sim(m_file, s);
+    SPDLOG_INFO("Saved final simulation state to output file {}.", m_filename);
 }
