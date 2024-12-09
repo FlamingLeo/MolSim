@@ -64,6 +64,13 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 bool westHalo = x == 0;
                 bool eastHalo = x == (numCells[0] - 1);
 
+                bool aboveBorder = z == (numCells[2] - 2);
+                bool belowBorder = z == 1;
+                bool northBorder = y == (numCells[1] - 2);
+                bool southBorder = y == 1;
+                bool westBorder = x == 1;
+                bool eastBorder = x == (numCells[0] - 2);
+
                 std::vector<HaloLocation> haloLocation;
                 if (northHalo)
                     haloLocation.push_back(HaloLocation::NORTH);
@@ -80,6 +87,23 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                         haloLocation.push_back(HaloLocation::BELOW);
                 }
 
+                std::vector<BorderLocation> borderLocation;
+                if (northBorder)
+                    borderLocation.push_back(BorderLocation::NORTH);
+                if (southBorder)
+                    borderLocation.push_back(BorderLocation::SOUTH);
+                if (westBorder)
+                    borderLocation.push_back(BorderLocation::WEST);
+                if (eastBorder)
+                    borderLocation.push_back(BorderLocation::EAST);
+                if (dim == 3) {
+                    if (aboveBorder)
+                        borderLocation.push_back(BorderLocation::ABOVE);
+                    if (belowBorder)
+                        borderLocation.push_back(BorderLocation::BELOW);
+                }
+
+                //this should be deleted and borderLocation condition added, but I'm afraid to break everything
                 // we don't care about which type of border it is, for now...
                 bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
                                           x == 1 || x == (numCells[0] - 2))
@@ -88,7 +112,7 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
 
                 // position of lower left corner
                 std::array<double, 3> position = {x * cellSize[0], y * cellSize[1], z * cellSize[2]};
-                cells.emplace_back(cellSize, position, type, index, haloLocation);
+                cells.emplace_back(cellSize, position, type, index, haloLocation, borderLocation);
 
                 // add to special cell ref. containers
                 // we can do this in here because we reserved the size of the vector beforehand...
@@ -289,6 +313,7 @@ std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
 }
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
+    //coincidentally works just as well for getting the opposite halo cell for a border cell
     // currently in 2D
     int cellIndex = from.getIndex();
     if (location == HaloLocation::NORTH) {
@@ -302,6 +327,40 @@ int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
     }
     return -1;
 }
+
+int CellContainer::getOppositeOfBorder(const Cell &from, BorderLocation location) {
+    // currently in 2D
+    int cellIndex = from.getIndex();
+    if (location == BorderLocation::NORTH) {
+        return cellIndex - numCells[0] * (numCells[1] - 2);
+    } else if (location == BorderLocation::SOUTH) {
+        return cellIndex + numCells[0] * (numCells[1] - 2);
+    } else if (location == BorderLocation::WEST) {
+        return cellIndex + (numCells[0] - 2);
+    } else if (location == BorderLocation::EAST) {
+        return cellIndex - (numCells[0] - 2);
+    }
+    return -1;
+}
+
+std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> locations) {
+    // currently in 2D, god help us in 3D
+    int cellIndex = from.getIndex();
+    std::vector<int> ghostCorners;
+    for(auto loc : locations) {
+        if (loc == BorderLocation::NORTH) {
+            cellIndex = cellIndex - numCells[0] * (numCells[1] - 2);
+        } else if (loc == BorderLocation::SOUTH) {
+            cellIndex = cellIndex + numCells[0] * (numCells[1] - 2);
+        } else if (loc == BorderLocation::WEST) {
+            cellIndex = cellIndex + (numCells[0] - 2);
+        } else if (loc == BorderLocation::EAST) {
+            cellIndex = cellIndex - (numCells[0] - 2);
+        }
+    }
+    return ghostCorners;
+}
+
 
 Cell &CellContainer::operator[](size_t index) { return cells[index]; }
 const Cell &CellContainer::operator[](size_t index) const { return cells[index]; }

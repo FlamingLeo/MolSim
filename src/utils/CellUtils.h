@@ -20,6 +20,8 @@ enum class BoundaryCondition { OUTFLOW, REFLECTIVE, PERIODIC };
 enum class CellType { INNER, BORDER, HALO };
 /// @brief Enum containing the possible corner and edge directions of halo cells.
 enum class HaloLocation { NORTH, SOUTH, WEST, EAST, ABOVE, BELOW };
+/// @brief Enum containing the possible corner and edge directions of border cells
+enum class BorderLocation {NORTH, SOUTH, WEST, EAST, ABOVE, BELOW};
 
 /// @brief Namespace containing utility functions for Cell and CellContainer objects.
 namespace CellUtils {

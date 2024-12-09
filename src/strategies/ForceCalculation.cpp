@@ -1,6 +1,7 @@
 #include "ForceCalculation.h"
 #include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
+#include "strategies/BoundaryConditions.h"
 #include "utils/ArrayUtils.h"
 #include <functional>
 #include <spdlog/spdlog.h>
@@ -207,6 +208,99 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
             }
         }
     }
+}
+
+void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, double, CellContainer *lc) {
+    //FIRST WE MIRROR BORDER PARTICLES FOR PERIODIC
+    mirrorGhostParticles(lc);
+
+    // loop over all cells ic
+    for (auto &ic : *lc) {
+        // loop over all active particles i in cell ic
+
+        //EXTRA SPECIAL CASE: if halo cell skip
+        if(!ic.getHaloLocation().empty()){
+            continue;
+        }
+
+        //for every particle
+        for (auto &ri : ic) {
+            Particle &i = ri;
+            if (!i.isActive())
+                continue;
+
+            // loop over all cells kc in Neighbours(ic)
+            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
+                Cell &kc = (*lc)[kci];
+
+                //EXTRA SPECIAL CASE: if halo cell, particles within ghosts
+                if(!kc.getBorderLocation().empty()){
+                    for (auto &rj : kc) {
+
+                        //no inactive halo cells (even though I'm not sure such a thing can exist since we only add particles from the halo from cells)
+                        Particle &j = rj;
+                        if (!j.isActive())
+                            continue;
+
+                        //We need to fake the position of the ghost Particle as if it were in the halo cell
+                        Cell trueCell = lc->getCells()[j.getCellIndex()];
+                        std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0], j.getX()[1] - trueCell.getX()[1],
+                                                        j.getX()[2] - trueCell.getX()[2]};
+                        std::array<double, 3> fakePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1],
+                                                        kc.getX()[2] + inCell[2]};
+
+                        auto distVec = i.getX() - fakePos;
+                        double distNorm = ArrayUtils::L2Norm(distVec);
+
+                        // compute force if distance is less than cutoff
+                        if (distNorm <= lc->getCutoff()) {
+                            double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
+                            double sigma = (i.getSigma() + j.getSigma()) / 2;
+
+                            double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                              (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
+                            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+
+                            // apply force on particle i (no force on ghost particle)
+                            i.setF(i.getF() + forceVec);
+                        }
+                    }
+                    continue;
+                }
+
+                //NORMAL CASE
+                // loop over all active  particles j in cell kc
+                for (auto &rj : kc) {
+
+                    Particle &j = rj;
+                    if (!j.isActive() || &i >= &j)
+                        continue;
+
+                    // only iterate through distinct pairs by comparing (distinct) memory addresses
+                    // in one complete force calculation, either i < j or i >= j will hold, but not both
+                    // this _may_ be changed if, somehow, the container where the particles are stored becomes dynamic
+                    auto distVec = i.getX() - j.getX();
+                    double distNorm = ArrayUtils::L2Norm(distVec);
+
+                    // compute force if distance is less than cutoff
+                    if (distNorm <= lc->getCutoff()) {
+                        double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
+                        double sigma = (i.getSigma() + j.getSigma()) / 2;
+
+                        double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
+                                          (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
+                        auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+
+                        // apply force on particle i and opposite force on particle j
+                        i.setF(i.getF() + forceVec);
+                        j.setF(j.getF() - forceVec);
+                    }
+                }
+            }
+        }
+    }
+    //IN THE END WE DELETE GHOST PARTICLES
+    deleteGhostParticles(lc);
 }
 
 void addGravitationalForce(ParticleContainer &particles, double g_grav) {

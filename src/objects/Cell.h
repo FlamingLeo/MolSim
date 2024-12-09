@@ -35,6 +35,9 @@ class Cell {
     /// @brief If this is a halo cell, the locations of this cell (North, South, West, East, Above, Below) are stored
     /// here.
     std::vector<HaloLocation> m_haloLocation;
+    /// @brief If this is a border cell, the locations of this cell (North, South, West, East, Above, Below) are stored
+    /// here.
+    std::vector<BorderLocation> m_borderLocation;
     /// @brief The type of this Cell. May be INNER, BORDER or HALO.
     CellType m_type;
     /// @brief The index of this Cell in the overarching CellContainer.
@@ -53,7 +56,7 @@ class Cell {
      * @param haloLocation The cardinal direction(s) of this cell if this is a halo Cell.
      */
     Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
-         const std::vector<HaloLocation> &haloLocation);
+         const std::vector<HaloLocation> &haloLocation, const std::vector<BorderLocation> &borderLocation);
 
     /**
      * @brief Gets an iterator to the beginning of the Particle* forward list.
@@ -115,6 +118,13 @@ class Cell {
      * @return A const reference to the halo location vector of this Cell.
      */
     const std::vector<HaloLocation> &getHaloLocation() const;
+
+    /**
+     * @brief Gets a const reference to the border location (cardinal direction) vector of this Cell.
+     *
+     * @return A const reference to the border location vector of this Cell.
+     */
+    const std::vector<BorderLocation> &getBorderLocation() const;
 
     /**
      * @brief Gets a const reference to the Cell's Particle pointer forward list.

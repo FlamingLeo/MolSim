@@ -74,3 +74,25 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc);
  * @param dimension The dimension argument passed to the getMirrorPosition() function in CellContainer.
  */
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension);
+
+/**
+ * @brief Adds ghost particles to the proper halo cells for periodic conditions.
+ *
+ * @param lc The CellContainer we are operating in.
+ */
+void mirrorGhostParticles(CellContainer *lc);
+
+/**
+ * @brief Deletes references to ghost particles from the halo cells (i.e all particle references in halo cells).
+ *
+ * @param lc The CellContainer we are operating in.
+ */
+void deleteGhostParticles(CellContainer *lc);
+
+/**
+ * @brief Gives for a certain direction the index of the corresponding Boundary Condition.
+ *
+ * @param location The direction of interest.
+ * @return The index for the direction
+ */
+int directionLookUp(BorderLocation location);

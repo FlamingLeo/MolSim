@@ -148,6 +148,21 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, CellContainer *lc);
 
 /**
+ * @brief Calculates the force \f$ F \f$ for all particles using Newton's third law of motion for a linked-cell
+ * LennardJones simulation with periodic boundary conditions and a cutoff radius. Extra-function so as
+ * not to break anything
+ *
+ * @details Newton's Third Law is used, but now, the algorithm only takes particles within a particle's cell
+ * neighborhood that have a distance smaller than (or equal to) the cutoff radius to eachother into consideration.
+ *
+ * **Complexity:** \f$ O(N) \f$
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param lc The CellContainer for the linked cells method.
+ */
+void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, double, CellContainer *lc);
+
+/**
  * @brief Adds the gravitional force m*g to all active particles in the ParticleContainer.
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.

@@ -297,33 +297,33 @@ TEST_F(CellContainerTest, GetOppositeNeighbor) {
 // Test getting the mirrored position of a particle from two cells.
 TEST_F(CellContainerTest, GetMirrorPosition) {
     std::array<double, 3> position = {2.0, 2.0, 0.0};
-    Cell fromCell({1.0, 1.0, 1.0}, {1.5, 1.5, 0.0}, CellType::INNER, 121, {});
-    Cell toCell({1.0, 1.0, 1.0}, {1.5, 3.5, 0.0}, CellType::INNER, 133, {});
+    Cell fromCell({1.0, 1.0, 1.0}, {1.5, 1.5, 0.0}, CellType::INNER, 121, {}, {});
+    Cell toCell({1.0, 1.0, 1.0}, {1.5, 3.5, 0.0}, CellType::INNER, 133, {}, {});
     std::array<double, 3> expectedPosition = {2.0, 4.0, 0.0};
     std::array<double, 3> result = container.getMirrorPosition(position, fromCell, toCell, 1);
     EXPECT_EQ(result, expectedPosition);
 
-    toCell = Cell({1.0, 1.0, 1.0}, {1.5, -1.5, 0.0}, CellType::INNER, 1, {});
+    toCell = Cell({1.0, 1.0, 1.0}, {1.5, -1.5, 0.0}, CellType::INNER, 1, {}, {});
     expectedPosition = {2.0, -1.0, 0.0};
     result = container.getMirrorPosition(position, fromCell, toCell, 1);
     EXPECT_EQ(result, expectedPosition);
 
-    toCell = Cell({1.0, 1.0, 1.0}, {3.5, 1.5, 0.0}, CellType::INNER, 122, {});
+    toCell = Cell({1.0, 1.0, 1.0}, {3.5, 1.5, 0.0}, CellType::INNER, 122, {}, {});
     expectedPosition = {4.0, 2.0, 0.0};
     result = container.getMirrorPosition(position, fromCell, toCell, 0);
     EXPECT_EQ(result, expectedPosition);
 
-    toCell = Cell({1.0, 1.0, 1.0}, {-0.5, 1.5, 0.0}, CellType::INNER, 120, {});
+    toCell = Cell({1.0, 1.0, 1.0}, {-0.5, 1.5, 0.0}, CellType::INNER, 120, {}, {});
     expectedPosition = {0.0, 2.0, 0.0};
     result = container.getMirrorPosition(position, fromCell, toCell, 0);
     EXPECT_EQ(result, expectedPosition);
 
-    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, 2.5}, CellType::INNER, 122, {});
+    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, 2.5}, CellType::INNER, 122, {}, {});
     expectedPosition = {2.0, 2.0, 2.5};
     result = container.getMirrorPosition(position, fromCell, toCell, 2);
     EXPECT_EQ(result, expectedPosition);
 
-    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, -0.5}, CellType::INNER, 120, {});
+    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, -0.5}, CellType::INNER, 120, {}, {});
     expectedPosition = {2.0, 2.0, -0.5};
     result = container.getMirrorPosition(position, fromCell, toCell, 2);
     EXPECT_EQ(result, expectedPosition);

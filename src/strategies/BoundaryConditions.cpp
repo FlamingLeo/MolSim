@@ -77,6 +77,8 @@ void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc) {
 }
 
 void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
+    //this function ought to be called after particles have made it into the halo cells and should be moved to the
+    //opposite border cell
     const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
     HaloLocation location;
 
@@ -95,13 +97,69 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
     std::array<double, 3> newPos = {newCell.getX()[0] + inCell[0], newCell.getX()[1] + inCell[1],
                                     newCell.getX()[2] + inCell[2]};
 
-    // we set the particles new position and move it to the proper cell
+    // we set the particle's new position and move it to the proper cell
     p.setX(newPos);
     if (!lc->moveParticle(p)) {
         p.markInactive();
         return;
     }
     SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
+}
+
+void mirrorGhostParticles(CellContainer *lc){
+    std::vector<std::reference_wrapper<Cell>> borderCells = lc->getBorderCells();
+
+    //we add to the halo cells on the opposite side (sides if corner) references to the particles
+    for(auto bc : borderCells){
+        std::vector<BorderLocation> location = bc.get().getBorderLocation();
+
+        //special case for corners (2D) -- should be changed to >2 for 3D
+        if(location.size() > 1){
+            //if not all concerned edges are periodic, don't mirror corner (intuitively this is how it seems it should be to me)
+            bool doCorner = true;
+            for(auto direction : location){
+                if(lc->getConditions()[directionLookUp(direction)] != BoundaryCondition::PERIODIC){
+                    doCorner = false;
+                }
+            }
+
+            if(doCorner) {
+                std::vector<int> corners = lc->getOppositeOfBorderCorner(bc, location);
+
+                //in every corner add the ghost particles
+                for (auto corner: corners) {
+                    for (auto p: bc.get().getParticles()) {
+                        lc->getCells()[corner].addParticle(p);
+                    }
+                }
+            }
+        }
+
+        //case for edges: you need to mirror across every edge
+        for(auto direction : location){
+
+            //check whether we should be applying periodic boundary conditions in this direction
+            if(lc->getConditions()[directionLookUp(direction)] != BoundaryCondition::PERIODIC){
+                continue;
+            }
+
+            int haloIndex = lc->getOppositeOfBorder(bc, direction);
+
+            for(auto p : bc.get().getParticles()) {
+                lc->getCells()[haloIndex].addParticle(p);
+            }
+        }
+    }
+}
+
+void deleteGhostParticles(CellContainer *lc){
+    //remove all particles (they are only ghost particles) from the halo cells, they should be empty
+    for(auto cell : lc->getHaloCells()){
+        int cellIndex = cell.get().getIndex();
+        for(auto p : cell.get()){
+            cell.get().removeParticle(p);
+        }
+    }
 }
 
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension) {
@@ -111,4 +169,22 @@ void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *l
         return;
     }
     SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
+}
+
+int directionLookUp(BorderLocation location){
+    switch (location) {
+        case BorderLocation::NORTH:
+            return 0;
+        case BorderLocation::SOUTH:
+            return 1;
+        case BorderLocation::WEST:
+            return 2;
+        case BorderLocation::EAST:
+            return 3;
+        case BorderLocation::ABOVE:
+            return 4;
+        case BorderLocation::BELOW:
+            return 5;
+    }
+    return -1;
 }
