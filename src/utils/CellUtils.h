@@ -175,6 +175,9 @@ static inline std::string fromBoundaryConditionArray(const std::array<BoundaryCo
         case BoundaryCondition::REFLECTIVE:
             ss << "r";
             break;
+        case BoundaryCondition::PERIODIC:
+            ss << "p";
+            break;
         default:
             SPDLOG_WARN("This shouldn't happen! (fromBoundaryConditionArray)");
             break;
@@ -219,6 +222,9 @@ static inline std::array<BoundaryCondition, 6> stringToBoundaryConditions(const 
             break;
         case 'r':
             arr[index++] = BoundaryCondition::REFLECTIVE;
+            break;
+        case 'p':
+            arr[index++] = BoundaryCondition::PERIODIC;
             break;
         default:
             CLIUtils::error("Invalid boundary condition character (must be one of: o, r)!");

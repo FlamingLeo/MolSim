@@ -877,19 +877,20 @@ BoundaryConditionType *BoundaryConditionType::_clone(::xml_schema::Flags f, ::xm
 BoundaryConditionType::Value BoundaryConditionType::_xsd_BoundaryConditionType_convert() const {
     ::xsd::cxx::tree::enum_comparator<char> c(_xsd_BoundaryConditionType_literals_);
     const Value *i(
-        ::std::lower_bound(_xsd_BoundaryConditionType_indexes_, _xsd_BoundaryConditionType_indexes_ + 2, *this, c));
+        ::std::lower_bound(_xsd_BoundaryConditionType_indexes_, _xsd_BoundaryConditionType_indexes_ + 3, *this, c));
 
-    if (i == _xsd_BoundaryConditionType_indexes_ + 2 || _xsd_BoundaryConditionType_literals_[*i] != *this) {
+    if (i == _xsd_BoundaryConditionType_indexes_ + 3 || _xsd_BoundaryConditionType_literals_[*i] != *this) {
         throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
     }
 
     return *i;
 }
 
-const char *const BoundaryConditionType::_xsd_BoundaryConditionType_literals_[2] = {"outflow", "reflective"};
+const char *const BoundaryConditionType::_xsd_BoundaryConditionType_literals_[3] = {"outflow", "reflective",
+                                                                                    "periodic"};
 
-const BoundaryConditionType::Value BoundaryConditionType::_xsd_BoundaryConditionType_indexes_[2] = {
-    ::BoundaryConditionType::outflow, ::BoundaryConditionType::reflective};
+const BoundaryConditionType::Value BoundaryConditionType::_xsd_BoundaryConditionType_indexes_[3] = {
+    ::BoundaryConditionType::outflow, ::BoundaryConditionType::periodic, ::BoundaryConditionType::reflective};
 
 // PositionType
 //

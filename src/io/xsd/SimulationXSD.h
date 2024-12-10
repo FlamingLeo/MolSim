@@ -1784,7 +1784,7 @@ class BoundaryConditionType : public ::xml_schema::String {
     /**
      * @brief Underlying enum type.
      */
-    enum Value { outflow, reflective };
+    enum Value { outflow, reflective, periodic };
 
     /**
      * @brief Create an instance from the underlying enum value.
@@ -1896,8 +1896,8 @@ class BoundaryConditionType : public ::xml_schema::String {
     Value _xsd_BoundaryConditionType_convert() const;
 
   public:
-    static const char *const _xsd_BoundaryConditionType_literals_[2];
-    static const Value _xsd_BoundaryConditionType_indexes_[2];
+    static const char *const _xsd_BoundaryConditionType_literals_[3];
+    static const Value _xsd_BoundaryConditionType_indexes_[3];
 
     //@endcond
 };
