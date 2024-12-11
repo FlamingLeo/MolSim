@@ -211,14 +211,17 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
 }
 
 void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, double, CellContainer *lc) {
-    //FIRST WE MIRROR BORDER PARTICLES FOR PERIODIC
-    mirrorGhostParticles(lc);
+
+    //FIRST WE MIRROR BORDER PARTICLES IF WE HAVE PERIODIC BOUNDARY CONDITIONS
+    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+        mirrorGhostParticles(lc);
+    }
 
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
 
-        //EXTRA SPECIAL CASE: if halo cell skip
+        //EXTRA SPECIAL CASE: if halo cell skip (no multiple interactions between same particles)
         if(!ic.getHaloLocation().empty()){
             continue;
         }
@@ -233,53 +236,27 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
 
-                //EXTRA SPECIAL CASE: if halo cell, particles within ghosts
-                if(!kc.getBorderLocation().empty()){
-                    for (auto &rj : kc) {
-
-                        //no inactive halo cells (even though I'm not sure such a thing can exist since we only add particles from the halo from cells)
-                        Particle &j = rj;
-                        if (!j.isActive())
-                            continue;
-
-                        //We need to fake the position of the ghost Particle as if it were in the halo cell
-                        Cell trueCell = lc->getCells()[j.getCellIndex()];
-                        std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0], j.getX()[1] - trueCell.getX()[1],
-                                                        j.getX()[2] - trueCell.getX()[2]};
-                        std::array<double, 3> fakePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1],
-                                                        kc.getX()[2] + inCell[2]};
-
-                        auto distVec = i.getX() - fakePos;
-                        double distNorm = ArrayUtils::L2Norm(distVec);
-
-                        // compute force if distance is less than cutoff
-                        if (distNorm <= lc->getCutoff()) {
-                            double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
-                            double sigma = (i.getSigma() + j.getSigma()) / 2;
-
-                            double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
-                                              (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
-                            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
-
-                            // apply force on particle i (no force on ghost particle)
-                            i.setF(i.getF() + forceVec);
-                        }
-                    }
-                    continue;
-                }
-
-                //NORMAL CASE
-                // loop over all active  particles j in cell kc
                 for (auto &rj : kc) {
 
+                    //normal check
                     Particle &j = rj;
                     if (!j.isActive() || &i >= &j)
                         continue;
 
-                    // only iterate through distinct pairs by comparing (distinct) memory addresses
-                    // in one complete force calculation, either i < j or i >= j will hold, but not both
-                    // this _may_ be changed if, somehow, the container where the particles are stored becomes dynamic
-                    auto distVec = i.getX() - j.getX();
+                    std::array<double, 3> truePos = j.getX();
+                    //SPECIAL CASE: Particle j is a ghost particle
+                    if(!kc.getHaloLocation().empty()) {
+                        //We need to fake the position of the ghost Particle as if it were in the halo cell
+                        Cell trueCell = lc->getCells()[j.getCellIndex()];
+                        std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0],
+                                                        j.getX()[1] - trueCell.getX()[1],
+                                                        j.getX()[2] - trueCell.getX()[2]};
+                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1],
+                                                         kc.getX()[2] + inCell[2]};
+
+                    }
+
+                    auto distVec = i.getX() - truePos;
                     double distNorm = ArrayUtils::L2Norm(distVec);
 
                     // compute force if distance is less than cutoff
@@ -291,7 +268,7 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
                                           (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
                         auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
 
-                        // apply force on particle i and opposite force on particle j
+                        // apply force on particle i (no force on ghost particle)
                         i.setF(i.getF() + forceVec);
                         j.setF(j.getF() - forceVec);
                     }
@@ -299,8 +276,10 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
             }
         }
     }
-    //IN THE END WE DELETE GHOST PARTICLES
-    deleteGhostParticles(lc);
+    //IN THE END WE DELETE GHOST PARTICLES IF WE HAVE PERIODIC CONDITIONS
+    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+        deleteGhostParticles(lc);
+    }
 }
 
 void addGravitationalForce(ParticleContainer &particles, double g_grav) {

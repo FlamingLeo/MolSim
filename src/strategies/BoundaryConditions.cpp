@@ -130,6 +130,7 @@ void mirrorGhostParticles(CellContainer *lc){
                 for (auto corner: corners) {
                     for (auto p: bc.get().getParticles()) {
                         lc->getCells()[corner].addParticle(p);
+                        SPDLOG_DEBUG("Mirror in Corner {}.", p.get().toString());
                     }
                 }
             }
@@ -147,6 +148,7 @@ void mirrorGhostParticles(CellContainer *lc){
 
             for(auto p : bc.get().getParticles()) {
                 lc->getCells()[haloIndex].addParticle(p);
+                SPDLOG_DEBUG("Mirror along edge {}.", p.get().toString());
             }
         }
     }
@@ -154,10 +156,10 @@ void mirrorGhostParticles(CellContainer *lc){
 
 void deleteGhostParticles(CellContainer *lc){
     //remove all particles (they are only ghost particles) from the halo cells, they should be empty
-    for(auto cell : lc->getHaloCells()){
-        int cellIndex = cell.get().getIndex();
-        for(auto p : cell.get()){
+    for(auto& cell : lc->getHaloCells()){
+        for(auto &p : cell.get()){
             cell.get().removeParticle(p);
+            SPDLOG_DEBUG("Deleted Ghost Particle {}.", p.get().toString());
         }
     }
 }
