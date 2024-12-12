@@ -168,9 +168,9 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 }
 
 void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, CellContainer *lc) {
-    SPDLOG_DEBUG("Start F");
-    //FIRST WE MIRROR BORDER PARTICLES IF WE HAVE PERIODIC BOUNDARY CONDITIONS
-    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+    // FIRST WE MIRROR BORDER PARTICLES IF WE HAVE PERIODIC BOUNDARY CONDITIONS
+    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
+        lc->getConditions().end()) {
         mirrorGhostParticles(lc);
     }
 
@@ -178,12 +178,12 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
 
-        //EXTRA SPECIAL CASE: if halo cell skip (no multiple interactions between same particles)
-        if(!ic.getHaloLocation().empty()){
+        // EXTRA SPECIAL CASE: if halo cell skip (no multiple interactions between same particles)
+        if (!ic.getHaloLocation().empty()) {
             continue;
         }
 
-        //for every particle
+        // for every particle
         for (auto &ri : ic) {
             Particle &i = ri;
             if (!i.isActive())
@@ -195,22 +195,20 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
 
                 for (auto &rj : kc) {
 
-                    //normal check
+                    // normal check
                     Particle &j = rj;
                     if (!j.isActive() || &i >= &j)
                         continue;
 
                     std::array<double, 3> truePos = j.getX();
-                    //SPECIAL CASE: Particle j is a ghost particle
-                    if(!kc.getHaloLocation().empty()) {
-                        //We need to fake the position of the ghost Particle as if it were in the halo cell
+                    // SPECIAL CASE: Particle j is a ghost particle
+                    if (!kc.getHaloLocation().empty()) {
+                        // We need to fake the position of the ghost Particle as if it were in the halo cell
                         Cell trueCell = lc->getCells()[j.getCellIndex()];
                         std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0],
                                                         j.getX()[1] - trueCell.getX()[1],
                                                         j.getX()[2] - trueCell.getX()[2]};
-                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1],
-                                   kc.getX()[2] + inCell[2]};
-
+                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1], kc.getX()[2] + inCell[2]};
                     }
 
                     auto distVec = i.getX() - truePos;
@@ -233,16 +231,18 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
             }
         }
     }
-    //IN THE END WE DELETE GHOST PARTICLES IF WE HAVE PERIODIC CONDITIONS
-    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+    // IN THE END WE DELETE GHOST PARTICLES IF WE HAVE PERIODIC CONDITIONS
+    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
+        lc->getConditions().end()) {
         deleteGhostParticles(lc);
     }
 }
 
 void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, double, CellContainer *lc) {
 
-    //FIRST WE MIRROR BORDER PARTICLES IF WE HAVE PERIODIC BOUNDARY CONDITIONS
-    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+    // FIRST WE MIRROR BORDER PARTICLES IF WE HAVE PERIODIC BOUNDARY CONDITIONS
+    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
+        lc->getConditions().end()) {
         mirrorGhostParticles(lc);
     }
 
@@ -250,12 +250,12 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
 
-        //EXTRA SPECIAL CASE: if halo cell skip (no multiple interactions between same particles)
-        if(!ic.getHaloLocation().empty()){
+        // EXTRA SPECIAL CASE: if halo cell skip (no multiple interactions between same particles)
+        if (!ic.getHaloLocation().empty()) {
             continue;
         }
 
-        //for every particle
+        // for every particle
         for (auto &ri : ic) {
             Particle &i = ri;
             if (!i.isActive())
@@ -267,22 +267,20 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
 
                 for (auto &rj : kc) {
 
-                    //normal check
+                    // normal check
                     Particle &j = rj;
                     if (!j.isActive() || &i >= &j)
                         continue;
 
                     std::array<double, 3> truePos = j.getX();
-                    //SPECIAL CASE: Particle j is a ghost particle
-                    if(!kc.getHaloLocation().empty()) {
-                        //We need to fake the position of the ghost Particle as if it were in the halo cell
+                    // SPECIAL CASE: Particle j is a ghost particle
+                    if (!kc.getHaloLocation().empty()) {
+                        // We need to fake the position of the ghost Particle as if it were in the halo cell
                         Cell trueCell = lc->getCells()[j.getCellIndex()];
                         std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0],
                                                         j.getX()[1] - trueCell.getX()[1],
                                                         j.getX()[2] - trueCell.getX()[2]};
-                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1],
-                                                         kc.getX()[2] + inCell[2]};
-
+                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1], kc.getX()[2] + inCell[2]};
                     }
 
                     auto distVec = i.getX() - truePos;
@@ -305,8 +303,9 @@ void calculateF_LennardJonesThirdLaw_LC_Periodic(ParticleContainer &particles, d
             }
         }
     }
-    //IN THE END WE DELETE GHOST PARTICLES IF WE HAVE PERIODIC CONDITIONS
-    if(std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) != lc->getConditions().end()) {
+    // IN THE END WE DELETE GHOST PARTICLES IF WE HAVE PERIODIC CONDITIONS
+    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
+        lc->getConditions().end()) {
         deleteGhostParticles(lc);
     }
 }

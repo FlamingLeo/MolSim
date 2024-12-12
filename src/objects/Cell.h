@@ -127,6 +127,13 @@ class Cell {
     const std::vector<BorderLocation> &getBorderLocation() const;
 
     /**
+     * @brief Gets a reference to the Cell's Particle pointer forward list.
+
+     * @return A reference to the Cell's Particle pointer forward list.
+     */
+    std::forward_list<std::reference_wrapper<Particle>> &getParticles();
+
+    /**
      * @brief Gets a const reference to the Cell's Particle pointer forward list.
      *
      * @return A const reference to the Cell's Particle pointer forward list.
