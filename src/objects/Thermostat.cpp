@@ -19,7 +19,7 @@ Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_ini
     T_target = T_init;
 }
 
-Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat) 
+Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat) 
 : particles{particles}, dimension{dimension}, T_init{T_init}, n_thermostat{n_thermostat} {
     scaling_limit = false;
     T_target = T_init;
