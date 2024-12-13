@@ -13,10 +13,26 @@ class Thermostat {
 
     double scalingFactor;
 
+    double T_init;
+
+    double T_target;
+
+    int n_thermostat;
+
+    double delta_T;
+
+    bool scaling_limit;
+
     ParticleContainer &particles;
 
   public:
-    Thermostat(ParticleContainer &particles, int dimension);
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat, double delta_T);
+
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat);
+
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double delta_T);
+
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat);
 
     void calculateKineticEnergy();
 
@@ -24,9 +40,7 @@ class Thermostat {
 
     void calculateScalingFactor(double newTemp);
 
-    void setTempViaVelocityScaling();
-
-    void setTempViaGradualScaling();
+    void updateSystemTemp(int currentStep);
 
     double getKineticEnergy();
 
