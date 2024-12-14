@@ -43,6 +43,16 @@ class FileWriter {
     void closeFile();
 
     /**
+     * @brief (Re)initializes the output directory.
+     *
+     * First, the function checks if the output directory exists. If it doesn't, it creates it. Otherwise, it deletes
+     * everything inside it.
+     *
+     * @param dirname The name of the output directory.
+     */
+    void initializeFolder(const std::string &dirname);
+
+    /**
      * @brief Overwrites the contents of the file opened in m_file with a given string. On error, the program will
      * terminate.
      *

@@ -8,8 +8,10 @@
  */
 #pragma once
 #include <algorithm>
-#include <filesystem>
+#include <cstdlib>
+#include <limits.h>
 #include <string>
+#include <unistd.h>
 
 /// @brief  Namespace defining utility functions for working with file paths.
 namespace PathUtils {
@@ -21,12 +23,13 @@ namespace PathUtils {
  * @return false if the file does not have a .xml extension.
  */
 static inline bool isXmlFile(const std::string &filename) {
-    std::filesystem::path filePath(filename);
-    std::string extension = filePath.extension().string();
-
+    size_t dotPos = filename.find_last_of('.');
+    if (dotPos == std::string::npos || dotPos == filename.length() - 1) {
+        return false;
+    }
+    std::string extension = filename.substr(dotPos);
     std::transform(extension.begin(), extension.end(), extension.begin(),
                    [](unsigned char c) { return std::tolower(c); });
-
     return extension == ".xml";
 }
 
@@ -58,14 +61,26 @@ static inline std::string getTargetPath(const std::string &fullPath, const std::
  * @return false if the test file directory could not be found.
  */
 static inline bool setupFileTests(std::string &targetPath, std::string &skipReason) {
-    std::filesystem::path cwd = std::filesystem::current_path();
+    auto getCurrentPath = []() -> std::string {
+        char buffer[PATH_MAX];
+        if (getcwd(buffer, sizeof(buffer)) != nullptr) {
+            return std::string(buffer);
+        }
+        return "";
+    };
+    auto pathExists = [](const std::string &path) -> bool { return access(path.c_str(), F_OK) == 0; };
+    std::string cwd = getCurrentPath();
+    if (cwd.empty()) {
+        skipReason = "Unable to determine current working directory, skipping tests...";
+        return false;
+    }
     targetPath = PathUtils::getTargetPath(cwd, "MolSim");
     if (targetPath.empty()) {
         skipReason = "Project root directory not found, skipping tests...";
         return false;
     }
     targetPath += "/tests/files";
-    if (!(std::filesystem::exists(targetPath))) {
+    if (!pathExists(targetPath)) {
         skipReason = "Test files not found, skipping tests...";
         return false;
     }

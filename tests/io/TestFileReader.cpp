@@ -2,7 +2,6 @@
 #include "objects/Cuboid.h"
 #include "objects/ParticleContainer.h"
 #include "utils/PathUtils.h"
-#include <filesystem>
 #include <gtest/gtest.h>
 #include <iostream>
 #define EXPECT_NO_EXIT(cmd, msg)                                                                                       \

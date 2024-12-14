@@ -26,7 +26,8 @@ class Thermostat {
     ParticleContainer &particles;
 
   public:
-    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat, double delta_T);
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat,
+               double delta_T);
 
     Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat);
 
