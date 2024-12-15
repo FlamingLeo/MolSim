@@ -129,7 +129,7 @@ void mirrorGhostParticles(CellContainer *lc) {
                 for (auto corner : corners) {
                     for (auto &p : bc.get().getParticles()) {
                         lc->getCells()[corner].addParticle(p.get());
-                        SPDLOG_DEBUG("Mirror in Corner {} with corner {} and actual {}.", p.get().toString(), corner,
+                        SPDLOG_DEBUG("Mirror in corner {} with corner {} and actual {}.", p.get().toString(), corner,
                                      p.get().getCellIndex());
                     }
                 }
@@ -138,7 +138,6 @@ void mirrorGhostParticles(CellContainer *lc) {
 
         // case for edges: you need to mirror across every edge
         for (auto direction : location) {
-
             // check whether we should be applying periodic boundary conditions in this direction
             if (lc->getConditions()[directionLookUp(direction)] != BoundaryCondition::PERIODIC) {
                 continue;
@@ -148,7 +147,7 @@ void mirrorGhostParticles(CellContainer *lc) {
 
             for (auto &p : bc.get().getParticles()) {
                 lc->getCells()[haloIndex].addParticle(p.get());
-                SPDLOG_DEBUG("Mirror along edge {} in {} and in actual {}.", p.get().toString(), haloIndex,
+                SPDLOG_TRACE("Mirror along edge {} in {} and in actual {}.", p.get().toString(), haloIndex,
                              p.get().getCellIndex());
             }
         }

@@ -122,10 +122,22 @@
     <xs:complexType name="simType">
         <xs:sequence>
             <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="thermostatType" name="thermostat"/>
             <xs:element type="xs:string" name="type"/>
-            <xs:element type="xs:boolean" name="linkedCells" minOccurs="0"/>
+            <xs:element type="xs:boolean" name="linkedCells" minOccurs="0" maxOccurs="1"/>
             <xs:element type="objectsType" name="objects"/>
             <xs:element type="xs:long" name="totalParticles" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="thermostatType">
+        <xs:sequence>
+            <xs:element type="xs:double" name="init"/>
+            <xs:element type="xs:int" name="timeStep"/>
+            <xs:element type="xs:double" name="target" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:double" name="deltaT" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:boolean" name="brownianMotion" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>

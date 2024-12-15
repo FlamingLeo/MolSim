@@ -14,7 +14,7 @@ TEST(BoundaryConditionTests, Outflow) {
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc};
-        calculateX_LC(pc, delta_t, &c);
+        calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 0);
         EXPECT_EQ(pc[0].getCellIndex(), -1);
@@ -42,7 +42,7 @@ TEST(BoundaryConditionTests, Reflective) {
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc};
-        calculateX_LC(pc, delta_t, &c);
+        calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
@@ -71,7 +71,7 @@ TEST(BoundaryConditionTests, MixedCorners) {
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc};
-        calculateX_LC(pc, delta_t, &c);
+        calculateX_LC(pc, delta_t, 0.0, &c);
 
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), expectedActive ? 1 : 0);

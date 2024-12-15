@@ -1,6 +1,7 @@
 #include "io/input/CLIParser.h"
 #include "io/input/XMLReader.h"
 #include "objects/ParticleContainer.h"
+#include "objects/Thermostat.h"
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
 #include "utils/CLIUtils.h"
@@ -42,13 +43,14 @@ int main(int argc, char *argv[]) {
     // initialize simulation-relevant objects
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
 
     // parse xml file first, then parse command line arguments
     XMLReader r(argv[argc - 1]);
-    r.readXML(args, pc);
+    r.readXML(args, pc, t);
     CLIParser::parseArguments(argc, argv, args);
-    auto sim = SimulationFactory::createSimulation(pc, args);
 
-    // run simulation with parsed arguments
+    // create simulation and run with parsed arguments
+    auto sim = SimulationFactory::createSimulation(pc, args, t);
     sim->runSimulation();
 }

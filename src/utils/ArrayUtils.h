@@ -159,6 +159,16 @@ inline Container elementWiseScalarOp(const Scalar &lhs, const Container &rhs, F 
 }
 
 /**
+ * @brief Calculates the square of the L2 norm for a given container.
+ * @tparam Container
+ * @param c
+ * @return sum_i(c[i]*c[i]).
+ */
+template <class Container> auto L2NormSquared(const Container &c) {
+    return std::accumulate(std::cbegin(c), std::cend(c), 0.0, [](auto a, auto b) { return a + b * b; });
+}
+
+/**
  * @brief Calculates the L2 norm for a given container.
  * @tparam Container
  * @param c

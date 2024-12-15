@@ -4,7 +4,7 @@
 #define READ_XML(_x)                                                                                                   \
     do {                                                                                                               \
         XMLReader xml{targetPath + _x};                                                                                \
-        xml.readXML(args, pc);                                                                                         \
+        xml.readXML(args, pc, t);                                                                                      \
     } while (0)
 
 class XMLReaderTests : public ::testing::Test {
@@ -58,6 +58,7 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
 
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
     READ_XML("/testXMLValid_Complete.xml");
 
     // check arguments
@@ -70,6 +71,12 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     EXPECT_EQ(args.domainSize, domainSize);
     EXPECT_DOUBLE_EQ(args.cutoffRadius, 5.0);
     EXPECT_EQ(args.sim, SimulationType::LJ);
+
+    // check thermostat
+    EXPECT_DOUBLE_EQ(t.getInitTemp(), 40.0);
+    EXPECT_EQ(t.getTimestep(), 1000);
+    EXPECT_DOUBLE_EQ(t.getTargetTemp(), 60.0);
+    EXPECT_DOUBLE_EQ(t.getDeltaT(), 0.5);
 
     // check objects
     ASSERT_EQ(pc.size(), 11);
@@ -85,7 +92,12 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
 TEST_F(XMLReaderTests, OpenFileValidPartial) {
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
     READ_XML("/testXMLValid_NoOptionals.xml");
+
+    // check thermostat
+    EXPECT_DOUBLE_EQ(t.getInitTemp(), 40.0);
+    EXPECT_EQ(t.getTimestep(), 2147483647);
 
     // check inserted object
     ASSERT_EQ(pc.size(), 1);
@@ -104,6 +116,7 @@ TEST_F(XMLReaderTests, OpenFileValidPartial) {
 TEST_F(XMLReaderTests, OpenFilesInvalid) {
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
 
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_IncorrectStructure.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_NotXML.xml"); }, "");

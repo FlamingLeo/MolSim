@@ -55,4 +55,4 @@ void setDefaults(Arguments &args);
  * @param args A reference to the argument struct in which to store the parsed arguments.
  */
 void parseArguments(int argc, char **argv, Arguments &args);
-}; // namespace CLIParser
+} // namespace CLIParser

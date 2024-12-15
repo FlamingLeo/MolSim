@@ -10,6 +10,7 @@
 #include "io/output/FileWriter.h"
 #include "io/output/WriterFactory.h"
 #include "objects/ParticleContainer.h"
+#include "objects/Thermostat.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
 #include "utils/Timer.h"
@@ -25,6 +26,9 @@ class Simulation {
 
     /// @brief Reference to the Arguments struct containing simulation parameters.
     Arguments &m_args;
+
+    /// @brief Reference to the Thermostat, for temperature regulation.
+    Thermostat &m_thermostat;
 
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;
@@ -67,8 +71,9 @@ class Simulation {
      *
      * @param pc The ParticleContainer containing the simulation molecules.
      * @param args The Arguments struct containing the simulation metadata.
+     * @param t The Thermostat used for temperature regulation.
      */
-    Simulation(ParticleContainer &pc, Arguments &args);
+    Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
 
     /// @brief Destroys the current Simulation object.
     virtual ~Simulation();

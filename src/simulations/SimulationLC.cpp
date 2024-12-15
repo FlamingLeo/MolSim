@@ -4,8 +4,8 @@
 #include "utils/CellUtils.h"
 #include "utils/StringUtils.h"
 
-SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args)
-    : Simulation(pc, args),
+SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t)
+    : Simulation(pc, args, t),
       m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius, m_particles)} {
     SPDLOG_TRACE("Created new linked cells Simulation.");
 }
@@ -31,7 +31,7 @@ void SimulationLC::runSimulation() {
 
     // serialize output for future runs
     XMLWriter xmlw{m_args.basename + "_results.xml"};
-    xmlw.serialize(m_particles, m_args);
+    xmlw.serialize(m_particles, m_args, m_thermostat);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

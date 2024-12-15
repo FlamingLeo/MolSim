@@ -58,7 +58,7 @@ static inline void printHelp() {
            "-d <number>  : Sets the time interval between two iterations of a simulation (default: "
            "simulation-specific).\n"
            "-g <number>  : Sets the gravitational force (decimal) effective on each particle in the simulation "
-           "(default: -12.44).\n"
+           "(default: 0.0).\n"
            "-b <name>    : Sets the base name of the generated files (default: type-specific).\n"
            "-B <cccccc>  : Sets the conditions to be applied at each boundary (North, South, West, East, Above, "
            "Below). c is one of:\n"

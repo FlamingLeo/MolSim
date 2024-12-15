@@ -1,13 +1,12 @@
 #pragma once
 #include "ParticleContainer.h"
+#include <cmath>
 
 class Thermostat {
   private:
     int dimension;
 
     double kineticEnergy;
-
-    double oldTemperature;
 
     double temperature;
 
@@ -21,19 +20,22 @@ class Thermostat {
 
     double delta_T;
 
-    bool scaling_limit;
+    bool limitScaling;
+
+    bool initBrownianMotion;
 
     ParticleContainer &particles;
 
   public:
-    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat,
-               double delta_T);
+    Thermostat(ParticleContainer &particles);
 
-    Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat);
+    Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
+               double delta_T, bool initBrownianMotion);
 
-    Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double delta_T);
+    ~Thermostat();
 
-    Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat);
+    void initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
+                    bool initBrownianMotion);
 
     void calculateKineticEnergy();
 
@@ -43,13 +45,21 @@ class Thermostat {
 
     void updateSystemTemp(int currentStep);
 
-    double getKineticEnergy();
+    double getKineticEnergy() const;
 
-    double getOldTemp();
+    double getOldTemp() const;
 
-    double getTemp();
+    double getTemp() const;
 
-    double getScalingFactor();
+    double getInitTemp() const;
 
-    ParticleContainer &getParticles();
+    double getTargetTemp() const;
+
+    double getDeltaT() const;
+
+    double getScalingFactor() const;
+
+    int getTimestep() const;
+
+    ParticleContainer &getParticles() const;
 };

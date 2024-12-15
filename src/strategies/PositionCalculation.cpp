@@ -7,19 +7,20 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
-void calculateX(ParticleContainer &particles, double delta_t, CellContainer *) {
+void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *) {
     SPDLOG_TRACE("Calculating new position...");
     for (auto &p : particles) {
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
 
-        // set previous f for each particle and reinitialize to zero for the upcoming force calculation
+        // set previous f for each particle and reinitialize using gravitational force for the upcoming force calculation
         p.setOldF(p.getF());
-        p.setFToZero();
+        std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
+        p.setF(gravity);
     }
 }
 
-void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *lc) {
+void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc) {
     SPDLOG_TRACE("Calculating new position (linked cells)...");
     for (auto &p : particles) {
         if (!p.isActive())
@@ -27,7 +28,8 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *
 
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
-        p.setFToZero();
+        std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
+        p.setF(gravity);
 
         // check particle index and potentially move it
         // if the particle somehow goes completely out of bounds, remove it to avoid issues

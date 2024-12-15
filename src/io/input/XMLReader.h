@@ -9,6 +9,7 @@
 #pragma once
 #include "FileReader.h"
 #include "objects/ParticleContainer.h"
+#include "objects/Thermostat.h"
 #include "utils/Arguments.h"
 #include <string>
 
@@ -33,6 +34,7 @@ class XMLReader : public FileReader {
      *
      * @param args A reference to the Arguments struct which will be modified.
      * @param pc A reference to the ParticleContainer object which will be modified.
+     * @param t A reference to the Thermostat to be initialized.
      */
-    void readXML(Arguments &args, ParticleContainer &pc);
+    void readXML(Arguments &args, ParticleContainer &pc, Thermostat &t);
 };
