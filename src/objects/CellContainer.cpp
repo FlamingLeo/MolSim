@@ -20,9 +20,9 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));
 
     // check that domain size and cutoff are initialized
-    if (cutoff == INF)
+    if (cutoff == INFINITY)
         CLIUtils::error("Cutoff radius not initialized!");
-    if (domainSize[0] == INF || domainSize[1] == INF || domainSize[2] == INF)
+    if (domainSize[0] == INFINITY || domainSize[1] == INFINITY || domainSize[2] == INFINITY)
         CLIUtils::error("Domain size not initialized!");
 
     SPDLOG_TRACE("Generating CellContainer with domain size {} and cutoff radius {} (in {} dimensions)",

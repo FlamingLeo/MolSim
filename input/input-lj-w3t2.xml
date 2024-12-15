@@ -13,6 +13,10 @@
         </domainSize>
         <cutoffRadius>3.0</cutoffRadius>
     </args>
+    <thermostat>
+        <init>40.0</init>
+        <timeStep>2147483647</timeStep>
+    </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>
     <objects>

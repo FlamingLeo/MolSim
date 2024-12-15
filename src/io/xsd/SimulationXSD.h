@@ -606,6 +606,7 @@ class ParticleType;
 class DiscType;
 class ObjectsType;
 class SimType;
+class ThermostatType;
 
 #include <algorithm> // std::binary_search
 #include <limits>    // std::numeric_limits
@@ -4814,6 +4815,60 @@ class SimType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name thermostat
+     *
+     * @brief Accessor and modifier functions for the %thermostat
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::ThermostatType ThermostatType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ThermostatType, char> ThermostatTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const ThermostatType &thermostat() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    ThermostatType &thermostat();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void thermostat(const ThermostatType &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void thermostat(::std::unique_ptr<ThermostatType> p);
+
+    //@}
+
+    /**
      * @name type
      *
      * @brief Accessor and modifier functions for the %type
@@ -5052,7 +5107,7 @@ class SimType : public ::xml_schema::Type {
      * @brief Create an instance from the ultimate base and
      * initializers for required elements and attributes.
      */
-    SimType(const TypeType &, const ObjectsType &);
+    SimType(const ThermostatType &, const TypeType &, const ObjectsType &);
 
     /**
      * @brief Create an instance from the ultimate base and
@@ -5062,7 +5117,7 @@ class SimType : public ::xml_schema::Type {
      * This constructor will try to use the passed values directly
      * instead of making copies.
      */
-    SimType(const TypeType &, ::std::unique_ptr<ObjectsType>);
+    SimType(::std::unique_ptr<ThermostatType>, const TypeType &, ::std::unique_ptr<ObjectsType>);
 
     /**
      * @brief Create an instance from a DOM element.
@@ -5125,10 +5180,369 @@ class SimType : public ::xml_schema::Type {
 
   protected:
     ArgsOptional args_;
+    ::xsd::cxx::tree::one<ThermostatType> thermostat_;
     ::xsd::cxx::tree::one<TypeType> type_;
     LinkedCellsOptional linkedCells_;
     ::xsd::cxx::tree::one<ObjectsType> objects_;
     TotalParticlesOptional totalParticles_;
+
+    //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %thermostatType schema type.
+ *
+ * @nosubgrouping
+ */
+class ThermostatType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name init
+     *
+     * @brief Accessor and modifier functions for the %init
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double InitType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<InitType, char, ::xsd::cxx::tree::schema_type::double_> InitTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const InitType &init() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    InitType &init();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void init(const InitType &x);
+
+    //@}
+
+    /**
+     * @name timeStep
+     *
+     * @brief Accessor and modifier functions for the %timeStep
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int TimeStepType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TimeStepType, char> TimeStepTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const TimeStepType &timeStep() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    TimeStepType &timeStep();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void timeStep(const TimeStepType &x);
+
+    //@}
+
+    /**
+     * @name target
+     *
+     * @brief Accessor and modifier functions for the %target
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double TargetType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<TargetType> TargetOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<TargetType, char, ::xsd::cxx::tree::schema_type::double_> TargetTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const TargetOptional &target() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    TargetOptional &target();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void target(const TargetType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void target(const TargetOptional &x);
+
+    //@}
+
+    /**
+     * @name deltaT
+     *
+     * @brief Accessor and modifier functions for the %deltaT
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double DeltaTType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<DeltaTType> DeltaTOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<DeltaTType, char, ::xsd::cxx::tree::schema_type::double_> DeltaTTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const DeltaTOptional &deltaT() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    DeltaTOptional &deltaT();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void deltaT(const DeltaTType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void deltaT(const DeltaTOptional &x);
+
+    //@}
+
+    /**
+     * @name brownianMotion
+     *
+     * @brief Accessor and modifier functions for the %brownianMotion
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Boolean BrownianMotionType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<BrownianMotionType> BrownianMotionOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<BrownianMotionType, char> BrownianMotionTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const BrownianMotionOptional &brownianMotion() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    BrownianMotionOptional &brownianMotion();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void brownianMotion(const BrownianMotionType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void brownianMotion(const BrownianMotionOptional &x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    ThermostatType(const InitType &, const TimeStepType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    ThermostatType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    ThermostatType(const ThermostatType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual ThermostatType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    ThermostatType &operator=(const ThermostatType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ThermostatType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<InitType> init_;
+    ::xsd::cxx::tree::one<TimeStepType> timeStep_;
+    TargetOptional target_;
+    DeltaTOptional deltaT_;
+    BrownianMotionOptional brownianMotion_;
 
     //@endcond
 };
@@ -5523,6 +5937,8 @@ void operator<<(::xercesc::DOMElement &, const DiscType &);
 void operator<<(::xercesc::DOMElement &, const ObjectsType &);
 
 void operator<<(::xercesc::DOMElement &, const SimType &);
+
+void operator<<(::xercesc::DOMElement &, const ThermostatType &);
 
 #include <xsd/cxx/post.hxx>
 

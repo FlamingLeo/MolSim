@@ -2,7 +2,8 @@
 #include "io/output/XMLWriter.h"
 #include "utils/StringUtils.h"
 
-Simulation::Simulation(ParticleContainer &pc, Arguments &args) : m_particles{pc}, m_args{args} {
+Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
+    : m_particles{pc}, m_args{args}, m_thermostat{t} {
     SPDLOG_TRACE("Created new Simulation.");
 }
 Simulation::~Simulation() = default;
@@ -36,17 +37,19 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
     // perform time integration
     double currentTime = m_args.startTime;
-#if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
     int iteration = 0;
-#endif
 
     while (currentTime < m_args.endTime) {
+        // update system temperature using thermostat
+        m_thermostat.updateSystemTemp(iteration);
+
+        // update position, force and velocity
         m_calculateX(m_particles, m_args.delta_t, lc);
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 
 #if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
-        iteration++;
+        // for non-benchmarking builds, generate output files
         if (iteration % m_args.itFreq == 0) {
             m_writer->writeParticles(m_particles, iteration, m_totalIt);
         }
@@ -56,6 +59,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         // add the number of active particles to the molecule update counter
         // we do this since we update each active molecule during one iteration
         TIMER_UPDATE_MOLECULES(m_timer, m_particles.activeSize());
+        iteration++;
     }
 
     // print total elapsed time and molecule updates per second
@@ -77,7 +81,7 @@ void Simulation::runSimulation() {
 
     // serialize output for future runs
     XMLWriter xmlw{m_args.basename + "_results.xml"};
-    xmlw.serialize(m_particles, m_args);
+    xmlw.serialize(m_particles, m_args, m_thermostat);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

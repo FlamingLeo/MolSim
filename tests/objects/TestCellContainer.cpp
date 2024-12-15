@@ -51,8 +51,8 @@ TEST_F(CellContainerTest, InitializeInvalidDimensions) {
 // Test attempting to initialize a cell container using partially or fully uninitialized values.
 // The program should terminate.
 TEST_F(CellContainerTest, InitializeUninitializedValues) {
-    EXPECT_DEATH(CellContainer({INF, 10.0, 10.0}, conditions, cutoff, particles, 3), "");
-    EXPECT_DEATH(CellContainer(domainSize, conditions, INF, particles, 3), "");
+    EXPECT_DEATH(CellContainer({INFINITY, 10.0, 10.0}, conditions, cutoff, particles, 3), "");
+    EXPECT_DEATH(CellContainer(domainSize, conditions, INFINITY, particles, 3), "");
 }
 
 // Test adding a particle to a cell container.

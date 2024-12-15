@@ -522,6 +522,14 @@ void SimType::args(const ArgsOptional &x) { this->args_ = x; }
 
 void SimType::args(::std::unique_ptr<ArgsType> x) { this->args_.set(std::move(x)); }
 
+const SimType::ThermostatType &SimType::thermostat() const { return this->thermostat_.get(); }
+
+SimType::ThermostatType &SimType::thermostat() { return this->thermostat_.get(); }
+
+void SimType::thermostat(const ThermostatType &x) { this->thermostat_.set(x); }
+
+void SimType::thermostat(::std::unique_ptr<ThermostatType> x) { this->thermostat_.set(std::move(x)); }
+
 const SimType::TypeType &SimType::type() const { return this->type_.get(); }
 
 SimType::TypeType &SimType::type() { return this->type_.get(); }
@@ -553,6 +561,45 @@ SimType::TotalParticlesOptional &SimType::totalParticles() { return this->totalP
 void SimType::totalParticles(const TotalParticlesType &x) { this->totalParticles_.set(x); }
 
 void SimType::totalParticles(const TotalParticlesOptional &x) { this->totalParticles_ = x; }
+
+// ThermostatType
+//
+
+const ThermostatType::InitType &ThermostatType::init() const { return this->init_.get(); }
+
+ThermostatType::InitType &ThermostatType::init() { return this->init_.get(); }
+
+void ThermostatType::init(const InitType &x) { this->init_.set(x); }
+
+const ThermostatType::TimeStepType &ThermostatType::timeStep() const { return this->timeStep_.get(); }
+
+ThermostatType::TimeStepType &ThermostatType::timeStep() { return this->timeStep_.get(); }
+
+void ThermostatType::timeStep(const TimeStepType &x) { this->timeStep_.set(x); }
+
+const ThermostatType::TargetOptional &ThermostatType::target() const { return this->target_; }
+
+ThermostatType::TargetOptional &ThermostatType::target() { return this->target_; }
+
+void ThermostatType::target(const TargetType &x) { this->target_.set(x); }
+
+void ThermostatType::target(const TargetOptional &x) { this->target_ = x; }
+
+const ThermostatType::DeltaTOptional &ThermostatType::deltaT() const { return this->deltaT_; }
+
+ThermostatType::DeltaTOptional &ThermostatType::deltaT() { return this->deltaT_; }
+
+void ThermostatType::deltaT(const DeltaTType &x) { this->deltaT_.set(x); }
+
+void ThermostatType::deltaT(const DeltaTOptional &x) { this->deltaT_ = x; }
+
+const ThermostatType::BrownianMotionOptional &ThermostatType::brownianMotion() const { return this->brownianMotion_; }
+
+ThermostatType::BrownianMotionOptional &ThermostatType::brownianMotion() { return this->brownianMotion_; }
+
+void ThermostatType::brownianMotion(const BrownianMotionType &x) { this->brownianMotion_.set(x); }
+
+void ThermostatType::brownianMotion(const BrownianMotionOptional &x) { this->brownianMotion_ = x; }
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
@@ -1763,22 +1810,23 @@ ObjectsType::~ObjectsType() {}
 // SimType
 //
 
-SimType::SimType(const TypeType &type, const ObjectsType &objects)
-    : ::xml_schema::Type(), args_(this), type_(type, this), linkedCells_(this), objects_(objects, this),
-      totalParticles_(this) {}
+SimType::SimType(const ThermostatType &thermostat, const TypeType &type, const ObjectsType &objects)
+    : ::xml_schema::Type(), args_(this), thermostat_(thermostat, this), type_(type, this), linkedCells_(this),
+      objects_(objects, this), totalParticles_(this) {}
 
-SimType::SimType(const TypeType &type, ::std::unique_ptr<ObjectsType> objects)
-    : ::xml_schema::Type(), args_(this), type_(type, this), linkedCells_(this), objects_(std::move(objects), this),
-      totalParticles_(this) {}
+SimType::SimType(::std::unique_ptr<ThermostatType> thermostat, const TypeType &type,
+                 ::std::unique_ptr<ObjectsType> objects)
+    : ::xml_schema::Type(), args_(this), thermostat_(std::move(thermostat), this), type_(type, this),
+      linkedCells_(this), objects_(std::move(objects), this), totalParticles_(this) {}
 
 SimType::SimType(const SimType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
-    : ::xml_schema::Type(x, f, c), args_(x.args_, f, this), type_(x.type_, f, this),
-      linkedCells_(x.linkedCells_, f, this), objects_(x.objects_, f, this),
+    : ::xml_schema::Type(x, f, c), args_(x.args_, f, this), thermostat_(x.thermostat_, f, this),
+      type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this), objects_(x.objects_, f, this),
       totalParticles_(x.totalParticles_, f, this) {}
 
 SimType::SimType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
-    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), type_(this), linkedCells_(this),
-      objects_(this), totalParticles_(this) {
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), thermostat_(this), type_(this),
+      linkedCells_(this), objects_(this), totalParticles_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1797,6 +1845,17 @@ void SimType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f
 
             if (!this->args_) {
                 this->args_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // thermostat
+        //
+        if (n.name() == "thermostat" && n.namespace_().empty()) {
+            ::std::unique_ptr<ThermostatType> r(ThermostatTraits::create(i, f, this));
+
+            if (!thermostat_.present()) {
+                this->thermostat_.set(::std::move(r));
                 continue;
             }
         }
@@ -1844,6 +1903,10 @@ void SimType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f
         break;
     }
 
+    if (!thermostat_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("thermostat", "");
+    }
+
     if (!type_.present()) {
         throw ::xsd::cxx::tree::expected_element<char>("type", "");
     }
@@ -1861,6 +1924,7 @@ SimType &SimType::operator=(const SimType &x) {
     if (this != &x) {
         static_cast<::xml_schema::Type &>(*this) = x;
         this->args_ = x.args_;
+        this->thermostat_ = x.thermostat_;
         this->type_ = x.type_;
         this->linkedCells_ = x.linkedCells_;
         this->objects_ = x.objects_;
@@ -1871,6 +1935,107 @@ SimType &SimType::operator=(const SimType &x) {
 }
 
 SimType::~SimType() {}
+
+// ThermostatType
+//
+
+ThermostatType::ThermostatType(const InitType &init, const TimeStepType &timeStep)
+    : ::xml_schema::Type(), init_(init, this), timeStep_(timeStep, this), target_(this), deltaT_(this),
+      brownianMotion_(this) {}
+
+ThermostatType::ThermostatType(const ThermostatType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), init_(x.init_, f, this), timeStep_(x.timeStep_, f, this),
+      target_(x.target_, f, this), deltaT_(x.deltaT_, f, this), brownianMotion_(x.brownianMotion_, f, this) {}
+
+ThermostatType::ThermostatType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), init_(this), timeStep_(this), target_(this),
+      deltaT_(this), brownianMotion_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void ThermostatType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // init
+        //
+        if (n.name() == "init" && n.namespace_().empty()) {
+            if (!init_.present()) {
+                this->init_.set(InitTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // timeStep
+        //
+        if (n.name() == "timeStep" && n.namespace_().empty()) {
+            if (!timeStep_.present()) {
+                this->timeStep_.set(TimeStepTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // target
+        //
+        if (n.name() == "target" && n.namespace_().empty()) {
+            if (!this->target_) {
+                this->target_.set(TargetTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // deltaT
+        //
+        if (n.name() == "deltaT" && n.namespace_().empty()) {
+            if (!this->deltaT_) {
+                this->deltaT_.set(DeltaTTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // brownianMotion
+        //
+        if (n.name() == "brownianMotion" && n.namespace_().empty()) {
+            if (!this->brownianMotion_) {
+                this->brownianMotion_.set(BrownianMotionTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!init_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("init", "");
+    }
+
+    if (!timeStep_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("timeStep", "");
+    }
+}
+
+ThermostatType *ThermostatType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class ThermostatType(*this, f, c);
+}
+
+ThermostatType &ThermostatType::operator=(const ThermostatType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->init_ = x.init_;
+        this->timeStep_ = x.timeStep_;
+        this->target_ = x.target_;
+        this->deltaT_ = x.deltaT_;
+        this->brownianMotion_ = x.brownianMotion_;
+    }
+
+    return *this;
+}
+
+ThermostatType::~ThermostatType() {}
 
 #include <istream>
 #include <xsd/cxx/tree/error-handler.hxx>
@@ -2633,6 +2798,14 @@ void operator<<(::xercesc::DOMElement &e, const SimType &i) {
         s << *i.args();
     }
 
+    // thermostat
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("thermostat", e));
+
+        s << i.thermostat();
+    }
+
     // type
     //
     {
@@ -2663,6 +2836,50 @@ void operator<<(::xercesc::DOMElement &e, const SimType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("totalParticles", e));
 
         s << *i.totalParticles();
+    }
+}
+
+void operator<<(::xercesc::DOMElement &e, const ThermostatType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // init
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("init", e));
+
+        s << ::xml_schema::AsDouble(i.init());
+    }
+
+    // timeStep
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("timeStep", e));
+
+        s << i.timeStep();
+    }
+
+    // target
+    //
+    if (i.target()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("target", e));
+
+        s << ::xml_schema::AsDouble(*i.target());
+    }
+
+    // deltaT
+    //
+    if (i.deltaT()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("deltaT", e));
+
+        s << ::xml_schema::AsDouble(*i.deltaT());
+    }
+
+    // brownianMotion
+    //
+    if (i.brownianMotion()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("brownianMotion", e));
+
+        s << *i.brownianMotion();
     }
 }
 

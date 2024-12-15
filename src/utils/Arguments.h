@@ -10,11 +10,11 @@
 #include "CellUtils.h"
 #include <array>
 #include <bitset>
+#include <cmath>
 #include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
-#define INF std::numeric_limits<double>::infinity()
 
 /// @brief Enum containing each (valid) type of output writer.
 enum class WriterType { VTK, XYZ, NIL };
@@ -35,11 +35,11 @@ struct Arguments {
     /// @brief Logging frequency (default: every 10 iterations)
     int itFreq{10};
     /// @brief Domain size for linked cells (default: unspecified, will fail if not specified!)
-    std::array<double, 3> domainSize{INF, INF, INF};
+    std::array<double, 3> domainSize{INFINITY, INFINITY, INFINITY};
     /// @brief Cutoff radius for linked cells (default: 3.0)
     double cutoffRadius{3.0};
-    /// @brief The gravity that the particles are exposed to (default: -12.44).
-    double gravity{-12.44};
+    /// @brief The gravity that the particles are exposed to (default: 0).
+    double gravity{0.0};
     /// @brief The basename of the output file (default: type-specific).
     std::string basename{};
     /// @brief Output type (default: VTK).

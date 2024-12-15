@@ -39,6 +39,7 @@
         const auto &arr = _a._x().get();                                                                               \
         _b._x = {arr.x(), arr.y(), arr.z()};                                                                           \
     }
+#define GET_IF_PRESENT(_a, _b, _c) (_a._b().present() ? _a._b().get() : _c)
 
 // helper function for reserving a certain amount of spaces in a particle container beforehand, if present
 static void reserveParticleContainer(ParticleContainer &pc, const std::unique_ptr<SimType> &xmlInput) {
@@ -78,8 +79,14 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
     }
 }
 
+// helper function to read and initialize thermostat
+static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t) {
+    t.initialize(2, xmlThermostat.init(), xmlThermostat.timeStep(), GET_IF_PRESENT(xmlThermostat, target, INFINITY),
+                 GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true));
+}
+
 // helper (wrapper) function to parse cuboids into a particle container
-void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
+static void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
     for (const auto &cuboid : xmlObjects.cuboid()) {
         std::array<double, 3> position{cuboid.position().x(), cuboid.position().y(), cuboid.position().z()};
         std::array<double, 3> velocity{cuboid.velocity().x(), cuboid.velocity().y(), cuboid.velocity().z()};
@@ -101,7 +108,7 @@ void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc)
 }
 
 // helper (wrapper) function to parse single particles into a particle container
-void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
+static void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
     for (const auto &particle : xmlObjects.particle()) {
         std::array<double, 3> position{particle.position().x(), particle.position().y(), particle.position().z()};
         std::array<double, 3> velocity{particle.velocity().x(), particle.velocity().y(), particle.velocity().z()};
@@ -134,7 +141,7 @@ void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleContainer &p
 }
 
 // helper (wrapper) function to parse discs into a particle container
-void parseDiscs(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
+static void parseDiscs(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
     for (const auto &disc : xmlObjects.disc()) {
         std::array<double, 3> position{disc.position().x(), disc.position().y(), disc.position().z()};
         std::array<double, 3> velocity{disc.velocity().x(), disc.velocity().y(), disc.velocity().z()};
@@ -160,7 +167,7 @@ XMLReader::XMLReader(const std::string &filename) {
     openFile(filename);
 }
 
-void XMLReader::readXML(Arguments &args, ParticleContainer &pc) {
+void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!", "", false);
 
@@ -178,6 +185,9 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc) {
             args.linkedCells = xmlInput->linkedCells().get();
             SPDLOG_DEBUG("Using linked cells?: {}", args.linkedCells);
         }
+
+        const auto &xmlThermostat = xmlInput->thermostat();
+        initThermostat(xmlThermostat, t);
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?

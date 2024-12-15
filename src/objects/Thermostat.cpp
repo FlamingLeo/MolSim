@@ -2,67 +2,106 @@
 #include "utils/ArrayUtils.h"
 #include <cmath>
 #include <functional>
+#include <spdlog/spdlog.h>
 
-Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat,
-                       double delta_T)
-    : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{T_target}, n_thermostat{n_thermostat},
-      delta_T{delta_T} {
-    scaling_limit = true;
+// helper methods for double inequality
+static bool areNotEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) > epsilon; }
+static bool areEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) <= epsilon; }
+
+/* constructors and destructors */
+Thermostat::Thermostat(ParticleContainer &particles) : particles{particles} {
+    SPDLOG_TRACE("Created new Thermostat, arguments uninitialized!");
 }
-
-Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, double T_target, int n_thermostat)
-    : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{T_target}, n_thermostat{n_thermostat} {
-    scaling_limit = false;
+Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
+                       double delta_T, bool initBrownianMotion)
+    : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{std::isfinite(T_target) ? T_target : T_init},
+      n_thermostat{n_thermostat}, delta_T{delta_T}, limitScaling{std::isfinite(delta_T)},
+      initBrownianMotion{initBrownianMotion} {
+    SPDLOG_TRACE("Created new Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
+                 "limit: {}, bm: {}",
+                 this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
+                 this->initBrownianMotion);
 }
+Thermostat::~Thermostat() = default;
 
-Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double delta_T)
-    : particles{particles}, dimension{dimension}, T_init{T_init}, n_thermostat{n_thermostat}, delta_T{delta_T} {
-    scaling_limit = true;
-    T_target = T_init;
-}
+/* functionality */
+void Thermostat::initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
+                            bool initBrownianMotion) {
+    this->dimension = dimension;
+    this->T_init = T_init;
+    this->n_thermostat = n_thermostat;
+    this->T_target = std::isfinite(T_target) ? T_target : T_init;
+    this->delta_T = delta_T;
+    this->initBrownianMotion = initBrownianMotion;
+    this->limitScaling = std::isfinite(delta_T);
 
-Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat)
-    : particles{particles}, dimension{dimension}, T_init{T_init}, n_thermostat{n_thermostat} {
-    scaling_limit = false;
-    T_target = T_init;
+    SPDLOG_TRACE("Initialized Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
+                 "limit: {}, bm: {}",
+                 this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
+                 this->initBrownianMotion);
 }
 
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
     for (auto &p : particles) {
-        sum += p.getM() * ArrayUtils::L2Norm(p.getV());
+        sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
     }
     kineticEnergy = sum / 2;
+    SPDLOG_TRACE("New kinetic energy: {}", kineticEnergy);
 }
-
-void Thermostat::calculateTemp() { temperature = 2 * kineticEnergy / (dimension * particles.activeSize()); }
-
-void Thermostat::calculateScalingFactor(double newTemp) { scalingFactor = std::sqrt(newTemp / temperature); }
-
+void Thermostat::calculateTemp() {
+    temperature = 2 * kineticEnergy / (dimension * particles.activeSize());
+    SPDLOG_TRACE("New temperature: {}", temperature);
+}
+void Thermostat::calculateScalingFactor(double newTemp) {
+    scalingFactor = std::sqrt(newTemp / temperature);
+    SPDLOG_TRACE("New scaling factor: {}", scalingFactor);
+}
 void Thermostat::updateSystemTemp(int currentStep) {
-    if (currentStep % n_thermostat == 0) {
-        calculateKineticEnergy();
-        calculateTemp();
-        if (scaling_limit) {
-            if (temperature != T_target) {
-                if (abs(temperature - T_target) < abs(delta_T)) {
-                    calculateScalingFactor(T_target);
-                } else {
-                    calculateScalingFactor(temperature + delta_T);
-                }
-            }
-        } else {
-            calculateScalingFactor(T_target);
-        }
+    if (currentStep % n_thermostat != 0)
+        return;
+
+    // perform temperature update if the current iteration number is a multiple of n_thermostat
+    SPDLOG_TRACE("Updating system temperature for iteration {} (n_thermostat: {})", currentStep, n_thermostat);
+
+    // for the first iteration, initialize velocities with brownian motion, then quit
+    if (currentStep == 0 && initBrownianMotion) {
+        SPDLOG_TRACE("0-th iteration, initializing velocities with Brownian motion...");
         for (auto &p : particles) {
-            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+            double factor = std::sqrt(T_init / p.getM());
+            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(factor, p.getV(), std::multiplies<>());
             p.setV(newV);
         }
+        return;
     }
-}
 
-double Thermostat::getKineticEnergy() { return kineticEnergy; }
-double Thermostat::getOldTemp() { return oldTemperature; }
-double Thermostat::getTemp() { return temperature; }
-double Thermostat::getScalingFactor() { return scalingFactor; }
-ParticleContainer &Thermostat::getParticles() { return particles; }
+    // calculate temperature based on kinetic energy and scale temperature
+    calculateKineticEnergy();
+    calculateTemp();
+
+    // if the current temp. is the same as the target temp., skip updating velocities
+    // TODO: check if the temperature is stable (i.e. once the target temp. is reached, see if this ever diverges)
+    if (areEqual(temperature, T_target)) {
+        SPDLOG_TRACE("Target temperature and current temperature are equal, skipping update.");
+        return;
+    }
+
+    // if dTemp is specified, only increment by (at most) dTemp
+    // otherwise, directly set temperature by scaling velocities
+    calculateScalingFactor(limitScaling ? std::min(temperature + delta_T, T_target) : T_target);
+
+    // update particle velocities to set new temperature
+    for (auto &p : particles) {
+        std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+        p.setV(newV);
+    }
+    SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);
+}
+double Thermostat::getKineticEnergy() const { return kineticEnergy; }
+double Thermostat::getTemp() const { return temperature; }
+double Thermostat::getInitTemp() const { return T_init; }
+double Thermostat::getTargetTemp() const { return T_target; }
+double Thermostat::getDeltaT() const { return delta_T; }
+double Thermostat::getScalingFactor() const { return scalingFactor; }
+int Thermostat::getTimestep() const { return n_thermostat; }
+ParticleContainer &Thermostat::getParticles() const { return particles; }

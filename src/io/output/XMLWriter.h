@@ -10,6 +10,7 @@
 #pragma once
 
 #include "objects/ParticleContainer.h"
+#include "objects/Thermostat.h"
 #include "utils/Arguments.h"
 #include <fstream>
 #include <string>
@@ -48,6 +49,7 @@ class XMLWriter {
      *
      * @param pc The ParticleContainer containing the active simulation particles.
      * @param args The Arguments struct containing simulation metadata.
+     * @param t The thermostat.
      */
-    void serialize(const ParticleContainer &pc, const Arguments &args);
+    void serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t);
 };

@@ -33,7 +33,7 @@ void XMLWriter::openFile(const std::string &filename) {
 
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
-void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args) {
+void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t) {
     if (!(m_file.is_open()))
         CLIUtils::error("No output file opened!", "", false);
 
@@ -51,6 +51,14 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args) {
         CellUtils::fromBoundaryCondition(args.conditions[0]), CellUtils::fromBoundaryCondition(args.conditions[1]),
         CellUtils::fromBoundaryCondition(args.conditions[2]), CellUtils::fromBoundaryCondition(args.conditions[3]),
         CellUtils::fromBoundaryCondition(args.conditions[4]), CellUtils::fromBoundaryCondition(args.conditions[5])};
+
+    // serialize thermostat
+    ThermostatType tt{t.getTemp(), t.getTimestep()};
+    tt.brownianMotion() = false; // since this is a continuation, we don't reinitialize velocities
+    if (std::isfinite(t.getTargetTemp()))
+        tt.target() = t.getTargetTemp();
+    if (std::isfinite(t.getDeltaT()))
+        tt.deltaT() = t.getDeltaT();
 
     // serialize each molecule inside the particle container
     ObjectsType o{};
@@ -74,7 +82,7 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args) {
     }
 
     // finalize output
-    SimType s{StringUtils::fromSimulationType(args.sim), o};
+    SimType s{tt, StringUtils::fromSimulationType(args.sim), o};
     s.args(a);
     s.linkedCells() = args.linkedCells;
     s.totalParticles() = pc.activeSize();

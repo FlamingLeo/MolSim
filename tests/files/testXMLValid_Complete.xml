@@ -13,6 +13,12 @@
         </domainSize>
         <cutoffRadius>5.0</cutoffRadius>
     </args>
+    <thermostat>
+        <init>40.0</init>
+        <timeStep>1000</timeStep>
+        <target>60.0</target>
+        <deltaT>0.5</deltaT>
+    </thermostat>
     <type>lj</type>
     <objects>
         <cuboid>

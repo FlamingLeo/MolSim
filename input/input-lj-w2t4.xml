@@ -7,6 +7,10 @@
         <basename>MD_vtk_LJ</basename>
         <output>vtk</output>
     </args>
+    <thermostat>
+        <init>40.0</init>
+        <timeStep>2147483647</timeStep>
+    </thermostat>
     <type>lj</type>
     <linkedCells>false</linkedCells>
     <objects>
