@@ -237,4 +237,14 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
         lc->getConditions().end()) {
         deleteGhostParticles(lc);
     }
+
+    //try adding gravity here
+    for(auto &p: particles) {
+        if(p.isActive()) {
+            double g_grav = -12.44;
+            std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
+            p.setF(p.getF() + gravity);
+        }
+    }
+
 }

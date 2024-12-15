@@ -27,8 +27,8 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
             continue;
 
         //add gravitational force
-        std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
-        p.setF(p.getF() + gravity);
+        //std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
+        //p.setF(p.getF() + gravity);
 
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));

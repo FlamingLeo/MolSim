@@ -41,7 +41,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
     while (currentTime < m_args.endTime) {
         // update system temperature using thermostat
-        m_thermostat.updateSystemTemp(iteration);
+        //m_thermostat.updateSystemTemp(iteration);
 
         // update position, force and velocity
         m_calculateX(m_particles, m_args.delta_t, m_args.gravity, lc);
