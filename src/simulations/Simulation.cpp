@@ -44,7 +44,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         m_thermostat.updateSystemTemp(iteration);
 
         // update position, force and velocity
-        m_calculateX(m_particles, m_args.delta_t, lc);
+        m_calculateX(m_particles, m_args.delta_t, m_args.gravity, lc);
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 

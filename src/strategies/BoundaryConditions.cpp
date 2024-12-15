@@ -149,7 +149,7 @@ void mirrorGhostParticles(CellContainer *lc) {
 
             for (auto &p : bc.get().getParticles()) {
                 lc->getCells()[haloIndex].addParticle(p.get());
-                SPDLOG_DEBUG("Mirror along edge {} in {} and in actual {}.", p.get().toString(), haloIndex,
+                SPDLOG_TRACE("Mirror along edge {} in {} and in actual {}.", p.get().toString(), haloIndex,
                              p.get().getCellIndex());
             }
         }

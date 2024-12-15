@@ -19,9 +19,10 @@
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param g_grav The gravitational force \f$ g_{grav} \f$.
  * @param lc Unused. Present to allow calling function without last argument.
  */
-void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc = nullptr);
+void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc = nullptr);
 
 /**
  * @brief Calculates the position \f$ x \f$ for all Particle objects in a given ParticleContainer when using the linked
@@ -38,6 +39,7 @@ void calculateX(ParticleContainer &particles, double delta_t, CellContainer *lc 
  *
  * @param particles The ParticleContainer containing the Particle objects to iterate over.
  * @param delta_t The timestep \f$ \Delta t \f$.
+ * @param g_grav The gravitational force \f$ g_{grav} \f$.
  * @param lc The CellContainer for the linked cells method.
  */
-void calculateX_LC(ParticleContainer &particles, double delta_t, CellContainer *lc);
+void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc);
