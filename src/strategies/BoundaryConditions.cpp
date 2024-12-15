@@ -103,7 +103,7 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
         p.markInactive();
         return;
     }
-    SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
+    SPDLOG_DEBUG("Moved periodic {} to cell {}.", p.toString(), p.getCellIndex());
 }
 
 void mirrorGhostParticles(CellContainer *lc) {
@@ -112,7 +112,6 @@ void mirrorGhostParticles(CellContainer *lc) {
     // we add to the halo cells on the opposite side (sides if corner) references to the particles
     for (auto bc : borderCells) {
         std::vector<BorderLocation> location = bc.get().getBorderLocation();
-
         // special case for corners (2D) -- should be changed to >2 for 3D
         if (location.size() > 1) {
             // if not all concerned edges are periodic, don't mirror corner (intuitively this is how it seems it should
@@ -126,7 +125,6 @@ void mirrorGhostParticles(CellContainer *lc) {
 
             if (doCorner) {
                 std::vector<int> corners = lc->getOppositeOfBorderCorner(bc, location);
-
                 // in every corner add the ghost particles
                 for (auto corner : corners) {
                     for (auto &p : bc.get().getParticles()) {

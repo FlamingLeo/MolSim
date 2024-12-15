@@ -343,7 +343,7 @@ int CellContainer::getOppositeOfBorder(const Cell &from, BorderLocation location
     return -1;
 }
 
-std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> locations) {
+std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations) {
     // currently in 2D, god help us in 3D
     int cellIndex = from.getIndex();
     std::vector<int> ghostCorners;
@@ -358,6 +358,7 @@ std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std:
             cellIndex = cellIndex - (numCells[0] - 2);
         }
     }
+    ghostCorners.push_back(cellIndex);
     return ghostCorners;
 }
 
