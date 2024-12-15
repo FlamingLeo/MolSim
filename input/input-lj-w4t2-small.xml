@@ -13,10 +13,10 @@
         </domainSize>
         <cutoffRadius>2.5</cutoffRadius>
         <bdConditions>
-            <n>periodic</n>
-            <s>periodic</s>
-            <w>reflective</w>
-            <e>reflective</e>
+            <n>reflective</n>
+            <s>reflective</s>
+            <w>periodic</w>
+            <e>periodic</e>
             <a>outflow</a>
             <b>outflow</b>
         </bdConditions>
