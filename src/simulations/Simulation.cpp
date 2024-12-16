@@ -61,6 +61,9 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         // add the number of active particles to the molecule update counter
         // we do this since we update each active molecule during one iteration
         TIMER_UPDATE_MOLECULES(m_timer, m_particles.activeSize());
+        if (lc) {
+            lc->removeHaloCellParticles();
+        }
         iteration++;
     }
 

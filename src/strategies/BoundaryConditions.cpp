@@ -165,7 +165,8 @@ void deleteGhostParticles(CellContainer *lc) {
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension) {
     p.setX(lc->getMirrorPosition(p.getX(), fromCell, toCell, dimension));
     if (!lc->moveParticle(p)) {
-        SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(), toCell.getIndex());
+        SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(),
+                     toCell.getIndex());
         p.markInactive();
         return;
     }
