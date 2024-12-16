@@ -1,7 +1,7 @@
 <sim>
     <args>
         <startTime>0.0</startTime>
-        <endTime>0.5</endTime>
+        <endTime>25.0</endTime>
         <delta_t>0.0005</delta_t>
         <frequency>10</frequency>
         <basename>MD_vtk_LJ_W4T2_S</basename>
@@ -15,8 +15,8 @@
         <bdConditions>
             <n>reflective</n>
             <s>reflective</s>
-            <w>reflective</w>
-            <e>reflective</e>
+            <w>periodic</w>
+            <e>periodic</e>
             <a>outflow</a>
             <b>outflow</b>
         </bdConditions>
@@ -28,11 +28,12 @@
     </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>
+    <totalParticles>1400</totalParticles>
     <objects>
         <cuboid>
             <position>
-                <x>0.6</x>
-                <y>2.0</y>
+                <x>2.6</x>
+                <y>4.0</y>
                 <z>0.0</z>
             </position>
             <velocity>
@@ -52,8 +53,8 @@
         </cuboid>
         <cuboid>
             <position>
-                <x>0.6</x>
-                <y>19.0</y>
+                <x>2.6</x>
+                <y>21.0</y>
                 <z>0.0</z>
             </position>
             <velocity>

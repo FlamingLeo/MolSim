@@ -1,5 +1,6 @@
 #include "Thermostat.h"
 #include "utils/ArrayUtils.h"
+#include "utils/MaxwellBoltzmannDistribution.h"
 #include <cmath>
 #include <functional>
 #include <spdlog/spdlog.h>
@@ -40,11 +41,20 @@ void Thermostat::initialize(int dimension, double T_init, int n_thermostat, doub
                  this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
                  this->initBrownianMotion);
 }
-
+void Thermostat::initializeBrownianMotion() {
+    SPDLOG_TRACE("0-th iteration, initializing velocities with Brownian motion...");
+    for (auto &p : particles) {
+        // should probably check for active particles here, but we can assume that all of them are active at the
+        // beginning of a simulation
+        p.setV(maxwellBoltzmannDistributedVelocity(std::sqrt(T_init / p.getM()), dimension));
+    }
+}
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
     for (auto &p : particles) {
-        sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+        if (p.isActive()) {
+            sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+        }
     }
     kineticEnergy = sum / 2;
     SPDLOG_TRACE("New kinetic energy: {}", kineticEnergy);
@@ -53,8 +63,21 @@ void Thermostat::calculateTemp() {
     temperature = 2 * kineticEnergy / (dimension * particles.activeSize());
     SPDLOG_TRACE("New temperature: {}", temperature);
 }
-void Thermostat::calculateScalingFactor(double newTemp) {
-    scalingFactor = std::sqrt(newTemp / temperature);
+void Thermostat::calculateScalingFactor() {
+    if (temperature == 0) {
+        scalingFactor = 1;
+        SPDLOG_TRACE("Temperature was 0, setting scaling factor to 1.");
+        return;
+    };
+
+    // if dTemp is specified, only increment by (at most) dTemp
+    // otherwise, directly set temperature
+    double diff = T_target - temperature;
+    if (limitScaling && std::abs(diff) > delta_T)
+        diff = (diff > 0) ? delta_T : -delta_T;
+    double T_new = temperature + diff;
+
+    scalingFactor = std::sqrt(T_new / temperature);
     SPDLOG_TRACE("New scaling factor: {}", scalingFactor);
 }
 void Thermostat::updateSystemTemp(int currentStep) {
@@ -64,13 +87,10 @@ void Thermostat::updateSystemTemp(int currentStep) {
     // perform temperature update if the current iteration number is a multiple of n_thermostat
     SPDLOG_TRACE("Updating system temperature for iteration {} (n_thermostat: {})", currentStep, n_thermostat);
 
-    // for the first iteration, initialize velocities with brownian motion, then quit
-    if (currentStep == 0 && initBrownianMotion) {
-        SPDLOG_TRACE("0-th iteration, initializing velocities with Brownian motion...");
-        for (auto &p : particles) {
-            double factor = std::sqrt(T_init / p.getM());
-            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(factor, p.getV(), std::multiplies<>());
-            p.setV(newV);
+    // for the first iteration, initialize velocities with brownian motion (if set), then quit
+    if (currentStep == 0) {
+        if (initBrownianMotion) {
+            initializeBrownianMotion();
         }
         return;
     }
@@ -80,20 +100,20 @@ void Thermostat::updateSystemTemp(int currentStep) {
     calculateTemp();
 
     // if the current temp. is the same as the target temp., skip updating velocities
-    // TODO: check if the temperature is stable (i.e. once the target temp. is reached, see if this ever diverges)
     if (areEqual(temperature, T_target)) {
         SPDLOG_TRACE("Target temperature and current temperature are equal, skipping update.");
         return;
     }
 
-    // if dTemp is specified, only increment by (at most) dTemp
-    // otherwise, directly set temperature by scaling velocities
-    calculateScalingFactor(limitScaling ? std::min(temperature + delta_T, T_target) : T_target);
+    // calculate beta
+    calculateScalingFactor();
 
     // update particle velocities to set new temperature
     for (auto &p : particles) {
-        std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
-        p.setV(newV);
+        if (p.isActive()) {
+            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+            p.setV(newV);
+        }
     }
     SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);
 }

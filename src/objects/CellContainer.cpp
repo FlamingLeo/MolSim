@@ -10,6 +10,14 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
+#ifndef NDEBUG
+#define PRINT_CELL_INDICES() printCellIndices()
+#define PRINT_CELL_CONTENTS() printCellContents()
+#else
+#define PRINT_CELL_INDICES() (void)0
+#define PRINT_CELL_CONTENTS() (void)0
+#endif
+
 /* constructor */
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                              const std::array<BoundaryCondition, 6> &conditions, double cutoff,
@@ -132,6 +140,10 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
     for (Particle &p : particles) {
         addParticle(p);
     }
+
+    // debug print
+    PRINT_CELL_INDICES();
+    PRINT_CELL_CONTENTS();
 }
 
 /* iterators */
@@ -411,9 +423,13 @@ void CellContainer::printCellIndices() const {
 }
 void CellContainer::printCellContents() const {
     for (size_t i = 0; i < cells.size(); ++i) {
-        std::cout << BOLD_ON << "Cell " << i << ":\n";
+        std::cout << BOLD_ON << "Cell " << i << "([" << cells[i].getX()[0] << ", " << cells[i].getX()[1] << ", "
+                  << cells[i].getX()[2] << "] - [" << (cells[i].getX()[0] + cells[i].getSize()[0]) << ", "
+                  << (cells[i].getX()[1] + cells[i].getSize()[1]) << ", "
+                  << (cells[i].getX()[2] + cells[i].getSize()[2]) << "]): " << BOLD_OFF << "\n";
         for (auto &p : cells[i].getParticles()) {
             std::cout << "\t" << p.get().toString() << "\n";
         }
     }
+    std::cout << BOLD_OFF;
 }

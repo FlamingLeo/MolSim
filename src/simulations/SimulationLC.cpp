@@ -25,6 +25,7 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("basename    : {}", m_args.basename);
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
     SPDLOG_INFO("bd. cond.   : {}", CellUtils::fromBoundaryConditionArray(m_args.conditions));
+    SPDLOG_INFO("#particles  : {}", m_particles.size());
 
     initializeBase(0);
     runSimulationLoop(&m_cellContainer);

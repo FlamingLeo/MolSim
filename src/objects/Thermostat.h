@@ -37,6 +37,8 @@ class Thermostat {
     void initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
                     bool initBrownianMotion);
 
+    void initializeBrownianMotion();
+
     void calculateKineticEnergy();
 
     void calculateTemp();

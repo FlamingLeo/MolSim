@@ -174,8 +174,6 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
         mirrorGhostParticles(lc);
     }
 
-    // TODO add gravitational force
-
     // loop over all cells ic
     for (auto &ic : *lc) {
         // loop over all active particles i in cell ic
@@ -238,13 +236,12 @@ void calculateF_LennardJonesThirdLaw_LC(ParticleContainer &particles, double, Ce
         deleteGhostParticles(lc);
     }
 
-    //try adding gravity here
-    for(auto &p: particles) {
-        if(p.isActive()) {
-            double g_grav = -12.44;
+    // try adding gravity here
+    for (auto &p : particles) {
+        if (p.isActive()) {
+            double g_grav = -12.44; // TODO don't hardcode this
             std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
             p.setF(p.getF() + gravity);
         }
     }
-
 }
