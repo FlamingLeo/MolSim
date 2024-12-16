@@ -69,7 +69,7 @@ void Thermostat::calculateScalingFactor() {
         scalingFactor = 1;
         SPDLOG_TRACE("Temperature was 0, setting scaling factor to 1.");
         return;
-    };
+    }
 
     // if dTemp is specified, only increment by (at most) dTemp
     // otherwise, directly set temperature

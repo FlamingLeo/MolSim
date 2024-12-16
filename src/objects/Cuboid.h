@@ -31,7 +31,7 @@ class Cuboid : public Cluster {
      * @param h The distance \f$ h \f$ between the particles in the cuboid.
      * @param m The mass \f$ m \f$ of the particles in the cuboid.
      * @param type The type of the particle.
-     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param epsilon The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
