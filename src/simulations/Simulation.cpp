@@ -40,6 +40,8 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
     int iteration = 0;
 
     while (currentTime < m_args.endTime) {
+        SPDLOG_DEBUG("Iteration: {}", iteration);
+
         // update system temperature using thermostat
         m_thermostat.updateSystemTemp(iteration);
 

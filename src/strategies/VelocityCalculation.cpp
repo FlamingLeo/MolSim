@@ -2,6 +2,7 @@
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <functional>
+#include <spdlog/spdlog.h>
 
 void calculateV(ParticleContainer &particles, double delta_t) {
     for (auto &p : particles) {

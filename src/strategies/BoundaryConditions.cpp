@@ -11,7 +11,7 @@ bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
         return false;
 
     BoundaryCondition bc = determineBoundaryCondition(p, targetCell, lc);
-    SPDLOG_DEBUG("Chose boundary condition {} for cell {}.", CellUtils::fromBoundaryCondition(bc),
+    SPDLOG_TRACE("Chose boundary condition {} for cell {}.", CellUtils::fromBoundaryCondition(bc),
                  targetCell.toString());
 
     switch (bc) {
@@ -39,13 +39,13 @@ BoundaryCondition determineBoundaryCondition(Particle &p, Cell &targetCell, Cell
         return lc->getConditions()[static_cast<int>(targetCell.getCornerRegion(p))];
     }
 
-    SPDLOG_DEBUG("Choosing boundary condition for cell {}: {} (cast: {})...", targetCell.toString(),
+    SPDLOG_TRACE("Choosing boundary condition for cell {}: {} (cast: {})...", targetCell.toString(),
                  CellUtils::fromHalo(haloLocations[0]), static_cast<int>(haloLocations[0]));
     return lc->getConditions()[static_cast<int>(haloLocations[0])];
 }
 
 void handleOutflowCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
-    SPDLOG_DEBUG("[outflow] Particle {} entered HALO cell ({}), deleting...", p.toString(),
+    SPDLOG_TRACE("[outflow] Particle {} entered HALO cell ({}), deleting...", p.toString(),
                  CellUtils::fromHaloVec(targetCell.getHaloLocation()));
     lc->deleteParticle(p);
     p.markInactive();
@@ -64,15 +64,15 @@ void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc) {
     if (flipVert && flipHorizontal) {
         reflectParticle(p, fromCell, toCell, lc, 2);
         p.setV({-p.getV()[0], -p.getV()[1], p.getV()[2]});
-        SPDLOG_DEBUG("Flipped vertically and horizontally: {}", p.toString());
+        SPDLOG_TRACE("Flipped vertically and horizontally: {}", p.toString());
     } else if (flipVert) {
         reflectParticle(p, fromCell, toCell, lc, 1);
         p.setV({p.getV()[0], -p.getV()[1], p.getV()[2]});
-        SPDLOG_DEBUG("Flipped vertically: {}", p.toString());
+        SPDLOG_TRACE("Flipped vertically: {}", p.toString());
     } else if (flipHorizontal) {
         reflectParticle(p, fromCell, toCell, lc, 0);
         p.setV({-p.getV()[0], p.getV()[1], p.getV()[2]});
-        SPDLOG_DEBUG("Flipped horizontally: {}", p.toString());
+        SPDLOG_TRACE("Flipped horizontally: {}", p.toString());
     }
 }
 
@@ -100,10 +100,11 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
     // we set the particle's new position and move it to the proper cell
     p.setX(newPos);
     if (!lc->moveParticle(p)) {
+        SPDLOG_ERROR("Invalid particle position! {}", p.toString());
         p.markInactive();
         return;
     }
-    SPDLOG_DEBUG("Moved periodic {} to cell {}.", p.toString(), p.getCellIndex());
+    SPDLOG_TRACE("Moved periodic {} to cell {}.", p.toString(), p.getCellIndex());
 }
 
 void mirrorGhostParticles(CellContainer *lc) {
@@ -164,12 +165,14 @@ void deleteGhostParticles(CellContainer *lc) {
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension) {
     p.setX(lc->getMirrorPosition(p.getX(), fromCell, toCell, dimension));
     if (!lc->moveParticle(p)) {
+        SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(), toCell.getIndex());
         p.markInactive();
         return;
     }
-    SPDLOG_DEBUG("Moved to cell {}.", p.getCellIndex());
+    SPDLOG_TRACE("Moved {} to cell {}.", p.toString(), p.getCellIndex());
 }
 
+// TODO replace this with enum cast
 int directionLookUp(BorderLocation location) {
     switch (location) {
     case BorderLocation::NORTH:

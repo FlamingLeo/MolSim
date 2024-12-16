@@ -13,11 +13,10 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
 
-        // set previous f for each particle and reinitialize using gravitational force for the upcoming force
-        // calculation
+        // store previous force, then reset force to 0
+        // TODO gravity?
         p.setOldF(p.getF());
-        std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
-        p.setF(gravity);
+        p.setFToZero();
     }
 }
 
@@ -27,31 +26,34 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
         if (!p.isActive())
             continue;
 
-        // add gravitational force
-        // std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
-        // p.setF(p.getF() + gravity);
-
+        // update position
         p.setX(p.getX() + ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>()) +
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
 
-        p.setF({0, 0, 0});
+        // store previous force for velocity calculation, then reset force to 0
+        p.setOldF(p.getF());
+        p.setFToZero();
+
         // check particle index and potentially move it
         // if the particle somehow goes completely out of bounds, remove it to avoid issues
         int newIdx = lc->getCellIndex(p.getX());
         if (newIdx == -1) {
+            SPDLOG_ERROR("Particle {} out of bounds! Removing...", p.toString());
             p.markInactive();
             p.setCellIndex(-1);
             continue;
         }
         if (newIdx != p.getCellIndex()) {
-            SPDLOG_DEBUG("Index mismatch (current: {}, expected: {}), moving...", p.getCellIndex(), newIdx);
+            SPDLOG_TRACE("Index mismatch (current: {}, expected: {}), moving...", p.getCellIndex(), newIdx);
 
             Cell &targetCell = (*lc)[newIdx];
             if (handleHaloCell(p, targetCell, lc))
                 continue;
 
-            if (!lc->moveParticle(p))
+            if (!lc->moveParticle(p)) {
+                SPDLOG_ERROR("Cannot move particle {}!", p.toString());
                 p.markInactive();
+            }
         }
     }
 }
