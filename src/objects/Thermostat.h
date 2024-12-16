@@ -45,7 +45,7 @@ class Thermostat {
      *
      * @details Must be specified when initializing a Thermostat.
      */
-    int n_thermostat{1000.0};
+    int n_thermostat{1000};
 
     /**
      * @brief The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application (default: \f$ \infty

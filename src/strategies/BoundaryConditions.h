@@ -88,11 +88,3 @@ void mirrorGhostParticles(CellContainer *lc);
  * @param lc The CellContainer we are operating in.
  */
 void deleteGhostParticles(CellContainer *lc);
-
-/**
- * @brief Gives for a certain direction the index of the corresponding Boundary Condition.
- *
- * @param location The direction of interest.
- * @return The index for the direction
- */
-int directionLookUp(BorderLocation location);

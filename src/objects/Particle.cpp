@@ -53,6 +53,10 @@ Particle::~Particle() {
 }
 
 /* functionality */
+std::array<double, 3> &Particle::getX() { return x; }
+std::array<double, 3> &Particle::getV() { return v; }
+std::array<double, 3> &Particle::getF() { return f; }
+std::array<double, 3> &Particle::getOldF() { return old_f; }
 const std::array<double, 3> &Particle::getX() const { return x; }
 const std::array<double, 3> &Particle::getV() const { return v; }
 const std::array<double, 3> &Particle::getF() const { return f; }
