@@ -43,7 +43,7 @@ class Thermostat {
 
     void calculateTemp();
 
-    void calculateScalingFactor(double newTemp);
+    void calculateScalingFactor();
 
     void updateSystemTemp(int currentStep);
 

@@ -64,6 +64,7 @@ void Thermostat::calculateTemp() {
     SPDLOG_TRACE("New temperature: {}", temperature);
 }
 void Thermostat::calculateScalingFactor() {
+    // avoid division by 0
     if (temperature == 0) {
         scalingFactor = 1;
         SPDLOG_TRACE("Temperature was 0, setting scaling factor to 1.");
