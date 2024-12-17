@@ -14,9 +14,8 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
 
         // store previous force, then reset force to 0
-        // TODO gravity?
         p.setOldF(p.getF());
-        p.setFToZero();
+        p.setF({0.0, p.getM() * g_grav, 0.0});
     }
 }
 
@@ -31,8 +30,12 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
                delta_t * delta_t * ArrayUtils::elementWiseScalarOp(1 / (2 * p.getM()), p.getF(), std::multiplies<>()));
 
         // store previous force for velocity calculation, then reset force to 0
+        // optimization: add graviational force here
+        // we can do this because the forces are additive; it doesn't matter if we first calculate the forces between
+        // the particles or the gravitational force
+        // thus, we save having to iterate through all particles once again after calculating the force
         p.setOldF(p.getF());
-        p.setFToZero();
+        p.setF({0.0, p.getM() * g_grav, 0.0});
 
         // check particle index and potentially move it
         // if the particle somehow goes completely out of bounds, remove it to avoid issues

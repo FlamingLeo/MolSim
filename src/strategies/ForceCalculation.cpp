@@ -58,10 +58,8 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
 
 void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // mirror border particles for periodic boundaries
-    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
-        lc->getConditions().end()) {
+    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
-    }
 
     // loop over all cells ic
     for (auto &ic : *lc) {
@@ -123,14 +121,5 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
         lc->getConditions().end()) {
         deleteGhostParticles(lc);
-    }
-
-    // try adding gravity here
-    for (auto &p : particles) {
-        if (p.isActive()) {
-            double g_grav = -12.44; // TODO don't hardcode this
-            std::array<double, 3> gravity = {0.0, p.getM() * g_grav, 0.0};
-            p.setF(p.getF() + gravity);
-        }
     }
 }
