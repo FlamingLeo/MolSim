@@ -47,6 +47,12 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
             SPDLOG_TRACE("Index mismatch (current: {}, expected: {}), moving...", p.getCellIndex(), newIdx);
 
             Cell &targetCell = (*lc)[newIdx];
+
+            if(newIdx < lc->getNumCells()[0]){
+                SPDLOG_DEBUG("We have particle in cell {} in lower halo {}", newIdx, p.toString());
+            }
+
+
             if (handleHaloCell(p, targetCell, lc))
                 continue;
 

@@ -14,6 +14,11 @@ bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
     SPDLOG_TRACE("Chose boundary condition {} for cell {}.", CellUtils::fromBoundaryCondition(bc),
                  targetCell.toString());
 
+    if(lc->getCellIndex(p.getX()) < lc->getNumCells()[0]){
+        SPDLOG_DEBUG("Chose boundary condition {} for lower halo cell {} and particle {}",
+                     CellUtils::fromBoundaryCondition(bc), lc->getCellIndex(p.getX()), p.toString());
+    }
+
     switch (bc) {
     case BoundaryCondition::OUTFLOW:
         handleOutflowCondition(p, targetCell, lc);
@@ -103,6 +108,12 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
         SPDLOG_ERROR("Invalid particle position! {}", p.toString());
         p.markInactive();
         return;
+    }
+
+    //if it was a corner halo, we need to recalculate boundary conditions because the particle still in another halo cell
+    if(haloLocations.size() > 1){
+        SPDLOG_DEBUG("Did another boundary in cell {} to particle {}", p.getCellIndex(), p.toString());
+        handleHaloCell(p, lc->getCells()[p.getCellIndex()], lc);
     }
     SPDLOG_TRACE("Moved periodic {} to cell {}.", p.toString(), p.getCellIndex());
 }
