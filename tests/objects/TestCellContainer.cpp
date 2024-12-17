@@ -268,29 +268,24 @@ TEST_F(CellContainerTest, CellIteratorEmpty) {
 // Test getting the index of the opposite neighbor cell.
 TEST_F(CellContainerTest, GetOppositeNeighbor) {
     int cellIndex = 121;
-    std::vector<HaloLocation> directions = {HaloLocation::NORTH};
+    HaloLocation direction = HaloLocation::NORTH;
     int expectedIndex = 114;
-    int result = container.getOppositeNeighbor(cellIndex, directions);
+    int result = container.getOppositeNeighbor(cellIndex, direction);
     EXPECT_EQ(result, expectedIndex);
 
-    directions = {HaloLocation::SOUTH};
+    direction = HaloLocation::SOUTH;
     expectedIndex = 128;
-    result = container.getOppositeNeighbor(cellIndex, directions);
+    result = container.getOppositeNeighbor(cellIndex, direction);
     EXPECT_EQ(result, expectedIndex);
 
-    directions = {HaloLocation::EAST};
+    direction = HaloLocation::EAST;
     expectedIndex = 120;
-    result = container.getOppositeNeighbor(cellIndex, directions);
+    result = container.getOppositeNeighbor(cellIndex, direction);
     EXPECT_EQ(result, expectedIndex);
 
-    directions = {HaloLocation::WEST};
+    direction = HaloLocation::WEST;
     expectedIndex = 122;
-    result = container.getOppositeNeighbor(cellIndex, directions);
-    EXPECT_EQ(result, expectedIndex);
-
-    directions = {HaloLocation::NORTH, HaloLocation::EAST};
-    expectedIndex = 113;
-    result = container.getOppositeNeighbor(cellIndex, directions);
+    result = container.getOppositeNeighbor(cellIndex, direction);
     EXPECT_EQ(result, expectedIndex);
 }
 

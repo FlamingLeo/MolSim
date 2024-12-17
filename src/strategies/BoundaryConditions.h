@@ -27,14 +27,14 @@
 bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc);
 
 /**
- * @brief Determines the boundary condition for a particle entering a halo cell.
+ * @brief Determines the correct halo location and boundary condition for a particle entering a halo cell.
  *
  * @param p The particle entering a halo cell.
  * @param targetCell The halo cell which the particle enters.
  * @param lc The CellContainer containing the cell.
- * @return The applied boundary condition.
+ * @return The chosen cardinal direction and the applied boundary condition.
  */
-BoundaryCondition determineBoundaryCondition(Particle &p, Cell &targetCell, CellContainer *lc);
+std::pair<HaloLocation, BoundaryCondition> determineBoundaryCondition(Particle &p, Cell &targetCell, CellContainer *lc);
 
 /**
  * @brief Handles the outflow condition where the particle is deleted upon entering a halo cell.
@@ -50,9 +50,10 @@ void handleOutflowCondition(Particle &p, Cell &targetCell, CellContainer *lc);
  *
  * @param p The particle entering a halo cell.
  * @param fromCell The current cell of the particle.
+ * @param location The cardinal direction of the entered halo cell.
  * @param lc The CellContainer containing the cell.
  */
-void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc);
+void handleReflectiveCondition(Particle &p, Cell &fromCell, HaloLocation location, CellContainer *lc);
 
 /**
  * @brief Handles the periodic condition where the particle is moved from the halo cell to the appropriate border cell
@@ -71,9 +72,9 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc);
  * @param fromCell The current cell of the particle. Passed to the getMirrorPosition() function in CellContainer.
  * @param toCell The target cell of the particle. Passed to the getMirrorPosition() function in CellContainer.
  * @param lc The CellContainer containing the cell.
- * @param dimension The dimension argument passed to the getMirrorPosition() function in CellContainer.
+ * @param direction The direction argument passed to the getMirrorPosition() function in CellContainer.
  */
-void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension);
+void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int direction);
 
 /**
  * @brief Adds ghost particles to the proper halo cells for periodic conditions.

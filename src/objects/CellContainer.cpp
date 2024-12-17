@@ -257,32 +257,27 @@ std::array<int, 3> CellContainer::getVirtualCellCoordinates(int index) const {
     int z = cellSize[2] == 0 ? 0 : index / (numCells[0] * numCells[1]);
     return {x, y, z};
 }
-int CellContainer::getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) const {
-    int idx = cellIndex;
-    for (auto l : directions) {
-        switch (l) {
-        case HaloLocation::NORTH:
-            idx -= numCells[0];
-            SPDLOG_TRACE("North set, getting southern cell index...");
-            break;
-        case HaloLocation::SOUTH:
-            idx += numCells[0];
-            SPDLOG_TRACE("South set, getting northern cell index...");
-            break;
-        case HaloLocation::EAST:
-            idx -= 1;
-            SPDLOG_TRACE("East set, getting western cell index...");
-            break;
-        case HaloLocation::WEST:
-            idx += 1;
-            SPDLOG_TRACE("West set, getting eastern cell index...");
-            break;
-        default:
-            SPDLOG_WARN("Not yet implemented! Come back later.\n");
-            break;
-        }
+int CellContainer::getOppositeNeighbor(int cellIndex, HaloLocation direction) const {
+    switch (direction) {
+    case HaloLocation::NORTH:
+        SPDLOG_TRACE("North set, getting southern cell index...");
+        return cellIndex - numCells[0];
+    case HaloLocation::SOUTH:
+        SPDLOG_TRACE("South set, getting northern cell index...");
+        return cellIndex + numCells[0];
+        break;
+    case HaloLocation::EAST:
+        SPDLOG_TRACE("East set, getting western cell index...");
+        return cellIndex - 1;
+        break;
+    case HaloLocation::WEST:
+        SPDLOG_TRACE("West set, getting eastern cell index...");
+        return cellIndex + 1;
+        break;
+    default:
+        SPDLOG_WARN("Not yet implemented! Come back later.\n");
+        return -1;
     }
-    return idx;
 }
 std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 3> &position, const Cell &from,
                                                        const Cell &to, int direction) const {
@@ -291,8 +286,8 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
     double yOffset = from.getSize()[1] - posWithinCell[1];
     double zOffset = from.getSize()[2] - posWithinCell[2];
     if (direction == 2) {
-        // north, south, east or west
-        return {to.getX()[0] + xOffset, to.getX()[1] + yOffset, to.getX()[2] + posWithinCell[2]};
+        // above or below
+        return {to.getX()[0] + posWithinCell[0], to.getX()[1] + posWithinCell[1], to.getX()[2] + zOffset};
     } else if (direction == 1) {
         // north or south
         return {to.getX()[0] + posWithinCell[0], to.getX()[1] + yOffset, to.getX()[2] + posWithinCell[2]};
@@ -325,8 +320,7 @@ std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
 }
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
-    // coincidentally works just as well for getting the opposite halo cell for a border cell
-    //  currently in 2D
+    // coincidentally works just as well for getting the opposite halo cell for a border cell; currently in 2D
     int cellIndex = from.getIndex();
     if (location == HaloLocation::NORTH) {
         return cellIndex - numCells[0] * (numCells[1] - 2);

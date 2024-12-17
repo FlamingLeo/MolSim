@@ -339,17 +339,15 @@ class CellContainer {
                                             int direction) const;
 
     /**
-     * @brief Gets the index of the opposing Cell in the specified direction(s).
+     * @brief Gets the index of the opposing Cell in the specified direction.
      *
-     * In other words, if the direction is NORTH, this function will return the southern neighbor. If multiple
-     * dimensions are passed (e.g. NORTH, WEST), the function will return the index of the opposing Cell in ALL
-     * diretions (e.g. SOUTH, EAST).
+     * For example, if the direction is NORTH, this function will return the southern neighbor.
      *
      * @param cellIndex The Cell from which to get the opposing Cell index.
-     * @param directions A vector containing the opposite direction(s) of the desired neighbor Cell.
+     * @param direction The opposite direction of the desired neighbor Cell.
      * @return The index of the opposing Cell in the specified direction.
      */
-    int getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) const;
+    int getOppositeNeighbor(int cellIndex, HaloLocation direction) const;
 
     /**
      * @brief Gets a vector of neighbouring Cell indices, including the Cell itself.
