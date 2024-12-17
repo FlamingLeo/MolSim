@@ -6,6 +6,44 @@
 #include <functional>
 #include <spdlog/spdlog.h>
 
+// helper function to calculate force vector
+std::array<double, 3> getForceVec(const Particle &p1, const Particle &p2, const std::array<double, 3> distVec,
+                                  double distNorm) {
+    double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
+    double sigma = (p1.getSigma() + p2.getSigma()) / 2;
+
+    // precompute terms
+    // pow(x, 2) _may_ allegedly be faster...
+    double distNormSquared = std::pow(distNorm, 2);
+    double invDistNorm = 1.0 / distNorm;
+    double sigmaOverDist = sigma * invDistNorm;
+    double sigmaOverDist2 = sigmaOverDist * sigmaOverDist;
+    double sigmaOverDist6 = sigmaOverDist2 * sigmaOverDist2 * sigmaOverDist2; // (sigma / dist) ^ 6
+    double sigmaOverDist12 = sigmaOverDist6 * sigmaOverDist6;                 // (sigma / dist) ^ 12
+
+    // compute force magnitude
+    double forceMag = ((-24 * epsilon) / distNormSquared) * (sigmaOverDist6 - 2 * sigmaOverDist12);
+
+    // return force vector
+    return ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+}
+
+// helper method to potentially fake the position of a ghost particle, for use with periodic boundaries
+std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
+    // special case: particle j is a ghost particle
+    // otherwise, we just get the real position of the particle
+    if (!c.getHaloLocation().empty()) {
+        // we need to fake the position of the ghost particle as if it were in the halo cell
+        Cell &trueCell = lc->getCells()[p.getCellIndex()];
+        std::array<double, 3> inCell = {p.getX()[0] - trueCell.getX()[0], p.getX()[1] - trueCell.getX()[1],
+                                        p.getX()[2] - trueCell.getX()[2]};
+        return {c.getX()[0] + inCell[0], c.getX()[1] + inCell[1], c.getX()[2] + inCell[2]};
+    } else {
+        return p.getX();
+    }
+}
+
+/* documented functions start here */
 void calculateF_Gravity(ParticleContainer &particles, double, CellContainer *) {
     // loop over unique pairs
     for (auto pair = particles.beginPairs(); pair != particles.endPairs(); ++pair) {
@@ -42,12 +80,8 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
             if (distNorm == 0)
                 continue;
 
-            double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
-            double sigma = (p1.getSigma() + p2.getSigma()) / 2;
-
-            double forceMag = (-24 * epsilon / std::pow(distNorm, 2)) *
-                              (std::pow(sigma / distNorm, 6) - 2 * std::pow(sigma / distNorm, 12));
-            auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+            // calculate force
+            auto forceVec = getForceVec(p1, p2, distVec, distNorm);
 
             // use newton's third law to apply force on p1 and opposite force on p2
             p1.setF(p1.getF() + forceVec);
@@ -63,13 +97,12 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 
     // loop over all cells ic
     for (auto &ic : *lc) {
-        // loop over all active particles i in cell ic
         // special case: if halo cell, skip (no multiple interactions between same particles)
         if (!ic.getHaloLocation().empty()) {
             continue;
         }
 
-        // for every particle i
+        // loop over all active particles i in cell ic
         for (auto &ri : ic) {
             Particle &i = ri;
             if (!i.isActive())
@@ -79,7 +112,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
 
-                // for every particle j in kc
+                // loop over all particles j in kc
                 for (auto &rj : kc) {
                     // check if j is active AND if i and j form a distinct pair (N3L)
                     // for checking distinct pairs, we compare the memory addresses of the two particles
@@ -87,28 +120,17 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                     if (!j.isActive() || &i >= &j)
                         continue;
 
-                    std::array<double, 3> truePos = j.getX();
-                    // special case: particle j is a ghost particle
-                    if (!kc.getHaloLocation().empty()) {
-                        // we need to fake the position of the ghost particle as if it were in the halo cell
-                        Cell &trueCell = lc->getCells()[j.getCellIndex()];
-                        std::array<double, 3> inCell = {j.getX()[0] - trueCell.getX()[0],
-                                                        j.getX()[1] - trueCell.getX()[1],
-                                                        j.getX()[2] - trueCell.getX()[2]};
-                        truePos = {kc.getX()[0] + inCell[0], kc.getX()[1] + inCell[1], kc.getX()[2] + inCell[2]};
-                    }
+                    // get the position used to calculate the distance between to particles
+                    std::array<double, 3> truePos = getTruePos(j, kc, lc);
 
+                    // calculate the distance between the two particles
                     auto distVec = i.getX() - truePos;
                     double distNorm = ArrayUtils::L2Norm(distVec);
 
                     // compute force if distance is less than cutoff
                     if (distNorm <= lc->getCutoff()) {
-                        double epsilon = std::sqrt(i.getEpsilon() * j.getEpsilon());
-                        double sigma = (i.getSigma() + j.getSigma()) / 2;
-
-                        double forceMag = ((-24 * epsilon) / std::pow(distNorm, 2)) *
-                                          (std::pow((sigma / distNorm), 6) - 2 * std::pow((sigma / distNorm), 12));
-                        auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
+                        // calculate force
+                        auto forceVec = getForceVec(i, j, distVec, distNorm);
 
                         // apply force on particle i (no force on ghost particle)
                         i.getF() = i.getF() + forceVec;
@@ -120,8 +142,6 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     }
 
     // delete ghost particles in the end
-    if (std::find(lc->getConditions().begin(), lc->getConditions().end(), BoundaryCondition::PERIODIC) !=
-        lc->getConditions().end()) {
+    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         deleteGhostParticles(lc);
-    }
 }
