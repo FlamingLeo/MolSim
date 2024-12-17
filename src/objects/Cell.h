@@ -54,6 +54,7 @@ class Cell {
      * @param type The type of this Cell.
      * @param index The index of this Cell in the CellContainer.
      * @param haloLocation The cardinal direction(s) of this cell if this is a halo Cell.
+     * @param borderLocation The cardinal direction(s) of this cell if this is a border Cell.
      */
     Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
          const std::vector<HaloLocation> &haloLocation, const std::vector<BorderLocation> &borderLocation);

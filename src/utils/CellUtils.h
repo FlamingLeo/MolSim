@@ -21,7 +21,7 @@ enum class CellType { INNER, BORDER, HALO };
 /// @brief Enum containing the possible corner and edge directions of halo cells.
 enum class HaloLocation { NORTH, SOUTH, WEST, EAST, ABOVE, BELOW };
 /// @brief Enum containing the possible corner and edge directions of border cells
-enum class BorderLocation { NORTH = 0, SOUTH, WEST, EAST, ABOVE, BELOW };
+enum class BorderLocation { NORTH = 0, SOUTH = 1, WEST = 2, EAST = 3, ABOVE = 4, BELOW = 5 };
 
 /// @brief Namespace containing utility functions for Cell and CellContainer objects.
 namespace CellUtils {

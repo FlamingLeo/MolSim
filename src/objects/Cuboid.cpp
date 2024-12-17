@@ -32,12 +32,13 @@ std::array<size_t, 3> &Cuboid::getN() { return N; }
 const std::array<size_t, 3> &Cuboid::getN() const { return N; }
 bool Cuboid::operator==(const Cuboid &other) const {
     return (x == other.x) && (N == other.N) && (h == other.h) && (m == other.m) && (v == other.v) &&
-           (mean_velocity == other.mean_velocity) && (particles == other.particles);
+           (mean_velocity == other.mean_velocity) && (particles == other.particles) && (sigma == other.sigma) &&
+           (epsilon == other.epsilon);
 }
 bool Cuboid::operator!=(const Cuboid &other) const { return !(*this == other); }
 std::string Cuboid::toString() const {
     std::stringstream stream;
-    stream << "{ x: " << x << ", N: " << N << ", v: " << v << ", h: " << h << ", m: " << m
-           << ", particles: " << particles.toString() << " }";
+    stream << "{ x: " << x << ", N: " << N << ", v: " << v << ", h: " << h << ", m: " << m << ", sigma: " << sigma
+           << ", epsilon: " << epsilon << ", particles: " << particles.toString() << " }";
     return stream.str();
 }

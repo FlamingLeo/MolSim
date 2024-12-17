@@ -47,7 +47,7 @@ class Disc : public Cluster {
      * @param h The distance \f$ h \f$ between the particles in the disc.
      * @param m The mass \f$ m \f$ of the particles in the disc.
      * @param type The type of the particle.
-     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param epsilon The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v, double h,

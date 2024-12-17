@@ -54,12 +54,13 @@ void Disc::initialize(size_t dimensions) {
 int Disc::getR() const { return r; }
 bool Disc::operator==(const Disc &other) const {
     return (x == other.x) && (r == other.r) && (h == other.h) && (m == other.m) && (v == other.v) &&
-           (mean_velocity == other.mean_velocity) && (particles == other.particles);
+           (mean_velocity == other.mean_velocity) && (particles == other.particles) && (sigma == other.sigma) &&
+           (epsilon == other.epsilon);
 }
 bool Disc::operator!=(const Disc &other) const { return !(*this == other); }
 std::string Disc::toString() {
     std::stringstream stream;
-    stream << "{ x: " << x << ", r: " << r << ", v: " << v << ", h: " << h << ", m: " << m
-           << ", particles: " << particles.toString() << " }";
+    stream << "{ x: " << x << ", r: " << r << ", v: " << v << ", h: " << h << ", m: " << m << ", sigma: " << sigma
+           << ", epsilon: " << epsilon << ", particles: " << particles.toString() << " }";
     return stream.str();
 }

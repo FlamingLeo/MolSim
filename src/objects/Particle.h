@@ -116,26 +116,54 @@ class Particle {
      *
      * @return A reference to the position array of this particle.
      */
-    const std::array<double, 3> &getX() const;
+    std::array<double, 3> &getX();
 
     /**
      * @brief Gets the velocity \f$ v \f$ of this particle.
      *
      * @return A reference to the velocity array of this particle.
      */
-    const std::array<double, 3> &getV() const;
+    std::array<double, 3> &getV();
 
     /**
      * @brief Gets the force \f$ F \f$ effective on this particle.
      *
      * @return A reference to the force array of this particle.
      */
-    const std::array<double, 3> &getF() const;
+    std::array<double, 3> &getF();
 
     /**
      * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle.
      *
      * @return A reference to the old force array of this particle.
+     */
+    std::array<double, 3> &getOldF();
+
+    /**
+     * @brief Gets the position \f$ x \f$ of this particle (const).
+     *
+     * @return A const reference to the position array of this particle.
+     */
+    const std::array<double, 3> &getX() const;
+
+    /**
+     * @brief Gets the velocity \f$ v \f$ of this particle (const).
+     *
+     * @return A const reference to the velocity array of this particle.
+     */
+    const std::array<double, 3> &getV() const;
+
+    /**
+     * @brief Gets the force \f$ F \f$ effective on this particle (const).
+     *
+     * @return A const reference to the force array of this particle.
+     */
+    const std::array<double, 3> &getF() const;
+
+    /**
+     * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle (const).
+     *
+     * @return A const reference to the old force array of this particle.
      */
     const std::array<double, 3> &getOldF() const;
 

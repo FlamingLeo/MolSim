@@ -81,7 +81,8 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
 
 // helper function to read and initialize thermostat
 static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t) {
-    t.initialize(2, xmlThermostat.init(), xmlThermostat.timeStep(), GET_IF_PRESENT(xmlThermostat, target, INFINITY),
+    t.initialize(2 /* this will be made changed once 3D is supported... */, xmlThermostat.init(),
+                 xmlThermostat.timeStep(), GET_IF_PRESENT(xmlThermostat, target, INFINITY),
                  GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true));
 }
 

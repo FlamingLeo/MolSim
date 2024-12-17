@@ -378,11 +378,11 @@ class CellContainer {
     int getOppositeOfBorder(const Cell &from, BorderLocation location);
 
     /**
-     * @brief For a border cell returns the indexes of the corner cells on the opposite sides of the domain
+     * @brief For a border cell returns the indices of the corner cells on the opposite sides of the domain
      *
      * @param from The Cell for which the opposite halo cell should be determined
-     * @param location The orientations of the Border Cell
-     * @return The indexes of the opposite halo cells
+     * @param locations The orientations of the Border Cell
+     * @return The indices of the opposite halo cells
      */
     std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
 

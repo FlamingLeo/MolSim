@@ -130,7 +130,7 @@ void mirrorGhostParticles(CellContainer *lc) {
             // be to me)
             bool doCorner = true;
             for (auto direction : location) {
-                if (lc->getConditions()[directionLookUp(direction)] != BoundaryCondition::PERIODIC) {
+                if (lc->getConditions()[static_cast<int>(direction)] != BoundaryCondition::PERIODIC) {
                     doCorner = false;
                 }
             }
@@ -151,7 +151,7 @@ void mirrorGhostParticles(CellContainer *lc) {
         // case for edges: you need to mirror across every edge
         for (auto direction : location) {
             // check whether we should be applying periodic boundary conditions in this direction
-            if (lc->getConditions()[directionLookUp(direction)] != BoundaryCondition::PERIODIC) {
+            if (lc->getConditions()[static_cast<int>(direction)] != BoundaryCondition::PERIODIC) {
                 continue;
             }
 
@@ -176,28 +176,10 @@ void deleteGhostParticles(CellContainer *lc) {
 void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int dimension) {
     p.setX(lc->getMirrorPosition(p.getX(), fromCell, toCell, dimension));
     if (!lc->moveParticle(p)) {
-        SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(), toCell.getIndex());
+        SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(),
+                     toCell.getIndex());
         p.markInactive();
         return;
     }
     SPDLOG_TRACE("Moved {} to cell {}.", p.toString(), p.getCellIndex());
-}
-
-// TODO replace this with enum cast
-int directionLookUp(BorderLocation location) {
-    switch (location) {
-    case BorderLocation::NORTH:
-        return 0;
-    case BorderLocation::SOUTH:
-        return 1;
-    case BorderLocation::WEST:
-        return 2;
-    case BorderLocation::EAST:
-        return 3;
-    case BorderLocation::ABOVE:
-        return 4;
-    case BorderLocation::BELOW:
-        return 5;
-    }
-    return -1;
 }

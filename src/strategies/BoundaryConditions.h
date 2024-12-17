@@ -59,7 +59,7 @@ void handleReflectiveCondition(Particle &p, Cell &fromCell, CellContainer *lc);
  * on the other side.
  *
  * @param p The particle entering a halo cell.
- * @param fromCell The current cell of the particle.
+ * @param targetCell The target cell of the particle.
  * @param lc The CellContainer containing the cell.
  */
 void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc);
@@ -88,11 +88,3 @@ void mirrorGhostParticles(CellContainer *lc);
  * @param lc The CellContainer we are operating in.
  */
 void deleteGhostParticles(CellContainer *lc);
-
-/**
- * @brief Gives for a certain direction the index of the corresponding Boundary Condition.
- *
- * @param location The direction of interest.
- * @return The index for the direction
- */
-int directionLookUp(BorderLocation location);
