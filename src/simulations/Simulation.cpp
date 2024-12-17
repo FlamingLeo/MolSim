@@ -8,7 +8,7 @@ Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
 }
 Simulation::~Simulation() = default;
 
-void Simulation::initializeBase(int type) {
+void Simulation::initializeBase() {
     // get total number of iterations
     m_totalIt = static_cast<int>((m_args.endTime - m_args.startTime) / m_args.delta_t);
 
@@ -18,7 +18,7 @@ void Simulation::initializeBase(int type) {
 #endif
 
     // initialize physics functions
-    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(m_args, type);
+    auto [cvx, cf] = StrategyFactory::getSimulationFunctions(m_args);
     m_calculateX = cvx.xf;
     m_calculateV = cvx.vf;
     m_calculateF = cf;
@@ -81,7 +81,7 @@ void Simulation::runSimulation() {
     SPDLOG_INFO("basename    : {}", m_args.basename);
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
 
-    initializeBase(0);          // we should let the user choose this...
+    initializeBase();
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
 
     // serialize output for future runs

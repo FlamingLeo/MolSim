@@ -46,8 +46,7 @@ class StrategyFactory {
      * @brief Return a 2-tuple of the physics functions corresponding to the chosen simulation.
      *
      * @param args The Arguments struct containing the simulation type and linked cells boolean.
-     * @param modifier A modifier for which combination of functions get returned (i.e. optimized, non-optimized).
      * @return A 2-tuple of the physics functions corresponding to the chosen simulation.
      */
-    static std::tuple<TimeIntegrationFuncs, FFunc> getSimulationFunctions(Arguments &args, int modifier);
+    static std::tuple<TimeIntegrationFuncs, FFunc> getSimulationFunctions(Arguments &args);
 };

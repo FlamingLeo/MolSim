@@ -27,7 +27,7 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("bd. cond.   : {}", CellUtils::fromBoundaryConditionArray(m_args.conditions));
     SPDLOG_INFO("#particles  : {}", m_particles.size());
 
-    initializeBase(0);
+    initializeBase();
     runSimulationLoop(&m_cellContainer);
 
     // serialize output for future runs

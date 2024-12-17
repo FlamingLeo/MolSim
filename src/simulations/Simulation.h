@@ -48,13 +48,8 @@ class Simulation {
     /// @brief Timer used to measure simulation runtime and log molecule updates per second (MUPS).
     Timer m_timer;
 
-    /**
-     * @brief Base function for initializing Simulation parameters.
-     *
-     * @param type Variable used for deciding whether a naive or optimized approach is used for calculating forces of
-     * particles.
-     */
-    void initializeBase(int type);
+    /// @brief Base function for initializing Simulation parameters.
+    void initializeBase();
 
     /**
      * @brief Runs a basic simulation loop.
