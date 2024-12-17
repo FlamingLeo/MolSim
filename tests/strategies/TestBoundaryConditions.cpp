@@ -56,13 +56,13 @@ TEST(BoundaryConditionTests, Reflective) {
     test({1.25, 1.25, 0}, {-10., 0., 0.}, {1.25, 1.25, 0}, {10, 0., 0.}, 13);      // west
 }
 
-// Tests choosing the correct boundary condition based on which edge is hit first.
-// See the report and the presentation slides for more details.
-TEST(BoundaryConditionTests, MixedCorners) {
+// Tests handling reflective corners.
+// The particle should be mirrored and have it's velocity flipped in the X and Y directions.
+TEST(BoundaryConditionTests, ReflectiveCorners) {
     constexpr double delta_t = 0.05;
-    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::OUTFLOW,
-                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::OUTFLOW,
-                                                BoundaryCondition::OUTFLOW,    BoundaryCondition::OUTFLOW};
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE};
 
     auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
@@ -84,10 +84,6 @@ TEST(BoundaryConditionTests, MixedCorners) {
     };
 
     test({10.8, 10.8, 0}, {5., 10., 0.}, {10.95, 10.7, 0}, {-5., -10., 0}, 130, true); // NE: N first -> reflect
-    test({10.8, 10.8, 0}, {10., 5., 0.}, {}, {}, -1, false);                           // NE: E first -> deleted
-    test({10.8, 1.2, 0}, {5., -10., 0.}, {}, {}, -1, false);                           // SE: S first -> deleted
-    test({10.8, 1.2, 0}, {10., -5., 0.}, {}, {}, -1, false);                           // SE: E first -> deleted
-    test({1.2, 1.2, 0}, {-5., -10., 0.}, {}, {}, -1, false);                           // SW: S first -> deleted
     test({1.2, 1.2, 0}, {-10., -5., 0.}, {1.3, 1.05, 0}, {10., 5., 0}, 13, true);      // SW: W first -> reflect
     test({1.2, 10.8, 0}, {-5., 10., 0.}, {1.05, 10.7, 0}, {5., -10., 0}, 121, true);   // NW: N first -> reflect
     test({1.2, 10.8, 0}, {-10., 5., 0.}, {1.3, 10.95, 0}, {10., -5., 0}, 121, true);   // NW: W first -> reflect

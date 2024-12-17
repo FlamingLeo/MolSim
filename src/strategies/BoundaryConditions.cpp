@@ -4,6 +4,7 @@
 #include "objects/Particle.h"
 #include "utils/CellUtils.h"
 #include <spdlog/spdlog.h>
+#include <utility>
 #include <vector>
 
 bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
@@ -128,7 +129,7 @@ void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
 void mirrorGhostParticles(CellContainer *lc) {
     std::vector<std::reference_wrapper<Cell>> borderCells = lc->getBorderCells();
 
-    // we add to the halo cells on the opposite side (sides if corner) references to the particles
+    // we add references to the particles to the halo cells on the opposite side (sides if corner)
     for (auto bc : borderCells) {
         std::vector<BorderLocation> location = bc.get().getBorderLocation();
         // special case for corners (2D) -- should be changed to >2 for 3D

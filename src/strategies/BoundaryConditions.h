@@ -13,6 +13,7 @@
 #include "objects/CellContainer.h"
 #include "objects/Particle.h"
 #include "utils/CellUtils.h"
+#include <utility>
 
 /**
  * @brief Handles the scenario where a particle enters a halo cell. Returns true if the particle is handled

@@ -69,18 +69,20 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
             continue;
         }
 
-        // for every particle
+        // for every particle i
         for (auto &ri : ic) {
             Particle &i = ri;
             if (!i.isActive())
                 continue;
 
-            // loop over all cells kc in Neighbours(ic)
+            // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
                 Cell &kc = (*lc)[kci];
 
+                // for every particle j in kc
                 for (auto &rj : kc) {
-                    // normal check
+                    // check if j is active AND if i and j form a distinct pair (N3L)
+                    // for checking distinct pairs, we compare the memory addresses of the two particles
                     Particle &j = rj;
                     if (!j.isActive() || &i >= &j)
                         continue;
@@ -109,8 +111,8 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                         auto forceVec = ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
 
                         // apply force on particle i (no force on ghost particle)
-                        i.setF(i.getF() + forceVec);
-                        j.setF(j.getF() - forceVec);
+                        i.getF() = i.getF() + forceVec;
+                        j.getF() = j.getF() - forceVec;
                     }
                 }
             }

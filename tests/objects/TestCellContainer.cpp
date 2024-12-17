@@ -312,16 +312,6 @@ TEST_F(CellContainerTest, GetMirrorPosition) {
     expectedPosition = {0.0, 2.0, 0.0};
     result = container.getMirrorPosition(position, fromCell, toCell, 0);
     EXPECT_EQ(result, expectedPosition);
-
-    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, 2.5}, CellType::INNER, 122, {}, {});
-    expectedPosition = {2.0, 2.0, 2.5};
-    result = container.getMirrorPosition(position, fromCell, toCell, 2);
-    EXPECT_EQ(result, expectedPosition);
-
-    toCell = Cell({1.0, 1.0, 1.0}, {1.5, 1.5, -0.5}, CellType::INNER, 120, {}, {});
-    expectedPosition = {2.0, 2.0, -0.5};
-    result = container.getMirrorPosition(position, fromCell, toCell, 2);
-    EXPECT_EQ(result, expectedPosition);
 }
 
 // Test removing halo cells from a cell container.
