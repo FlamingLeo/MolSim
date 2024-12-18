@@ -61,9 +61,12 @@ Following options are supported:
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
+-C <name>: Sets the C compiler used (default: system-dependent).
+-X <name>: Sets the C++ compiler used (default: system-dependent).
 ```
 
 **NOTE**: On Debian-based systems, the script will automatically attempt to install missing libraries (unless `-l` is set) to speed up the compilation process.
