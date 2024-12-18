@@ -12,7 +12,7 @@ target_include_directories(mdsrc
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(mdsrc PUBLIC xerces-c spdlog::spdlog)
+target_link_libraries(mdsrc PUBLIC spdlog::spdlog)
 target_compile_definitions(mdsrc PUBLIC SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL})
 
 # create executable target from source files
