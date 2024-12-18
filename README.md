@@ -165,6 +165,22 @@ Complete XML input files have the following structure:
     <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
     <output><!-- vtk, xyz, nil --></output> <!-- output type -->
   </args>
+  <!-- A thermostat used to regulate the temperature of the particle system. -->
+  <thermostat>
+    <!-- The intial temperature of the system. -->
+    <init><!-- double --></init>
+    <!-- The number of iterations after which the thermostat should be applied. -->
+    <timeStep><!-- int --></timeStep>
+    <!-- (Optional) The target temperature of the system. -->
+    <!-- If the target temperature is not specified, the initial temperature is used. -->
+    <target><!-- double --></target>
+    <!-- The maximum temperature difference in one thermostat application. -->
+    <!-- If it is not specified, the temperature will be updated directly. -->
+    <!-- Note that this may cause abrupt changes in the particle velocities. -->
+    <deltaT><!-- double --></deltaT>
+    <!-- Specify, whether or not particle velocities should be initialized with Brownian Motion in the first iteration. -->
+    <brownianMotion><!-- boolean --></brownianMotion>
+  </thermostat>
   <!-- The type of the simulation. Must be specified. -->
   <type><!-- gravity, lj --></type>
   <!-- (Optional) Specify whether the simulation should use the linked cells method. -->
