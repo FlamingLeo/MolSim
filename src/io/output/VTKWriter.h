@@ -11,15 +11,12 @@
 #pragma once
 
 #include "FileWriter.h"
-#include "io/vtk/vtk-unstructured.h"
 #include "objects/Particle.h"
 #include <string>
 
 /// @brief Class which implements functionality to generate VTK output from particles.
 class VTKWriter : public FileWriter {
   private:
-    /// @brief The VTK file instance containing particle data.
-    VTKFile_t *m_vtkFile;
     /// @brief The base name of the generated files.
     std::string m_basename = "MD_vtk";
     /// @brief The name of the directory in which to store the generated files.

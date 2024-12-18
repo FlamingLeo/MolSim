@@ -39,38 +39,7 @@ void CLIParser::checkValidity(const Arguments &args) {
 }
 
 void CLIParser::setDefaults(Arguments &args) {
-    SPDLOG_TRACE("Argument bit vector: {}", args.argsSet.to_string());
-
-    // simulation-specific options
-    switch (args.sim) {
-    case SimulationType::GRAVITY:
-        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
-        args.endTime = args.argsSet.test(1) ? args.endTime : 1000.0;
-        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.014;
-        break;
-    case SimulationType::LJ:
-        args.startTime = args.argsSet.test(0) ? args.startTime : 0.0;
-        args.endTime = args.argsSet.test(1) ? args.endTime : 5.0;
-        args.delta_t = args.argsSet.test(2) ? args.delta_t : 0.0002;
-        break;
-    default:
-        CLIUtils::error("Cannot set default arguments for unknown simulation type!");
-    }
-
-    // type-specific options
-    switch (args.type) {
-    case WriterType::VTK:
-        args.basename = args.argsSet.test(3) ? args.basename : "MD_vtk";
-        break;
-    case WriterType::XYZ:
-        args.basename = args.argsSet.test(3) ? args.basename : "MD_xyz";
-        break;
-    case WriterType::NIL: /* ignored */
-        args.basename = args.argsSet.test(3) ? args.basename : "MD_nil";
-        break;
-    default:
-        CLIUtils::error("Cannot set default arguments for unknown output type!");
-    }
+    return;
 }
 
 void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {

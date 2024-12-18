@@ -75,9 +75,6 @@ void Simulation::runSimulation() {
     initializeBase();
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
 
-    // serialize output for future runs
-    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
-
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }
 
