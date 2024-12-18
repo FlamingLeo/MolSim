@@ -1,5 +1,4 @@
 #include "Simulation.h"
-#include "io/output/XMLWriter.h"
 #include "utils/StringUtils.h"
 
 Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
@@ -12,10 +11,8 @@ void Simulation::initializeBase() {
     // get total number of iterations
     m_totalIt = static_cast<int>((m_args.endTime - m_args.startTime) / m_args.delta_t);
 
-#if !defined(DO_BENCHMARKING) && !defined(DO_PROFILING)
     // initialize output writer
-    m_writer = WriterFactory::createWriter(m_args.type, m_args.basename);
-#endif
+    SIM_INIT_WRITER(m_writer, m_args.type, m_args.basename);
 
     // initialize physics functions
     auto [cvx, cf] = StrategyFactory::getSimulationFunctions(m_args);
@@ -50,12 +47,9 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 
-#if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
-        // for non-benchmarking builds, generate output files
-        if (iteration % m_args.itFreq == 0) {
-            m_writer->writeParticles(m_particles, iteration, m_totalIt);
-        }
-#endif
+        // for standard builds, generate output files
+        SIM_WRITE_OUTPUT(iteration, m_args.itFreq, m_writer, m_particles, m_totalIt);
+
         currentTime += m_args.delta_t;
 
         // add the number of active particles to the molecule update counter
@@ -82,8 +76,7 @@ void Simulation::runSimulation() {
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
 
     // serialize output for future runs
-    XMLWriter xmlw{m_args.basename + "_results.xml"};
-    xmlw.serialize(m_particles, m_args, m_thermostat);
+    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }
