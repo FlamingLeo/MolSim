@@ -1,5 +1,5 @@
-#include "strategies/PositionCalculation.h"
 #include "strategies/BoundaryConditions.h"
+#include "strategies/PositionCalculation.h"
 #include <gtest/gtest.h>
 
 // Tests the outflow boundary condition using a single particle in a cell container.
@@ -90,6 +90,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners) {
     test({1.2, 10.8, 0}, {-10., 5., 0.}, {1.3, 10.95, 0}, {10., -5., 0}, 121, true);   // NW: W first -> reflect
 }
 
+// Tests handling basic periodic boundaries.
 TEST(BoundaryConditionTests, Periodic) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -111,16 +112,16 @@ TEST(BoundaryConditionTests, Periodic) {
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
         EXPECT_TRUE(pc[0].isActive());
     };
-    test({1.5, 5.5, 0}, {0., 20., 0.}, {1.5, 1.5, 0}, {0., 20., 0.}, 8); // north
-    test({1.5, 1.5, 0}, {0., -20., 0.}, {1.5, 5.5, 0}, {0, -20., 0.}, 36);      // south
+    test({1.5, 5.5, 0}, {0., 20., 0.}, {1.5, 1.5, 0}, {0., 20., 0.}, 8);   // north
+    test({1.5, 1.5, 0}, {0., -20., 0.}, {1.5, 5.5, 0}, {0, -20., 0.}, 36); // south
     test({1.5, 1.5, 0}, {-20., 0., 0.}, {5.5, 1.5, 0}, {-20, 0., 0.}, 12); // west
-    test({5.5, 1.5, 0}, {20., 0., 0.}, {1.5, 1.5, 0}, {20, 0., 0.}, 8);      // east
+    test({5.5, 1.5, 0}, {20., 0., 0.}, {1.5, 1.5, 0}, {20, 0., 0.}, 8);    // east
 
-    //this is the test for corners (double mirroring)
-    test({6.75, 1.75, 0.},  {0., -20., 0.}, {1.75, 5.75, 0.}, {0., -20., 0.}, 36);
-
+    // this is the test for corners (double mirroring)
+    test({6.75, 1.75, 0.}, {0., -20., 0.}, {1.75, 5.75, 0.}, {0., -20., 0.}, 36);
 }
 
+// Tests mirroring ghost particles when used with periodic boundaries.
 TEST(BoundaryConditionTests, PeriodicMirroring) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -140,15 +141,17 @@ TEST(BoundaryConditionTests, PeriodicMirroring) {
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_TRUE(pc[0].isActive());
 
-        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex].getParticles().begin(), c.getCells()[expectedGhostIndex].getParticles().end()), 1);
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex].getParticles().end()),
+                  1);
     };
-    test({2.5, 5.5, 0}, {0., 0., 0.}, {2.5, 5.5, 0}, {0., 0., 0.}, 2); // north
-    test({2.5, 1.5, 0}, {0., 0., 0.}, {2.5, 1.5, 0}, {0., 0., 0.}, 44);      // south
+    test({2.5, 5.5, 0}, {0., 0., 0.}, {2.5, 5.5, 0}, {0., 0., 0.}, 2);  // north
+    test({2.5, 1.5, 0}, {0., 0., 0.}, {2.5, 1.5, 0}, {0., 0., 0.}, 44); // south
     test({1.5, 2.5, 0}, {0., 0., 0.}, {1.5, 2.5, 0}, {0., 0., 0.}, 20); // west
-    test({5.5, 2.5, 0}, {0., 0., 0.}, {5.5, 2.5, 0}, {0., 0., 0.}, 14);      // east
-
+    test({5.5, 2.5, 0}, {0., 0., 0.}, {5.5, 2.5, 0}, {0., 0., 0.}, 14); // east
 }
 
+// Test handling periodic corner halo cells.
 TEST(BoundaryConditionTests, PeriodicMirroringCorner) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -168,10 +171,15 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner) {
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_TRUE(pc[0].isActive());
 
-        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[0]].getParticles().begin(), c.getCells()[expectedGhostIndex[0]].getParticles().end()), 1);
-        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[1]].getParticles().begin(), c.getCells()[expectedGhostIndex[1]].getParticles().end()), 1);
-        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[2]].getParticles().begin(), c.getCells()[expectedGhostIndex[2]].getParticles().end()), 1);
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[0]].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex[0]].getParticles().end()),
+                  1);
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[1]].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex[1]].getParticles().end()),
+                  1);
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex[2]].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex[2]].getParticles().end()),
+                  1);
     };
     test({1.5, 1.5, 0}, {0., 0., 0.}, {1.5, 1.5, 0}, {0., 0., 0.}, {43, 13, 48}); // sw corner
 }
-
