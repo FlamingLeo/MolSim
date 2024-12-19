@@ -105,8 +105,6 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
         // loop over all active particles i in cell ic
         for (auto &ri : ic) {
             Particle &i = ri;
-            if (!i.isActive())
-                continue;
 
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
@@ -117,7 +115,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                     // check if j is active AND if i and j form a distinct pair (N3L)
                     // for checking distinct pairs, we compare the memory addresses of the two particles
                     Particle &j = rj;
-                    if (!j.isActive() || &i >= &j)
+                    if (&i >= &j)
                         continue;
 
                     // get the position used to calculate the distance between to particles
