@@ -121,6 +121,7 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 // position of lower left corner
                 std::array<double, 3> position = {x * cellSize[0], y * cellSize[1], z * cellSize[2]};
                 cells.emplace_back(cellSize, position, type, index, haloLocation, borderLocation);
+                calculateNeighbors(cells.size() - 1);
 
                 // add to special cell ref. containers
                 // we can do this in here because we reserved the size of the vector beforehand...
@@ -297,27 +298,27 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
     }
 }
 
-std::vector<int> CellContainer::getNeighbors(int cellIndex) const {
-    std::vector<int> neighbors;
+void CellContainer::calculateNeighbors(int cellIndex) {
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
     for (int dz = (cellSize[2] == 0 ? 0 : -1); dz <= (cellSize[2] == 0 ? 0 : 1); ++dz) {
         for (int dy = -1; dy <= 1; ++dy) {
             for (int dx = -1; dx <= 1; ++dx) {
                 if (dx == 0 && dy == 0 && dz == 0) {
-                    neighbors.push_back(cellIndex);
+                    cells[cellIndex].getNeighbors().push_back(cellIndex);
                     continue;
                 }
                 std::array<int, 3> neighborCoords = {coords[0] + dx, coords[1] + dy, 0};
                 if (neighborCoords[0] >= 0 && neighborCoords[0] < numCells[0] && neighborCoords[1] >= 0 &&
                     neighborCoords[1] < numCells[1]) {
                     int neighborIndex = neighborCoords[1] * numCells[0] + neighborCoords[0];
-                    neighbors.push_back(neighborIndex);
+                    cells[cellIndex].getNeighbors().push_back(neighborIndex);
                 }
             }
         }
     }
-    return neighbors;
 }
+
+const std::vector<int> &CellContainer::getNeighbors(int cellIndex) const { return cells[cellIndex].getNeighbors(); }
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
     // coincidentally works just as well for getting the opposite halo cell for a border cell; currently in 2D

@@ -38,6 +38,8 @@ class Cell {
     /// @brief If this is a border cell, the locations of this cell (North, South, West, East, Above, Below) are stored
     /// here.
     std::vector<BorderLocation> m_borderLocation;
+    /// @brief The neighboring Cell indices.
+    std::vector<int> m_neighbors;
     /// @brief The type of this Cell. May be INNER, BORDER or HALO.
     CellType m_type;
     /// @brief The index of this Cell in the overarching CellContainer.
@@ -126,6 +128,20 @@ class Cell {
      * @return A const reference to the border location vector of this Cell.
      */
     const std::vector<BorderLocation> &getBorderLocation() const;
+
+    /**
+     * @brief Gets a reference to the Cell's neighbors.
+     *
+     * @return A const reference to the Cell's neighbors.
+     */
+    std::vector<int> &getNeighbors();
+
+    /**
+     * @brief Gets a const reference to the Cell's neighbors.
+     *
+     * @return A const reference to the Cell's neighbors.
+     */
+    const std::vector<int> &getNeighbors() const;
 
     /**
      * @brief Gets a reference to the Cell's Particle pointer forward list.

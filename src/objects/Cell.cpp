@@ -61,6 +61,8 @@ CellType Cell::getType() const { return m_type; }
 int Cell::getIndex() const { return m_index; }
 const std::vector<HaloLocation> &Cell::getHaloLocation() const { return m_haloLocation; }
 const std::vector<BorderLocation> &Cell::getBorderLocation() const { return m_borderLocation; }
+std::vector<int> &Cell::getNeighbors() { return m_neighbors; }
+const std::vector<int> &Cell::getNeighbors() const { return m_neighbors; }
 std::forward_list<std::reference_wrapper<Particle>> &Cell::getParticles() { return m_particles; }
 const std::forward_list<std::reference_wrapper<Particle>> &Cell::getParticles() const { return m_particles; }
 std::string Cell::toString() const {

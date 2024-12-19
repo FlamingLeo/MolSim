@@ -350,12 +350,19 @@ class CellContainer {
     int getOppositeNeighbor(int cellIndex, HaloLocation direction) const;
 
     /**
+     * @brief Computes the vector of neighbouring Cell indices, including the Cell itself.
+     *
+     * @param cellIndex The index of the Cell for which the neighbours should be determined.
+     */
+    void calculateNeighbors(int cellIndex);
+
+    /**
      * @brief Gets a vector of neighbouring Cell indices, including the Cell itself.
      *
      * @param cellIndex The index of the Cell for which the neighbours should be determined.
      * @return A vector of neighbouring Cell indices, including the Cell itself.
      */
-    std::vector<int> getNeighbors(int cellIndex) const;
+    const std::vector<int> &getNeighbors(int cellIndex) const;
 
     /**
      * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
