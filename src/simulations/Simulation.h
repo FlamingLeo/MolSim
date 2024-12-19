@@ -9,6 +9,7 @@
 #pragma once
 #include "io/output/FileWriter.h"
 #include "io/output/WriterFactory.h"
+#include "io/output/XMLWriter.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
 #include "strategies/StrategyFactory.h"
@@ -17,6 +18,25 @@
 #include <cassert>
 #include <memory>
 #include <string>
+
+#if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d)                                                                              \
+    do {                                                                                                               \
+        XMLWriter xmlw{_a};                                                                                            \
+        xmlw.serialize(_b, _c, _d);                                                                                    \
+    } while (0)
+#define SIM_INIT_WRITER(_a, _b, _c) _a = WriterFactory::createWriter(_b, _c)
+#define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e)                                                                           \
+    do {                                                                                                               \
+        if (_a % _b == 0) {                                                                                            \
+            _c->writeParticles(_d, _a, _e);                                                                            \
+        }                                                                                                              \
+    } while (0)
+#else
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d) (void)0
+#define SIM_INIT_WRITER(_a, _b, _c) (void)0
+#define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e) (void)0
+#endif
 
 /// @brief Class defining a time-integration simulation.
 class Simulation {

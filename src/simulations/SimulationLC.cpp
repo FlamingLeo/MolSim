@@ -31,8 +31,7 @@ void SimulationLC::runSimulation() {
     runSimulationLoop(&m_cellContainer);
 
     // serialize output for future runs
-    XMLWriter xmlw{m_args.basename + "_results.xml"};
-    xmlw.serialize(m_particles, m_args, m_thermostat);
+    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
 
-    SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
+    SPDLOG_INFO("Completed {} linked cell simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

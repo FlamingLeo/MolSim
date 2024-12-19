@@ -27,6 +27,8 @@ help() {
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
+-C <name>: Sets the C compiler used (default: system-dependent).
+-X <name>: Sets the C++ compiler used (default: system-dependent).
 
 \033[1mNOTES\033[0m:
 On Debian-based systems, the script will automatically attempt to install missing libraries (unless -l is set) to speed up the compilation process.
@@ -36,13 +38,15 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdhj:lmps:t"
+OPTSTRING=":b:cdhj:lmps:tC:X:"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
 profiling_opt=""
 benchmarking_opt=""
 spdlog_level=""
+c_compiler=""
+cpp_compiler=""
 install_opt=true
 run_tests=false
 make_documentation=false
@@ -166,6 +170,16 @@ while getopts ${OPTSTRING} opt; do
     # print help message and quit
     help
     ;;
+  C)
+    # C compiler, no checks
+    c_compiler="-DCMAKE_C_COMPILER=${OPTARG}"
+    echo "[BUILD] Set C compiler to: ${OPTARG}"
+    ;;
+  X)
+    # C++ compiler, no checks
+    cpp_compiler="-DCMAKE_CXX_COMPILER=${OPTARG}"
+    echo "[BUILD] Set C compiler to: ${OPTARG}"
+    ;;
   ?)
     # unknown option
     echo "[ERROR] Invalid option: -${OPTARG}."
@@ -271,7 +285,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${build_string} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }
