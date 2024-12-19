@@ -448,13 +448,6 @@ class CellContainer {
     size_t size() const;
 
     /**
-     * @brief Gets the amount of active Particle objects in the ParticleContainer.
-     *
-     * @return The total number of active Particle objects.
-     */
-    size_t activeSize() const;
-
-    /**
      * @brief Debug function to print the indices of all cells for a 2D container.
      *
      * Halo cells are marked red, border cells are marked yellow, inner cells are marked green.

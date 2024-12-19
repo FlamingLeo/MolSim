@@ -243,11 +243,12 @@ bool CellContainer::moveParticle(Particle &p) {
 }
 void CellContainer::removeHaloCellParticles() {
     for (auto &p : particles) {
-        if (p.isActive() && p.getCellIndex() != -1) {
+        if (p.getCellIndex() != -1) {
             if (cells[p.getCellIndex()].getType() == CellType::HALO) {
                 SPDLOG_TRACE("Found active halo particle, removing...");
                 deleteParticle(p);
                 p.markInactive();
+                particles.notifyInactivity();
             }
         }
     }
@@ -385,7 +386,6 @@ double CellContainer::getCutoff() const { return cutoff; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
 const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }
-size_t CellContainer::activeSize() const { return particles.activeSize(); }
 
 /* debug functions */
 void CellContainer::printCellIndices() const {

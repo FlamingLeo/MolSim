@@ -84,7 +84,7 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     SimType s{tt, StringUtils::fromSimulationType(args.sim), o};
     s.args(a);
     s.linkedCells() = args.linkedCells;
-    s.totalParticles() = pc.activeSize();
+    s.totalParticles() = pc.size();
 
     // write output to file
     sim(m_file, s);

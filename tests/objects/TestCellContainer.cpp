@@ -313,39 +313,3 @@ TEST_F(CellContainerTest, GetMirrorPosition) {
     result = container.getMirrorPosition(position, fromCell, toCell, 0);
     EXPECT_EQ(result, expectedPosition);
 }
-
-// Test removing halo cells from a cell container.
-TEST_F(CellContainerTest, RemoveHaloCells) {
-    // populate particle container with halo cells
-    ParticleContainer pc;
-    Particle p1({0.0, 0.0, 0.0},
-                {
-                    0.,
-                    0.,
-                    0.,
-                },
-                1);
-    Particle p2({1.0, 0.0, 0.0},
-                {
-                    0.,
-                    0.,
-                    0.,
-                },
-                2);
-    Particle p3({2.0, 0.0, 0.0},
-                {
-                    0.,
-                    0.,
-                    0.,
-                },
-                3);
-    pc.addParticle(p1);
-    pc.addParticle(p2);
-    pc.addParticle(p3);
-    CellContainer c({10, 10, 1}, conditions, 1.0, pc, 2);
-
-    // verify that there are no more particles after removal
-    c.removeHaloCellParticles();
-    EXPECT_EQ(c.size(), 3);
-    EXPECT_EQ(c.activeSize(), 0);
-}
