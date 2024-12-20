@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Cluster.h"
 #include "ParticleContainer.h"
 #include <array>
 #include <string>
@@ -17,30 +18,10 @@
  * @brief Class storing metadata about a Particle disc.
  *
  */
-class Disc {
+class Disc : public Cluster {
   private:
-    /// @brief Center \f$ x \f$ of the disc.
-    std::array<double, 3> x;
-
     /// @brief Radius \f$ r \f$ of the disc in terms of number of particles.
-
     int r;
-
-    /// @brief Distance \f$ h \f$ between the particles in the disc.
-    double h;
-
-    /// @brief Mass \f$ m \f$ of the particles in the disc.
-    double m;
-
-    /// @brief Starting velocity \f$ v \f$ of the particles in the disc (before adding Maxwell-Boltzmann
-    /// perturbations).
-    std::array<double, 3> v;
-
-    /// @brief Mean velocity for the Maxwell-Boltzmann distribution.
-    double mean_velocity;
-
-    /// @brief Reference to the ParticleContainer object from Simulation (passed by DiscGenerator).
-    ParticleContainer &particles;
 
     /**
      * @brief Helper function to get circle point (Particle) coordinates.
@@ -65,23 +46,12 @@ class Disc {
      * disc.
      * @param h The distance \f$ h \f$ between the particles in the disc.
      * @param m The mass \f$ m \f$ of the particles in the disc.
+     * @param type The type of the particle.
+     * @param epsilon The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v, double h,
-         double m);
-
-    /**
-     * @brief Gets the position \f$ x \f$ of this disc.
-     *
-     * @return A reference to the position array of this disc.
-     */
-    std::array<double, 3> &getX();
-
-    /**
-     * @brief Gets the position \f$ x \f$ of this disc (const).
-     *
-     * @return A const reference to the position array of this disc.
-     */
-    const std::array<double, 3> &getX() const;
+         double m, int type = TYPE_DEFAULT, double epsilon = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /**
      * @brief Gets the radius \f$ r \f$ of this disc.
@@ -89,55 +59,6 @@ class Disc {
      * @return The radius of this disc.
      */
     int getR() const;
-
-    /**
-     * @brief Gets the distance \f$ h \f$ between the particles of this disc.
-     *
-     * @return The distance between the particles of the disc.
-     */
-    double getH() const;
-
-    /**
-     * @brief Gets the mass \f$ m \f$ of the particles of this disc.
-     *
-     * @return The mass of the particles of the disc.
-     */
-    double getM() const;
-
-    /**
-     * @brief Gets the starting velocity \f$ v \f$ of the particles of this disc.
-     *
-     * @return A reference to the velocity array of the disc.
-     */
-    std::array<double, 3> &getV();
-
-    /**
-     * @brief Gets the starting velocity \f$ v \f$ of the particles of this disc (const).
-     *
-     * @return A const reference to the velocity array of the disc.
-     */
-    const std::array<double, 3> &getV() const;
-
-    /**
-     * @brief Gets the mean velocity for the Maxwell-Boltzmann distribution.
-     *
-     * @return The mean velocity field of the disc.
-     */
-    double getMeanVelocity() const;
-
-    /**
-     * @brief Gets the reference to the central ParticleContainer.
-     *
-     * @return A reference to the ParticleContainer stored in this container.
-     */
-    ParticleContainer &getParticles();
-
-    /**
-     * @brief Gets the reference to the central ParticleContainer (const).
-     *
-     * @return A const reference to the ParticleContainer stored in this container.
-     */
-    const ParticleContainer &getParticles() const;
 
     /**
      * @brief Overload of the equality operator for Cuboid objects.
@@ -159,7 +80,7 @@ class Disc {
 
     /// @brief Main function of Disc class, initializes the particles based on the disc metadata
     /// in a grid and adds them to the given ParticleContainer.
-    void initializeDisc();
+    void initialize(size_t dimensions = 2) override;
 
     /**
      * @brief Returns a string representation of this Disc.

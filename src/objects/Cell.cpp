@@ -9,8 +9,9 @@
 #include <vector>
 
 Cell::Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
-           const std::vector<HaloLocation> &haloLocation)
-    : m_type{type}, m_size{size}, m_position{position}, m_index{index}, m_haloLocation{haloLocation} {};
+           const std::vector<HaloLocation> &haloLocation, const std::vector<BorderLocation> &borderLocation)
+    : m_type{type}, m_size{size}, m_position{position}, m_index{index}, m_haloLocation{haloLocation},
+      m_borderLocation{borderLocation} {};
 std::forward_list<std::reference_wrapper<Particle>>::iterator Cell::begin() { return m_particles.begin(); }
 std::forward_list<std::reference_wrapper<Particle>>::iterator Cell::end() { return m_particles.end(); }
 void Cell::addParticle(Particle &particle) { m_particles.push_front(std::ref(particle)); }
@@ -59,6 +60,10 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
 CellType Cell::getType() const { return m_type; }
 int Cell::getIndex() const { return m_index; }
 const std::vector<HaloLocation> &Cell::getHaloLocation() const { return m_haloLocation; }
+const std::vector<BorderLocation> &Cell::getBorderLocation() const { return m_borderLocation; }
+std::vector<int> &Cell::getNeighbors() { return m_neighbors; }
+const std::vector<int> &Cell::getNeighbors() const { return m_neighbors; }
+std::forward_list<std::reference_wrapper<Particle>> &Cell::getParticles() { return m_particles; }
 const std::forward_list<std::reference_wrapper<Particle>> &Cell::getParticles() const { return m_particles; }
 std::string Cell::toString() const {
     const std::array<double, 3> to{m_position[0] + m_size[0], m_position[1] + m_size[1], m_position[2] + m_size[2]};

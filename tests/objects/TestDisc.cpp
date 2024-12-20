@@ -5,7 +5,7 @@
 
 // Test initializing the disc particles (i.e. if the positions are correct, if the force effective is 0, if the
 // masses of all the particles are the same and if the positions are correct).
-TEST(DiscTests, InitializeDiscRadiusOne) {
+TEST(DiscTests, initializeRadiusOne) {
     constexpr size_t num = 5;
     constexpr std::array<std::array<double, 3>, num> positions = {
         {{0, -1, 0}, {-1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 1, 0}}};
@@ -13,7 +13,7 @@ TEST(DiscTests, InitializeDiscRadiusOne) {
     constexpr std::array oldF = {0., 0., 0.};
     ParticleContainer pc;
     Disc d{pc, {0, 0, 0}, 1, {1., 2., 3.}, 1., 1.};
-    d.initializeDisc();
+    d.initialize();
 
     ASSERT_EQ(d.getParticles().size(), num);
     for (size_t i = 0; i < num; ++i) {
@@ -26,13 +26,13 @@ TEST(DiscTests, InitializeDiscRadiusOne) {
 }
 
 // Test initializing a disc with radius zero.
-TEST(DiscTests, InitializeDiscRadiusZero) {
+TEST(DiscTests, initializeRadiusZero) {
     constexpr std::array<double, 3> position = {0, 0, 0};
     constexpr std::array f = {0., 0., 0.};
     constexpr std::array oldF = {0., 0., 0.};
     ParticleContainer pc;
     Disc d{pc, {0, 0, 0}, 0, {1., 2., 3.}, 1., 1.};
-    d.initializeDisc();
+    d.initialize();
 
     ASSERT_EQ(d.getParticles().size(), 1);
     Particle &p = d.getParticles()[0];

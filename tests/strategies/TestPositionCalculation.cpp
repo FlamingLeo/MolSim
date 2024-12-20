@@ -8,7 +8,7 @@ TEST(PositionTests, UpdatePositions) {
 
     ParticleContainer pc(1);
     pc.addParticle(xBefore, {4., 5., 6.}, 7.);
-    calculateX(pc, 0.5);
+    calculateX(pc, 0.5, 0.0);
 
     EXPECT_EQ(pc[0].getX(), xAfter);
 }

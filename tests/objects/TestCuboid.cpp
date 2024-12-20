@@ -6,7 +6,7 @@
 TEST(CuboidTests, InitializeCuboidParticlesEmpty) {
     ParticleContainer pc;
     Cuboid c{pc, {0., 0., 0.}, {0, 0, 0}, {0., 0., 0.}, 0., 0.};
-    c.initializeParticles();
+    c.initialize();
 
     ASSERT_EQ(c.getParticles().size(), 0);
 }
@@ -16,7 +16,7 @@ TEST(CuboidTests, InitializeCuboidParticlesEmpty) {
 TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
     ParticleContainer pc;
     Cuboid c{pc, {1., 2., 3.}, {1, 2, 3}, {1., 2., 3.}, 1., 1.};
-    c.initializeParticles();
+    c.initialize();
 
     constexpr std::array<std::array<double, 6>, 3> expectedX = {
         {{1., 1., 1., 1., 1., 1.}, {2., 3., 2., 3., 2., 3.}, {3., 3., 4., 4., 5., 5.}}};

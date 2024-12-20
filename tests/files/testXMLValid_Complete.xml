@@ -3,8 +3,6 @@
         <startTime>0.0</startTime>
         <endTime>10.0</endTime>
         <delta_t>0.01</delta_t>
-        <epsilon>1.0</epsilon>
-        <sigma>1.0</sigma>
         <frequency>100</frequency>
         <basename>MD_vtk</basename>
         <output>vtk</output>
@@ -15,6 +13,12 @@
         </domainSize>
         <cutoffRadius>5.0</cutoffRadius>
     </args>
+    <thermostat>
+        <init>40.0</init>
+        <timeStep>1000</timeStep>
+        <target>60.0</target>
+        <deltaT>0.5</deltaT>
+    </thermostat>
     <type>lj</type>
     <objects>
         <cuboid>
@@ -35,6 +39,8 @@
             </size>
             <distance>1.0</distance>
             <mass>2.0</mass>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
         </cuboid>
         <particle>
             <position>
@@ -49,6 +55,8 @@
             </velocity>
             <mass>0.5</mass>
             <type>1</type>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
         </particle>
         <particle>
             <position>
@@ -61,8 +69,21 @@
                 <y>0.2</y>
                 <z>0.0</z>
             </velocity>
+            <force>
+                <x>1</x>
+                <y>2</y>
+                <z>3</z>
+            </force>
+            <oldForce>
+                <x>4</x>
+                <y>5</y>
+                <z>6</z>
+            </oldForce>
             <mass>0.5</mass>
             <type>1</type>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
+            <cellIndex>42</cellIndex>
         </particle>
         <disc>
             <position>
@@ -78,6 +99,8 @@
             <radius>1</radius>
             <distance>1</distance>
             <mass>1.0</mass>
+            <epsilon>5.0</epsilon>
+            <sigma>1.0</sigma>
         </disc>
     </objects>
     <totalParticles>13</totalParticles>

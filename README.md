@@ -29,7 +29,6 @@ This project uses the following external C++ libraries:
 
 -   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
--   [Benchmark](https://github.com/google/benchmark) 1.9.0
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
 
@@ -57,16 +56,17 @@ Following options are supported:
   - RelWithDebInfo : High optimization levels, debug information.
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
-           Logging MUST be set to level 6 to enable benchmarking. If -s is not set, this will be done automatically.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
-           To enable benchmarking, this option MUST be set to 6 (off). This is done automatically if -s is not set.
 -t       : Automatically runs tests after successful compilation (default: off).
+-C <name>: Sets the C compiler used (default: system-dependent).
+-X <name>: Sets the C++ compiler used (default: system-dependent).
 ```
 
 **NOTE**: On Debian-based systems, the script will automatically attempt to install missing libraries (unless `-l` is set) to speed up the compilation process.
@@ -107,9 +107,7 @@ Currently, the following options are supported:
   - o        : Outflow (particles get deleted once they leave the domain).
   - r        : Reflective (particles are reflected off the domain boundaries).
 -D <x,y,z>   : Sets the domain size (decimal array) for the linked cell method (MUST be specified if not present in input!).
--E <number>  : Sets the epsilon value (decimal) for a Lennard-Jones simulation (default: 5).
 -R <number>  : Sets the cutoff radius (decimal) for the linked cell method (MUST be specified if not present in input!).
--S <number>  : Sets the sigma value (decimal) for a Lennard-Jones simulation (default: 1).
 -f <number>  : Sets the output frequency, i.e. after how many iterations a new VTK file should be written (default: 10).
 -o <type>    : Sets the output file type and directory (default: vtk).
   - vtk      : Generates VTK Unstructured Grid (.vtu) files.
@@ -131,11 +129,11 @@ The test executable will be located in the `build/tests` directory. From there, 
 
 ### Benchmarking Instructions
 
-Benchmarking is **disabled** by default and must be enabled manually using CMake. To perform benchmarking on all simulations, run the built binary inside `build/bench`.
+Benchmarking is **disabled** by default and must be enabled manually using CMake. When enabled, benchmarking is done automatically when running a simulation in the main executable.
 
-**IMPORTANT**: Logging **must** be disabled when compiling the benchmarks, and you **must** compile a `Release` build. Otherwise, compilation will fail.
+**IMPORTANT**: The log level **must** be at least `INFO`, and you **must** compile a `Release` build. Otherwise, compilation and / or execution will fail.
 
-**NOTE**: You may need to [disable CPU scaling](https://github.com/google/benchmark/blob/main/docs/user_guide.md#disabling-cpu-frequency-scaling) when benchmarking for more accurate results. You can do this using `cpupower`.
+**NOTE**: You may need to disable CPU scaling when benchmarking for more accurate results. You can do this using `cpupower`.
 
 ```bash
 sudo cpupower frequency-set --governor performance # disable CPU scaling
@@ -145,22 +143,16 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 ## Input Files
 
-The program supports XML and formatted raw text input. Currently, the following input files are included in the repository, inside the `input` directory:
+The program supports XML input files. Currently, the following input files are included in the repository, inside the `input` directory:
 
--   **Text Files**: When reading data from a text file, the type of the simulation must be specified.
-    -   `input-lj.txt`: Simulation of the collision of two particle cuboids. For use with Lennard-Jones potential simulations (`-t lj`).
-    -   `input-gravity.txt`: Simulation of Halley's Comet. For use with gravitational simulations (`-t gravity`).
--   **XML Files**: All relevant simulation information should already be provided in the XML file.
-    -   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
-    -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
-    -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
-    -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
+-   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
+-   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
+-   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
+-   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
-**NOTE 2**: Raw text input files only work for the tasks from the first 2 worksheets. Functionality for processing them is most likely going to be removed in the future.
-
-### XML Input
+### XML Structure
 
 Complete XML input files have the following structure:
 
@@ -172,14 +164,31 @@ Complete XML input files have the following structure:
     <startTime><!-- double --></startTime>  <!-- start time -->
     <endTime><!-- double --></endTime>      <!-- end time -->
     <delta_t><!-- double --></delta_t>      <!-- time step -->
-    <epsilon><!-- double --></epsilon>      <!-- depth of the potential well -->
-    <sigma><!-- double --></sigma>          <!-- distance where LJ potential reaches zero -->
     <frequency><!-- int --></frequency>     <!-- output frequency -->
     <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
     <output><!-- vtk, xyz, nil --></output> <!-- output type -->
   </args>
+  <!-- A thermostat used to regulate the temperature of the particle system. -->
+  <thermostat>
+    <!-- The intial temperature of the system. -->
+    <init><!-- double --></init>
+    <!-- The number of iterations after which the thermostat should be applied. -->
+    <timeStep><!-- int --></timeStep>
+    <!-- (Optional) The target temperature of the system. -->
+    <!-- If the target temperature is not specified, the initial temperature is used. -->
+    <target><!-- double --></target>
+    <!-- The maximum temperature difference in one thermostat application. -->
+    <!-- If it is not specified, the temperature will be updated directly. -->
+    <!-- Note that this may cause abrupt changes in the particle velocities. -->
+    <deltaT><!-- double --></deltaT>
+    <!-- Specify, whether or not particle velocities should be initialized with Brownian Motion in the first iteration. -->
+    <brownianMotion><!-- boolean --></brownianMotion>
+  </thermostat>
   <!-- The type of the simulation. Must be specified. -->
-  <type><!-- gravity, lj, ljlc --></type>
+  <type><!-- gravity, lj --></type>
+  <!-- (Optional) Specify whether the simulation should use the linked cells method. -->
+  <!-- Currently, the gravitational simulation is unsupported with the linked cells method -->
+  <linkedCells><!-- bool --></linkedCells>
   <!-- (Optional) The total number of particles used in the simulation. -->
   <!-- Use this to reserve enough space in the ParticleContainer beforehand to potentially speed up initialization. -->
   <!-- You could theoretically specify any number here, but for optimal memory usage, it should be exact. -->
@@ -202,7 +211,11 @@ Complete XML input files have the following structure:
       </velocity>
       <!-- The particle's mass (positive). -->
       <mass><!-- double --></mass>
-      <!-- The particle's type. Currently doesn't serve any purpose. -->
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
       <type><!-- int --></type>
     </particle>
     <!-- A cuboid of particles. -->
@@ -230,6 +243,12 @@ Complete XML input files have the following structure:
       <distance><!-- double --></distance>
       <!-- The mass of each cuboid particle. -->
       <mass><!-- double --></mass>
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
+      <type><!-- int --></type>
     </cuboid>
     <!-- A 2D disc of particles. -->
     <disc>
@@ -252,6 +271,12 @@ Complete XML input files have the following structure:
       <distance><!-- double --></distance>
       <!-- The mass of each disc particle. -->
       <mass><!-- double --></mass>
+      <!-- The depth of the potential well. Lennard-Jones parameter. -->
+      <epsilon><!-- double --></epsilon>
+      <!-- The distance where the LJ potential reaches zero. Lennard-Jones parameter. -->
+      <sigma><!-- double --></sigma>
+      <!-- The particle's type. -->
+      <type><!-- int --></type>
     </disc>
   </objects>
 </sim>

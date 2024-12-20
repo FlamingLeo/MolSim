@@ -1,4 +1,8 @@
 <sim>
+    <thermostat>
+        <init>40.0</init>
+        <timeStep>2147483647</timeStep>
+    </thermostat>
     <type>lj</type>
     <objects>
         <particle>

@@ -22,6 +22,9 @@ class ParticleContainer {
     /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
 
+    /// @brief Flag that determines if inactive particles should be removed after a time integration step.
+    bool m_removeInactiveParticles = false;
+
     /* iterator definitions */
   public:
     /// @brief Standard library iterator function for marking the beginning of the iteration process.
@@ -161,15 +164,40 @@ class ParticleContainer {
      * @param x The position of the new particle.
      * @param v The velocity of the new particle.
      * @param m The mass of the new particle.
+     * @param type The type of the new particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
-    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m);
+    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
+                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /**
-     * @brief Reads particles from a given file into the container.
+     * @brief Creates and adds a new complete particle to the container.
      *
-     * @param filename The path to the file from which the particles will be read.
+     * @param x A reference to the array containing data for the position \f$ x \f$.
+     * @param v A reference to the array containing data for the velocity \f$ v \f$.
+     * @param f A reference to the array containing data for the force \f$ F \f$ effective on this particle.
+     * @param old_f A reference to the array containing data for the old force \f$ F \f$ effective on this particle.
+     * @param m The mass \f$ m \f$ of the particle.
+     * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
      */
-    void fromFile(const std::string &filename);
+    void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
+                     const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
+
+    /**
+     * @brief Removes inactive Particle objects from the container.
+     *
+     */
+    void removeInactiveParticles();
+
+    /**
+     * @brief Notifies the container that inactive particles should be removed after a time integration step.
+     *
+     */
+    void notifyInactivity();
 
     /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.
@@ -200,13 +228,6 @@ class ParticleContainer {
      * @return The size of the container.
      */
     size_t size() const;
-
-    /**
-     * @brief Returns the amount of active particles in the container.
-     *
-     * @return The number of active particles in the container.
-     */
-    size_t activeSize() const;
 
     /**
      * @brief Checks if the container is empty.

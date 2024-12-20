@@ -41,22 +41,4 @@ class FileReader {
      * @param filename The name of the file to load into the input stream m_infile.
      */
     void openFile(const std::string &filename);
-
-    /**
-     * @brief Reads particle data into a ParticleContainer from a given input file.
-     *
-     * @deprecated Raw file input will be removed in the future in favor of XML input.
-     *
-     * @param particles The ParticleContainer to read the input data from.
-     */
-    void readParticles(ParticleContainer *particles);
-
-    /**
-     * @brief Reads and intializes cuboid data into a ParticleContainer from a given input file.
-     *
-     * @deprecated Raw file input will be removed in the future in favor of XML input.
-     *
-     * @param particles The ParticleContainer to read the input data from.
-     */
-    void readCuboids(ParticleContainer &particles);
 };

@@ -4,7 +4,7 @@
 #define READ_XML(_x)                                                                                                   \
     do {                                                                                                               \
         XMLReader xml{targetPath + _x};                                                                                \
-        xml.readXML(args, pc);                                                                                         \
+        xml.readXML(args, pc, t);                                                                                      \
     } while (0)
 
 class XMLReaderTests : public ::testing::Test {
@@ -32,21 +32,39 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
                                                           {10, 10, 0},
                                                           {11, 10, 0},
                                                           {10, 11, 0}}};
-
     constexpr std::array<double, 11> m = {2, 2, 2, 2, 0.5, 0.5, 1, 1, 1, 1, 1};
-    constexpr std::array<double, 3> f = {0., 0., 0.};
-    constexpr std::array<double, 3> oldF = {0., 0., 0.};
+    constexpr std::array<std::array<double, 3>, 11> f = {{{0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {1., 2., 3.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.},
+                                                          {0., 0., 0.}}};
+    constexpr std::array<std::array<double, 3>, 11> oldF = {{{0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {4., 5., 6.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.},
+                                                             {0., 0., 0.}}};
 
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
     READ_XML("/testXMLValid_Complete.xml");
 
     // check arguments
     EXPECT_DOUBLE_EQ(args.startTime, 0.0);
     EXPECT_DOUBLE_EQ(args.endTime, 10.0);
     EXPECT_DOUBLE_EQ(args.delta_t, 0.01);
-    EXPECT_DOUBLE_EQ(args.epsilon, 1.0);
-    EXPECT_DOUBLE_EQ(args.sigma, 1.0);
     EXPECT_EQ(args.itFreq, 100);
     EXPECT_EQ(args.basename, "MD_vtk");
     EXPECT_EQ(args.type, WriterType::VTK);
@@ -54,13 +72,19 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     EXPECT_DOUBLE_EQ(args.cutoffRadius, 5.0);
     EXPECT_EQ(args.sim, SimulationType::LJ);
 
+    // check thermostat
+    EXPECT_DOUBLE_EQ(t.getInitTemp(), 40.0);
+    EXPECT_EQ(t.getTimestep(), 1000);
+    EXPECT_DOUBLE_EQ(t.getTargetTemp(), 60.0);
+    EXPECT_DOUBLE_EQ(t.getDeltaT(), 0.5);
+
     // check objects
     ASSERT_EQ(pc.size(), 11);
     for (size_t i = 0; i < pc.size(); ++i) {
         EXPECT_EQ(pc[i].getX(), x[i]);
         EXPECT_EQ(pc[i].getM(), m[i]);
-        EXPECT_EQ(pc[i].getF(), f);
-        EXPECT_EQ(pc[i].getOldF(), oldF);
+        EXPECT_EQ(pc[i].getF(), f[i]);
+        EXPECT_EQ(pc[i].getOldF(), oldF[i]);
     }
 }
 
@@ -68,7 +92,12 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
 TEST_F(XMLReaderTests, OpenFileValidPartial) {
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
     READ_XML("/testXMLValid_NoOptionals.xml");
+
+    // check thermostat
+    EXPECT_DOUBLE_EQ(t.getInitTemp(), 40.0);
+    EXPECT_EQ(t.getTimestep(), 2147483647);
 
     // check inserted object
     ASSERT_EQ(pc.size(), 1);
@@ -87,7 +116,10 @@ TEST_F(XMLReaderTests, OpenFileValidPartial) {
 TEST_F(XMLReaderTests, OpenFilesInvalid) {
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
 
+    EXPECT_DEATH({ READ_XML("/testXMLInvalid_IncorrectStructure.xml"); }, "");
+    EXPECT_DEATH({ READ_XML("/testXMLInvalid_NotXML.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_WrongTypes.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_GarbageTags.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_MissingType.xml"); }, "");

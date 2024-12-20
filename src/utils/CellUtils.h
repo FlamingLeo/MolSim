@@ -15,17 +15,21 @@
 #include <vector>
 
 /// @brief Enum containing the possible types of boundary conditions.
-enum class BoundaryCondition { OUTFLOW, REFLECTIVE };
+enum class BoundaryCondition { OUTFLOW, REFLECTIVE, PERIODIC };
 /// @brief Enum containing the possible types of cells.
 enum class CellType { INNER, BORDER, HALO };
 /// @brief Enum containing the possible corner and edge directions of halo cells.
 enum class HaloLocation { NORTH, SOUTH, WEST, EAST, ABOVE, BELOW };
+/// @brief Enum containing the possible corner and edge directions of border cells
+enum class BorderLocation { NORTH = 0, SOUTH = 1, WEST = 2, EAST = 3, ABOVE = 4, BELOW = 5 };
 
 /// @brief Namespace containing utility functions for Cell and CellContainer objects.
 namespace CellUtils {
 /// @brief Map containing conversion information for converting a string to a BoundaryCondition enum.
 static inline const std::unordered_map<std::string, BoundaryCondition> conditionTable = {
-    {"outflow", BoundaryCondition::OUTFLOW}, {"reflective", BoundaryCondition::REFLECTIVE}};
+    {"outflow", BoundaryCondition::OUTFLOW},
+    {"reflective", BoundaryCondition::REFLECTIVE},
+    {"periodic", BoundaryCondition::PERIODIC}};
 
 /// @brief Map containing conversion information for converting a string to a CellType enum.
 static inline const std::unordered_map<std::string, CellType> typeTable = {
@@ -171,6 +175,9 @@ static inline std::string fromBoundaryConditionArray(const std::array<BoundaryCo
         case BoundaryCondition::REFLECTIVE:
             ss << "r";
             break;
+        case BoundaryCondition::PERIODIC:
+            ss << "p";
+            break;
         default:
             SPDLOG_WARN("This shouldn't happen! (fromBoundaryConditionArray)");
             break;
@@ -215,6 +222,9 @@ static inline std::array<BoundaryCondition, 6> stringToBoundaryConditions(const 
             break;
         case 'r':
             arr[index++] = BoundaryCondition::REFLECTIVE;
+            break;
+        case 'p':
+            arr[index++] = BoundaryCondition::PERIODIC;
             break;
         default:
             CLIUtils::error("Invalid boundary condition character (must be one of: o, r)!");
