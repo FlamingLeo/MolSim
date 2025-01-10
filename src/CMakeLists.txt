@@ -8,13 +8,11 @@ list(REMOVE_ITEM MD_SRC "MolSim.cpp")
 add_library(mdsrc ${MD_SRC})
 
 target_include_directories(mdsrc
-        SYSTEM PUBLIC
-            ${PROJECT_SOURCE_DIR}/libs/libxsd
         PUBLIC
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(mdsrc PUBLIC xerces-c spdlog::spdlog)
+target_link_libraries(mdsrc PUBLIC spdlog::spdlog)
 target_compile_definitions(mdsrc PUBLIC SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL})
 
 # create executable target from source files

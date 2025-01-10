@@ -32,14 +32,6 @@ int main(int argc, char *argv[]) {
     if (SPDLOG_ACTIVE_LEVEL > 1)
         spdlog::set_pattern("[%^%l%$] %v");
 #endif
-
-    // check for invalid syntax (not enough args)
-    CLIParser::checkArgc(argc);
-
-    // check if "-h" is passed
-    // running '$ ./MolSim -h' should still be valid, even if no file input is given
-    CLIParser::checkHelpString(argc, argv);
-
     // initialize simulation-relevant objects
     Arguments args;
     ParticleContainer pc;
@@ -48,7 +40,6 @@ int main(int argc, char *argv[]) {
     // parse xml file first, then parse command line arguments
     XMLReader r(argv[argc - 1]);
     r.readXML(args, pc, t);
-    CLIParser::parseArguments(argc, argv, args);
 
     // create simulation and run with parsed arguments
     auto sim = SimulationFactory::createSimulation(pc, args, t);

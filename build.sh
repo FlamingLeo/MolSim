@@ -227,22 +227,6 @@ fi
 # check, if pkg-config is installed, if dependencies are installed
 # if not, install automatically for quicker compilation (unless -l set)
 if [[ "${can_check_for_pkgs}" = true ]]; then
-  echo -n "[BUILD] Checking if xerces-c is installed... "
-  if pkg-config --list-all | grep -qw xerces; then
-    echo "found."
-  else
-    if [[ "${install_opt}" = true ]]; then
-      echo "not found! Installing using apt-get..."
-      if [[ "${has_updated_apt}" == "false" ]]; then
-        sudo apt-get update
-        has_updated_apt=true
-      fi
-      sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
-    else
-      echo "not found! Will be fetched during compilation..."
-    fi
-  fi
-
   echo -n "[BUILD] Checking if gtest is installed... "
   if pkg-config --list-all | grep -qw gtest; then
     echo "found."

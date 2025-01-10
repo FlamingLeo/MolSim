@@ -28,7 +28,6 @@ endif()
 # include custom cmake modules to check for libraries
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(profiling)
-include(xerces)
 include(doxygen)
 include(gtest)
 include(benchmark)
