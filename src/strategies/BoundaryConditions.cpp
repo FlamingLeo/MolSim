@@ -74,6 +74,7 @@ void handleReflectiveCondition(ParticleContainer &pc, Particle &p, Cell &fromCel
     // decide, which way to flip particle speed and position
     bool flipVert = (location == HaloLocation::NORTH) || (location == HaloLocation::SOUTH);
     bool flipHorizontal = (location == HaloLocation::EAST) || (location == HaloLocation::WEST);
+    bool flipDepth = (location == HaloLocation::BELOW) || (location == HaloLocation::ABOVE);
 
     // reflect
     if (flipVert) {
@@ -84,6 +85,10 @@ void handleReflectiveCondition(ParticleContainer &pc, Particle &p, Cell &fromCel
         reflectParticle(pc, p, fromCell, toCell, lc, 0);
         p.setV({-p.getV()[0], p.getV()[1], p.getV()[2]});
         SPDLOG_DEBUG("Flipped horizontally: {}", p.toString());
+    } else if (flipDepth) {
+        reflectParticle(pc, p, fromCell, toCell, lc, 2);
+        p.setV({p.getV()[0], p.getV()[1], -p.getV()[2]});
+        SPDLOG_DEBUG("Flipped depth-wise: {}", p.toString());
     }
 
     // handle further halo cell properties, if the particle is reflected inside another halo cell
@@ -135,19 +140,21 @@ void mirrorGhostParticles(CellContainer *lc) {
     // we add references to the particles to the halo cells on the opposite side (sides if corner)
     for (auto bc : borderCells) {
         std::vector<BorderLocation> location = bc.get().getBorderLocation();
-        // special case for corners (2D) -- should be changed to >2 for 3D
+
+        //I'm starting to think it should be 1 even for 3D (imagine a cross section)
         if (location.size() > 1) {
-            // if not all concerned edges are periodic, don't mirror corner (intuitively this is how it seems it should
-            // be to me)
-            bool doCorner = true;
+            // At least 2 edges should be periodic for us to mirror in corner (intuition)
+            int doCorner = 0;
+            std::vector<BorderLocation> periodicBorders;
             for (auto direction : location) {
-                if (lc->getConditions()[static_cast<int>(direction)] != BoundaryCondition::PERIODIC) {
-                    doCorner = false;
+                if (lc->getConditions()[static_cast<int>(direction)] == BoundaryCondition::PERIODIC) {
+                    periodicBorders.push_back(direction);
+                    doCorner += 1;
                 }
             }
 
-            if (doCorner) {
-                std::vector<int> corners = lc->getOppositeOfBorderCorner(bc, location);
+            if (doCorner >= 2) {
+                std::vector<int> corners = lc->getOppositeOfBorderCorner(bc, periodicBorders);
                 // in every corner add the ghost particles
                 for (auto corner : corners) {
                     for (auto &p : bc.get().getParticles()) {

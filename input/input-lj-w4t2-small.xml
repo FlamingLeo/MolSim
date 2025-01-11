@@ -9,7 +9,7 @@
         <domainSize>
             <x>63.0</x>
             <y>36.0</y>
-            <z>1.0</z>
+            <z>7.5</z>
         </domainSize>
         <cutoffRadius>2.5</cutoffRadius>
         <bdConditions>
@@ -17,8 +17,8 @@
             <s>reflective</s>
             <w>periodic</w>
             <e>periodic</e>
-            <a>outflow</a>
-            <b>outflow</b>
+            <a>reflective</a>
+            <b>reflective</b>
         </bdConditions>
         <gravity>-12.44</gravity>
     </args>
@@ -34,17 +34,17 @@
             <position>
                 <x>2.6</x>
                 <y>4.0</y>
-                <z>0.0</z>
+                <z>3.0</z>
             </position>
             <velocity>
                 <x>0.0</x>
                 <y>0.0</y>
-                <z>0.0</z>
+                <z>20.0</z>
             </velocity>
             <size>
                 <x>50</x>
                 <y>14</y>
-                <z>1</z>
+                <z>3</z>
             </size>
             <distance>1.2</distance>
             <mass>1.0</mass>
@@ -55,17 +55,17 @@
             <position>
                 <x>2.6</x>
                 <y>21.0</y>
-                <z>0.0</z>
+                <z>3.0</z>
             </position>
             <velocity>
                 <x>0.0</x>
                 <y>0.0</y>
-                <z>0.0</z>
+                <z>20.0</z>
             </velocity>
             <size>
                 <x>50</x>
                 <y>14</y>
-                <z>1</z>
+                <z>3</z>
             </size>
             <distance>1.2</distance>
             <mass>2.0</mass>

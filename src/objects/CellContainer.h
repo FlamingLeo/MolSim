@@ -48,6 +48,8 @@ class CellContainer {
     std::array<BoundaryCondition, 6> conditions;
     /// @brief The cutoff radius.
     double cutoff;
+    /// @brief The number of dimensions (2/3)
+    size_t dim;
     /// @brief A reference to the overarching ParticleContainer.
     ParticleContainer &particles;
 
@@ -62,7 +64,7 @@ class CellContainer {
      * @param dim The dimension of the container. May either be two- (2) or three-dimensional (3).
      */
     CellContainer(const std::array<double, 3> &domainSize, const std::array<BoundaryCondition, 6> &conditions,
-                  double cutoff, ParticleContainer &particles, size_t dim = 2);
+                  double cutoff, ParticleContainer &particles, size_t dim = 3);
 
     /**
      * @brief Standard library iterator function for marking the beginning of the iteration process.
@@ -391,6 +393,15 @@ class CellContainer {
      */
     std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
 
+
+    /**
+     * @brief For a collection of border locations, returns all unique pairs
+     *
+     * @param locations The border locations/directions which form the pairs
+     * @return A vector of vectors representing the unique pairs
+     */
+    std::vector<std::vector<BorderLocation>> getBorderCombinations(std::vector<BorderLocation> &locations);
+
     /**
      * @brief Gets a const reference to the CellContainer's domain size.
      *
@@ -425,6 +436,13 @@ class CellContainer {
      * @return The cutoff radius.
      */
     double getCutoff() const;
+
+    /**
+     * @brief Gets the number of dimensions of the linked cells.
+     *
+     * @return The number of dimensions
+     */
+    size_t getDim() const;
 
     /**
      * @brief Gets a reference to the primary ParticleContainer.

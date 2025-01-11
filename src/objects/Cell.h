@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Particle.h"
-#include "ParticleContainer.h"
 #include "utils/CellUtils.h"
 #include <algorithm>
 #include <array>
@@ -93,8 +92,8 @@ class Cell {
      * @brief If this Cell is a corner Halo Cell, check if a Particle is above or below the diagonal line separating the
      * two cardinal directions.
      *
-     * This is used primarily with reflective boundaries to check which boundary the Cell hit first. This method is only
-     * compatible with 2D domains. See the report and presentation slides for more information.
+     * This is used primarily with reflective boundaries to check which boundary the Cell hit first.
+     * See the report and presentation slides for more information.
      *
      * @param p The Particle to analyze.
      * @return The singular cardinal direction of the Halo Cell based on the Particle's position.
