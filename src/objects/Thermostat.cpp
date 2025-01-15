@@ -122,3 +122,10 @@ double Thermostat::getDeltaT() const { return delta_T; }
 double Thermostat::getScalingFactor() const { return scalingFactor; }
 int Thermostat::getTimestep() const { return n_thermostat; }
 ParticleContainer &Thermostat::getParticles() const { return particles; }
+
+bool Thermostat::operator==(const Thermostat &other) const {
+    return dimension == other.dimension && kineticEnergy == other.kineticEnergy && temperature == other.temperature &&
+           scalingFactor == other.scalingFactor && T_init == other.T_init && T_target == other.T_target &&
+           n_thermostat == other.n_thermostat && delta_T == other.delta_T && limitScaling == other.limitScaling &&
+           initBrownianMotion == other.initBrownianMotion;
+}
