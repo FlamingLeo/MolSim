@@ -7,8 +7,8 @@
 #include <spdlog/spdlog.h>
 
 // helper function to calculate force vector
-std::array<double, 3> getForceVec(const Particle &p1, const Particle &p2, const std::array<double, 3> distVec,
-                                  double distNorm) {
+static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2, const std::array<double, 3> distVec,
+                                           double distNorm) {
     double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
     double sigma = (p1.getSigma() + p2.getSigma()) / 2;
 
@@ -29,7 +29,7 @@ std::array<double, 3> getForceVec(const Particle &p1, const Particle &p2, const 
 }
 
 // helper method to potentially fake the position of a ghost particle, for use with periodic boundaries
-std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
+static std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
     // special case: particle j is a ghost particle
     // otherwise, we just get the real position of the particle
     if (!c.getHaloLocation().empty()) {
@@ -81,7 +81,7 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
                 continue;
 
             // calculate force
-            auto forceVec = getForceVec(p1, p2, distVec, distNorm);
+            auto forceVec = getLJForceVec(p1, p2, distVec, distNorm);
 
             // use newton's third law to apply force on p1 and opposite force on p2
             p1.setF(p1.getF() + forceVec);
@@ -128,7 +128,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                     // compute force if distance is less than cutoff
                     if (distNorm <= lc->getCutoff()) {
                         // calculate force
-                        auto forceVec = getForceVec(i, j, distVec, distNorm);
+                        auto forceVec = getLJForceVec(i, j, distVec, distNorm);
 
                         // apply force on particle i (no force on ghost particle)
                         i.getF() = i.getF() + forceVec;

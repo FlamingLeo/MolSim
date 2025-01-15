@@ -173,4 +173,15 @@ class Thermostat {
 
     /// @brief Gets a reference to the Particle system.
     ParticleContainer &getParticles() const;
+
+    /**
+     * @brief Overload of the equality operator. Checks if two Thermostat objects have the same values.
+     *
+     * Does not check if both objects reference the same ParticleContainer.
+     *
+     * @param other The other Thermostat to check the values against.
+     * @return true if both Thermostat objects contain the same values.
+     * @return false if both Thermostat objects do not contain the same values.
+     */
+    bool operator==(const Thermostat &other) const;
 };

@@ -58,6 +58,22 @@ struct Arguments {
     /// @brief Returns a string representation of the struct.
     /// @return A string representation of the struct.
     std::string toString() const;
+
+    /**
+     * @brief Overload of the equality operator. Checks if two Arguments structs contain the same values.
+     *
+     * Does not check if argsSet is the same.
+     *
+     * @param other The Arguments structed to compare the current one with.
+     * @return true if both structs contain the same values.
+     * @return false if both structs do not contain the same values.
+     */
+    inline bool operator==(const Arguments &other) const {
+        return startTime == other.startTime && endTime == other.endTime && delta_t == other.delta_t &&
+               itFreq == other.itFreq && domainSize == other.domainSize && cutoffRadius == other.cutoffRadius &&
+               gravity == other.gravity && basename == other.basename && type == other.type && sim == other.sim &&
+               linkedCells == other.linkedCells && conditions == other.conditions;
+    }
 };
 
 /**
