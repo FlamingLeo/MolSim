@@ -8,101 +8,50 @@
  */
 #pragma once
 
+#include "Cluster.h"
 #include "ParticleContainer.h"
 #include <array>
 #include <string>
 
 /// @brief Cuboid class storing meta-data about the given cuboids.
-class Cuboid {
+class Cuboid : public Cluster {
   private:
-    /// @brief Lower-left corner \f$ x \f$ of the cuboid.
-    std::array<double, 3> x;
-
     /// @brief 3D Dimensions \f$ N \f$ of the cuboid.
     std::array<size_t, 3> N;
-
-    /// @brief Distance \f$ h \f$ between the particles in the cuboid.
-    double h;
-
-    /// @brief Mass \f$ m \f$ of the particles in the cuboid.
-    double m;
-
-    /// @brief Starting velocity \f$ v \f$ of the particles in the cuboid (before added Maxwell-Boltzmann
-    /// perturbations).
-    std::array<double, 3> v;
-
-    /// @brief Mean velocity for the Maxwell-Boltzmann distribution.
-    double mean_velocity;
-
-    /// @brief Reference to the ParticleContainer object from Lennard-Jones Simulation
-    /// (passed by ParticleGenerator).
-    ParticleContainer &particles;
 
   public:
     /**
      * @brief Constructs a new Cuboid object with all the needed meta-data.
      *
-     * @param particles A reference to the central ParticleContainer from Lennard-Jones
-     * @param x A reference to the array containing data for the cuboid position \f$ x \f$
-     * @param N A reference to the array containing data for the dimensions \f$ N \f$ of the cuboid
-     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the cuboid
-     * @param h The distance \f$ h \f$ between the particles in the cuboid
-     * @param m The mass \f$ m \f$ of the particles in the cuboid
+     * @param particles A reference to the central ParticleContainer.
+     * @param x A reference to the array containing data for the cuboid position \f$ x \f$.
+     * @param N A reference to the array containing data for the dimensions \f$ N \f$ of the cuboid.
+     * @param v A reference to the array containing data for the starting speed \f$ v \f$ of the particles in the
+     * cuboid.
+     * @param h The distance \f$ h \f$ between the particles in the cuboid.
+     * @param m The mass \f$ m \f$ of the particles in the cuboid.
+     * @param type The type of the particle.
+     * @param epsilon The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
     Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
-           const std::array<double, 3> &v, double h, double m);
-
-    /* getters */
-    /**
-     * @brief Gets the position \f$ x \f$ of this cuboid.
-     *
-     * @return A reference to the position array of this cuboid.
-     */
-    const std::array<double, 3> &getX() const;
+           const std::array<double, 3> &v, double h, double m, int type = TYPE_DEFAULT,
+           double epsilon = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
 
     /**
      * @brief Gets the dimensions \f$ N \f$ of this cuboid.
      *
      * @return A reference to the dimensions array of this cuboid.
      */
+    std::array<size_t, 3> &getN();
+
+    /**
+     * @brief Gets the dimensions \f$ N \f$ of this cuboid (const).
+     *
+     * @return A const reference to the dimensions array of this cuboid.
+     */
     const std::array<size_t, 3> &getN() const;
 
-    /**
-     * @brief Gets the distance \f$ h \f$ between the particles of this cuboid.
-     *
-     * @return The distance between the particles of the cuboid.
-     */
-    const double getH() const;
-
-    /**
-     * @brief Gets the mass \f$ m \f$ of the particles of this cuboid.
-     *
-     * @return The mass of the particles of the cuboid.
-     */
-    const double getM() const;
-
-    /**
-     * @brief Gets the starting velocity \f$ v \f$ of the particles of this cuboid.
-     *
-     * @return A reference of the velocity array of the cuboid.
-     */
-    const std::array<double, 3> &getV() const;
-
-    /**
-     * @brief Gets the mean velocity for the Maxwell-Boltzmann distribution.
-     *
-     * @return The mean velocity field of the cuboid.
-     */
-    const double getMeanVelocity() const;
-
-    /**
-     * @brief Gets the reference to the central ParticleContainer.
-     *
-     * @return The reference for the ParticleContainer stored in this container.
-     */
-    const ParticleContainer &getParticles() const;
-
-    /* utility */
     /**
      * @brief Overload of the equality operator for Cuboid objects.
      *
@@ -127,7 +76,7 @@ class Cuboid {
      *
      * @param dimensions The number of dimensions for which to perform the simulation. Must be either 1 or 2.
      */
-    void initializeParticles(size_t dimensions = 2);
+    void initialize(size_t dimensions = 2) override;
 
     /**
      * @brief Returns a string representation of this Cuboid.

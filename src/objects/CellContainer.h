@@ -339,17 +339,22 @@ class CellContainer {
                                             int direction) const;
 
     /**
-     * @brief Gets the index of the opposing Cell in the specified direction(s).
+     * @brief Gets the index of the opposing Cell in the specified direction.
      *
-     * In other words, if the direction is NORTH, this function will return the southern neighbor. If multiple
-     * dimensions are passed (e.g. NORTH, WEST), the function will return the index of the opposing Cell in ALL
-     * diretions (e.g. SOUTH, EAST).
+     * For example, if the direction is NORTH, this function will return the southern neighbor.
      *
      * @param cellIndex The Cell from which to get the opposing Cell index.
-     * @param directions A vector containing the opposite direction(s) of the desired neighbor Cell.
+     * @param direction The opposite direction of the desired neighbor Cell.
      * @return The index of the opposing Cell in the specified direction.
      */
-    int getOppositeNeighbor(int cellIndex, const std::vector<HaloLocation> &directions) const;
+    int getOppositeNeighbor(int cellIndex, HaloLocation direction) const;
+
+    /**
+     * @brief Computes the vector of neighbouring Cell indices, including the Cell itself.
+     *
+     * @param cellIndex The index of the Cell for which the neighbours should be determined.
+     */
+    void calculateNeighbors(int cellIndex);
 
     /**
      * @brief Gets a vector of neighbouring Cell indices, including the Cell itself.
@@ -357,7 +362,34 @@ class CellContainer {
      * @param cellIndex The index of the Cell for which the neighbours should be determined.
      * @return A vector of neighbouring Cell indices, including the Cell itself.
      */
-    std::vector<int> getNeighbors(int cellIndex) const;
+    const std::vector<int> &getNeighbors(int cellIndex) const;
+
+    /**
+     * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
+     *
+     * @param from The Cell for which the opposite border cell should be determined
+     * @param location The orientation of the Halo Cell
+     * @return The index of the opposite border cell
+     */
+    int getOppositeOfHalo(const Cell &from, HaloLocation location);
+
+    /**
+     * @brief For a border cell returns the index of the halo cell on the opposite side of the domain
+     *
+     * @param from The Cell for which the opposite halo cell should be determined
+     * @param location The orientation of the Border Cell
+     * @return The index of the opposite halo cell
+     */
+    int getOppositeOfBorder(const Cell &from, BorderLocation location);
+
+    /**
+     * @brief For a border cell returns the indices of the corner cells on the opposite sides of the domain
+     *
+     * @param from The Cell for which the opposite halo cell should be determined
+     * @param locations The orientations of the Border Cell
+     * @return The indices of the opposite halo cells
+     */
+    std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
 
     /**
      * @brief Gets a const reference to the CellContainer's domain size.
@@ -414,13 +446,6 @@ class CellContainer {
      * @return The total size of the ParticleContainer.
      */
     size_t size() const;
-
-    /**
-     * @brief Gets the amount of active Particle objects in the ParticleContainer.
-     *
-     * @return The total number of active Particle objects.
-     */
-    size_t activeSize() const;
 
     /**
      * @brief Debug function to print the indices of all cells for a 2D container.

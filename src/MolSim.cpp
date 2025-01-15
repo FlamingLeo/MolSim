@@ -1,33 +1,30 @@
 #include "io/input/CLIParser.h"
-#include "io/input/FileReader.h"
 #include "io/input/XMLReader.h"
-#include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
+#include "objects/Thermostat.h"
 #include "simulations/SimulationFactory.h"
-#include "strategies/ForceCalculation.h"
-#include "strategies/PositionCalculation.h"
-#include "strategies/VelocityCalculation.h"
 #include "utils/Arguments.h"
-#include "utils/ArrayUtils.h"
-#include "utils/PathUtils.h"
-#include "utils/StringUtils.h"
-#include <filesystem>
+#include "utils/CLIUtils.h"
 #include <iostream>
-#include <memory>
 #include <spdlog/spdlog.h>
-#include <string>
-namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
     // set log level to trace to let macro definition handle correct level
     spdlog::set_level(spdlog::level::trace);
 
-#ifdef DO_BENCHMARKING
-    // prevent running main with benchmarking options enabled
-    // file output and logging are both disabled, effectively rendering the program useless
-    std::cerr << "[" << BOLD_ON << "error" << BOLD_OFF
-              << "] Cannot run main program in benchmark mode! Recompile the program and try again.\n";
-    std::exit(EXIT_FAILURE);
+#if defined(DO_BENCHMARKING) && defined(DO_PROFILING)
+    // prevent benchmarking and profiling simultaneously to avoid measuring I/O when timing runtime
+    CLIUtils::error("Cannot do benchmarking and profiling at the same time!", "", false);
+#endif
+
+#if defined(DO_PROFILING) && SPDLOG_ACTIVE_LEVEL < 6
+    // prevent profiling with logging enabled
+    CLIUtils::error("Cannot do profiling with logging turned on!", "", false);
+#endif
+
+#if defined(DO_BENCHMARKING) && SPDLOG_ACTIVE_LEVEL < 2
+    // prevent benchmarking with debug logging information
+    CLIUtils::error("Cannot perform benchmarking with debug log information!", "", false);
 #endif
 
 #ifdef NDEBUG
@@ -37,29 +34,23 @@ int main(int argc, char *argv[]) {
 #endif
 
     // check for invalid syntax (not enough args)
-    if (argc < 2)
-        CLIUtils::error("Not enough arguments! Use '-h' to display a help message.");
+    CLIParser::checkArgc(argc);
 
-    std::string filename = argv[argc - 1];
-    std::unique_ptr<Simulation> sim;
+    // check if "-h" is passed
+    // running '$ ./MolSim -h' should still be valid, even if no file input is given
+    CLIParser::checkHelpString(argc, argv);
 
     // initialize simulation-relevant objects
     Arguments args;
     ParticleContainer pc;
+    Thermostat t{pc};
 
-    // check if the input file is an xml file, otherwise use text file initialization methods
-    if (PathUtils::isXmlFile(filename)) {
-        SPDLOG_DEBUG("Input file is an XML file. Command line arguments will have precedence.");
-        XMLReader r(filename);
-        r.readXML(args, pc);
-        CLIParser::parseArguments(argc, argv, args);
-        sim = SimulationFactory::createSimulation(args.sim, pc, args);
-    } else {
-        SPDLOG_DEBUG("Input file is unspecified or NOT an XML file.");
-        CLIParser::parseArguments(argc, argv, args);
-        sim = SimulationFactory::createSimulation(args.sim, filename, args);
-    }
+    // parse xml file first, then parse command line arguments
+    XMLReader r(argv[argc - 1]);
+    r.readXML(args, pc, t);
+    CLIParser::parseArguments(argc, argv, args);
 
-    // run simulation with parsed arguments
+    // create simulation and run with parsed arguments
+    auto sim = SimulationFactory::createSimulation(pc, args, t);
     sim->runSimulation();
 }

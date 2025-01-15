@@ -1,6 +1,5 @@
 #include "XYZWriter.h"
 #include "utils/CLIUtils.h"
-#include <filesystem>
 #include <iomanip>
 #include <spdlog/spdlog.h>
 #include <sstream>
@@ -8,34 +7,20 @@
 
 XYZWriter::XYZWriter() {
     SPDLOG_TRACE("Created new XYZWriter (empty).");
-    initializeFolder();
+    initializeFolder(m_dirname);
 }
 XYZWriter::XYZWriter(const std::string &basename) : m_basename{basename} {
     SPDLOG_TRACE("Created new XYZWriter with base name {}", basename);
-    initializeFolder();
+    initializeFolder(m_dirname);
 }
 XYZWriter::XYZWriter(const std::string &basename, const std::string &dirname)
     : m_basename{basename}, m_dirname{dirname} {
     SPDLOG_TRACE("Created new XYZWriter with base name {} and directory name {}", basename, dirname);
-    initializeFolder();
+    initializeFolder(m_dirname);
 }
 XYZWriter::~XYZWriter() {
     closeFile();
     SPDLOG_TRACE("Destroyed XYZWriter.");
-}
-
-void XYZWriter::initializeFolder() {
-    // create output directory in which to store generated XYZ output files
-    if (!(std::filesystem::exists(m_dirname))) {
-        SPDLOG_DEBUG("Folder {} does not exist, creating...", m_dirname);
-        if (!(std::filesystem::create_directory(m_dirname)))
-            CLIUtils::error("Error creating directory", m_dirname, false);
-    } else {
-        SPDLOG_DEBUG("Folder {} exists, reinitializing...", m_dirname);
-        std::filesystem::remove_all(m_dirname);
-        if (!(std::filesystem::create_directory(m_dirname)))
-            CLIUtils::error("Error reinitializing directory", m_dirname, false);
-    }
 }
 
 void XYZWriter::writeParticles(const ParticleContainer &particles, int iteration, int total) {

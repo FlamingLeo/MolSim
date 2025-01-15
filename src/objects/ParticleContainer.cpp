@@ -63,23 +63,35 @@ ParticleContainer::PairIterator ParticleContainer::endPairs() {
 }
 
 /* container functions */
+void ParticleContainer::removeInactiveParticles() {
+    if (m_removeInactiveParticles) {
+        SPDLOG_TRACE("Removing inactive particles from ParticleContainer.");
+        m_particles.erase(
+            std::remove_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return !p.isActive(); }),
+            m_particles.end());
+        m_removeInactiveParticles = false;
+    }
+}
+void ParticleContainer::notifyInactivity() {
+    m_removeInactiveParticles = true;
+    SPDLOG_TRACE("Marked ParticleContainer for inactivity notification.");
+}
 Particle &ParticleContainer::operator[](size_t index) { return m_particles[index]; }
 const Particle &ParticleContainer::operator[](size_t index) const { return m_particles[index]; }
-
 void ParticleContainer::addParticle(const Particle &particle) {
     m_particles.push_back(particle);
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
-
-void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m) {
-    m_particles.emplace_back(x, v, m);
-    SPDLOG_TRACE("Created and added Particle to ParticleContainer - x: {}, v: {}, m: {}", ArrayUtils::to_string(x),
-                 ArrayUtils::to_string(v), m);
+void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type,
+                                    double eps, double sigma) {
+    m_particles.emplace_back(x, v, m, type, eps, sigma);
+    SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
-void ParticleContainer::fromFile(const std::string &filename) {
-    SPDLOG_TRACE("Reading Particle data from file {} into ParticleContainer...", filename);
-    FileReader fileReader(filename);
-    fileReader.readParticles(this);
+void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v,
+                                    const std::array<double, 3> &f, const std::array<double, 3> &old_f, double m,
+                                    int type, double eps, double sigma, int cellIndex) {
+    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, cellIndex);
+    SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::reserve(size_t capacity) {
     m_particles.reserve(capacity);
@@ -96,9 +108,6 @@ const Particle &ParticleContainer::get(size_t index) const {
     return m_particles[index];
 }
 size_t ParticleContainer::size() const { return m_particles.size(); }
-size_t ParticleContainer::activeSize() const {
-    return std::count_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return p.isActive(); });
-}
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
 bool ParticleContainer::operator==(const ParticleContainer &other) const { return m_particles == other.m_particles; }

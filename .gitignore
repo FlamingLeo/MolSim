@@ -43,6 +43,7 @@ doxys_documentation/
 /*build*/
 /*release*/
 /*debug*/
+/*test*/
 
 # Output folders
 vtk/

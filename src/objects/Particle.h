@@ -13,6 +13,10 @@
 #include <array>
 #include <string>
 
+#define TYPE_DEFAULT 0
+#define SIGMA_DEFAULT 1
+#define EPSILON_DEFAULT 5
+
 /// @brief Particle class modeling a particle's position, velocity, force, mass and type.
 class Particle {
   private:
@@ -31,9 +35,14 @@ class Particle {
     /// @brief Mass \f$ m \f$ of this particle.
     double m;
 
-    /// @brief Type of the particle. Use it for whatever you want (e.g. to separate molecules belonging to different
-    /// bodies, matters, and so on).
+    /// @brief Type of the particle.
     int type;
+
+    /// @brief Depth \f$ \epsilon \f$ of the potential well. Lennard-Jones parameter.
+    double epsilon;
+
+    /// @brief Distance \f$ \sigma \f$ where the Lennard-Jones potential reaches zero. Lennard-Jones parameter.
+    double sigma;
 
     /// @brief The cell index of the particle, to be used with the linked cell method.
     int cellIndex;
@@ -66,20 +75,38 @@ class Particle {
     Particle(const Particle &other);
 
     /**
-     * @brief Construct a new Particle object using explicit values for each data field.
+     * @brief Construct a new Particle object using explicit values for each new data field.
      *
      * Given that the current simulations make use of the particle mass as the divisor in some formulas, the mass may
      * not be negative or 0.
      *
-     * @param x_arg A reference to the array containing data for the position \f$ x \f$.
-     * @param v_arg A reference to the array containing data for the velocity \f$ v \f$.
-     * @param m_arg The mass \f$ m \f$ of the particle.
+     * @param x A reference to the array containing data for the position \f$ x \f$.
+     * @param v A reference to the array containing data for the velocity \f$ v \f$.
+     * @param m The mass \f$ m \f$ of the particle.
      * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
-    Particle(
-        // for visualization, we need always 3 coordinates
-        // -> in case of 2d, we use only the first and the second
-        const std::array<double, 3> &x_arg, const std::array<double, 3> &v_arg, double m_arg, int type = 0);
+    Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
+             double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
+
+    /**
+     * @brief Construct a new Particle object using explicit values for every data field.
+     *
+     * There are no default parameters here; every value must be initialized.
+     *
+     * @param x A reference to the array containing data for the position \f$ x \f$.
+     * @param v A reference to the array containing data for the velocity \f$ v \f$.
+     * @param f A reference to the array containing data for the force \f$ F \f$ effective on this particle.
+     * @param old_f A reference to the array containing data for the old force \f$ F \f$ effective on this particle.
+     * @param m The mass \f$ m \f$ of the particle.
+     * @param type The type of the particle.
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
+     */
+    Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
+             const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
 
     /// @brief Destroys the Particle object.
     virtual ~Particle();
@@ -89,26 +116,54 @@ class Particle {
      *
      * @return A reference to the position array of this particle.
      */
-    const std::array<double, 3> &getX() const;
+    std::array<double, 3> &getX();
 
     /**
      * @brief Gets the velocity \f$ v \f$ of this particle.
      *
      * @return A reference to the velocity array of this particle.
      */
-    const std::array<double, 3> &getV() const;
+    std::array<double, 3> &getV();
 
     /**
      * @brief Gets the force \f$ F \f$ effective on this particle.
      *
      * @return A reference to the force array of this particle.
      */
-    const std::array<double, 3> &getF() const;
+    std::array<double, 3> &getF();
 
     /**
      * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle.
      *
      * @return A reference to the old force array of this particle.
+     */
+    std::array<double, 3> &getOldF();
+
+    /**
+     * @brief Gets the position \f$ x \f$ of this particle (const).
+     *
+     * @return A const reference to the position array of this particle.
+     */
+    const std::array<double, 3> &getX() const;
+
+    /**
+     * @brief Gets the velocity \f$ v \f$ of this particle (const).
+     *
+     * @return A const reference to the velocity array of this particle.
+     */
+    const std::array<double, 3> &getV() const;
+
+    /**
+     * @brief Gets the force \f$ F \f$ effective on this particle (const).
+     *
+     * @return A const reference to the force array of this particle.
+     */
+    const std::array<double, 3> &getF() const;
+
+    /**
+     * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle (const).
+     *
+     * @return A const reference to the old force array of this particle.
      */
     const std::array<double, 3> &getOldF() const;
 
@@ -125,6 +180,20 @@ class Particle {
      * @return The type of the particle.
      */
     const int getType() const;
+
+    /**
+     * @brief Gets the Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     *
+     * @return The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
+     */
+    const double getEpsilon() const;
+
+    /**
+     * @brief Gets the Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     *
+     * @return The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     */
+    const double getSigma() const;
 
     /**
      * @brief Get the index of the particle in a CellContainer.
@@ -160,16 +229,16 @@ class Particle {
     /**
      * @brief Sets the new force effective on the particle \f$ F \f$ to a given value.
      *
-     * @param g A reference to the array containing the new force effective on this particle.
+     * @param new_f A reference to the array containing the new force effective on this particle.
      */
-    void setF(const std::array<double, 3> &g);
+    void setF(const std::array<double, 3> &new_f);
 
     /**
      * @brief Sets the new previously effective force on the particle \f$ F_\text{old} \f$ to a given value.
      *
-     * @param g A reference to the array containing the new previously effective force on this particle.
+     * @param new_old_f A reference to the array containing the new previously effective force on this particle.
      */
-    void setOldF(const std::array<double, 3> &g);
+    void setOldF(const std::array<double, 3> &new_old_f);
 
     /// @brief Resets the force of the particle \f$ F \f$ to 0,0,0.
     void setFToZero();
@@ -190,6 +259,20 @@ class Particle {
      * @param new_type The new type of this particle.
      */
     void setType(double new_type);
+
+    /**
+     * @brief Sets the new Lennard-Jones parameter \f$ \epsilon \f$ of the particle to a given value.
+     *
+     * @param new_eps The new Lennard-Jones parameter \f$ \epsilon \f$ of this particle.
+     */
+    void setEpsilon(double new_eps);
+
+    /**
+     * @brief Sets the new Lennard-Jones parameter \f$ \sigma \f$ of the particle to a given value.
+     *
+     * @param new_sigma The new Lennard-Jones parameter \f$ \sigma \f$ of this particle.
+     */
+    void setSigma(double new_sigma);
 
     /**
      * @brief Sets the new index in a CellContainer.

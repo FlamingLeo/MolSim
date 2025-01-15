@@ -10,8 +10,8 @@
 #include <vector>
 
 Disc::Disc(ParticleContainer &particles, const std::array<double, 3> &x, int r, const std::array<double, 3> &v,
-           double h, double m)
-    : x{x}, r{r}, h{h}, m{m}, v{v}, mean_velocity{0.1}, particles{particles} {
+           double h, double m, int type, double epsilon, double sigma)
+    : Cluster(particles, x, v, h, m, type, epsilon, sigma), r{r} {
     if (r < 0)
         CLIUtils::error("Radius must be 0 or greater, got", StringUtils::fromNumber(r));
     if (h <= 0)
@@ -41,36 +41,26 @@ std::vector<std::array<double, 3>> Disc::getCircleCoordinates(double centerX, do
 }
 
 /* documented functions start here  */
-void Disc::initializeDisc() {
+void Disc::initialize(size_t dimensions) {
     SPDLOG_TRACE("Initializing Particles for Disc {}...", this->toString());
     std::vector<std::array<double, 3>> positions = getCircleCoordinates(x[0], x[1], r, h);
     for (auto &p : positions) {
-        std::array<double, 3> vel =
-            ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, 2), std::plus<>());
-        particles.addParticle(p, vel, m);
+        std::array<double, 3> vel = ArrayUtils::elementWisePairOp(
+            v, maxwellBoltzmannDistributedVelocity(mean_velocity, dimensions), std::plus<>());
+        particles.addParticle(p, vel, m, type, epsilon, sigma);
     }
 }
 
-std::array<double, 3> &Disc::getX() { return x; }
-const std::array<double, 3> &Disc::getX() const { return x; }
 int Disc::getR() const { return r; }
-double Disc::getH() const { return h; }
-double Disc::getM() const { return m; }
-std::array<double, 3> &Disc::getV() { return v; }
-const std::array<double, 3> &Disc::getV() const { return v; }
-double Disc::getMeanVelocity() const { return mean_velocity; }
-ParticleContainer &Disc::getParticles() { return particles; }
-const ParticleContainer &Disc::getParticles() const { return particles; }
-
 bool Disc::operator==(const Disc &other) const {
     return (x == other.x) && (r == other.r) && (h == other.h) && (m == other.m) && (v == other.v) &&
-           (mean_velocity == other.mean_velocity) && (particles == other.particles);
+           (mean_velocity == other.mean_velocity) && (particles == other.particles) && (sigma == other.sigma) &&
+           (epsilon == other.epsilon);
 }
 bool Disc::operator!=(const Disc &other) const { return !(*this == other); }
-
 std::string Disc::toString() {
     std::stringstream stream;
-    stream << "{ x: " << x << ", r: " << r << ", v: " << v << ", h: " << h << ", m: " << m
-           << ", particles: " << particles.toString() << " }";
+    stream << "{ x: " << x << ", r: " << r << ", v: " << v << ", h: " << h << ", m: " << m << ", sigma: " << sigma
+           << ", epsilon: " << epsilon << ", particles: " << particles.toString() << " }";
     return stream.str();
 }
