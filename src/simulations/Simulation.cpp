@@ -44,7 +44,6 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
         // update position, force and velocity
         m_calculateX(m_particles, m_args.delta_t, m_args.gravity, lc);
-        m_particles.removeInactiveParticles();
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 
@@ -55,7 +54,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
         // add the number of active particles to the molecule update counter
         // we do this since we update each active molecule during one iteration
-        TIMER_UPDATE_MOLECULES(m_timer, m_particles.size());
+        TIMER_UPDATE_MOLECULES(m_timer, m_particles.activeSize());
         iteration++;
     }
 

@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-bool handleHaloCell(ParticleContainer &pc, Particle &p, Cell &targetCell, CellContainer *lc) {
+bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
     // don't do anything if the cell is not a halo cell
     if (targetCell.getType() != CellType::HALO)
         return false;
@@ -21,13 +21,13 @@ bool handleHaloCell(ParticleContainer &pc, Particle &p, Cell &targetCell, CellCo
     // handle corresponding boundary condition(s)
     switch (bc) {
     case BoundaryCondition::OUTFLOW:
-        handleOutflowCondition(pc, p, targetCell, lc);
+        handleOutflowCondition(p, targetCell, lc);
         return true;
     case BoundaryCondition::REFLECTIVE:
-        handleReflectiveCondition(pc, p, targetCell, loc, lc);
+        handleReflectiveCondition(p, targetCell, loc, lc);
         return true;
     case BoundaryCondition::PERIODIC:
-        handlePeriodicCondition(pc, p, targetCell, lc);
+        handlePeriodicCondition(p, targetCell, lc);
         return true;
     default:
         return false;
@@ -37,7 +37,7 @@ bool handleHaloCell(ParticleContainer &pc, Particle &p, Cell &targetCell, CellCo
 std::pair<HaloLocation, BoundaryCondition> determineBoundaryCondition(Particle &p, Cell &targetCell,
                                                                       CellContainer *lc) {
     // get cardinal direction(s) of halo cell
-    // note: i'm still debating whether a bitmap would be faster...
+    // TODO: i'm still debating whether a bitmap would be faster...
     const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
 
     // if there is more than one cardinal direction, the cell is a _corner_ halo cell
@@ -56,17 +56,15 @@ std::pair<HaloLocation, BoundaryCondition> determineBoundaryCondition(Particle &
     return {location, condition};
 }
 
-void handleOutflowCondition(ParticleContainer &pc, Particle &p, Cell &targetCell, CellContainer *lc) {
+void handleOutflowCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
     // outflow simply removes the particle from the simulation, no fancy case-handling here...
     SPDLOG_DEBUG("[outflow] Particle {} entered HALO cell ({}), deleting...", p.toString(),
                  CellUtils::fromHaloVec(targetCell.getHaloLocation()));
     lc->deleteParticle(p);
     p.markInactive();
-    pc.notifyInactivity();
 }
 
-void handleReflectiveCondition(ParticleContainer &pc, Particle &p, Cell &fromCell, HaloLocation location,
-                               CellContainer *lc) {
+void handleReflectiveCondition(Particle &p, Cell &fromCell, HaloLocation location, CellContainer *lc) {
     // get cell to reflect particle into
     int oppIdx = lc->getOppositeNeighbor(fromCell.getIndex(), location);
     Cell &toCell = (*lc)[oppIdx];
@@ -78,24 +76,24 @@ void handleReflectiveCondition(ParticleContainer &pc, Particle &p, Cell &fromCel
 
     // reflect
     if (flipVert) {
-        reflectParticle(pc, p, fromCell, toCell, lc, 1);
+        reflectParticle(p, fromCell, toCell, lc, 1);
         p.setV({p.getV()[0], -p.getV()[1], p.getV()[2]});
         SPDLOG_DEBUG("Flipped vertically: {}", p.toString());
     } else if (flipHorizontal) {
-        reflectParticle(pc, p, fromCell, toCell, lc, 0);
+        reflectParticle(p, fromCell, toCell, lc, 0);
         p.setV({-p.getV()[0], p.getV()[1], p.getV()[2]});
         SPDLOG_DEBUG("Flipped horizontally: {}", p.toString());
     } else if (flipDepth) {
-        reflectParticle(pc, p, fromCell, toCell, lc, 2);
+        reflectParticle(p, fromCell, toCell, lc, 2);
         p.setV({p.getV()[0], p.getV()[1], -p.getV()[2]});
         SPDLOG_DEBUG("Flipped depth-wise: {}", p.toString());
     }
 
     // handle further halo cell properties, if the particle is reflected inside another halo cell
-    handleHaloCell(pc, p, lc->getCells()[p.getCellIndex()], lc);
+    handleHaloCell(p, lc->getCells()[p.getCellIndex()], lc);
 }
 
-void handlePeriodicCondition(ParticleContainer &pc, Particle &p, Cell &targetCell, CellContainer *lc) {
+void handlePeriodicCondition(Particle &p, Cell &targetCell, CellContainer *lc) {
     // this function ought to be called after particles have made it into the halo cells and should be moved to the
     // opposite border cell
     const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
@@ -121,7 +119,6 @@ void handlePeriodicCondition(ParticleContainer &pc, Particle &p, Cell &targetCel
     if (!lc->moveParticle(p)) {
         SPDLOG_ERROR("Invalid particle position! {}", p.toString());
         p.markInactive();
-        pc.notifyInactivity();
         return;
     }
 
@@ -129,7 +126,7 @@ void handlePeriodicCondition(ParticleContainer &pc, Particle &p, Cell &targetCel
     // cell
     if (haloLocations.size() > 1) {
         SPDLOG_DEBUG("Found another boundary in cell {} for particle {}", p.getCellIndex(), p.toString());
-        handleHaloCell(pc, p, lc->getCells()[p.getCellIndex()], lc);
+        handleHaloCell(p, lc->getCells()[p.getCellIndex()], lc);
     }
     SPDLOG_DEBUG("Moved periodic {} to cell {}.", p.toString(), p.getCellIndex());
 }
@@ -191,14 +188,12 @@ void deleteGhostParticles(CellContainer *lc) {
     }
 }
 
-void reflectParticle(ParticleContainer &pc, Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc,
-                     int direction) {
+void reflectParticle(Particle &p, Cell &fromCell, Cell &toCell, CellContainer *lc, int direction) {
     p.setX(lc->getMirrorPosition(p.getX(), fromCell, toCell, direction));
     if (!lc->moveParticle(p)) {
         SPDLOG_ERROR("Error reflecting particle {}! from: {}, to: {}", p.toString(), fromCell.getIndex(),
                      toCell.getIndex());
         p.markInactive();
-        pc.notifyInactivity();
         return;
     }
     SPDLOG_DEBUG("Moved {} to cell {}.", p.toString(), p.getCellIndex());

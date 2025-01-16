@@ -22,9 +22,6 @@ class ParticleContainer {
     /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
 
-    /// @brief Flag that determines if inactive particles should be removed after a time integration step.
-    bool m_removeInactiveParticles = false;
-
     /* iterator definitions */
   public:
     /// @brief Standard library iterator function for marking the beginning of the iteration process.
@@ -188,18 +185,6 @@ class ParticleContainer {
                      const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
 
     /**
-     * @brief Removes inactive Particle objects from the container.
-     *
-     */
-    void removeInactiveParticles();
-
-    /**
-     * @brief Notifies the container that inactive particles should be removed after a time integration step.
-     *
-     */
-    void notifyInactivity();
-
-    /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.
      *
      * @param capacity The amount of contiguous spaces to reserve in m_particles.
@@ -228,6 +213,13 @@ class ParticleContainer {
      * @return The size of the container.
      */
     size_t size() const;
+
+    /**
+     * @brief Returns the amount of active particles in the container.
+     *
+     * @return The number of active particles in the container.
+     */
+    size_t activeSize() const;
 
     /**
      * @brief Checks if the container is empty.

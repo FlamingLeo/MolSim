@@ -17,6 +17,7 @@ TEST(BoundaryConditionTests, Outflow2D) {
         CellContainer c{{10., 10., 1.}, conditions, 1., pc};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 0);
         EXPECT_EQ(pc[0].getCellIndex(), -1);
         EXPECT_FALSE(pc[0].isActive());
     };
@@ -44,6 +45,7 @@ TEST(BoundaryConditionTests, Reflective2D) {
         CellContainer c{{10., 10., 1.}, conditions, 1., pc};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
@@ -73,6 +75,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners2D) {
         calculateX_LC(pc, delta_t, 0.0, &c);
 
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), expectedActive ? 1 : 0);
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
         if (expectedActive) {
             EXPECT_EQ(pc[0].getX(), expectedPos);
@@ -103,6 +106,7 @@ TEST(BoundaryConditionTests, Periodic2D) {
         CellContainer c{{5., 5., 1.}, conditions, 1., pc};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
@@ -132,6 +136,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring2D) {
         CellContainer c{{5., 5., 1.}, conditions, 1., pc};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_TRUE(pc[0].isActive());
@@ -161,6 +166,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner2D) {
         CellContainer c{{5., 5., 1.}, conditions, 1., pc};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
         EXPECT_EQ(pc[0].getV(), expectedVel);
         EXPECT_TRUE(pc[0].isActive());

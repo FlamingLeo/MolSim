@@ -52,13 +52,15 @@ void Thermostat::initializeBrownianMotion() {
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
     for (auto &p : particles) {
-        sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+        if (p.isActive()) {
+            sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+        }
     }
     kineticEnergy = sum / 2;
     SPDLOG_TRACE("New kinetic energy: {}", kineticEnergy);
 }
 void Thermostat::calculateTemp() {
-    temperature = 2 * kineticEnergy / (dimension * particles.size());
+    temperature = 2 * kineticEnergy / (dimension * particles.activeSize());
     SPDLOG_TRACE("New temperature: {}", temperature);
 }
 void Thermostat::calculateScalingFactor() {
@@ -109,8 +111,10 @@ void Thermostat::updateSystemTemp(int currentStep) {
 
     // update particle velocities to set new temperature
     for (auto &p : particles) {
-        std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
-        p.setV(newV);
+        if (p.isActive()) {
+            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+            p.setV(newV);
+        }
     }
     SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);
 }
