@@ -44,7 +44,7 @@
             <size>
                 <x>50</x>
                 <y>14</y>
-                <z>3</z>
+                <z>1</z>
             </size>
             <distance>1.2</distance>
             <mass>1.0</mass>
@@ -65,7 +65,7 @@
             <size>
                 <x>50</x>
                 <y>14</y>
-                <z>3</z>
+                <z>1</z>
             </size>
             <distance>1.2</distance>
             <mass>2.0</mass>
