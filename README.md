@@ -145,17 +145,20 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 ## Input Files
 
+**Filename Structure**: `input-lj-w<n>t<m>` = Worksheet `n`, Task `m`.
+
 The program supports XML input files. Currently, the following input files are included in the repository, inside the `input` directory:
 
--   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
--   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
--   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
--   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
--   `input-lj-w4t2-small.xml`: Simulation of the Rayleigh-Taylor instability (small). _Worksheet 4, Task 2a_
--   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large). _Worksheet 4, Task 2b_
--   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation. _Worksheet 4, Task 3a_
--   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid. _Worksheet 4, Task 3b_
--   `input-lj-w4t5.xml`: Simulation of the Rayleigh-Taylor instability, performance contest environment. _Worksheet 4, Task 5_
+-   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids.
+-   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method.
+-   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method.
+-   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary.
+-   `input-lj-w4t2-small.xml`: Simulation of the Rayleigh-Taylor instability (small).
+-   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large).
+-   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation.
+-   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid.
+-   `input-lj-w4t5.xml`: Simulation of the Rayleigh-Taylor instability, performance contest environment.
+-   `input-lj-w5t3.xml`: Simulation of the Rayleigh-Taylor instability in 3D.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
