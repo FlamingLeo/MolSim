@@ -4,7 +4,7 @@
 
 // Tests the outflow boundary condition using a single particle in a cell container.
 // Upon entering a halo cell, the particle is removed from the cell container and is marked inactive.
-TEST(BoundaryConditionTests, Outflow) {
+TEST(BoundaryConditionTests, Outflow2D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
@@ -29,7 +29,7 @@ TEST(BoundaryConditionTests, Outflow) {
 // Tests the reflective boundary condition using a single particle in a cell container.
 // Upon entering a halo cell, the velocity is inverted and the mirrored position of the particle is computed.
 // See the report and the presentation slides for more details.
-TEST(BoundaryConditionTests, Reflective) {
+TEST(BoundaryConditionTests, Reflective2D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
                                                 BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -57,7 +57,7 @@ TEST(BoundaryConditionTests, Reflective) {
 
 // Tests handling reflective corners.
 // The particle should be mirrored and have it's velocity flipped in the X and Y directions.
-TEST(BoundaryConditionTests, ReflectiveCorners) {
+TEST(BoundaryConditionTests, ReflectiveCorners2D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
                                                 BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -88,7 +88,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners) {
 }
 
 // Tests handling basic periodic boundaries.
-TEST(BoundaryConditionTests, Periodic) {
+TEST(BoundaryConditionTests, Periodic2D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -118,7 +118,7 @@ TEST(BoundaryConditionTests, Periodic) {
 }
 
 // Tests mirroring ghost particles when used with periodic boundaries.
-TEST(BoundaryConditionTests, PeriodicMirroring) {
+TEST(BoundaryConditionTests, PeriodicMirroring2D) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
@@ -147,7 +147,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring) {
 }
 
 // Test handling periodic corner halo cells.
-TEST(BoundaryConditionTests, PeriodicMirroringCorner) {
+TEST(BoundaryConditionTests, PeriodicMirroringCorner2D) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
@@ -177,3 +177,97 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner) {
     };
     test({1.5, 1.5, 0}, {0., 0., 0.}, {1.5, 1.5, 0}, {0., 0., 0.}, {43, 13, 48}); // sw corner
 }
+
+TEST(BoundaryConditionTests, Periodic3D){
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
+        EXPECT_TRUE(pc[0].isActive());
+    };
+    test({2.5, 1.5, 1.5}, {20., 0., 0.}, {1.5, 1.5, 1.5}, {20., 0., 0.}, 21);   // X
+    test({1.5, 2.5, 1.5}, {0., 20., 0.}, {1.5, 1.5, 1.5}, {0, 20., 0.}, 21); // Y
+    test({1.5, 1.5, 2.5}, {0., 0., 20.}, {1.5, 1.5, 1.5}, {0, 0., 20.}, 21); // Z
+
+    // this is the test for corners (double mirroring)
+    test({2.75, 1.5, 1.75}, {20., 0., -20.}, {1.75, 1.5, 2.75}, {20., 0., -20.}, 37);
+    //triple mirroring
+    test({2.75, 1.5, 1.75}, {10., -20., -20.}, {1.25, 2.5, 2.75}, {10., -20., -20.}, 41);
+}
+
+TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedGhostIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc};
+        mirrorGhostParticles(&c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_TRUE(pc[0].isActive());
+
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex].getParticles().end()),
+                  1);
+    };
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 20);  // X
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 30); // Y
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 54); // Z
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 28); // XY
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 52); // XZ
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 62); // YZ
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 60); // XYZ
+}
+
+TEST(BoundaryConditionTests, PeriodicMirroring3D){
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedGhostIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{3., 3., 3.}, conditions, 1., pc};
+        mirrorGhostParticles(&c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_TRUE(pc[0].isActive());
+
+        EXPECT_EQ(std::distance(c.getCells()[expectedGhostIndex].getParticles().begin(),
+                                c.getCells()[expectedGhostIndex].getParticles().end()),
+                  1);
+    };
+
+    //double boundary
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 55);  // X
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 73);  // Y
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 70);  // XY
+
+    //single boundary
+    test({3.5, 2.5, 2.5}, {0., 0., 0.}, {3.5, 2.5, 2.5}, {0., 0., 0.}, 60);  // X
+}
+

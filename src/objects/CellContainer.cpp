@@ -384,7 +384,7 @@ std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std:
     std::vector<int> ghostCorners;
     for(auto& pair : getBorderCombinations(locations)) {
         int cellIndex = from.getIndex();
-        for (auto loc: locations) {
+        for (auto &loc: pair) {
             if (loc == BorderLocation::NORTH) {
                 cellIndex = cellIndex - numCells[0] * (numCells[1] - 2);
             } else if (loc == BorderLocation::SOUTH) {
@@ -393,6 +393,10 @@ std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std:
                 cellIndex = cellIndex + (numCells[0] - 2);
             } else if (loc == BorderLocation::EAST) {
                 cellIndex = cellIndex - (numCells[0] - 2);
+            } else if (loc == BorderLocation::ABOVE) {
+                cellIndex = cellIndex - numCells[0] * numCells[1] * (numCells[2] - 2);
+            } else if (loc == BorderLocation::BELOW) {
+                cellIndex = cellIndex + numCells[0] * numCells[1] * (numCells[2] - 2);
             }
         }
         ghostCorners.push_back(cellIndex);
@@ -408,6 +412,12 @@ std::vector<std::vector<BorderLocation>> CellContainer::getBorderCombinations(st
         for (int j = i + 1; j < n; ++j) {
             pairs.push_back({locations[i], locations[j]});
         }
+    }
+
+    //if we have a triple corner, I have come to the conclusion we should also mirror across all 3 dimensions
+    //it's just intuition tho, I wouldn't stake my life on it
+    if (locations.size() == 3){
+        pairs.push_back(locations);
     }
 
     return pairs;

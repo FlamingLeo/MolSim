@@ -160,7 +160,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
             bool ANW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
 
             if (BSE){
-                bool BS = relZ <= relY;
+                bool BS = 0.5 * relX  - 0.5 * relZ + relY >= 0.5;
                 bool BE = relX > relZ;
 
                 if (BS){
@@ -169,7 +169,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return HaloLocation::SOUTH;
             }
             if (BSW){
-                bool BS = relZ <= relY;
+                bool BS = -0.5 * relX - 0.5 * relZ + relY >= 0;
                 bool BW = relX <= relZ;
 
                 if (BS){
@@ -178,7 +178,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return HaloLocation::SOUTH;
             }
             if (BNE){
-                bool BN = relZ > relY;
+                bool BN = -0.5 * relX + 0.5 * relZ + relY >= 0.5;
                 bool BE = relX > relZ;
 
                 if (BN){
@@ -187,7 +187,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return BE ? HaloLocation::EAST : HaloLocation::BELOW;
             }
             if (BNW){
-                bool BN = relZ > relY;
+                bool BN = 0.5 * relX + 0.5 * relZ + relY >= 1;
                 bool BW = relX <= relZ;
 
                 if (BN){
@@ -196,7 +196,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return BW ? HaloLocation::WEST : HaloLocation::BELOW;
             }
             if (ASE){
-                bool AS = relZ > relY;
+                bool AS = 0.5 * relX + 0.5 * relZ + relY >= 1;
                 bool AE = relX <= relZ;
 
                 if (AS){
@@ -205,7 +205,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return HaloLocation::SOUTH;
             }
             if (ASW){
-                bool AS = relZ > relY;
+                bool AS = -0.5 * relX + 0.5 * relZ + relY >= 0.5;
                 bool AW = relX > relZ;
 
                 if (AS){
@@ -214,7 +214,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return HaloLocation::SOUTH;
             }
             if (ANE){
-                bool AN = relZ <= relY;
+                bool AN = -0.5 * relX - 0.5 * relZ + relY >= 0;
                 bool AE = relX <= relZ;
 
                 if (AN){
@@ -223,7 +223,7 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
                 return AE ? HaloLocation::ABOVE : HaloLocation::EAST;
             }
             if (ANW){
-                bool AN = relZ <= relY;
+                bool AN = 0.5 * relX - 0.5 * relZ + relY >= 0.5;
                 bool AW = relX > relZ;
 
                 if (AN){
