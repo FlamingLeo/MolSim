@@ -28,7 +28,7 @@
     </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>
-    <totalParticles>150</totalParticles>
+    <dimensions>3</dimensions>
     <objects>
         <cuboid>
             <position>
@@ -73,4 +73,5 @@
             <sigma>1.1</sigma>
         </cuboid>
     </objects>
+    <totalParticles>150</totalParticles>
 </sim>

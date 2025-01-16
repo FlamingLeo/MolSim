@@ -21,8 +21,7 @@ void Cell::removeParticle(Particle &particle) {
 const std::array<double, 3> &Cell::getSize() const { return m_size; }
 const std::array<double, 3> &Cell::getX() const { return m_position; }
 HaloLocation Cell::getCornerRegion(const Particle &p) const {
-
-    //return m_haloLocation[0];
+    // return m_haloLocation[0];
 
     // verify that this is a corner cell
     assert(!(this->m_haloLocation.empty()));
@@ -62,28 +61,40 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
         return HaloLocation::NORTH; // for certain compilers
 
     } else {
-        //HERE THE SAME BUT FOR 3D
+        // HERE THE SAME BUT FOR 3D
         double relX = p.getX()[0] - m_position[0];
         double relY = p.getX()[1] - m_position[1];
         double relZ = p.getX()[2] - m_position[2];
-        SPDLOG_DEBUG("posX: {}, posY: {}, posZ: {}, relX: {}, relY: {}, relZ: {}, sizeX: {}, sizeY: {}, sizeZ: {}", m_position[0], m_position[1], m_position[2], relX,
-                     relY, relZ, m_size[0], m_size[1], m_size[2]);
+        SPDLOG_DEBUG("posX: {}, posY: {}, posZ: {}, relX: {}, relY: {}, relZ: {}, sizeX: {}, sizeY: {}, sizeZ: {}",
+                     m_position[0], m_position[1], m_position[2], relX, relY, relZ, m_size[0], m_size[1], m_size[2]);
         assert(!(relX < 0 || relX > m_size[0] || relY < 0 || relY > m_size[1] || relZ < 0 || relZ > m_size[2]));
 
-        if(m_haloLocation.size() == 2){
-            //we determine the character of the diagonal
-            bool NW = VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool SE = VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool NE = VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool SW = VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool BW = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool BE = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool BS = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH);
-            bool BN = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH);
-            bool AW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool AE = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool AS = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH);
-            bool AN = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH);
+        if (m_haloLocation.size() == 2) {
+            // we determine the character of the diagonal
+            bool NW =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool SE =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool NE =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool SW =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool BW =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool BE =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool BS =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH);
+            bool BN =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH);
+            bool AW =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool AE =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool AS =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH);
+            bool AN =
+                VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH);
 
             bool NW_SE = NW || SE; // diagonal top left -> bottom right
             bool NE_SW = NE || SW; // diagonal bottom left -> top right
@@ -94,139 +105,153 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
             bool BS_AN = BS || AN;
             bool BN_AS = BN || AS;
 
-            //bool aboveDiagonal = NE_SW ? (relX <= relY) : (relX > relY);
+            // bool aboveDiagonal = NE_SW ? (relX <= relY) : (relX > relY);
             bool aboveDiagonal = false;
-            if (NE_SW){
+            if (NE_SW) {
                 aboveDiagonal = relX <= relY;
-                //NE
-                if (NE){
+                // NE
+                if (NE) {
                     return aboveDiagonal ? HaloLocation::NORTH : HaloLocation::EAST;
                 }
-                //SW
+                // SW
                 return aboveDiagonal ? HaloLocation::WEST : HaloLocation::SOUTH;
-            } else if (NW_SE){
+            } else if (NW_SE) {
                 aboveDiagonal = relX > relY;
-                //NW
-                if (NW){
+                // NW
+                if (NW) {
                     return aboveDiagonal ? HaloLocation::NORTH : HaloLocation::WEST;
                 }
-                //SE
+                // SE
                 return aboveDiagonal ? HaloLocation::EAST : HaloLocation::SOUTH;
-            } else if (BW_AE){
+            } else if (BW_AE) {
                 aboveDiagonal = relX <= relZ;
-                //BW
-                if (BW){
-                    return aboveDiagonal? HaloLocation::WEST : HaloLocation::BELOW;
+                // BW
+                if (BW) {
+                    return aboveDiagonal ? HaloLocation::WEST : HaloLocation::BELOW;
                 }
-                //AE
+                // AE
                 return aboveDiagonal ? HaloLocation::ABOVE : HaloLocation::EAST;
-            } else if (BE_AW){
+            } else if (BE_AW) {
                 aboveDiagonal = relX > relZ;
-                //BE
-                if (BE){
+                // BE
+                if (BE) {
                     return aboveDiagonal ? HaloLocation::EAST : HaloLocation::BELOW;
                 }
-                //AW
+                // AW
                 return aboveDiagonal ? HaloLocation::ABOVE : HaloLocation::WEST;
-            } else if (BS_AN){
+            } else if (BS_AN) {
                 aboveDiagonal = relZ <= relY;
-                //BS
-                if (BS){
+                // BS
+                if (BS) {
                     return aboveDiagonal ? HaloLocation::BELOW : HaloLocation::SOUTH;
                 }
-                //AN
+                // AN
                 return aboveDiagonal ? HaloLocation::NORTH : HaloLocation::ABOVE;
-            } else if (BN_AS){
+            } else if (BN_AS) {
                 aboveDiagonal = relZ > relY;
-                //BN
-                if (BN){
+                // BN
+                if (BN) {
                     return aboveDiagonal ? HaloLocation::NORTH : HaloLocation::BELOW;
                 }
-                //AS
+                // AS
                 return aboveDiagonal ? HaloLocation::ABOVE : HaloLocation::SOUTH;
             }
 
-
-
         } else {
-            //The 8 3-fold corners
-            bool BSE = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool BSW = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool BNE = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool BNW = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool ASE = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool ASW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
-            bool ANE = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
-            bool ANW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) && VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            // The 8 3-fold corners
+            bool BSE = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool BSW = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool BNE = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool BNW = VEC_CONTAINS(m_haloLocation, HaloLocation::BELOW) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool ASE = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool ASW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::SOUTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
+            bool ANE = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
+            bool ANW = VEC_CONTAINS(m_haloLocation, HaloLocation::ABOVE) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::NORTH) &&
+                       VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
 
-            if (BSE){
-                bool BS = 0.5 * relX  - 0.5 * relZ + relY >= 0.5;
+            if (BSE) {
+                bool BS = 0.5 * relX - 0.5 * relZ + relY >= 0.5;
                 bool BE = relX > relZ;
 
-                if (BS){
+                if (BS) {
                     return BE ? HaloLocation::EAST : HaloLocation::BELOW;
                 }
                 return HaloLocation::SOUTH;
             }
-            if (BSW){
+            if (BSW) {
                 bool BS = -0.5 * relX - 0.5 * relZ + relY >= 0;
                 bool BW = relX <= relZ;
 
-                if (BS){
+                if (BS) {
                     return BW ? HaloLocation::WEST : HaloLocation::BELOW;
                 }
                 return HaloLocation::SOUTH;
             }
-            if (BNE){
+            if (BNE) {
                 bool BN = -0.5 * relX + 0.5 * relZ + relY >= 0.5;
                 bool BE = relX > relZ;
 
-                if (BN){
+                if (BN) {
                     return HaloLocation::NORTH;
                 }
                 return BE ? HaloLocation::EAST : HaloLocation::BELOW;
             }
-            if (BNW){
+            if (BNW) {
                 bool BN = 0.5 * relX + 0.5 * relZ + relY >= 1;
                 bool BW = relX <= relZ;
 
-                if (BN){
+                if (BN) {
                     return HaloLocation::NORTH;
                 }
                 return BW ? HaloLocation::WEST : HaloLocation::BELOW;
             }
-            if (ASE){
+            if (ASE) {
                 bool AS = 0.5 * relX + 0.5 * relZ + relY >= 1;
                 bool AE = relX <= relZ;
 
-                if (AS){
+                if (AS) {
                     return AE ? HaloLocation::ABOVE : HaloLocation::EAST;
                 }
                 return HaloLocation::SOUTH;
             }
-            if (ASW){
+            if (ASW) {
                 bool AS = -0.5 * relX + 0.5 * relZ + relY >= 0.5;
                 bool AW = relX > relZ;
 
-                if (AS){
+                if (AS) {
                     return AW ? HaloLocation::ABOVE : HaloLocation::WEST;
                 }
                 return HaloLocation::SOUTH;
             }
-            if (ANE){
+            if (ANE) {
                 bool AN = -0.5 * relX - 0.5 * relZ + relY >= 0;
                 bool AE = relX <= relZ;
 
-                if (AN){
+                if (AN) {
                     return HaloLocation::NORTH;
                 }
                 return AE ? HaloLocation::ABOVE : HaloLocation::EAST;
             }
-            if (ANW){
+            if (ANW) {
                 bool AN = 0.5 * relX - 0.5 * relZ + relY >= 0.5;
                 bool AW = relX > relZ;
 
-                if (AN){
+                if (AN) {
                     return HaloLocation::NORTH;
                 }
                 return AW ? HaloLocation::ABOVE : HaloLocation::WEST;

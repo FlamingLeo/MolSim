@@ -187,6 +187,11 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
             SPDLOG_DEBUG("Using linked cells?: {}", args.linkedCells);
         }
 
+        if (xmlInput->dimensions().present()) {
+            args.dimensions = xmlInput->dimensions().get();
+        }
+        SPDLOG_DEBUG("Number of dimensions: {}", args.dimensions);
+
         const auto &xmlThermostat = xmlInput->thermostat();
         initThermostat(xmlThermostat, t);
 

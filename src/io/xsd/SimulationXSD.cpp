@@ -546,6 +546,14 @@ void SimType::linkedCells(const LinkedCellsType &x) { this->linkedCells_.set(x);
 
 void SimType::linkedCells(const LinkedCellsOptional &x) { this->linkedCells_ = x; }
 
+const SimType::DimensionsOptional &SimType::dimensions() const { return this->dimensions_; }
+
+SimType::DimensionsOptional &SimType::dimensions() { return this->dimensions_; }
+
+void SimType::dimensions(const DimensionsType &x) { this->dimensions_.set(x); }
+
+void SimType::dimensions(const DimensionsOptional &x) { this->dimensions_ = x; }
+
 const SimType::ObjectsType &SimType::objects() const { return this->objects_.get(); }
 
 SimType::ObjectsType &SimType::objects() { return this->objects_.get(); }
@@ -1812,21 +1820,21 @@ ObjectsType::~ObjectsType() {}
 
 SimType::SimType(const ThermostatType &thermostat, const TypeType &type, const ObjectsType &objects)
     : ::xml_schema::Type(), args_(this), thermostat_(thermostat, this), type_(type, this), linkedCells_(this),
-      objects_(objects, this), totalParticles_(this) {}
+      dimensions_(this), objects_(objects, this), totalParticles_(this) {}
 
 SimType::SimType(::std::unique_ptr<ThermostatType> thermostat, const TypeType &type,
                  ::std::unique_ptr<ObjectsType> objects)
     : ::xml_schema::Type(), args_(this), thermostat_(std::move(thermostat), this), type_(type, this),
-      linkedCells_(this), objects_(std::move(objects), this), totalParticles_(this) {}
+      linkedCells_(this), dimensions_(this), objects_(std::move(objects), this), totalParticles_(this) {}
 
 SimType::SimType(const SimType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), args_(x.args_, f, this), thermostat_(x.thermostat_, f, this),
-      type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this), objects_(x.objects_, f, this),
-      totalParticles_(x.totalParticles_, f, this) {}
+      type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this), dimensions_(x.dimensions_, f, this),
+      objects_(x.objects_, f, this), totalParticles_(x.totalParticles_, f, this) {}
 
 SimType::SimType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), thermostat_(this), type_(this),
-      linkedCells_(this), objects_(this), totalParticles_(this) {
+      linkedCells_(this), dimensions_(this), objects_(this), totalParticles_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1880,6 +1888,15 @@ void SimType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f
             }
         }
 
+        // dimensions
+        //
+        if (n.name() == "dimensions" && n.namespace_().empty()) {
+            if (!this->dimensions_) {
+                this->dimensions_.set(DimensionsTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         // objects
         //
         if (n.name() == "objects" && n.namespace_().empty()) {
@@ -1927,6 +1944,7 @@ SimType &SimType::operator=(const SimType &x) {
         this->thermostat_ = x.thermostat_;
         this->type_ = x.type_;
         this->linkedCells_ = x.linkedCells_;
+        this->dimensions_ = x.dimensions_;
         this->objects_ = x.objects_;
         this->totalParticles_ = x.totalParticles_;
     }
@@ -2820,6 +2838,14 @@ void operator<<(::xercesc::DOMElement &e, const SimType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("linkedCells", e));
 
         s << *i.linkedCells();
+    }
+
+    // dimensions
+    //
+    if (i.dimensions()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("dimensions", e));
+
+        s << *i.dimensions();
     }
 
     // objects

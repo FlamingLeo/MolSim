@@ -204,8 +204,7 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
     test({1.25, 5.75, 0.}, {-20., 20., 0.}, {5.25, 5.25, 0.}, {-20., -20., 0.}, 40); // nw corner
 }
 
-
-TEST(BoundaryConditionTests, Periodic3D){
+TEST(BoundaryConditionTests, Periodic3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -226,13 +225,13 @@ TEST(BoundaryConditionTests, Periodic3D){
         EXPECT_TRUE(pc[0].isActive());
     };
 
-    test({2.5, 1.5, 1.5}, {20., 0., 0.}, {1.5, 1.5, 1.5}, {20., 0., 0.}, 21);   // X
-    test({1.5, 2.5, 1.5}, {0., 20., 0.}, {1.5, 1.5, 1.5}, {0, 20., 0.}, 21); // Y
-    test({1.5, 1.5, 2.5}, {0., 0., 20.}, {1.5, 1.5, 1.5}, {0, 0., 20.}, 21); // Z
+    test({2.5, 1.5, 1.5}, {20., 0., 0.}, {1.5, 1.5, 1.5}, {20., 0., 0.}, 21); // X
+    test({1.5, 2.5, 1.5}, {0., 20., 0.}, {1.5, 1.5, 1.5}, {0, 20., 0.}, 21);  // Y
+    test({1.5, 1.5, 2.5}, {0., 0., 20.}, {1.5, 1.5, 1.5}, {0, 0., 20.}, 21);  // Z
 
     // this is the test for corners (double mirroring)
     test({2.75, 1.5, 1.75}, {20., 0., -20.}, {1.75, 1.5, 2.75}, {20., 0., -20.}, 37);
-    //triple mirroring
+    // triple mirroring
     test({2.75, 1.5, 1.75}, {10., -20., -20.}, {1.25, 2.5, 2.75}, {10., -20., -20.}, 41);
 }
 
@@ -258,7 +257,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
                                 c.getCells()[expectedGhostIndex].getParticles().end()),
                   1);
     };
-    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 20);  // X
+    test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 20); // X
     test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 30); // Y
     test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 54); // Z
     test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 28); // XY
@@ -267,7 +266,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
     test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 60); // XYZ
 }
 
-TEST(BoundaryConditionTests, PeriodicMirroring3D){
+TEST(BoundaryConditionTests, PeriodicMirroring3D) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC};
@@ -290,12 +289,11 @@ TEST(BoundaryConditionTests, PeriodicMirroring3D){
                   1);
     };
 
-    //double boundary
-    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 55);  // X
-    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 73);  // Y
-    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 70);  // XY
+    // double boundary
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 55); // X
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 73); // Y
+    test({3.5, 1.5, 2.5}, {0., 0., 0.}, {3.5, 1.5, 2.5}, {0., 0., 0.}, 70); // XY
 
-    //single boundary
-    test({3.5, 2.5, 2.5}, {0., 0., 0.}, {3.5, 2.5, 2.5}, {0., 0., 0.}, 60);  // X
+    // single boundary
+    test({3.5, 2.5, 2.5}, {0., 0., 0.}, {3.5, 2.5, 2.5}, {0., 0., 0.}, 60); // X
 }
-

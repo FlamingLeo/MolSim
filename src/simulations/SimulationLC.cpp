@@ -5,8 +5,8 @@
 #include "utils/StringUtils.h"
 
 SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t)
-    : Simulation(pc, args, t),
-      m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius, m_particles)} {
+    : Simulation(pc, args, t), m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius,
+                                                             m_particles, args.dimensions)} {
     SPDLOG_TRACE("Created new linked cells Simulation.");
 }
 SimulationLC::~SimulationLC() = default;
@@ -18,6 +18,7 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("end time    : {}", m_args.endTime);
     SPDLOG_INFO("timestep    : {}", m_args.delta_t);
     SPDLOG_INFO("output freq.: {}", m_args.itFreq);
+    SPDLOG_INFO("dimensions  : {}", m_args.dimensions);
     SPDLOG_INFO("domain size : {}", ArrayUtils::to_string(m_args.domainSize));
     SPDLOG_INFO("cell size   : {}", ArrayUtils::to_string(m_cellContainer.getCellSize()));
     SPDLOG_INFO("cutoff      : {}", m_args.cutoffRadius);

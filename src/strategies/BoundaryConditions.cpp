@@ -141,7 +141,7 @@ void mirrorGhostParticles(CellContainer *lc) {
     for (auto bc : borderCells) {
         std::vector<BorderLocation> location = bc.get().getBorderLocation();
 
-        //I'm starting to think it should be 1 even for 3D (imagine a cross section)
+        // I'm starting to think it should be 1 even for 3D (imagine a cross section)
         if (location.size() > 1) {
             // At least 2 edges should be periodic for us to mirror in corner (intuition)
             int doCorner = 0;

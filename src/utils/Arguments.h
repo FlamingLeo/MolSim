@@ -52,6 +52,8 @@ struct Arguments {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW};
+    /// @brief The dimensions of the simulation, either 2 or 3 (default: 2).
+    size_t dimensions{2};
     /// @brief Bitset containing flags, whether startTime (0), endTime (1), delta_t (2) and basename (3) have been
     /// manually set by the user. If not, use default values depending on the simulation.
     std::bitset<4> argsSet{0b0000};
@@ -72,7 +74,7 @@ struct Arguments {
         return startTime == other.startTime && endTime == other.endTime && delta_t == other.delta_t &&
                itFreq == other.itFreq && domainSize == other.domainSize && cutoffRadius == other.cutoffRadius &&
                gravity == other.gravity && basename == other.basename && type == other.type && sim == other.sim &&
-               linkedCells == other.linkedCells && conditions == other.conditions;
+               linkedCells == other.linkedCells && conditions == other.conditions && dimensions == other.dimensions;
     }
 };
 

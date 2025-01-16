@@ -201,6 +201,10 @@ Complete XML input files have the following structure:
   <!-- Use this to reserve enough space in the ParticleContainer beforehand to potentially speed up initialization. -->
   <!-- You could theoretically specify any number here, but for optimal memory usage, it should be exact. -->
   <totalParticles><!-- size_t --></totalParticles>
+  <!-- (Optional) The dimensions of the simulation. Must be either 2 or 3. -->
+  <!-- If this tag isn't specified, the simulation will be 2D by default. -->
+  <!-- Note that this may cause unexpected results for 3D input. -->
+  <dimensions><!-- unsigned --></dimensions>
   <!-- The simulation molecules. May contain any positive number of "particle", "cuboid" or "disc" entries. -->
   <objects>
     <!-- A simple particle. -->

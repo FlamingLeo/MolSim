@@ -393,7 +393,6 @@ class CellContainer {
      */
     std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
 
-
     /**
      * @brief For a collection of border locations, returns all unique pairs
      *

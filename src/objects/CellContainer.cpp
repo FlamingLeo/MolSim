@@ -37,7 +37,7 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                  ArrayUtils::to_string(domainSize), cutoff, dim);
 
     // determining cell size
-    //if we are in 2D numCells
+    // if we are in 2D numCells
     for (size_t i = 0; i < dim; i++) {
         if (std::fabs(std::fmod(domainSize[i], cutoff)) < 1e-9) {
             // perfect fit
@@ -112,7 +112,8 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                         borderLocation.push_back(BorderLocation::BELOW);
                 }
 
-                // this should be deleted and borderLocation condition added, but I'm afraid to break everything (who wrote this? - in any case I agree)
+                // this should be deleted and borderLocation condition added, but I'm afraid to break everything (who
+                // wrote this? - in any case I agree)
                 //  we don't care about which type of border it is, for now...
                 bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
                                           x == 1 || x == (numCells[0] - 2))
@@ -279,17 +280,17 @@ int CellContainer::getOppositeNeighbor(int cellIndex, HaloLocation direction) co
         break;
     case HaloLocation::ABOVE:
         SPDLOG_TRACE("Above set, getting below cell index...");
-        if(dim == 3) {
+        if (dim == 3) {
             return cellIndex - numCells[0] * numCells[1];
-        } else{
+        } else {
             return -1;
         }
         break;
     case HaloLocation::BELOW:
         SPDLOG_TRACE("Below set, getting above cell index...");
-        if(dim == 3) {
+        if (dim == 3) {
             return cellIndex + numCells[0] * numCells[1];
-        } else{
+        } else {
             return -1;
         }
         break;
@@ -318,20 +319,21 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
 
 void CellContainer::calculateNeighbors(int cellIndex) {
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
-    //here we check whether we have a 3rd dimension
+    // here we check whether we have a 3rd dimension
     for (int dz = (cellSize[2] == 0 ? 0 : -1); dz <= (cellSize[2] == 0 ? 0 : 1); ++dz) {
         for (int dy = -1; dy <= 1; ++dy) {
             for (int dx = -1; dx <= 1; ++dx) {
                 if (dx == 0 && dy == 0 && dz == 0) {
-                    //cell itself is also a neighbor
+                    // cell itself is also a neighbor
                     cells[cellIndex].getNeighbors().push_back(cellIndex);
                     continue;
                 }
-                //coords[2] + dz = 0 if in 2D
+                // coords[2] + dz = 0 if in 2D
                 std::array<int, 3> neighborCoords = {coords[0] + dx, coords[1] + dy, coords[2] + dz};
                 if (neighborCoords[0] >= 0 && neighborCoords[0] < numCells[0] && neighborCoords[1] >= 0 &&
                     neighborCoords[1] < numCells[1] && neighborCoords[2] >= 0 && neighborCoords[2] < numCells[2]) {
-                    int neighborIndex = neighborCoords[2] * numCells[1] * numCells[0] + neighborCoords[1] * numCells[0] + neighborCoords[0];
+                    int neighborIndex = neighborCoords[2] * numCells[1] * numCells[0] +
+                                        neighborCoords[1] * numCells[0] + neighborCoords[0];
                     cells[cellIndex].getNeighbors().push_back(neighborIndex);
                 }
             }
@@ -382,9 +384,9 @@ int CellContainer::getOppositeOfBorder(const Cell &from, BorderLocation location
 std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations) {
     // switched to 3D, should still work in 2D
     std::vector<int> ghostCorners;
-    for(auto& pair : getBorderCombinations(locations)) {
+    for (auto &pair : getBorderCombinations(locations)) {
         int cellIndex = from.getIndex();
-        for (auto &loc: pair) {
+        for (auto &loc : pair) {
             if (loc == BorderLocation::NORTH) {
                 cellIndex = cellIndex - numCells[0] * (numCells[1] - 2);
             } else if (loc == BorderLocation::SOUTH) {
@@ -404,7 +406,7 @@ std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std:
     return ghostCorners;
 }
 
-std::vector<std::vector<BorderLocation>> CellContainer::getBorderCombinations(std::vector<BorderLocation> &locations){
+std::vector<std::vector<BorderLocation>> CellContainer::getBorderCombinations(std::vector<BorderLocation> &locations) {
     std::vector<std::vector<BorderLocation>> pairs;
     int n = locations.size();
 
@@ -414,9 +416,9 @@ std::vector<std::vector<BorderLocation>> CellContainer::getBorderCombinations(st
         }
     }
 
-    //if we have a triple corner, I have come to the conclusion we should also mirror across all 3 dimensions
-    //it's just intuition tho, I wouldn't stake my life on it
-    if (locations.size() == 3){
+    // if we have a triple corner, I have come to the conclusion we should also mirror across all 3 dimensions
+    // it's just intuition tho, I wouldn't stake my life on it
+    if (locations.size() == 3) {
         pairs.push_back(locations);
     }
 
@@ -436,7 +438,7 @@ const std::array<double, 3> &CellContainer::getCellSize() const { return cellSiz
 const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCells; }
 const std::array<BoundaryCondition, 6> &CellContainer::getConditions() const { return conditions; }
 double CellContainer::getCutoff() const { return cutoff; }
-size_t CellContainer::getDim() const {return dim;}
+size_t CellContainer::getDim() const { return dim; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
 const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }
