@@ -178,6 +178,33 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner2D) {
     test({1.5, 1.5, 0}, {0., 0., 0.}, {1.5, 1.5, 0}, {0., 0., 0.}, {43, 13, 48}); // sw corner
 }
 
+TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::PERIODIC,   BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC,   BoundaryCondition::PERIODIC};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{5., 5., 1.}, conditions, 1., pc};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
+        EXPECT_TRUE(pc[0].isActive());
+    };
+    test({5.75, 5.75, 0.}, {20., 20., 0.}, {1.75, 5.25, 0.}, {20., -20., 0.}, 36);   // ne corner
+    test({5.25, 1.25, 0.}, {20., -20., 0.}, {1.25, 1.75, 0.}, {20., 20., 0.}, 8);    // se corner
+    test({1.25, 1.25, 0.}, {-20., -20., 0.}, {5.25, 1.75, 0.}, {-20., 20., 0.}, 12); // sw corner
+    test({1.25, 5.75, 0.}, {-20., 20., 0.}, {5.25, 5.25, 0.}, {-20., -20., 0.}, 40); // nw corner
+}
+
+
 TEST(BoundaryConditionTests, Periodic3D){
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -198,6 +225,7 @@ TEST(BoundaryConditionTests, Periodic3D){
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
         EXPECT_TRUE(pc[0].isActive());
     };
+
     test({2.5, 1.5, 1.5}, {20., 0., 0.}, {1.5, 1.5, 1.5}, {20., 0., 0.}, 21);   // X
     test({1.5, 2.5, 1.5}, {0., 20., 0.}, {1.5, 1.5, 1.5}, {0, 20., 0.}, 21); // Y
     test({1.5, 1.5, 2.5}, {0., 0., 20.}, {1.5, 1.5, 1.5}, {0, 0., 20.}, 21); // Z

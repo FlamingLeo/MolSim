@@ -51,6 +51,7 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
         CellUtils::fromBoundaryCondition(args.conditions[0]), CellUtils::fromBoundaryCondition(args.conditions[1]),
         CellUtils::fromBoundaryCondition(args.conditions[2]), CellUtils::fromBoundaryCondition(args.conditions[3]),
         CellUtils::fromBoundaryCondition(args.conditions[4]), CellUtils::fromBoundaryCondition(args.conditions[5])};
+    a.gravity() = args.gravity;
 
     // serialize thermostat
     ThermostatType tt{t.getTemp(), t.getTimestep()};

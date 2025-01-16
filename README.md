@@ -27,7 +27,7 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions
 
 This project uses the following external C++ libraries:
 
--   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0¹
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
@@ -35,6 +35,8 @@ This project uses the following external C++ libraries:
 If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
 
 **NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
+
+¹: Xerces-C++ is not supported when compiling with the Intel C++ compiler.
 
 ## Getting Started
 
@@ -149,6 +151,11 @@ The program supports XML input files. Currently, the following input files are i
 -   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
 -   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
 -   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
+-   `input-lj-w4t2-small.xml`: Simulation of the Rayleigh-Taylor instability (small). _Worksheet 4, Task 2a_
+-   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large). _Worksheet 4, Task 2b_
+-   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation. _Worksheet 4, Task 3a_
+-   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid. _Worksheet 4, Task 3b_
+-   `input-lj-w4t5.xml`: Simulation of the Rayleigh-Taylor instability, performance contest environment. _Worksheet 4, Task 5_
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
@@ -169,6 +176,7 @@ Complete XML input files have the following structure:
     <output><!-- vtk, xyz, nil --></output> <!-- output type -->
   </args>
   <!-- A thermostat used to regulate the temperature of the particle system. -->
+  <!-- If you do not wish to use the thermostat, set the timeStep value to something larger than the total number of time integration steps and set brownianMotion to false. -->
   <thermostat>
     <!-- The intial temperature of the system. -->
     <init><!-- double --></init>

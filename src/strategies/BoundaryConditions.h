@@ -66,7 +66,7 @@ void handleReflectiveCondition(ParticleContainer &pc, Particle &p, Cell &fromCel
  *
  * @param pc The ParticleContainer containing the particle.
  * @param p The particle entering a halo cell.
- * @param targetCell The target cell of the particle.
+ * @param targetCell The cell the particle has moved to before this function is called.
  * @param lc The CellContainer containing the cell.
  */
 void handlePeriodicCondition(ParticleContainer &pc, Particle &p, Cell &targetCell, CellContainer *lc);
