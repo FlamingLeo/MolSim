@@ -4,7 +4,7 @@
         <endTime>100.0</endTime>
         <delta_t>0.0005</delta_t>
         <frequency>10</frequency>
-        <basename>MD_vtk_LJ_W4T2_L</basename>
+        <basename>MD_vtk_LJ_W5T3</basename>
         <output>vtk</output>
         <domainSize>
             <x>60.0</x>
