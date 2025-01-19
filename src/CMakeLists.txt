@@ -17,6 +17,16 @@ target_include_directories(mdsrc
 target_link_libraries(mdsrc PUBLIC xerces-c spdlog::spdlog)
 target_compile_definitions(mdsrc PUBLIC SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL})
 
+# check if openmp is available
+find_package(OpenMP)
+message(CHECK_START "Checking OpenMP availability")
+if(OpenMP_CXX_FOUND)
+    message(CHECK_PASS "found")
+    target_link_libraries(mdsrc PUBLIC OpenMP::OpenMP_CXX)
+else()
+    message(CHECK_FAIL "not found! Parallelization DISABLED")
+endif()
+
 # create executable target from source files
 add_executable(MolSim MolSim.cpp)
 target_link_libraries(MolSim mdsrc)
