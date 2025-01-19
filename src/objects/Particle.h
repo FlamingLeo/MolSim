@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "utils/OMPWrapper.h"
 #include <array>
 #include <string>
 
@@ -50,6 +51,9 @@ class Particle {
 
     /// @brief The cell index of the particle, to be used with the linked cell method.
     int cellIndex;
+
+    /// @brief A mutual exclusion lock, used alongside parallelization.
+    omp_lock_t lock;
 
     /**
      * @brief The status of the particle.
@@ -234,6 +238,13 @@ class Particle {
      * @return The ID of this particle.
      */
     int getId() const;
+
+    /**
+     * @brief Get a reference to the Lock object.
+     *
+     * @return A reference to the Lock object.
+     */
+    omp_lock_t &getLock();
 
     /**
      * @brief Sets the new position \f$ x \f$ of the particle to a given value.

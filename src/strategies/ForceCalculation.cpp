@@ -94,7 +94,8 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
 
-    // loop over all (regular) cells ic
+// loop over all (regular) cells ic
+#pragma omp parallel for
     for (auto &ic : lc->getIterableCells()) {
         // loop over all active particles i in cell ic
         for (auto &ri : ic.get()) {
@@ -125,8 +126,13 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                         auto forceVec = getLJForceVec(i, j, distVec, distNorm);
 
                         // apply force on particle i (no force on ghost particle)
+                        omp_set_lock(&i.getLock());
                         i.getF() = i.getF() + forceVec;
+                        omp_unset_lock(&i.getLock());
+
+                        omp_set_lock(&j.getLock());
                         j.getF() = j.getF() - forceVec;
+                        omp_unset_lock(&j.getLock());
                     }
                 }
             }

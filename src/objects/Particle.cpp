@@ -17,6 +17,7 @@ Particle::Particle(int type_arg)
         ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma, cellIndex);
     if (m <= 0)
         CLIUtils::error(MASS_ERROR);
+    omp_init_lock(&lock);
 }
 
 Particle::Particle(const Particle &other)
@@ -25,6 +26,7 @@ Particle::Particle(const Particle &other)
     SPDLOG_TRACE("Generated Particle {} (copy) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}", id,
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
+    omp_init_lock(&lock);
 }
 
 Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type, double eps,
@@ -36,6 +38,7 @@ Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &
                  cellIndex);
     if (m <= 0)
         CLIUtils::error(MASS_ERROR);
+    omp_init_lock(&lock);
 }
 
 Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
@@ -46,12 +49,14 @@ Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &
                  cellIndex);
     if (m <= 0)
         CLIUtils::error(MASS_ERROR);
+    omp_init_lock(&lock);
 }
 
 Particle::~Particle() {
     SPDLOG_TRACE("Destroyed Particle {} - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}, id: {}", id,
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
+    omp_destroy_lock(&lock);
 }
 
 /* functionality */
@@ -71,6 +76,7 @@ double Particle::getSigma() const { return sigma; }
 int Particle::getCellIndex() const { return cellIndex; }
 bool Particle::isActive() const { return active; }
 int Particle::getId() const { return id; }
+omp_lock_t &Particle::getLock() { return lock; }
 
 void Particle::setX(const std::array<double, 3> &new_x) { x = new_x; }
 void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }
