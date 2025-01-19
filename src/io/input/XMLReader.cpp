@@ -80,10 +80,10 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
 }
 
 // helper function to read and initialize thermostat
-static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t) {
-    t.initialize(2 /* this will be made changed once 3D is supported... */, xmlThermostat.init(),
-                 xmlThermostat.timeStep(), GET_IF_PRESENT(xmlThermostat, target, INFINITY),
-                 GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true));
+static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t, int dimensions) {
+    t.initialize(dimensions, xmlThermostat.init(), xmlThermostat.timeStep(),
+                 GET_IF_PRESENT(xmlThermostat, target, INFINITY), GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY),
+                 GET_IF_PRESENT(xmlThermostat, brownianMotion, true), GET_IF_PRESENT(xmlThermostat, nanoFlow, false));
 }
 
 // helper (wrapper) function to parse cuboids into a particle container
@@ -193,7 +193,7 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
         SPDLOG_DEBUG("Number of dimensions: {}", args.dimensions);
 
         const auto &xmlThermostat = xmlInput->thermostat();
-        initThermostat(xmlThermostat, t);
+        initThermostat(xmlThermostat, t, args.dimensions);
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?

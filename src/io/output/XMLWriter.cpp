@@ -55,7 +55,8 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
 
     // serialize thermostat
     ThermostatType tt{t.getTemp(), t.getTimestep()};
-    tt.brownianMotion() = false;     // since this is a continuation, we don't reinitialize velocities
+    tt.brownianMotion() = false; // since this is a continuation, we don't reinitialize velocities
+    tt.nanoFlow() = t.getNanoflow();
     tt.target() = t.getTargetTemp(); // no need to check if t_target is finite, because it always is...
     if (std::isfinite(t.getDeltaT()))
         tt.deltaT() = t.getDeltaT();

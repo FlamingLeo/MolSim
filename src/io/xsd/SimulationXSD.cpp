@@ -609,6 +609,14 @@ void ThermostatType::brownianMotion(const BrownianMotionType &x) { this->brownia
 
 void ThermostatType::brownianMotion(const BrownianMotionOptional &x) { this->brownianMotion_ = x; }
 
+const ThermostatType::NanoFlowOptional &ThermostatType::nanoFlow() const { return this->nanoFlow_; }
+
+ThermostatType::NanoFlowOptional &ThermostatType::nanoFlow() { return this->nanoFlow_; }
+
+void ThermostatType::nanoFlow(const NanoFlowType &x) { this->nanoFlow_.set(x); }
+
+void ThermostatType::nanoFlow(const NanoFlowOptional &x) { this->nanoFlow_ = x; }
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // ArgsType
@@ -1959,15 +1967,16 @@ SimType::~SimType() {}
 
 ThermostatType::ThermostatType(const InitType &init, const TimeStepType &timeStep)
     : ::xml_schema::Type(), init_(init, this), timeStep_(timeStep, this), target_(this), deltaT_(this),
-      brownianMotion_(this) {}
+      brownianMotion_(this), nanoFlow_(this) {}
 
 ThermostatType::ThermostatType(const ThermostatType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), init_(x.init_, f, this), timeStep_(x.timeStep_, f, this),
-      target_(x.target_, f, this), deltaT_(x.deltaT_, f, this), brownianMotion_(x.brownianMotion_, f, this) {}
+      target_(x.target_, f, this), deltaT_(x.deltaT_, f, this), brownianMotion_(x.brownianMotion_, f, this),
+      nanoFlow_(x.nanoFlow_, f, this) {}
 
 ThermostatType::ThermostatType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), init_(this), timeStep_(this), target_(this),
-      deltaT_(this), brownianMotion_(this) {
+      deltaT_(this), brownianMotion_(this), nanoFlow_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -2024,6 +2033,15 @@ void ThermostatType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::
             }
         }
 
+        // nanoFlow
+        //
+        if (n.name() == "nanoFlow" && n.namespace_().empty()) {
+            if (!this->nanoFlow_) {
+                this->nanoFlow_.set(NanoFlowTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         break;
     }
 
@@ -2048,6 +2066,7 @@ ThermostatType &ThermostatType::operator=(const ThermostatType &x) {
         this->target_ = x.target_;
         this->deltaT_ = x.deltaT_;
         this->brownianMotion_ = x.brownianMotion_;
+        this->nanoFlow_ = x.nanoFlow_;
     }
 
     return *this;
@@ -2906,6 +2925,14 @@ void operator<<(::xercesc::DOMElement &e, const ThermostatType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("brownianMotion", e));
 
         s << *i.brownianMotion();
+    }
+
+    // nanoFlow
+    //
+    if (i.nanoFlow()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("nanoFlow", e));
+
+        s << *i.nanoFlow();
     }
 }
 

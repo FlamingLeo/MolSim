@@ -138,6 +138,7 @@
             <xs:element type="xs:double" name="target" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:double" name="deltaT" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:boolean" name="brownianMotion" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:boolean" name="nanoFlow" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

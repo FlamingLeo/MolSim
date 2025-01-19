@@ -52,14 +52,13 @@ void Thermostat::initializeBrownianMotion() {
 }
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
-    if(!nanoFlow){
+    if (!nanoFlow) {
         for (auto &p : particles) {
             if (p.isActive()) {
                 sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
             }
         }
-    }
-    else{
+    } else {
         for (auto &p : particles) {
             if (p.isActive()) {
                 sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
@@ -92,7 +91,7 @@ void Thermostat::calculateScalingFactor() {
     SPDLOG_TRACE("New scaling factor: {}", scalingFactor);
 }
 
-void Thermostat::calculateThermalMotions(){
+void Thermostat::calculateThermalMotions() {
     for (auto &p : particles) {
         if (p.isActive()) {
             avg_velocity[0] += p.getV()[0];
@@ -103,8 +102,6 @@ void Thermostat::calculateThermalMotions(){
     avg_velocity[0] /= particles.size();
     avg_velocity[1] /= particles.size();
     avg_velocity[2] /= particles.size();
-
-
 
     for (auto &p : particles) {
         if (p.isActive()) {
@@ -141,20 +138,21 @@ void Thermostat::updateSystemTemp(int currentStep) {
     // calculate beta
     calculateScalingFactor();
 
-    if(!nanoFlow){
+    if (!nanoFlow) {
         // update particle velocities to set new temperature
         for (auto &p : particles) {
             if (p.isActive()) {
-                std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+                std::array<double, 3> newV =
+                    ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
                 p.setV(newV);
             }
         }
-    }
-    else{
+    } else {
         // update particle thermal motion to set new temperature
         for (auto &p : particles) {
             if (p.isActive()) {
-                std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
+                std::array<double, 3> newV =
+                    ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
                 p.setV(newV + avg_velocity);
             }
         }
@@ -168,11 +166,12 @@ double Thermostat::getTargetTemp() const { return T_target; }
 double Thermostat::getDeltaT() const { return delta_T; }
 double Thermostat::getScalingFactor() const { return scalingFactor; }
 int Thermostat::getTimestep() const { return n_thermostat; }
+bool Thermostat::getNanoflow() const { return nanoFlow; }
 ParticleContainer &Thermostat::getParticles() const { return particles; }
 
 bool Thermostat::operator==(const Thermostat &other) const {
     return dimension == other.dimension && kineticEnergy == other.kineticEnergy && temperature == other.temperature &&
            scalingFactor == other.scalingFactor && T_init == other.T_init && T_target == other.T_target &&
            n_thermostat == other.n_thermostat && delta_T == other.delta_T && limitScaling == other.limitScaling &&
-           initBrownianMotion == other.initBrownianMotion;
+           initBrownianMotion == other.initBrownianMotion && nanoFlow == other.nanoFlow;
 }

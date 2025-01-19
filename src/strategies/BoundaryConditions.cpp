@@ -37,7 +37,6 @@ bool handleHaloCell(Particle &p, Cell &targetCell, CellContainer *lc) {
 std::pair<HaloLocation, BoundaryCondition> determineBoundaryCondition(Particle &p, Cell &targetCell,
                                                                       CellContainer *lc) {
     // get cardinal direction(s) of halo cell
-    // TODO: i'm still debating whether a bitmap would be faster...
     const std::vector<HaloLocation> &haloLocations = targetCell.getHaloLocation();
 
     // if there is more than one cardinal direction, the cell is a _corner_ halo cell
