@@ -23,6 +23,7 @@ help() {
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-o       : Disables OpenMP functionality.
 -p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
@@ -38,10 +39,11 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdhj:lmps:tC:X:"
+OPTSTRING=":b:cdhj:lmops:tC:X:"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
+openmp_opt=""
 profiling_opt=""
 benchmarking_opt=""
 spdlog_level=""
@@ -119,6 +121,11 @@ while getopts ${OPTSTRING} opt; do
 
     echo "[BUILD] Documentation will be built after compilation."
     make_documentation=true
+    ;;
+  o)
+    # disable openmp
+    echo "[BUILD] OpenMP will be disabled."
+    openmp_opt="-DENABLE_OPENMP=OFF"
     ;;
   p)
     # disable profiling with debug builds
@@ -285,7 +292,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${openmp_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }
