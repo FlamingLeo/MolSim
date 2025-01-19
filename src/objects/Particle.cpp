@@ -5,14 +5,15 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
-#define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
+
+static int ids = 0;
 
 /* constructors */
 Particle::Particle(int type_arg)
     : x{0., 0., 0.}, v{0., 0., 0.}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{1.}, type{type_arg}, epsilon{1}, sigma{1},
-      cellIndex{-1} {
+      cellIndex{-1}, id{ids++} {
     SPDLOG_TRACE(
-        "Generated Particle (simple constructor) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {} cellIndex: {}",
+        "Generated Particle {} (simple constructor) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {} cellIndex: {}", id,
         ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma, cellIndex);
     if (m <= 0)
         CLIUtils::error(MASS_ERROR);
@@ -20,17 +21,18 @@ Particle::Particle(int type_arg)
 
 Particle::Particle(const Particle &other)
     : x{other.x}, v{other.v}, f{other.f}, old_f{other.old_f}, m{other.m}, type{other.type}, epsilon{other.epsilon},
-      sigma{other.sigma}, cellIndex{other.cellIndex} {
-    SPDLOG_TRACE("Generated Particle (copy) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
+      sigma{other.sigma}, cellIndex{other.cellIndex}, id{ids++} {
+    SPDLOG_TRACE("Generated Particle {} (copy) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}", id,
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
 }
 
 Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type, double eps,
                    double sigma)
-    : x{x}, v{v}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{m}, type{type}, epsilon{eps}, sigma{sigma}, cellIndex{-1} {
-    SPDLOG_TRACE("Generated Particle (arguments) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
-                 ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
+    : x{x}, v{v}, f{0., 0., 0.}, old_f{0., 0., 0.}, m{m}, type{type}, epsilon{eps}, sigma{sigma}, cellIndex{-1},
+      id{ids++} {
+    SPDLOG_TRACE("Generated Particle {} (arguments) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
+                 id, ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
     if (m <= 0)
         CLIUtils::error(MASS_ERROR);
@@ -38,8 +40,8 @@ Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &
 
 Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
                    const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex)
-    : x{x}, v{v}, f{f}, old_f{old_f}, m{m}, type{type}, epsilon{eps}, sigma{sigma}, cellIndex{cellIndex} {
-    SPDLOG_TRACE("Generated Particle (complete) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
+    : x{x}, v{v}, f{f}, old_f{old_f}, m{m}, type{type}, epsilon{eps}, sigma{sigma}, cellIndex{cellIndex}, id{ids++} {
+    SPDLOG_TRACE("Generated Particle {} (complete) - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}", id,
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
     if (m <= 0)
@@ -47,7 +49,7 @@ Particle::Particle(const std::array<double, 3> &x, const std::array<double, 3> &
 }
 
 Particle::~Particle() {
-    SPDLOG_TRACE("Destroyed Particle - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}",
+    SPDLOG_TRACE("Destroyed Particle {} - x: {}, v: {}, f: {}, m: {}, eps: {}, sigma: {}, cellIndex: {}, id: {}", id,
                  ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), m, epsilon, sigma,
                  cellIndex);
 }
@@ -62,12 +64,13 @@ const std::array<double, 3> &Particle::getV() const { return v; }
 const std::array<double, 3> &Particle::getThermalMotion() const { return thermal_motion; }
 const std::array<double, 3> &Particle::getF() const { return f; }
 const std::array<double, 3> &Particle::getOldF() const { return old_f; }
-const double Particle::getM() const { return m; }
-const int Particle::getType() const { return type; }
-const double Particle::getEpsilon() const { return epsilon; }
-const double Particle::getSigma() const { return sigma; }
-const int Particle::getCellIndex() const { return cellIndex; }
-const bool Particle::isActive() const { return active; }
+double Particle::getM() const { return m; }
+int Particle::getType() const { return type; }
+double Particle::getEpsilon() const { return epsilon; }
+double Particle::getSigma() const { return sigma; }
+int Particle::getCellIndex() const { return cellIndex; }
+bool Particle::isActive() const { return active; }
+int Particle::getId() const { return id; }
 
 void Particle::setX(const std::array<double, 3> &new_x) { x = new_x; }
 void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }

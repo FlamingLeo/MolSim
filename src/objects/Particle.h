@@ -16,6 +16,7 @@
 #define TYPE_DEFAULT 0
 #define SIGMA_DEFAULT 1
 #define EPSILON_DEFAULT 5
+#define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
 /// @brief Particle class modeling a particle's position, velocity, force, mass and type.
 class Particle {
@@ -58,6 +59,9 @@ class Particle {
      *
      */
     bool active{true};
+
+    /// @brief A unique ID for this particle. Currently only used for debug purposes.
+    int id;
 
   public:
     /**
@@ -182,28 +186,28 @@ class Particle {
      *
      * @return The mass of the particle.
      */
-    const double getM() const;
+    double getM() const;
 
     /**
      * @brief Gets the type of the particle.
      *
      * @return The type of the particle.
      */
-    const int getType() const;
+    int getType() const;
 
     /**
      * @brief Gets the Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      *
      * @return The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      */
-    const double getEpsilon() const;
+    double getEpsilon() const;
 
     /**
      * @brief Gets the Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      *
      * @return The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
-    const double getSigma() const;
+    double getSigma() const;
 
     /**
      * @brief Get the index of the particle in a CellContainer.
@@ -212,7 +216,7 @@ class Particle {
      *
      * @return The index of the particle in a grid of cells.
      */
-    const int getCellIndex() const;
+    int getCellIndex() const;
 
     /**
      * @brief Checks if the particle is currently active.
@@ -220,7 +224,16 @@ class Particle {
      * @return true if the particle is currently active.
      * @return false if the particle is currently inactive.
      */
-    const bool isActive() const;
+    bool isActive() const;
+
+    /**
+     * @brief Get the ID of this particle.
+     *
+     * Currently only used for debugging purposes.
+     *
+     * @return The ID of this particle.
+     */
+    int getId() const;
 
     /**
      * @brief Sets the new position \f$ x \f$ of the particle to a given value.
