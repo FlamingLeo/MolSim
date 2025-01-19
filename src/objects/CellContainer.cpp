@@ -37,7 +37,6 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                  ArrayUtils::to_string(domainSize), cutoff, dim);
 
     // determining cell size
-    // if we are in 2D numCells
     for (size_t i = 0; i < dim; i++) {
         if (std::fabs(std::fmod(domainSize[i], cutoff)) < 1e-9) {
             // perfect fit
@@ -115,7 +114,7 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
 
                 // this should be deleted and borderLocation condition added, but I'm afraid to break everything (who
                 // wrote this? - in any case I agree)
-                //  we don't care about which type of border it is, for now...
+                // we don't care about which type of border it is, for now...
                 bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
                                           x == 1 || x == (numCells[0] - 2))
                                        : (y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2));
@@ -126,12 +125,15 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 cells.emplace_back(cellSize, position, type, index, haloLocation, borderLocation);
                 calculateNeighbors(cells.size() - 1);
 
-                // add to special cell ref. containers
+                // add to cell ref. containers
                 // we can do this in here because we reserved the size of the vector beforehand...
                 if (type == CellType::HALO) {
                     haloCells.push_back(std::ref(cells[cells.size() - 1]));
                 } else if (type == CellType::BORDER) {
                     borderCells.push_back(std::ref(cells[cells.size() - 1]));
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
+                } else {
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
                 }
 
                 SPDLOG_TRACE("Created new cell ({}, {}) (index: {})", x, y, index);
@@ -356,6 +358,13 @@ void CellContainer::calculateNeighbors(int cellIndex) {
 }
 
 const std::vector<int> &CellContainer::getNeighbors(int cellIndex) const { return cells[cellIndex].getNeighbors(); }
+std::vector<std::reference_wrapper<Cell>> CellContainer::getNeighborCells(int cellIndex) {
+    std::vector<std::reference_wrapper<Cell>> neighbors;
+    for (size_t idx : getNeighbors(cellIndex)) {
+        neighbors.push_back(std::ref(cells[idx]));
+    }
+    return neighbors;
+}
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
     // coincidentally works just as well for getting the opposite halo cell for a border cell; currently in 2D
@@ -447,6 +456,8 @@ std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() { ret
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() const { return borderCells; }
 std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() { return haloCells; }
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() const { return haloCells; }
+std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() { return iterableCells; }
+const std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() const { return iterableCells; }
 const std::array<double, 3> &CellContainer::getDomainSize() const { return domainSize; }
 const std::array<double, 3> &CellContainer::getCellSize() const { return cellSize; }
 const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCells; }

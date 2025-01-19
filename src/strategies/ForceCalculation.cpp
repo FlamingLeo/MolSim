@@ -13,7 +13,6 @@ static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p
     double sigma = (p1.getSigma() + p2.getSigma()) / 2;
 
     // precompute terms
-    // pow(x, 2) _may_ allegedly be faster...
     double distNormSquared = std::pow(distNorm, 2);
     double invDistNorm = 1.0 / distNorm;
     double sigmaOverDist = sigma * invDistNorm;
@@ -95,39 +94,34 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
 
-    // loop over all cells ic
-    for (auto &ic : *lc) {
-        // special case: if halo cell, skip (no multiple interactions between same particles)
-        if (!ic.getHaloLocation().empty()) {
-            continue;
-        }
-
+    // loop over all (regular) cells ic
+    for (auto &ic : lc->getIterableCells()) {
         // loop over all active particles i in cell ic
-        for (auto &ri : ic) {
-            Particle &i = ri;
-
+        for (auto &ri : ic.get()) {
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
-            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
-                Cell &kc = (*lc)[kci];
-
+            for (auto &kc : lc->getNeighborCells(ic.get().getIndex())) {
                 // loop over all particles j in kc
-                for (auto &rj : kc) {
-                    // check if j is active AND if i and j form a distinct pair (N3L)
+                for (auto &rj : kc.get()) {
+                    // check if i and j form a distinct pair (N3L)
+                    // note: we don't need to check for activity here, since all particles are guaranteed active
+                    //       all inactive particles have since been removed from the cells
                     // for checking distinct pairs, we compare the memory addresses of the two particles
+                    Particle &i = ri;
                     Particle &j = rj;
                     if (&i >= &j)
                         continue;
 
                     // get the position used to calculate the distance between to particles
-                    std::array<double, 3> truePos = getTruePos(j, kc, lc);
+                    std::array<double, 3> truePos = getTruePos(j, kc.get(), lc);
 
                     // calculate the distance between the two particles
                     auto distVec = i.getX() - truePos;
-                    double distNorm = ArrayUtils::L2Norm(distVec);
+                    double dist = ArrayUtils::L2NormSquared(distVec);
 
                     // compute force if distance is less than cutoff
-                    if (distNorm <= lc->getCutoff()) {
+                    if (dist <= SQR(lc->getCutoff())) {
                         // calculate force
+                        double distNorm = std::sqrt(dist);
                         auto forceVec = getLJForceVec(i, j, distVec, distNorm);
 
                         // apply force on particle i (no force on ghost particle)

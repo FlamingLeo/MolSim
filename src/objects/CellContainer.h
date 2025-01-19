@@ -37,10 +37,12 @@ class CellContainer {
     ContainerType cells;
     /// @brief Container of mutual exclusion locks for each cell.
     std::vector<omp_lock_t> cellLocks;
-    /// @brief Container of pointers to border cells.
+    /// @brief Container of references to border cells.
     std::vector<std::reference_wrapper<Cell>> borderCells;
-    /// @brief Container of pointers to halo cells.
+    /// @brief Container of references to halo cells.
     std::vector<std::reference_wrapper<Cell>> haloCells;
+    /// @brief Container of references to cells to iterate over when calculating the forces between particles.
+    std::vector<std::reference_wrapper<Cell>> iterableCells;
     /// @brief The size of the domain in each dimension.
     std::array<double, 3> domainSize;
     /// @brief The size of each cell in each dimension (default: 0, 0, 0).
@@ -273,6 +275,20 @@ class CellContainer {
     const std::vector<std::reference_wrapper<Cell>> &getHaloCells() const;
 
     /**
+     * @brief Gets a reference to the iterable Cell container.
+     *
+     * @return A reference to the iterable Cell container.
+     */
+    std::vector<std::reference_wrapper<Cell>> &getIterableCells();
+
+    /**
+     * @brief Gets a const reference to the iterable Cell container.
+     *
+     * @return A const reference to the iterable Cell container.
+     */
+    const std::vector<std::reference_wrapper<Cell>> &getIterableCells() const;
+
+    /**
      * @brief Removes the active halo Cell Particle objects.
      *
      * For each halo Cell particle, if the Particle is active, it is removed from the Cell's linked list and is marked
@@ -371,6 +387,8 @@ class CellContainer {
      * @return A vector of neighbouring Cell indices, including the Cell itself.
      */
     const std::vector<int> &getNeighbors(int cellIndex) const;
+
+    std::vector<std::reference_wrapper<Cell>> getNeighborCells(int cellIndex);
 
     /**
      * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
