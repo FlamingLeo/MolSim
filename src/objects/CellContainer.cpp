@@ -18,7 +18,7 @@
 #define PRINT_CELL_CONTENTS() (void)0
 #endif
 
-/* constructor */
+/* constructor and destructor */
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                              const std::array<BoundaryCondition, 6> &conditions, double cutoff,
                              ParticleContainer &particles, size_t dim)
@@ -54,9 +54,10 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         }
     }
 
-    // reserve space for all cells
+    // reserve space for all cells and cell locks
     size_t totalNumCells = numCells[0] * numCells[1] * numCells[2];
     cells.reserve(totalNumCells);
+    cellLocks.reserve(totalNumCells);
     SPDLOG_DEBUG("Reserved space for {} cells (X: {}, Y: {}, Z: {}).", totalNumCells, numCells[0], numCells[1],
                  numCells[2]);
 
@@ -134,6 +135,10 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 }
 
                 SPDLOG_TRACE("Created new cell ({}, {}) (index: {})", x, y, index);
+
+                // initialize corresponding cell lock
+                omp_init_lock(&cellLocks[index]);
+
                 index++;
             }
         }
@@ -147,6 +152,12 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
     // debug print
     PRINT_CELL_INDICES();
     PRINT_CELL_CONTENTS();
+}
+
+CellContainer::~CellContainer() {
+    for (size_t i = 0; i < cellLocks.size(); ++i) {
+        omp_destroy_lock(&cellLocks[i]);
+    }
 }
 
 /* iterators */
@@ -224,7 +235,9 @@ bool CellContainer::addParticle(Particle &p) {
     int cellIndex = p.getCellIndex() == -1 ? getCellIndex(p.getX()) : p.getCellIndex();
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
         p.setCellIndex(cellIndex);
+        omp_set_lock(&cellLocks[cellIndex]);
         cells[cellIndex].addParticle(p);
+        omp_unset_lock(&cellLocks[cellIndex]);
         SPDLOG_TRACE("Added particle {}", p.toString());
         return true;
     } else {
@@ -235,7 +248,9 @@ bool CellContainer::addParticle(Particle &p) {
 void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
     assert(cellIndex != -1);
+    omp_set_lock(&cellLocks[cellIndex]);
     cells[cellIndex].removeParticle(p);
+    omp_unset_lock(&cellLocks[cellIndex]);
     p.setCellIndex(-1);
     SPDLOG_TRACE("Removed particle from cell {}: {}", cellIndex, p.toString());
 }

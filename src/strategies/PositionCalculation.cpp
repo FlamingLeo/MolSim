@@ -3,6 +3,7 @@
 #include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
+#include "utils/OMPWrapper.h"
 #include <functional>
 #include <spdlog/spdlog.h>
 #include <vector>
@@ -24,6 +25,8 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
 
 void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc) {
     SPDLOG_TRACE("Calculating new position (linked cells)...");
+
+#pragma omp parallel for
     for (auto &p : particles) {
         if (!p.isActive())
             continue;

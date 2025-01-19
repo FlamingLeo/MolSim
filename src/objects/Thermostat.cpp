@@ -144,8 +144,8 @@ void Thermostat::updateSystemTemp(int currentStep) {
         for (auto &p : particles) {
             // update particle velocities to set new temperature
             if (p.isActive()) {
-                SPDLOG_INFO("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                            omp_get_num_threads());
+                SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
+                             omp_get_num_threads());
                 std::array<double, 3> newV =
                     ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
                 p.setV(newV);
@@ -156,8 +156,8 @@ void Thermostat::updateSystemTemp(int currentStep) {
         for (auto &p : particles) {
             // update particle thermal motion to set new temperature
             if (p.isActive()) {
-                SPDLOG_INFO("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                            omp_get_num_threads());
+                SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
+                             omp_get_num_threads());
                 std::array<double, 3> newV =
                     ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
                 p.setV(newV + avg_velocity);

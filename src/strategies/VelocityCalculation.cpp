@@ -1,10 +1,12 @@
 #include "VelocityCalculation.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
+#include "utils/OMPWrapper.h"
 #include <functional>
 #include <spdlog/spdlog.h>
 
 void calculateV(ParticleContainer &particles, double delta_t) {
+#pragma omp parallel for
     for (auto &p : particles) {
         if (!p.isActive())
             continue;

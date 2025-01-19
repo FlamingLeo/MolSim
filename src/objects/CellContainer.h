@@ -13,6 +13,7 @@
 #include "io/input/FileReader.h"
 #include "io/output/WriterFactory.h"
 #include "utils/CellUtils.h"
+#include "utils/OMPWrapper.h"
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -34,6 +35,8 @@ class CellContainer {
   private:
     /// @brief The container of Cell objects itself.
     ContainerType cells;
+    /// @brief Container of mutual exclusion locks for each cell.
+    std::vector<omp_lock_t> cellLocks;
     /// @brief Container of pointers to border cells.
     std::vector<std::reference_wrapper<Cell>> borderCells;
     /// @brief Container of pointers to halo cells.
@@ -55,7 +58,7 @@ class CellContainer {
 
   public:
     /**
-     * @brief Constructs a new CellContainer.
+     * @brief Constructs a new CellContainer and initializes all Cell objects and locks.
      *
      * @param domainSize The size of the domain.
      * @param conditions The boundary conditions to be applied at each boundary.
@@ -65,6 +68,9 @@ class CellContainer {
      */
     CellContainer(const std::array<double, 3> &domainSize, const std::array<BoundaryCondition, 6> &conditions,
                   double cutoff, ParticleContainer &particles, size_t dim = 3);
+
+    /// @brief Destroys the CellContainer object and frees the reserved locks.
+    ~CellContainer();
 
     /**
      * @brief Standard library iterator function for marking the beginning of the iteration process.
