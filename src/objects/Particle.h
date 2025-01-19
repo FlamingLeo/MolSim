@@ -26,6 +26,9 @@ class Particle {
     /// @brief Velocity \f$ v \f$ of the particle.
     std::array<double, 3> v;
 
+    /// @brief Thermal motion of the particle
+    std::array<double, 3> thermal_motion;
+
     /// @brief Force \f$ F \f$ effective on this particle.
     std::array<double, 3> f;
 
@@ -154,6 +157,13 @@ class Particle {
     const std::array<double, 3> &getV() const;
 
     /**
+     * @brief Gets the thermal motion \f$ thermal_motion \f$ of this particle (const).
+     *
+     * @return A const reference to the thermal motion array of this particle.
+     */
+    const std::array<double, 3> &getThermalMotion() const;
+
+    /**
      * @brief Gets the force \f$ F \f$ effective on this particle (const).
      *
      * @return A const reference to the force array of this particle.
@@ -225,6 +235,13 @@ class Particle {
      * @param new_v A reference to the array containing the new velocity of this particle.
      */
     void setV(const std::array<double, 3> &new_v);
+
+    /**
+     * @brief Sets the new thermal motion \f$ thermal_motion \f$ of the particle to a given value.
+     *
+     * @param new_thermal_motion A reference to the array containing the new thermal motion of this particle.
+     */
+    void setThermalMotion(const std::array<double, 3> &new_thermal_motion);
 
     /**
      * @brief Sets the new force effective on the particle \f$ F \f$ to a given value.

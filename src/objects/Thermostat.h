@@ -63,6 +63,12 @@ class Thermostat {
     /// @brief Determines whether or not to initialize the velocities with Brownian Motion (default: on).
     bool initBrownianMotion{true};
 
+    /// @brief Determines whether the thermostat is used for the nano-scale flow simulation
+    bool nanoFlow{false};
+
+    /// @brief Average velocity of the system
+    std::array<double, 3> avg_velocity{0, 0, 0};
+
     /// @brief A reference to the Particle system.
     ParticleContainer &particles;
 
@@ -84,9 +90,10 @@ class Thermostat {
      * @param T_target The target temperature \f$ T_{target} \f$ of the system.
      * @param delta_T The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application.
      * @param initBrownianMotion Determines whether or not to initialize the velocities with Brownian Motion.
+     * @param nanoFlow Determines whether the thermostat is used for the nano-scale flow simulation
      */
     Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
-               double delta_T, bool initBrownianMotion);
+               double delta_T, bool initBrownianMotion, bool nanoFlow);
 
     /// @brief Destroys the current Thermostat object.
     ~Thermostat();
@@ -100,9 +107,10 @@ class Thermostat {
      * @param T_target The target temperature \f$ T_{target} \f$ of the system.
      * @param delta_T The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application.
      * @param initBrownianMotion Determines whether or not to initialize the velocities with Brownian Motion.
+     * @param nanoFlow Determines whether the thermostat is used for the nano-scale flow simulation
      */
     void initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
-                    bool initBrownianMotion);
+                    bool initBrownianMotion, bool nanoFlow);
 
     /**
      * @brief Initialize the Particle velocities with Brownian Motion.
@@ -140,6 +148,14 @@ class Thermostat {
      * (depending if the current temperature is above or below the target temperature).
      */
     void calculateScalingFactor();
+
+
+    /**
+     * @brief Calculates the thermal motions of each particle of the system.
+     *
+     * @details TODO
+     */
+    void calculateThermalMotions();
 
     /**
      * @brief Updates the system temperature.

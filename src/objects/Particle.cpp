@@ -59,6 +59,7 @@ std::array<double, 3> &Particle::getF() { return f; }
 std::array<double, 3> &Particle::getOldF() { return old_f; }
 const std::array<double, 3> &Particle::getX() const { return x; }
 const std::array<double, 3> &Particle::getV() const { return v; }
+const std::array<double, 3> &Particle::getThermalMotion() const { return thermal_motion; }
 const std::array<double, 3> &Particle::getF() const { return f; }
 const std::array<double, 3> &Particle::getOldF() const { return old_f; }
 const double Particle::getM() const { return m; }
@@ -70,6 +71,7 @@ const bool Particle::isActive() const { return active; }
 
 void Particle::setX(const std::array<double, 3> &new_x) { x = new_x; }
 void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }
+void Particle::setThermalMotion(const std::array<double, 3> &new_thermal_motion) { thermal_motion = new_thermal_motion; }
 void Particle::setF(const std::array<double, 3> &new_f) { f = new_f; }
 void Particle::setOldF(const std::array<double, 3> &new_old_f) { old_f = new_old_f; }
 void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }

@@ -14,20 +14,20 @@ Thermostat::Thermostat(ParticleContainer &particles) : particles{particles} {
     SPDLOG_TRACE("Created new Thermostat, arguments uninitialized!");
 }
 Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
-                       double delta_T, bool initBrownianMotion)
+                       double delta_T, bool initBrownianMotion, bool nanoFlow)
     : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{std::isfinite(T_target) ? T_target : T_init},
       n_thermostat{n_thermostat}, delta_T{delta_T}, limitScaling{std::isfinite(delta_T)},
-      initBrownianMotion{initBrownianMotion} {
+      initBrownianMotion{initBrownianMotion}, nanoFlow{nanoFlow} {
     SPDLOG_TRACE("Created new Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
                  "limit: {}, bm: {}",
                  this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
-                 this->initBrownianMotion);
+                 this->initBrownianMotion, this->nanoFlow);
 }
 Thermostat::~Thermostat() = default;
 
 /* functionality */
 void Thermostat::initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
-                            bool initBrownianMotion) {
+                            bool initBrownianMotion, bool nanoFlow) {
     this->dimension = dimension;
     this->T_init = T_init;
     this->n_thermostat = n_thermostat;
@@ -35,6 +35,7 @@ void Thermostat::initialize(int dimension, double T_init, int n_thermostat, doub
     this->delta_T = delta_T;
     this->initBrownianMotion = initBrownianMotion;
     this->limitScaling = std::isfinite(delta_T);
+    this->nanoFlow = nanoFlow;
 
     SPDLOG_TRACE("Initialized Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
                  "limit: {}, bm: {}",
@@ -51,9 +52,18 @@ void Thermostat::initializeBrownianMotion() {
 }
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
-    for (auto &p : particles) {
-        if (p.isActive()) {
-            sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+    if(!nanoFlow){
+        for (auto &p : particles) {
+            if (p.isActive()) {
+                sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
+            }
+        }
+    }
+    else{
+        for (auto &p : particles) {
+            if (p.isActive()) {
+                sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
+            }
         }
     }
     kineticEnergy = sum / 2;
@@ -81,6 +91,28 @@ void Thermostat::calculateScalingFactor() {
     scalingFactor = std::sqrt(T_new / temperature);
     SPDLOG_TRACE("New scaling factor: {}", scalingFactor);
 }
+
+void Thermostat::calculateThermalMotions(){
+    for (auto &p : particles) {
+        if (p.isActive()) {
+            avg_velocity[0] += p.getV()[0];
+            avg_velocity[1] += p.getV()[1];
+            avg_velocity[2] += p.getV()[2];
+        }
+    }
+    avg_velocity[0] /= particles.size();
+    avg_velocity[1] /= particles.size();
+    avg_velocity[2] /= particles.size();
+
+
+
+    for (auto &p : particles) {
+        if (p.isActive()) {
+            p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
+        }
+    }
+}
+
 void Thermostat::updateSystemTemp(int currentStep) {
     if (currentStep % n_thermostat != 0)
         return;
@@ -109,11 +141,22 @@ void Thermostat::updateSystemTemp(int currentStep) {
     // calculate beta
     calculateScalingFactor();
 
-    // update particle velocities to set new temperature
-    for (auto &p : particles) {
-        if (p.isActive()) {
-            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
-            p.setV(newV);
+    if(!nanoFlow){
+        // update particle velocities to set new temperature
+        for (auto &p : particles) {
+            if (p.isActive()) {
+                std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+                p.setV(newV);
+            }
+        }
+    }
+    else{
+        // update particle thermal motion to set new temperature
+        for (auto &p : particles) {
+            if (p.isActive()) {
+                std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
+                p.setV(newV + avg_velocity);
+            }
         }
     }
     SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);
