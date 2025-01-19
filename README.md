@@ -63,6 +63,7 @@ Following options are supported:
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
+-o       : Disables OpenMP functionality.
 -p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
@@ -157,7 +158,8 @@ The program supports XML input files. Currently, the following input files are i
 -   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large).
 -   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation.
 -   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid.
--   `input-lj-w4t5.xml`: Simulation of the Rayleigh-Taylor instability, performance contest environment.
+-   `input-lj-w4t5-small.xml`: Simulation of the Rayleigh-Taylor instability (small), performance contest environment.
+-   `input-lj-w4t5-large.xml`: Simulation of the Rayleigh-Taylor instability (large), performance contest environment.
 -   `input-lj-w5t3.xml`: Simulation of the Rayleigh-Taylor instability in 3D.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
@@ -194,6 +196,9 @@ Complete XML input files have the following structure:
     <deltaT><!-- double --></deltaT>
     <!-- Specify, whether or not particle velocities should be initialized with Brownian Motion in the first iteration. -->
     <brownianMotion><!-- boolean --></brownianMotion>
+    <!-- (Optional) Specify, whether or not the thermostat is used for the nano-scale flow simulation. -->
+    <!-- By default, this is set to false. -->
+    <nanoFlow><!-- boolean --></nanoFlow>
   </thermostat>
   <!-- The type of the simulation. Must be specified. -->
   <type><!-- gravity, lj --></type>
