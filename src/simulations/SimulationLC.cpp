@@ -2,6 +2,7 @@
 #include "io/output/XMLWriter.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CellUtils.h"
+#include "utils/OMPWrapper.h"
 #include "utils/StringUtils.h"
 
 SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t)
@@ -27,6 +28,7 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
     SPDLOG_INFO("bd. cond.   : {}", CellUtils::fromBoundaryConditionArray(m_args.conditions));
     SPDLOG_INFO("#particles  : {}", m_particles.size());
+    SPDLOG_INFO("max threads : {}", omp_get_max_threads());
 
     initializeBase();
     runSimulationLoop(&m_cellContainer);

@@ -18,4 +18,5 @@ inline void omp_init_lock(omp_lock_t *) { return; }
 inline void omp_destroy_lock(omp_lock_t *) { return; }
 inline void omp_set_lock(omp_lock_t *) { return; }
 inline void omp_unset_lock(omp_lock_t *) { return; }
+inline int omp_get_max_threads() { return 1; }
 #endif

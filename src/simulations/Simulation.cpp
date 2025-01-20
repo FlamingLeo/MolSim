@@ -1,4 +1,5 @@
 #include "Simulation.h"
+#include "utils/OMPWrapper.h"
 #include "utils/StringUtils.h"
 
 Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
@@ -71,6 +72,7 @@ void Simulation::runSimulation() {
     SPDLOG_INFO("output freq.: {}", m_args.itFreq);
     SPDLOG_INFO("basename    : {}", m_args.basename);
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
+    SPDLOG_INFO("max threads : {}", omp_get_max_threads());
 
     initializeBase();
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
