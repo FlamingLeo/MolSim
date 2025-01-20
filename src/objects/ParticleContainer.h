@@ -164,9 +164,13 @@ class ParticleContainer {
      * @param type The type of the new particle.
      * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations.
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations.
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations.
      */
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
-                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
+                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT, double k = K_DEFAULT,
+                     double r_0 = R0_DEFAULT, double fzup = FZUP_DEFAULT);
 
     /**
      * @brief Creates and adds a new complete particle to the container.
@@ -182,7 +186,8 @@ class ParticleContainer {
      * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
      */
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
-                     const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
+                     const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, double k,
+                     double r_0, double fzup, int cellIndex);
 
     /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.

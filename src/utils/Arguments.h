@@ -54,6 +54,8 @@ struct Arguments {
                                                 BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW};
     /// @brief The dimensions of the simulation, either 2 or 3 (default: 2).
     size_t dimensions{2};
+    /// @brief Determines, whether the simulation is a membrane simulation or not.
+    bool membrane{false};
     /// @brief Bitset containing flags, whether startTime (0), endTime (1), delta_t (2) and basename (3) have been
     /// manually set by the user. If not, use default values depending on the simulation.
     std::bitset<4> argsSet{0b0000};

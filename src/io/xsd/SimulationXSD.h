@@ -605,6 +605,7 @@ class CuboidType;
 class ParticleType;
 class DiscType;
 class ObjectsType;
+class MembraneType;
 class SimType;
 class ThermostatType;
 
@@ -4737,6 +4738,224 @@ class ObjectsType : public ::xml_schema::Type {
 };
 
 /**
+ * @brief Class corresponding to the %membraneType schema type.
+ *
+ * @nosubgrouping
+ */
+class MembraneType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name stiffness
+     *
+     * @brief Accessor and modifier functions for the %stiffness
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double StiffnessType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<StiffnessType, char, ::xsd::cxx::tree::schema_type::double_> StiffnessTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const StiffnessType &stiffness() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    StiffnessType &stiffness();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void stiffness(const StiffnessType &x);
+
+    //@}
+
+    /**
+     * @name avgBondLength
+     *
+     * @brief Accessor and modifier functions for the %avgBondLength
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double AvgBondLengthType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<AvgBondLengthType, char, ::xsd::cxx::tree::schema_type::double_>
+        AvgBondLengthTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const AvgBondLengthType &avgBondLength() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    AvgBondLengthType &avgBondLength();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void avgBondLength(const AvgBondLengthType &x);
+
+    //@}
+
+    /**
+     * @name zForce
+     *
+     * @brief Accessor and modifier functions for the %zForce
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double ZForceType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ZForceType, char, ::xsd::cxx::tree::schema_type::double_> ZForceTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const ZForceType &zForce() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    ZForceType &zForce();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void zForce(const ZForceType &x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    MembraneType(const StiffnessType &, const AvgBondLengthType &, const ZForceType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    MembraneType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    MembraneType(const MembraneType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual MembraneType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    MembraneType &operator=(const MembraneType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~MembraneType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<StiffnessType> stiffness_;
+    ::xsd::cxx::tree::one<AvgBondLengthType> avgBondLength_;
+    ::xsd::cxx::tree::one<ZForceType> zForce_;
+
+    //@endcond
+};
+
+/**
  * @brief Class corresponding to the %simType schema type.
  *
  * @nosubgrouping
@@ -4865,6 +5084,77 @@ class SimType : public ::xml_schema::Type {
      * instead of making a copy.
      */
     void thermostat(::std::unique_ptr<ThermostatType> p);
+
+    //@}
+
+    /**
+     * @name membrane
+     *
+     * @brief Accessor and modifier functions for the %membrane
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::MembraneType MembraneType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<MembraneType> MembraneOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<MembraneType, char> MembraneTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const MembraneOptional &membrane() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    MembraneOptional &membrane();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void membrane(const MembraneType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void membrane(const MembraneOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void membrane(::std::unique_ptr<MembraneType> p);
 
     //@}
 
@@ -5242,6 +5532,7 @@ class SimType : public ::xml_schema::Type {
   protected:
     ArgsOptional args_;
     ::xsd::cxx::tree::one<ThermostatType> thermostat_;
+    MembraneOptional membrane_;
     ::xsd::cxx::tree::one<TypeType> type_;
     LinkedCellsOptional linkedCells_;
     DimensionsOptional dimensions_;
@@ -6059,6 +6350,8 @@ void operator<<(::xercesc::DOMElement &, const ParticleType &);
 void operator<<(::xercesc::DOMElement &, const DiscType &);
 
 void operator<<(::xercesc::DOMElement &, const ObjectsType &);
+
+void operator<<(::xercesc::DOMElement &, const MembraneType &);
 
 void operator<<(::xercesc::DOMElement &, const SimType &);
 

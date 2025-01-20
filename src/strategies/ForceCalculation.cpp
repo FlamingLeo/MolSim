@@ -144,7 +144,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
         deleteGhostParticles(lc);
 }
 
-void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc){
+void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // mirror border particles for periodic boundaries
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
@@ -183,8 +183,8 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                     if (VEC_CONTAINS(i.getDirectNeighbours(), j)){
                         // compute scalar
                         double scalar = k * (1 - r_0/ distNorm);
-                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i, we multiply by -1
-                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i, we multiply
+                    by -1 forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
 
                     } else if (VEC_CONTAINS(i.getDiagonalNeighbours(), j)){
                         double scalar = k * (1 - std::sqrt(2) * r_0/ distNorm);

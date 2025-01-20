@@ -70,14 +70,15 @@ void ParticleContainer::addParticle(const Particle &particle) {
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type,
-                                    double eps, double sigma) {
-    m_particles.emplace_back(x, v, m, type, eps, sigma);
+                                    double eps, double sigma, double k, double r_0, double fzup) {
+    m_particles.emplace_back(x, v, m, type, eps, sigma, k, r_0, fzup);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v,
                                     const std::array<double, 3> &f, const std::array<double, 3> &old_f, double m,
-                                    int type, double eps, double sigma, int cellIndex) {
-    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, cellIndex);
+                                    int type, double eps, double sigma, double k, double r_0, double fzup,
+                                    int cellIndex) {
+    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, k, r_0, fzup, cellIndex);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::reserve(size_t capacity) {

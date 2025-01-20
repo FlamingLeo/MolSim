@@ -89,6 +89,13 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     s.totalParticles() = pc.activeSize();
     s.dimensions() = args.dimensions;
 
+    // potentially serialize membrane data
+    if (args.membrane && !pc.isEmpty()) {
+        // this can be expanded if the values differ for each particle
+        MembraneType m{pc[0].getK(), pc[0].getR0(), pc[0].getFZUP()};
+        s.membrane() = m;
+    }
+
     // write output to file
     sim(m_file, s);
     SPDLOG_INFO("Saved final simulation state to output file {}.", m_filename);

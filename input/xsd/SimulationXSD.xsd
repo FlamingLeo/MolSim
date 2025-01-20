@@ -119,10 +119,19 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="membraneType">
+        <xs:sequence>
+            <xs:element type="xs:double" name="stiffness"/>
+            <xs:element type="xs:double" name="avgBondLength"/>
+            <xs:element type="xs:double" name="zForce"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="simType">
         <xs:sequence>
             <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1"/>
             <xs:element type="thermostatType" name="thermostat"/>
+            <xs:element type="membraneType" name="membrane" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:string" name="type"/>
             <xs:element type="xs:boolean" name="linkedCells" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:positiveInteger" name="dimensions" minOccurs="0" maxOccurs="1"/>

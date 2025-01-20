@@ -18,6 +18,9 @@
 #define TYPE_DEFAULT 0
 #define SIGMA_DEFAULT 1
 #define EPSILON_DEFAULT 5
+#define K_DEFAULT 0
+#define R0_DEFAULT 0
+#define FZUP_DEFAULT 0
 #define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
 /// @brief Particle class modeling a particle's position, velocity, force, mass and type.
@@ -55,6 +58,15 @@ class Particle {
 
     /// @brief Distance \f$ \sigma \f$ where the Lennard-Jones potential reaches zero. Lennard-Jones parameter.
     double sigma;
+
+    /// @brief The stiffness constant \f$ k \f$ for membrane simulations.
+    double k;
+
+    /// @brief The average bond length \f$ r_0 \f$ for membrane simulations.
+    double r_0;
+
+    /// @brief The constant upward force \f$ F_{Z-UP} \f$ for membrane simulations.
+    double fzup;
 
     /// @brief The cell index of the particle, to be used with the linked cell method.
     int cellIndex;
@@ -101,12 +113,16 @@ class Particle {
      * @param x A reference to the array containing data for the position \f$ x \f$.
      * @param v A reference to the array containing data for the velocity \f$ v \f$.
      * @param m The mass \f$ m \f$ of the particle.
-     * @param type The type of the particle.
-     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
-     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param type The type of the particle. (optional)
+     * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle. (optional)
+     * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle. (optional)
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations. (optional)
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations. (optional)
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations. (optional)
      */
     Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
-             double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
+             double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT, double k = K_DEFAULT, double r_0 = R0_DEFAULT,
+             double fzup = FZUP_DEFAULT);
 
     /**
      * @brief Construct a new Particle object using explicit values for every data field.
@@ -121,10 +137,14 @@ class Particle {
      * @param type The type of the particle.
      * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations.
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations.
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations.
      * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
      */
     Particle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
-             const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
+             const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, double k, double r_0,
+             double fzup, int cellIndex);
 
     /// @brief Destroys the Particle object.
     virtual ~Particle();
@@ -158,18 +178,32 @@ class Particle {
     std::array<double, 3> &getOldF();
 
     /**
-     * @brief Gets the direct neighbours of this particle (const).
+     * @brief Gets the direct neighbours of this particle.
      *
      * @return A reference to the vector of direct neighbour particle references of this particle.
      */
     std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours();
 
     /**
-     * @brief Gets the diagonal neighbours of this particle (const).
+     * @brief Gets the direct neighbours of this particle (const).
+     *
+     * @return A const reference to the vector of direct neighbour particle references of this particle.
+     */
+    const std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours() const;
+
+    /**
+     * @brief Gets the diagonal neighbours of this particle.
      *
      * @return A reference to the vector of diagonal neighbour particle references of this particle.
      */
     std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours();
+
+    /**
+     * @brief Gets the diagonal neighbours of this particle (const).
+     *
+     * @return A const reference to the vector of diagonal neighbour particle references of this particle.
+     */
+    const std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours() const;
 
     /**
      * @brief Gets the position \f$ x \f$ of this particle (const).
@@ -235,6 +269,27 @@ class Particle {
     double getSigma() const;
 
     /**
+     * @brief Gets the stiffness constant \f$ k \f$.
+     *
+     * @return The stiffness constant \f$ k \f$.
+     */
+    double getK() const;
+
+    /**
+     * @brief Gets the average bond length of a molecule pair \f$ r_0 \f$.
+     *
+     * @return The average bond length \f$ r_0 \f$.
+     */
+    double getR0() const;
+
+    /**
+     * @brief Gets the constant upward force \f$ F_{Z-UP} \f$.
+     *
+     * @return The constant upward force \f$ F_{Z-UP} \f$.
+     */
+    double getFZUP() const;
+
+    /**
      * @brief Get the index of the particle in a CellContainer.
      *
      * For use with the linked cell method.
@@ -287,7 +342,6 @@ class Particle {
      * @param neighbours A reference to the vector of references to the neighbours.
      */
     void setDirectNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours);
-
 
     /**
      * @brief Sets the diagonal neighbours of the particle.
@@ -350,6 +404,27 @@ class Particle {
      * @param new_sigma The new Lennard-Jones parameter \f$ \sigma \f$ of this particle.
      */
     void setSigma(double new_sigma);
+
+    /**
+     * @brief Sets the new stiffness constant \f$ k \f$ to a given value.
+     *
+     * @param new_sigma The new stiffness constant \f$ k \f$.
+     */
+    void setK(double new_k);
+
+    /**
+     * @brief Sets the new upward force \f$ F_{Z-UP} \f$ to a given value.
+     *
+     * @param new_sigma The new upward force \f$ F_{Z-UP} \f$.
+     */
+    void setFZUP(double new_fzup);
+
+    /**
+     * @brief Sets the new average bond length \f$ r_0 \f$ to a given value.
+     *
+     * @param new_sigma The new average bond length \f$ r_0 \f$.
+     */
+    void setR0(double new_r_0);
 
     /**
      * @brief Sets the new index in a CellContainer.

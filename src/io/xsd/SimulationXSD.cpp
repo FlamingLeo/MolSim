@@ -509,6 +509,27 @@ ObjectsType::DiscSequence &ObjectsType::disc() { return this->disc_; }
 
 void ObjectsType::disc(const DiscSequence &s) { this->disc_ = s; }
 
+// MembraneType
+//
+
+const MembraneType::StiffnessType &MembraneType::stiffness() const { return this->stiffness_.get(); }
+
+MembraneType::StiffnessType &MembraneType::stiffness() { return this->stiffness_.get(); }
+
+void MembraneType::stiffness(const StiffnessType &x) { this->stiffness_.set(x); }
+
+const MembraneType::AvgBondLengthType &MembraneType::avgBondLength() const { return this->avgBondLength_.get(); }
+
+MembraneType::AvgBondLengthType &MembraneType::avgBondLength() { return this->avgBondLength_.get(); }
+
+void MembraneType::avgBondLength(const AvgBondLengthType &x) { this->avgBondLength_.set(x); }
+
+const MembraneType::ZForceType &MembraneType::zForce() const { return this->zForce_.get(); }
+
+MembraneType::ZForceType &MembraneType::zForce() { return this->zForce_.get(); }
+
+void MembraneType::zForce(const ZForceType &x) { this->zForce_.set(x); }
+
 // SimType
 //
 
@@ -529,6 +550,16 @@ SimType::ThermostatType &SimType::thermostat() { return this->thermostat_.get();
 void SimType::thermostat(const ThermostatType &x) { this->thermostat_.set(x); }
 
 void SimType::thermostat(::std::unique_ptr<ThermostatType> x) { this->thermostat_.set(std::move(x)); }
+
+const SimType::MembraneOptional &SimType::membrane() const { return this->membrane_; }
+
+SimType::MembraneOptional &SimType::membrane() { return this->membrane_; }
+
+void SimType::membrane(const MembraneType &x) { this->membrane_.set(x); }
+
+void SimType::membrane(const MembraneOptional &x) { this->membrane_ = x; }
+
+void SimType::membrane(::std::unique_ptr<MembraneType> x) { this->membrane_.set(std::move(x)); }
 
 const SimType::TypeType &SimType::type() const { return this->type_.get(); }
 
@@ -1823,26 +1854,110 @@ ObjectsType &ObjectsType::operator=(const ObjectsType &x) {
 
 ObjectsType::~ObjectsType() {}
 
+// MembraneType
+//
+
+MembraneType::MembraneType(const StiffnessType &stiffness, const AvgBondLengthType &avgBondLength,
+                           const ZForceType &zForce)
+    : ::xml_schema::Type(), stiffness_(stiffness, this), avgBondLength_(avgBondLength, this), zForce_(zForce, this) {}
+
+MembraneType::MembraneType(const MembraneType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), stiffness_(x.stiffness_, f, this), avgBondLength_(x.avgBondLength_, f, this),
+      zForce_(x.zForce_, f, this) {}
+
+MembraneType::MembraneType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), stiffness_(this), avgBondLength_(this), zForce_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void MembraneType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // stiffness
+        //
+        if (n.name() == "stiffness" && n.namespace_().empty()) {
+            if (!stiffness_.present()) {
+                this->stiffness_.set(StiffnessTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // avgBondLength
+        //
+        if (n.name() == "avgBondLength" && n.namespace_().empty()) {
+            if (!avgBondLength_.present()) {
+                this->avgBondLength_.set(AvgBondLengthTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // zForce
+        //
+        if (n.name() == "zForce" && n.namespace_().empty()) {
+            if (!zForce_.present()) {
+                this->zForce_.set(ZForceTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!stiffness_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("stiffness", "");
+    }
+
+    if (!avgBondLength_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("avgBondLength", "");
+    }
+
+    if (!zForce_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("zForce", "");
+    }
+}
+
+MembraneType *MembraneType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class MembraneType(*this, f, c);
+}
+
+MembraneType &MembraneType::operator=(const MembraneType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->stiffness_ = x.stiffness_;
+        this->avgBondLength_ = x.avgBondLength_;
+        this->zForce_ = x.zForce_;
+    }
+
+    return *this;
+}
+
+MembraneType::~MembraneType() {}
+
 // SimType
 //
 
 SimType::SimType(const ThermostatType &thermostat, const TypeType &type, const ObjectsType &objects)
-    : ::xml_schema::Type(), args_(this), thermostat_(thermostat, this), type_(type, this), linkedCells_(this),
-      dimensions_(this), objects_(objects, this), totalParticles_(this) {}
+    : ::xml_schema::Type(), args_(this), thermostat_(thermostat, this), membrane_(this), type_(type, this),
+      linkedCells_(this), dimensions_(this), objects_(objects, this), totalParticles_(this) {}
 
 SimType::SimType(::std::unique_ptr<ThermostatType> thermostat, const TypeType &type,
                  ::std::unique_ptr<ObjectsType> objects)
-    : ::xml_schema::Type(), args_(this), thermostat_(std::move(thermostat), this), type_(type, this),
+    : ::xml_schema::Type(), args_(this), thermostat_(std::move(thermostat), this), membrane_(this), type_(type, this),
       linkedCells_(this), dimensions_(this), objects_(std::move(objects), this), totalParticles_(this) {}
 
 SimType::SimType(const SimType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), args_(x.args_, f, this), thermostat_(x.thermostat_, f, this),
-      type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this), dimensions_(x.dimensions_, f, this),
-      objects_(x.objects_, f, this), totalParticles_(x.totalParticles_, f, this) {}
+      membrane_(x.membrane_, f, this), type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this),
+      dimensions_(x.dimensions_, f, this), objects_(x.objects_, f, this), totalParticles_(x.totalParticles_, f, this) {}
 
 SimType::SimType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
-    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), thermostat_(this), type_(this),
-      linkedCells_(this), dimensions_(this), objects_(this), totalParticles_(this) {
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), thermostat_(this), membrane_(this),
+      type_(this), linkedCells_(this), dimensions_(this), objects_(this), totalParticles_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1872,6 +1987,17 @@ void SimType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f
 
             if (!thermostat_.present()) {
                 this->thermostat_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // membrane
+        //
+        if (n.name() == "membrane" && n.namespace_().empty()) {
+            ::std::unique_ptr<MembraneType> r(MembraneTraits::create(i, f, this));
+
+            if (!this->membrane_) {
+                this->membrane_.set(::std::move(r));
                 continue;
             }
         }
@@ -1950,6 +2076,7 @@ SimType &SimType::operator=(const SimType &x) {
         static_cast<::xml_schema::Type &>(*this) = x;
         this->args_ = x.args_;
         this->thermostat_ = x.thermostat_;
+        this->membrane_ = x.membrane_;
         this->type_ = x.type_;
         this->linkedCells_ = x.linkedCells_;
         this->dimensions_ = x.dimensions_;
@@ -2824,6 +2951,34 @@ void operator<<(::xercesc::DOMElement &e, const ObjectsType &i) {
     }
 }
 
+void operator<<(::xercesc::DOMElement &e, const MembraneType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // stiffness
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("stiffness", e));
+
+        s << ::xml_schema::AsDouble(i.stiffness());
+    }
+
+    // avgBondLength
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("avgBondLength", e));
+
+        s << ::xml_schema::AsDouble(i.avgBondLength());
+    }
+
+    // zForce
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("zForce", e));
+
+        s << ::xml_schema::AsDouble(i.zForce());
+    }
+}
+
 void operator<<(::xercesc::DOMElement &e, const SimType &i) {
     e << static_cast<const ::xml_schema::Type &>(i);
 
@@ -2841,6 +2996,14 @@ void operator<<(::xercesc::DOMElement &e, const SimType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("thermostat", e));
 
         s << i.thermostat();
+    }
+
+    // membrane
+    //
+    if (i.membrane()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("membrane", e));
+
+        s << *i.membrane();
     }
 
     // type

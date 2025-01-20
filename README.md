@@ -200,6 +200,16 @@ Complete XML input files have the following structure:
     <!-- By default, this is set to false. -->
     <nanoFlow><!-- boolean --></nanoFlow>
   </thermostat>
+  <!-- (Optional) Membrane data used for membrane simulations. -->
+  <!-- Currently, this is only compatible with cuboid objects. -->
+  <membrane>
+    <!-- The stiffness constant. -->
+    <stiffness><!-- double --></stiffness>
+    <!-- The average bond length of a molecule pair. -->
+    <avgBondLength><!-- double --></avgBondLength>
+    <!-- The constant upward force along the z-axis. -->
+    <zForce><!-- double --></zForce>
+  </membrane>
   <!-- The type of the simulation. Must be specified. -->
   <type><!-- gravity, lj --></type>
   <!-- (Optional) Specify whether the simulation should use the linked cells method. -->

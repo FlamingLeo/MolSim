@@ -87,7 +87,8 @@ static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermos
 }
 
 // helper (wrapper) function to parse cuboids into a particle container
-static void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
+static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::MembraneOptional &membrane,
+                         ParticleContainer &pc) {
     for (const auto &cuboid : xmlObjects.cuboid()) {
         std::array<double, 3> position{cuboid.position().x(), cuboid.position().y(), cuboid.position().z()};
         std::array<double, 3> velocity{cuboid.velocity().x(), cuboid.velocity().y(), cuboid.velocity().z()};
@@ -98,12 +99,16 @@ static void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContain
         int type = cuboid.type().present() ? cuboid.type().get() : TYPE_DEFAULT;
         double epsilon = cuboid.epsilon().present() ? cuboid.epsilon().get() : EPSILON_DEFAULT;
         double sigma = cuboid.sigma().present() ? cuboid.sigma().get() : SIGMA_DEFAULT;
+        double k = membrane.present() ? membrane.get().stiffness() : K_DEFAULT;
+        double r_0 = membrane.present() ? membrane.get().avgBondLength() : R0_DEFAULT;
+        double fzup = membrane.present() ? membrane.get().zForce() : FZUP_DEFAULT;
 
-        SPDLOG_TRACE("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}",
+        SPDLOG_DEBUG("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}, k: {}, r_0: {}, "
+                     "f_z-up: {}",
                      ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), ArrayUtils::to_string(size),
-                     distance, mass, epsilon, sigma);
+                     distance, mass, epsilon, sigma, k, r_0, fzup);
 
-        Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma};
+        Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma, k, r_0, fzup};
         cuboidObj.initialize();
     }
 }
@@ -137,7 +142,9 @@ static void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleConta
             ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), ArrayUtils::to_string(force),
             ArrayUtils::to_string(oldForce), mass, type, epsilon, sigma, cellIndex);
 
-        pc.addParticle(position, velocity, force, oldForce, mass, type, epsilon, sigma, cellIndex);
+        // membrane properties cannot be applied to singular particles
+        pc.addParticle(position, velocity, force, oldForce, mass, type, epsilon, sigma, K_DEFAULT, R0_DEFAULT,
+                       FZUP_DEFAULT, cellIndex);
     }
 }
 
@@ -198,7 +205,11 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?
 
-        parseCuboids(xmlObjects, pc);
+        SimType::MembraneOptional &membrane = xmlInput->membrane();
+        args.membrane = membrane.present();
+        SPDLOG_DEBUG("Membrane simulation?: {}", args.membrane);
+
+        parseCuboids(xmlObjects, membrane, pc);
         parseParticles(xmlObjects, pc);
         parseDiscs(xmlObjects, pc);
 
