@@ -59,6 +59,9 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
  * particle pair in the entire container, the algorithm only uses particles within the cell neighborhood of the current
  * particle.
  *
+ * For parallelization, the domain is split into chunks distributed amonst threads. This is done using standard OpenMP
+ * loop parallelization.
+ *
  * **Complexity:** \f$ O(N) \f$
  *
  * This method uses Newton's Third Law \f[ F_{ij} = -F_{ji}. \f] to avoid calculating the force twice.
@@ -72,3 +75,20 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
  * @param lc The CellContainer for the linked cells method.
  */
 void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc);
+
+/**
+ * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a linked-cell LennardJones
+ simulation and a cutoff radius using a task-based parallelization approach.
+ *
+ * @details Fundamentally, this is the same algorithm as the base aslgorithm, but instead of splitting chunks of the
+ * domain amongst a team of threads, each cell is assigned a separate OpenMP task, distributed among threads via a
+ * single delegation thread.
+ *
+ * **Complexity:** \f$ O(N) \f$
+ *
+ * This method uses Newton's Third Law \f[ F_{ij} = -F_{ji}. \f] to avoid calculating the force twice.
+ *
+ * @param particles The ParticleContainer containing the Particle objects to iterate over.
+ * @param lc The CellContainer for the linked cells method.
+ */
+void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellContainer *lc);

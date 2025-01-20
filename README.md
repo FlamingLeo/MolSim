@@ -18,6 +18,7 @@ The code has been developed using the following software on separate machines:
 -   [Clang++](https://clang.llvm.org/) 18.1.3 (minimum: 14)
 -   [CMake](https://cmake.org/) 3.28.3 (minimum: 3.22)
 -   [GNU Make](https://www.gnu.org/software/make/) 4.3 (minimum: 4.3)
+-   [OpenMP](https://www.openmp.org/) 5.0 (minimum: 4.5)
 -   [Doxygen](https://www.doxygen.nl/) 1.9.8 (optional)
 -   [Paraview](https://www.paraview.org/) 5.13.1 (less optional)
 
@@ -86,6 +87,7 @@ cmake ..
 # -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
 # -DENABLE_DOXYGEN=<OFF|ON>
 # -DENABLE_BENCHMARKING=<OFF|ON>
+# -DENABLE_OPENMP=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
 # <MolSim|bench|tests|doc_doxygen|all|clean|help>
@@ -116,6 +118,10 @@ Currently, the following options are supported:
   - vtk      : Generates VTK Unstructured Grid (.vtu) files.
   - xyz      : Generates XYZ (.xyz) files.
   - nil      : Logs to stdout. Used for debugging purposes.
+-p <type>    : Sets the parallelization strategy used (default: coarse).
+               If OpenMP support is disabled, this option has no effect.
+  - coarse   : Uses the standard OpenMP for-loop parallelization strategy.
+  - fine     : Uses a finer-grained, task-based parallelization approach.
 -t <type>    : Sets the desired simulation to be performed (default: lj).
   - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
   - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
@@ -160,7 +166,9 @@ The program supports XML input files. Currently, the following input files are i
 -   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid.
 -   `input-lj-w4t5-small.xml`: Simulation of the Rayleigh-Taylor instability (small), performance contest environment.
 -   `input-lj-w4t5-large.xml`: Simulation of the Rayleigh-Taylor instability (large), performance contest environment.
--   `input-lj-w5t3.xml`: Simulation of the Rayleigh-Taylor instability in 3D.
+-   `input-lj-w5t1.xml`: Simulation of a membrane.
+-   `input-lj-w5t3-coarse.xml`: Simulation of the Rayleigh-Taylor instability in 3D using coarse-grained parallelization.
+-   `input-lj-w5t3-fine.xml`: Simulation of the Rayleigh-Taylor instability in 3D using fine-grained parallelization.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
@@ -173,12 +181,13 @@ Complete XML input files have the following structure:
 <sim>
   <!-- (Optional) Simulation arguments are wrapped in "args". This may be omitted, if the simulation can be initialized with default values. -->
   <args>
-    <startTime><!-- double --></startTime>  <!-- start time -->
-    <endTime><!-- double --></endTime>      <!-- end time -->
-    <delta_t><!-- double --></delta_t>      <!-- time step -->
-    <frequency><!-- int --></frequency>     <!-- output frequency -->
-    <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
-    <output><!-- vtk, xyz, nil --></output> <!-- output type -->
+    <startTime><!-- double --></startTime>                    <!-- start time -->
+    <endTime><!-- double --></endTime>                        <!-- end time -->
+    <delta_t><!-- double --></delta_t>                        <!-- time step -->
+    <frequency><!-- int --></frequency>                       <!-- output frequency -->
+    <basename><!-- string --></basename>                      <!-- base name without iteration number of output files -->
+    <output><!-- vtk, xyz, nil --></output>                   <!-- output type -->
+    <parallelization><!-- coarse, fine --></parallelization>  <!-- parallelization type -->
   </args>
   <!-- A thermostat used to regulate the temperature of the particle system. -->
   <!-- If you do not wish to use the thermostat, set the timeStep value to something larger than the total number of time integration steps and set brownianMotion to false. -->

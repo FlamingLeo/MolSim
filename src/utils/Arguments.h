@@ -22,6 +22,9 @@ enum class WriterType { VTK, XYZ, NIL };
 /// @brief Enum containg each possible Simulation to be performed.
 enum class SimulationType { GRAVITY, LJ };
 
+/// @brief Enum containing each possible parallelization strategy.
+enum class ParallelizationType { COARSE, FINE };
+
 /**
  * @brief Struct containing each option configurable via command line arguments.
  */
@@ -46,6 +49,8 @@ struct Arguments {
     WriterType type{WriterType::VTK};
     /// @brief Simulation type (default: LJ).
     SimulationType sim{SimulationType::LJ};
+    /// @brief Parallelization type (default: coarse-grained).
+    ParallelizationType parallelization{ParallelizationType::COARSE};
     /// @brief Decide, whether or not to use the linked cell method (default: true)
     bool linkedCells{true};
     /// @brief The type of condition to be applied at each boundary (default: outflow)
@@ -76,7 +81,8 @@ struct Arguments {
         return startTime == other.startTime && endTime == other.endTime && delta_t == other.delta_t &&
                itFreq == other.itFreq && domainSize == other.domainSize && cutoffRadius == other.cutoffRadius &&
                gravity == other.gravity && basename == other.basename && type == other.type && sim == other.sim &&
-               linkedCells == other.linkedCells && conditions == other.conditions && dimensions == other.dimensions;
+               parallelization == other.parallelization && linkedCells == other.linkedCells &&
+               conditions == other.conditions && dimensions == other.dimensions;
     }
 };
 

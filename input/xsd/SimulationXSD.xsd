@@ -15,8 +15,16 @@
             <xs:element type="xs:double" name="cutoffRadius" minOccurs="0" maxOccurs="1"/>
             <xs:element type="bdConditionsType" name="bdConditions" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:double" name="gravity" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="parallelType" name="parallelization" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:simpleType name="parallelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="coarse"/>
+            <xs:enumeration value="fine"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="bdConditionsType">
         <xs:sequence>

@@ -76,6 +76,11 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
                          bdConditions.s(), bdConditions.w(), bdConditions.e(), bdConditions.a(), bdConditions.b());
         }
         LOAD_ARGS(xmlArgs, args, gravity);
+        if (xmlArgs.parallelization().present()) {
+            auto pStrat = xmlArgs.parallelization().get();
+            args.parallelization = StringUtils::toParallelizationType(pStrat);
+            SPDLOG_DEBUG("Loaded parallelization strategy: {}", pStrat);
+        }
     }
 }
 

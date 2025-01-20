@@ -7,8 +7,8 @@
 #include <spdlog/spdlog.h>
 
 // helper function to calculate force vector
-static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2, const std::array<double, 3> distVec,
-                                           double distNorm) {
+static inline std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2,
+                                                  const std::array<double, 3> distVec, double distNorm) {
     double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
     double sigma = (p1.getSigma() + p2.getSigma()) / 2;
 
@@ -28,7 +28,7 @@ static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p
 }
 
 // helper method to potentially fake the position of a ghost particle, for use with periodic boundaries
-static std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
+static inline std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
     // special case: particle j is a ghost particle
     // otherwise, we just get the real position of the particle
     if (!c.getHaloLocation().empty()) {
@@ -164,10 +164,6 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
                             // loop over all particles j in kc
                             for (auto &rj : kc.get()) {
                                 // check if i and j form a distinct pair (N3L)
-                                // note: we don't need to check for activity here, since all particles are guaranteed
-                                // active
-                                //       all inactive particles have since been removed from the cells
-                                // for checking distinct pairs, we compare the memory addresses of the two particles
                                 Particle &i = ri;
                                 Particle &j = rj;
                                 if (&i >= &j)

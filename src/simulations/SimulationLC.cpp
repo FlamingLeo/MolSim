@@ -28,7 +28,12 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
     SPDLOG_INFO("bd. cond.   : {}", CellUtils::fromBoundaryConditionArray(m_args.conditions));
     SPDLOG_INFO("#particles  : {}", m_particles.size());
+#ifdef _OPENMP
+    SPDLOG_INFO("p. strat.   : {}", StringUtils::fromParallelizationType(m_args.parallelization));
     SPDLOG_INFO("max threads : {}", omp_get_max_threads());
+#else
+    SPDLOG_WARN("Parallelization is DISABLED!");
+#endif
 
     initializeBase();
     runSimulationLoop(&m_cellContainer);

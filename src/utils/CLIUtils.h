@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#define OPTSTRING "s:e:d:f:g:b:o:t:B:D:R:h"
+#define OPTSTRING "s:e:d:f:g:b:o:p:t:B:D:R:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 #define RED "\e[0;31m"
@@ -33,9 +33,12 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Mapping from getopt option characters to their full names.
  */
 static inline std::unordered_map<char, std::string> optionNames = {
-    {'s', "Start time"},          {'e', "End time"},    {'d', "Timestep"},     {'b', "Basename"},
-    {'f', "Output frequency"},    {'g', "Gravity"},     {'o', "Output type"},  {'t', "Simulation type"},
-    {'B', "Boundary Conditions"}, {'D', "Domain Size"}, {'R', "Cutoff Radius"}};
+    {'s', "Start time"},       {'e', "End time"},
+    {'d', "Timestep"},         {'b', "Basename"},
+    {'f', "Output frequency"}, {'g', "Gravity"},
+    {'o', "Output type"},      {'p', "Parallelization type"},
+    {'t', "Simulation type"},  {'B', "Boundary Conditions"},
+    {'D', "Domain Size"},      {'R', "Cutoff Radius"}};
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.
@@ -74,6 +77,10 @@ static inline void printHelp() {
            "  - vtk      : Generates VTK Unstructured Grid (.vtu) files.\n"
            "  - xyz      : Generates XYZ (.xyz) files.\n"
            "  - nil      : Logs to stdout. Used for debugging purposes.\n"
+           "-p <type>    : Sets the parallelization strategy used (default: coarse).\n"
+           "               If OpenMP support is disabled, this option has no effect.\n"
+           "  - coarse   : Uses the standard OpenMP for-loop parallelization strategy.\n"
+           "  - fine     : Uses a finer-grained, task-based parallelization approach.\n"
            "-t <type>    : Sets the desired simulation to be performed (default: lj).\n"
            "  - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).\n"
            "  - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).\n"

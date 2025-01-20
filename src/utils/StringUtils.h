@@ -27,10 +27,30 @@ static inline const std::unordered_map<std::string, WriterType> writerTable = {
 static inline const std::unordered_map<std::string, SimulationType> simulationTable = {
     {"gravity", SimulationType::GRAVITY}, {"lj", SimulationType::LJ}};
 
+/// @brief Map containing conversion information for converting a string to a ParallelizationType enum.
+static inline const std::unordered_map<std::string, ParallelizationType> parallelizationTable = {
+    {"coarse", ParallelizationType::COARSE}, {"fine", ParallelizationType::FINE}};
+
 /// @brief Reverse map containing conversion information for converting a WriterType enum to a string.
 static inline const std::unordered_map<WriterType, std::string> writerStringTable = []() {
     std::unordered_map<WriterType, std::string> reverseMap;
     for (const auto &pair : writerTable)
+        reverseMap[pair.second] = pair.first;
+    return reverseMap;
+}();
+
+/// @brief Reverse map containing conversion information for converting a SimulationType enum to a string.
+static inline const std::unordered_map<SimulationType, std::string> simulationStringTable = []() {
+    std::unordered_map<SimulationType, std::string> reverseMap;
+    for (const auto &pair : simulationTable)
+        reverseMap[pair.second] = pair.first;
+    return reverseMap;
+}();
+
+/// @brief Reverse map containing conversion information for converting a ParallelizationType enum to a string.
+static inline const std::unordered_map<ParallelizationType, std::string> parallelizationStringTable = []() {
+    std::unordered_map<ParallelizationType, std::string> reverseMap;
+    for (const auto &pair : parallelizationTable)
         reverseMap[pair.second] = pair.first;
     return reverseMap;
 }();
@@ -50,14 +70,6 @@ static inline bool findStringIC(const std::string &haystack, const std::string &
                           [](unsigned char ch1, unsigned char ch2) { return std::toupper(ch1) == std::toupper(ch2); });
     return (it != haystack.end());
 }
-
-/// @brief Reverse map containing conversion information for converting a SimulationType enum to a string.
-static inline const std::unordered_map<SimulationType, std::string> simulationStringTable = []() {
-    std::unordered_map<SimulationType, std::string> reverseMap;
-    for (const auto &pair : simulationTable)
-        reverseMap[pair.second] = pair.first;
-    return reverseMap;
-}();
 
 /// @brief  Namespace defining utility functions for working with strings.
 namespace StringUtils {
@@ -211,6 +223,21 @@ static inline SimulationType toSimulationType(const std::string &type) {
 }
 
 /**
+ * @brief Converts a string to a ParallelizationType enum using a dedicated map.
+ *
+ * @param type The string containing the desired ParallelizationType.
+ * @return The desired ParallelizationType enum if the type string is valid, otherwise terminates with error.
+ */
+static inline ParallelizationType toParallelizationType(const std::string &type) {
+    auto it = parallelizationTable.find(type);
+    if (it != parallelizationTable.end())
+        return it->second;
+    else
+        CLIUtils::error("Invalid output type", type);
+    return ParallelizationType::COARSE; // shouldn't reach this; included to silence warning
+}
+
+/**
  * @brief Converts a char to a string.
  *
  * @param c The character to be converted.
@@ -237,6 +264,16 @@ static inline std::string fromWriterType(WriterType writerType) { return writerS
  */
 static inline std::string fromSimulationType(SimulationType simulationType) {
     return simulationStringTable.at(simulationType);
+}
+
+/**
+ * @brief Converts a ParallelizationType to a string.
+ *
+ * @param parallelizationType An instance of the ParallelizationType enum to be converted.
+ * @return The resulting string.
+ */
+static inline std::string fromParallelizationType(ParallelizationType parallelizationType) {
+    return parallelizationStringTable.at(parallelizationType);
 }
 
 /**

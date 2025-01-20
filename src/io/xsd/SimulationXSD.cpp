@@ -131,6 +131,36 @@ void ArgsType::gravity(const GravityType &x) { this->gravity_.set(x); }
 
 void ArgsType::gravity(const GravityOptional &x) { this->gravity_ = x; }
 
+const ArgsType::ParallelizationOptional &ArgsType::parallelization() const { return this->parallelization_; }
+
+ArgsType::ParallelizationOptional &ArgsType::parallelization() { return this->parallelization_; }
+
+void ArgsType::parallelization(const ParallelizationType &x) { this->parallelization_.set(x); }
+
+void ArgsType::parallelization(const ParallelizationOptional &x) { this->parallelization_ = x; }
+
+void ArgsType::parallelization(::std::unique_ptr<ParallelizationType> x) { this->parallelization_.set(std::move(x)); }
+
+// ParallelType
+//
+
+ParallelType::ParallelType(Value v) : ::xml_schema::String(_xsd_ParallelType_literals_[v]) {}
+
+ParallelType::ParallelType(const char *v) : ::xml_schema::String(v) {}
+
+ParallelType::ParallelType(const ::std::string &v) : ::xml_schema::String(v) {}
+
+ParallelType::ParallelType(const ::xml_schema::String &v) : ::xml_schema::String(v) {}
+
+ParallelType::ParallelType(const ParallelType &v, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::String(v, f, c) {}
+
+ParallelType &ParallelType::operator=(Value v) {
+    static_cast<::xml_schema::String &>(*this) = ::xml_schema::String(_xsd_ParallelType_literals_[v]);
+
+    return *this;
+}
+
 // BdConditionsType
 //
 
@@ -655,18 +685,20 @@ void ThermostatType::nanoFlow(const NanoFlowOptional &x) { this->nanoFlow_ = x; 
 
 ArgsType::ArgsType()
     : ::xml_schema::Type(), startTime_(this), endTime_(this), delta_t_(this), frequency_(this), basename_(this),
-      output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this), gravity_(this) {}
+      output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this), gravity_(this),
+      parallelization_(this) {}
 
 ArgsType::ArgsType(const ArgsType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), startTime_(x.startTime_, f, this), endTime_(x.endTime_, f, this),
       delta_t_(x.delta_t_, f, this), frequency_(x.frequency_, f, this), basename_(x.basename_, f, this),
       output_(x.output_, f, this), domainSize_(x.domainSize_, f, this), cutoffRadius_(x.cutoffRadius_, f, this),
-      bdConditions_(x.bdConditions_, f, this), gravity_(x.gravity_, f, this) {}
+      bdConditions_(x.bdConditions_, f, this), gravity_(x.gravity_, f, this),
+      parallelization_(x.parallelization_, f, this) {}
 
 ArgsType::ArgsType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), startTime_(this), endTime_(this), delta_t_(this),
       frequency_(this), basename_(this), output_(this), domainSize_(this), cutoffRadius_(this), bdConditions_(this),
-      gravity_(this) {
+      gravity_(this), parallelization_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -776,6 +808,17 @@ void ArgsType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags 
             }
         }
 
+        // parallelization
+        //
+        if (n.name() == "parallelization" && n.namespace_().empty()) {
+            ::std::unique_ptr<ParallelizationType> r(ParallelizationTraits::create(i, f, this));
+
+            if (!this->parallelization_) {
+                this->parallelization_.set(::std::move(r));
+                continue;
+            }
+        }
+
         break;
     }
 }
@@ -797,12 +840,51 @@ ArgsType &ArgsType::operator=(const ArgsType &x) {
         this->cutoffRadius_ = x.cutoffRadius_;
         this->bdConditions_ = x.bdConditions_;
         this->gravity_ = x.gravity_;
+        this->parallelization_ = x.parallelization_;
     }
 
     return *this;
 }
 
 ArgsType::~ArgsType() {}
+
+// ParallelType
+//
+
+ParallelType::ParallelType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::String(e, f, c) {
+    _xsd_ParallelType_convert();
+}
+
+ParallelType::ParallelType(const ::xercesc::DOMAttr &a, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::String(a, f, c) {
+    _xsd_ParallelType_convert();
+}
+
+ParallelType::ParallelType(const ::std::string &s, const ::xercesc::DOMElement *e, ::xml_schema::Flags f,
+                           ::xml_schema::Container *c)
+    : ::xml_schema::String(s, e, f, c) {
+    _xsd_ParallelType_convert();
+}
+
+ParallelType *ParallelType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class ParallelType(*this, f, c);
+}
+
+ParallelType::Value ParallelType::_xsd_ParallelType_convert() const {
+    ::xsd::cxx::tree::enum_comparator<char> c(_xsd_ParallelType_literals_);
+    const Value *i(::std::lower_bound(_xsd_ParallelType_indexes_, _xsd_ParallelType_indexes_ + 2, *this, c));
+
+    if (i == _xsd_ParallelType_indexes_ + 2 || _xsd_ParallelType_literals_[*i] != *this) {
+        throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
+    }
+
+    return *i;
+}
+
+const char *const ParallelType::_xsd_ParallelType_literals_[2] = {"coarse", "fine"};
+
+const ParallelType::Value ParallelType::_xsd_ParallelType_indexes_[2] = {::ParallelType::coarse, ::ParallelType::fine};
 
 // BdConditionsType
 //
@@ -2527,6 +2609,22 @@ void operator<<(::xercesc::DOMElement &e, const ArgsType &i) {
 
         s << ::xml_schema::AsDouble(*i.gravity());
     }
+
+    // parallelization
+    //
+    if (i.parallelization()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("parallelization", e));
+
+        s << *i.parallelization();
+    }
+}
+
+void operator<<(::xercesc::DOMElement &e, const ParallelType &i) { e << static_cast<const ::xml_schema::String &>(i); }
+
+void operator<<(::xercesc::DOMAttr &a, const ParallelType &i) { a << static_cast<const ::xml_schema::String &>(i); }
+
+void operator<<(::xml_schema::ListStream &l, const ParallelType &i) {
+    l << static_cast<const ::xml_schema::String &>(i);
 }
 
 void operator<<(::xercesc::DOMElement &e, const BdConditionsType &i) {
