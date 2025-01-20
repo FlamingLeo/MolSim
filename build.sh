@@ -64,7 +64,7 @@ while getopts ${OPTSTRING} opt; do
       usage
     fi
     # disable benchmarking with debug builds
-    if [[ ("${OPTARG}" != "Release" || "${OPTARG}" != "RelWithDebInfo") && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
+    if [[ "${OPTARG}" != "Release" && "${OPTARG}" != "RelWithDebInfo" && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
@@ -73,7 +73,7 @@ while getopts ${OPTSTRING} opt; do
     ;;
   c)
     # disable benchmarking with debug builds
-    if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
+    if [[ "${build_string}" != "" && "${build_string}" != "-DCMAKE_BUILD_TYPE=Release" && "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo" ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
