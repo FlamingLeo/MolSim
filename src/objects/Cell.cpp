@@ -21,8 +21,6 @@ void Cell::removeParticle(Particle &particle) {
 const std::array<double, 3> &Cell::getSize() const { return m_size; }
 const std::array<double, 3> &Cell::getX() const { return m_position; }
 HaloLocation Cell::getCornerRegion(const Particle &p) const {
-    // return m_haloLocation[0];
-
     // verify that this is a corner cell
     assert(!(this->m_haloLocation.empty()));
 
@@ -59,7 +57,6 @@ HaloLocation Cell::getCornerRegion(const Particle &p) const {
         }
         CLIUtils::error("Invalid corner cell! This should NOT happen.", "", false);
         return HaloLocation::NORTH; // for certain compilers
-
     } else {
         // HERE THE SAME BUT FOR 3D
         double relX = p.getX()[0] - m_position[0];

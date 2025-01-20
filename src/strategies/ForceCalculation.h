@@ -9,6 +9,7 @@
 #pragma once
 #include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
+#define SQR(x) ((x) * (x))
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a Gravity simulation.

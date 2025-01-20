@@ -18,7 +18,7 @@
 #define PRINT_CELL_CONTENTS() (void)0
 #endif
 
-/* constructor */
+/* constructor and destructor */
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                              const std::array<BoundaryCondition, 6> &conditions, double cutoff,
                              ParticleContainer &particles, size_t dim)
@@ -37,7 +37,6 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                  ArrayUtils::to_string(domainSize), cutoff, dim);
 
     // determining cell size
-    // if we are in 2D numCells
     for (size_t i = 0; i < dim; i++) {
         if (std::fabs(std::fmod(domainSize[i], cutoff)) < 1e-9) {
             // perfect fit
@@ -54,9 +53,10 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         }
     }
 
-    // reserve space for all cells
+    // reserve space for all cells and cell locks
     size_t totalNumCells = numCells[0] * numCells[1] * numCells[2];
     cells.reserve(totalNumCells);
+    cellLocks.reserve(totalNumCells);
     SPDLOG_DEBUG("Reserved space for {} cells (X: {}, Y: {}, Z: {}).", totalNumCells, numCells[0], numCells[1],
                  numCells[2]);
 
@@ -114,7 +114,7 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
 
                 // this should be deleted and borderLocation condition added, but I'm afraid to break everything (who
                 // wrote this? - in any case I agree)
-                //  we don't care about which type of border it is, for now...
+                // we don't care about which type of border it is, for now...
                 bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
                                           x == 1 || x == (numCells[0] - 2))
                                        : (y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2));
@@ -125,15 +125,22 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 cells.emplace_back(cellSize, position, type, index, haloLocation, borderLocation);
                 calculateNeighbors(cells.size() - 1);
 
-                // add to special cell ref. containers
+                // add to cell ref. containers
                 // we can do this in here because we reserved the size of the vector beforehand...
                 if (type == CellType::HALO) {
                     haloCells.push_back(std::ref(cells[cells.size() - 1]));
                 } else if (type == CellType::BORDER) {
                     borderCells.push_back(std::ref(cells[cells.size() - 1]));
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
+                } else {
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
                 }
 
                 SPDLOG_TRACE("Created new cell ({}, {}) (index: {})", x, y, index);
+
+                // initialize corresponding cell lock
+                omp_init_lock(&cellLocks[index]);
+
                 index++;
             }
         }
@@ -147,6 +154,12 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
     // debug print
     PRINT_CELL_INDICES();
     PRINT_CELL_CONTENTS();
+}
+
+CellContainer::~CellContainer() {
+    for (size_t i = 0; i < cellLocks.size(); ++i) {
+        omp_destroy_lock(&cellLocks[i]);
+    }
 }
 
 /* iterators */
@@ -224,7 +237,9 @@ bool CellContainer::addParticle(Particle &p) {
     int cellIndex = p.getCellIndex() == -1 ? getCellIndex(p.getX()) : p.getCellIndex();
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
         p.setCellIndex(cellIndex);
+        omp_set_lock(&cellLocks[cellIndex]);
         cells[cellIndex].addParticle(p);
+        omp_unset_lock(&cellLocks[cellIndex]);
         SPDLOG_TRACE("Added particle {}", p.toString());
         return true;
     } else {
@@ -235,7 +250,9 @@ bool CellContainer::addParticle(Particle &p) {
 void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
     assert(cellIndex != -1);
+    omp_set_lock(&cellLocks[cellIndex]);
     cells[cellIndex].removeParticle(p);
+    omp_unset_lock(&cellLocks[cellIndex]);
     p.setCellIndex(-1);
     SPDLOG_TRACE("Removed particle from cell {}: {}", cellIndex, p.toString());
 }
@@ -341,6 +358,13 @@ void CellContainer::calculateNeighbors(int cellIndex) {
 }
 
 const std::vector<int> &CellContainer::getNeighbors(int cellIndex) const { return cells[cellIndex].getNeighbors(); }
+std::vector<std::reference_wrapper<Cell>> CellContainer::getNeighborCells(int cellIndex) {
+    std::vector<std::reference_wrapper<Cell>> neighbors;
+    for (size_t idx : getNeighbors(cellIndex)) {
+        neighbors.push_back(std::ref(cells[idx]));
+    }
+    return neighbors;
+}
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
     // coincidentally works just as well for getting the opposite halo cell for a border cell; currently in 2D
@@ -432,6 +456,8 @@ std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() { ret
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() const { return borderCells; }
 std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() { return haloCells; }
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() const { return haloCells; }
+std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() { return iterableCells; }
+const std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() const { return iterableCells; }
 const std::array<double, 3> &CellContainer::getDomainSize() const { return domainSize; }
 const std::array<double, 3> &CellContainer::getCellSize() const { return cellSize; }
 const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCells; }
