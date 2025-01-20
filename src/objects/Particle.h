@@ -12,6 +12,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #define TYPE_DEFAULT 0
 #define SIGMA_DEFAULT 1
@@ -34,6 +35,12 @@ class Particle {
 
     /// @brief Force \f$ F_\text{old} \f$ which was effective on this particle.
     std::array<double, 3> old_f;
+
+    /// @brief Direct (up-down, left-right) neighbours of the particle (for membranes).
+    std::vector<std::reference_wrapper<Particle>> direct_neighbours;
+
+    /// @brief Diagonal neighbours of the particle (for membranes).
+    std::vector<std::reference_wrapper<Particle>> diagonal_neighbours;
 
     /// @brief Mass \f$ m \f$ of this particle.
     double m;
@@ -143,6 +150,20 @@ class Particle {
     std::array<double, 3> &getOldF();
 
     /**
+     * @brief Gets the direct neighbours of this particle (const).
+     *
+     * @return A reference to the vector of direct neighbour particle references of this particle.
+     */
+    std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours();
+
+    /**
+     * @brief Gets the diagonal neighbours of this particle (const).
+     *
+     * @return A reference to the vector of diagonal neighbour particle references of this particle.
+     */
+    std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours();
+
+    /**
      * @brief Gets the position \f$ x \f$ of this particle (const).
      *
      * @return A const reference to the position array of this particle.
@@ -235,6 +256,21 @@ class Particle {
      * @param new_v A reference to the array containing the new velocity of this particle.
      */
     void setV(const std::array<double, 3> &new_v);
+
+    /**
+     * @brief Sets the direct neighbours of the particle.
+     *
+     * @param neighbours A reference to the vector of references to the neighbours.
+     */
+    void setDirectNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours);
+
+
+    /**
+     * @brief Sets the diagonal neighbours of the particle.
+     *
+     * @param neighbours A reference to the vector of references to the neighbours.
+     */
+    void setDiagonalNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours);
 
     /**
      * @brief Sets the new thermal motion \f$ thermal_motion \f$ of the particle to a given value.

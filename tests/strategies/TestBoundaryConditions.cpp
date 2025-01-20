@@ -14,7 +14,7 @@ TEST(BoundaryConditionTests, Outflow2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{10., 10., 1.}, conditions, 1., pc};
+        CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 0);
@@ -42,7 +42,7 @@ TEST(BoundaryConditionTests, Reflective2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{10., 10., 1.}, conditions, 1., pc};
+        CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 1);
@@ -71,7 +71,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{10., 10., 1.}, conditions, 1., pc};
+        CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
 
         EXPECT_EQ(c.size(), 1);
@@ -103,7 +103,7 @@ TEST(BoundaryConditionTests, Periodic2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{5., 5., 1.}, conditions, 1., pc};
+        CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 1);
@@ -133,7 +133,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{5., 5., 1.}, conditions, 1., pc};
+        CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 1);
@@ -163,7 +163,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner2D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{5., 5., 1.}, conditions, 1., pc};
+        CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(c.activeSize(), 1);
@@ -196,7 +196,7 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{5., 5., 1.}, conditions, 1., pc};
+        CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
@@ -222,7 +222,7 @@ TEST(BoundaryConditionTests, Periodic3D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{2., 2., 2.}, conditions, 1., pc};
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
@@ -252,7 +252,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{2., 2., 2.}, conditions, 1., pc};
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);
@@ -283,7 +283,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring3D) {
         ParticleContainer pc;
         Particle p{position, velocity, 1, 1};
         pc.addParticle(p);
-        CellContainer c{{3., 3., 3.}, conditions, 1., pc};
+        CellContainer c{{3., 3., 3.}, conditions, 1., pc, 3};
         mirrorGhostParticles(&c);
         EXPECT_EQ(c.size(), 1);
         EXPECT_EQ(pc[0].getX(), expectedPos);

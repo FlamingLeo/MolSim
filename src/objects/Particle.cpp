@@ -57,6 +57,8 @@ std::array<double, 3> &Particle::getX() { return x; }
 std::array<double, 3> &Particle::getV() { return v; }
 std::array<double, 3> &Particle::getF() { return f; }
 std::array<double, 3> &Particle::getOldF() { return old_f; }
+std::vector<std::reference_wrapper<Particle>> &Particle::getDirectNeighbours() {return direct_neighbours;}
+std::vector<std::reference_wrapper<Particle>> &Particle::getDiagonalNeighbours() {return diagonal_neighbours;}
 const std::array<double, 3> &Particle::getX() const { return x; }
 const std::array<double, 3> &Particle::getV() const { return v; }
 const std::array<double, 3> &Particle::getThermalMotion() const { return thermal_motion; }

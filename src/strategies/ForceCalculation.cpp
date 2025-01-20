@@ -143,3 +143,68 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         deleteGhostParticles(lc);
 }
+
+void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc){
+    // mirror border particles for periodic boundaries
+    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+        mirrorGhostParticles(lc);
+
+    // loop over all cells ic
+    for (auto &ic : *lc) {
+        // special case: if halo cell, skip (no multiple interactions between same particles)
+        if (!ic.getHaloLocation().empty()) {
+            continue;
+        }
+
+        // loop over all active particles i in cell ic
+        for (auto &ri : ic) {
+            Particle &i = ri;
+
+            // loop over all cells kc in Neighbours(ic), including the particle i's own cell
+            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
+                Cell &kc = (*lc)[kci];
+
+                // loop over all particles j in kc
+                for (auto &rj : kc) {
+                    // check if j is active AND if i and j form a distinct pair (N3L)
+                    // for checking distinct pairs, we compare the memory addresses of the two particles
+                    Particle &j = rj;
+                    if (&i >= &j)
+                        continue;
+
+                    std::array<double, 3> truePos = getTruePos(j, kc, lc);
+                    std::array<double, 3> forceVec = {0.0, 0.0, 0.0};
+
+                    // calculate the distance between the two particles
+                    auto distVec = i.getX() - truePos;
+                    double distNorm = ArrayUtils::L2Norm(distVec);
+
+                    /*
+                    if (VEC_CONTAINS(i.getDirectNeighbours(), j)){
+                        // compute scalar
+                        double scalar = k * (1 - r_0/ distNorm);
+                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i, we multiply by -1
+                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+
+                    } else if (VEC_CONTAINS(i.getDiagonalNeighbours(), j)){
+                        double scalar = k * (1 - std::sqrt(2) * r_0/ distNorm);
+                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+
+                    } else if (distNorm <= lc->getCutoff()){
+                        //calculate force
+                        forceVec = getLJForceVec(i, j, distVec, distNorm);
+
+                        // apply force on particle i (no force on ghost particle)
+                        i.getF() = i.getF() + forceVec;
+                        j.getF() = j.getF() - forceVec;
+                    }
+                     */
+                }
+            }
+        }
+    }
+
+    // delete ghost particles in the end
+    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+        deleteGhostParticles(lc);
+}
