@@ -19,11 +19,14 @@ help() {
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-f       : Disables fast math optimizations (default: enabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -o       : Disables OpenMP functionality.
+-O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
+           This skips checking particle activity, since all particles should remain active. Be careful when using this option!
 -p       : Compiles the program with the '-pg' flag for use with gprof. 
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
@@ -39,11 +42,13 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdhj:lmops:tC:X:"
+OPTSTRING=":b:cdfhj:lmoOps:tC:X:"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
+fastmath_opt=""
 openmp_opt=""
+outflow_opt=""
 profiling_opt=""
 benchmarking_opt=""
 spdlog_level=""
@@ -97,6 +102,11 @@ while getopts ${OPTSTRING} opt; do
     echo "[BUILD] Documentation generation will be disabled."
     doxygen_opt="-DENABLE_DOXYGEN=OFF"
     ;;
+  f)
+    # disable fast math
+    echo "[BUILD] Fast math optimizations will be disabled."
+    fastmath_opt="-DENABLE_FAST_MATH=OFF"
+    ;;
   j)
     # number of makefile jobs
     if [[ "$OPTARG" =~ ^[1-9][0-9]*$ ]]; then
@@ -126,6 +136,11 @@ while getopts ${OPTSTRING} opt; do
     # disable openmp
     echo "[BUILD] OpenMP will be disabled."
     openmp_opt="-DENABLE_OPENMP=OFF"
+    ;;
+  O)
+    # disable outflow simulations
+    echo "[BUILD] Outflow simulations will be disabled."
+    outflow_opt="-DNO_OUTFLOW=ON"
     ;;
   p)
     # disable profiling with debug builds
@@ -292,7 +307,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${openmp_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${fastmath_opt} ${openmp_opt} ${outflow_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }

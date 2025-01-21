@@ -1,6 +1,7 @@
 #include "Simulation.h"
 #include "utils/OMPWrapper.h"
 #include "utils/StringUtils.h"
+#include <algorithm>
 
 Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
     : m_particles{pc}, m_args{args}, m_thermostat{t} {
@@ -65,6 +66,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 }
 
 void Simulation::runSimulation() {
+    CHECK_NOUTFLOW(m_args, conditions);
     SPDLOG_INFO("Running {} simulation with the following arguments:", StringUtils::fromSimulationType(m_args.sim));
     SPDLOG_INFO("start time  : {}", m_args.startTime);
     SPDLOG_INFO("end time    : {}", m_args.endTime);

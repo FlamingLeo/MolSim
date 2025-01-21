@@ -55,15 +55,13 @@ void Thermostat::calculateKineticEnergy() {
     double sum = 0;
     if (!nanoFlow) {
         for (auto &p : particles) {
-            if (p.isActive()) {
-                sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
-            }
+            CONTINUE_IF_INACTIVE(p);
+            sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
         }
     } else {
         for (auto &p : particles) {
-            if (p.isActive()) {
-                sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
-            }
+            CONTINUE_IF_INACTIVE(p);
+            sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
         }
     }
     kineticEnergy = sum / 2;
@@ -94,20 +92,18 @@ void Thermostat::calculateScalingFactor() {
 
 void Thermostat::calculateThermalMotions() {
     for (auto &p : particles) {
-        if (p.isActive()) {
-            avg_velocity[0] += p.getV()[0];
-            avg_velocity[1] += p.getV()[1];
-            avg_velocity[2] += p.getV()[2];
-        }
+        CONTINUE_IF_INACTIVE(p);
+        avg_velocity[0] += p.getV()[0];
+        avg_velocity[1] += p.getV()[1];
+        avg_velocity[2] += p.getV()[2];
     }
     avg_velocity[0] /= particles.size();
     avg_velocity[1] /= particles.size();
     avg_velocity[2] /= particles.size();
 
     for (auto &p : particles) {
-        if (p.isActive()) {
-            p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
-        }
+        CONTINUE_IF_INACTIVE(p);
+        p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
     }
 }
 
@@ -143,25 +139,22 @@ void Thermostat::updateSystemTemp(int currentStep) {
 #pragma omp parallel for
         for (auto &p : particles) {
             // update particle velocities to set new temperature
-            if (p.isActive()) {
-                SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                             omp_get_num_threads());
-                std::array<double, 3> newV =
-                    ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
-                p.setV(newV);
-            }
+            CONTINUE_IF_INACTIVE(p);
+            SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
+                         omp_get_num_threads());
+            std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
+            p.setV(newV);
         }
     } else {
 #pragma omp parallel for
         for (auto &p : particles) {
             // update particle thermal motion to set new temperature
-            if (p.isActive()) {
-                SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                             omp_get_num_threads());
-                std::array<double, 3> newV =
-                    ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
-                p.setV(newV + avg_velocity);
-            }
+            CONTINUE_IF_INACTIVE(p);
+            SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
+                         omp_get_num_threads());
+            std::array<double, 3> newV =
+                ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
+            p.setV(newV + avg_velocity);
         }
     }
     SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);

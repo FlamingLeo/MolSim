@@ -66,8 +66,7 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     ObjectsType o{};
     for (auto &p : pc) {
         // skip inactive particles
-        if (!p.isActive())
-            continue;
+        CONTINUE_IF_INACTIVE(p);
 
         // serialize particle data
         ParticleType pt{PositionType{p.getX()[0], p.getX()[1], p.getX()[2]},

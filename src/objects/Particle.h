@@ -23,6 +23,14 @@
 #define FZUP_DEFAULT 0
 #define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
+#ifdef NOUTFLOW
+#define CONTINUE_IF_INACTIVE(p) (void)0
+#else
+#define CONTINUE_IF_INACTIVE(p)                                                                                        \
+    if (!(p).isActive())                                                                                               \
+        continue;
+#endif
+
 /// @brief Particle class modeling a particle's position, velocity, force, mass and type.
 class Particle {
   private:

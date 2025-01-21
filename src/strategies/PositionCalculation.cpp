@@ -28,8 +28,7 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
 
 #pragma omp parallel for
     for (auto &p : particles) {
-        if (!p.isActive())
-            continue;
+        CONTINUE_IF_INACTIVE(p);
 
         // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());

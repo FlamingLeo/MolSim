@@ -13,6 +13,7 @@ SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t
 SimulationLC::~SimulationLC() = default;
 
 void SimulationLC::runSimulation() {
+    CHECK_NOUTFLOW(m_args, conditions);
     SPDLOG_INFO("Running {} linked cell simulation with the following arguments:",
                 StringUtils::fromSimulationType(m_args.sim));
     SPDLOG_INFO("start time  : {}", m_args.startTime);

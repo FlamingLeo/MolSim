@@ -262,7 +262,8 @@ bool CellContainer::moveParticle(Particle &p) {
 }
 void CellContainer::removeHaloCellParticles() {
     for (auto &p : particles) {
-        if (p.isActive() && p.getCellIndex() != -1) {
+        CONTINUE_IF_INACTIVE(p);
+        if (p.getCellIndex() != -1) {
             if (cells[p.getCellIndex()].getType() == CellType::HALO) {
                 SPDLOG_TRACE("Found active halo particle, removing...");
                 deleteParticle(p);

@@ -28,11 +28,19 @@ endif()
 # include custom cmake modules to check for libraries
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(profiling)
+include(cflags)
 include(xerces)
 include(doxygen)
 include(gtest)
 include(benchmark)
 include(spdlog)
+
+# add (potentially dangerous) option to ensure that there are no outflow conditions
+option(NO_OUTFLOW "Ensure no outflow simulations" OFF)
+if(NO_OUTFLOW)
+    message(STATUS "Outflow simulations DISABLED! Be careful!")
+    add_compile_definitions(NOUTFLOW)
+endif()
 
 # use cmake files in each subdirectory
 add_subdirectory(src)

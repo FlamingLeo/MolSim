@@ -17,8 +17,8 @@
             <s>reflective</s>
             <w>periodic</w>
             <e>periodic</e>
-            <a>outflow</a>
-            <b>outflow</b>
+            <a>reflective</a>
+            <b>reflective</b>
         </bdConditions>
         <gravity>-12.44</gravity>
     </args>
