@@ -60,7 +60,7 @@ Following options are supported:
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
--f       : Disables fast math optimizations (default: enabled).
+-f       : Enables fast math optimizations (default: disabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
@@ -91,6 +91,8 @@ cmake ..
 # -DENABLE_DOXYGEN=<OFF|ON>
 # -DENABLE_BENCHMARKING=<OFF|ON>
 # -DENABLE_OPENMP=<OFF|ON>
+# -DENABLE_FAST_MATH=<OFF|ON>
+# -DNO_OUTFLOW=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
 # <MolSim|bench|tests|doc_doxygen|all|clean|help>

@@ -34,7 +34,7 @@ check_and_set_flag("-funroll-loops" funroll_supported)
 check_and_set_flag("-fomit-frame-pointer" fomit_supported)
 
 # fast math options
-option(ENABLE_FAST_MATH "Enable fast math optimizations" ON)
+option(ENABLE_FAST_MATH "Enable fast math optimizations" OFF)
 if(ENABLE_FAST_MATH)
     message(STATUS "Fast math optimizations ENABLED")
     check_and_set_flag("-ffast-math" fmath_supported)                   # note: potentially dangerous!

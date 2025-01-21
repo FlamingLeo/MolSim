@@ -19,7 +19,7 @@ help() {
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
--f       : Disables fast math optimizations (default: enabled).
+-f       : Enables fast math optimizations (default: disabled).
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
@@ -103,9 +103,9 @@ while getopts ${OPTSTRING} opt; do
     doxygen_opt="-DENABLE_DOXYGEN=OFF"
     ;;
   f)
-    # disable fast math
-    echo "[BUILD] Fast math optimizations will be disabled."
-    fastmath_opt="-DENABLE_FAST_MATH=OFF"
+    # enable fast math
+    echo "[BUILD] Fast math optimizations will be enabled."
+    fastmath_opt="-DENABLE_FAST_MATH=ON"
     ;;
   j)
     # number of makefile jobs
