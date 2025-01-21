@@ -34,6 +34,7 @@ include(doxygen)
 include(gtest)
 include(benchmark)
 include(spdlog)
+include(pgo)
 
 # add (potentially dangerous) option to ensure that there are no outflow conditions
 option(NO_OUTFLOW "Ensure no outflow simulations" OFF)

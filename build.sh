@@ -20,6 +20,7 @@ help() {
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -f       : Enables fast math optimizations (default: disabled).
+-g       : Compiles the program with the '-pg' flag for use with gprof. 
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
@@ -27,7 +28,8 @@ help() {
 -o       : Disables OpenMP functionality.
 -O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
            This skips checking particle activity, since all particles should remain active. Be careful when using this option!
--p       : Compiles the program with the '-pg' flag for use with gprof. 
+-p       : Enables PGO instrumentation code generation (default: off).
+-P       : Enables profile-guided compiler optimizations (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -42,7 +44,7 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdfhj:lmoOps:tC:X:"
+OPTSTRING=":b:cdfghj:lmoOpPs:tC:X:"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
@@ -50,6 +52,8 @@ fastmath_opt=""
 openmp_opt=""
 outflow_opt=""
 profiling_opt=""
+pgo_gen_opt=""
+pgo_use_opt=""
 benchmarking_opt=""
 spdlog_level=""
 c_compiler=""
@@ -142,7 +146,7 @@ while getopts ${OPTSTRING} opt; do
     echo "[BUILD] Outflow simulations will be disabled."
     outflow_opt="-DNO_OUTFLOW=ON"
     ;;
-  p)
+  g)
     # disable profiling with debug builds
     if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
       echo "[ERROR] Cannot profile with non-release builds!"
@@ -167,6 +171,16 @@ while getopts ${OPTSTRING} opt; do
     # enable profiling
     echo "[BUILD] Profiling will be enabled."
     profiling_opt="-DENABLE_PROFILING=ON"
+    ;;
+  p)
+    # enable pgo instrumentation
+    echo "[BUILD] PGO instrumentation generation will be enabled."
+    pgo_gen_opt="-DPGO_GENERATE=ON"
+    ;;
+  P)
+    # enable pgo 
+    echo "[BUILD] Profile guided optimization will be enabled."
+    pgo_use_opt="-DPGO_USE=ON"
     ;;
   t)
     # run tests
@@ -307,7 +321,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${fastmath_opt} ${openmp_opt} ${outflow_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${pgo_gen_opt} ${pgo_use_opt} ${doxygen_opt} ${fastmath_opt} ${openmp_opt} ${outflow_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }
