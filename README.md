@@ -61,6 +61,7 @@ Following options are supported:
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
 -f       : Enables fast math optimizations (default: disabled).
+-g       : Compiles the program with the '-pg' flag for use with gprof. 
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
@@ -68,7 +69,8 @@ Following options are supported:
 -o       : Disables OpenMP functionality.
 -O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
            This skips checking particle activity, since all particles should remain active. Be careful when using this option!
--p       : Compiles the program with the '-pg' flag for use with gprof. 
+-p       : Enables PGO instrumentation code generation (default: off).
+-P       : Enables profile-guided compiler optimizations (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -93,6 +95,8 @@ cmake ..
 # -DENABLE_OPENMP=<OFF|ON>
 # -DENABLE_FAST_MATH=<OFF|ON>
 # -DNO_OUTFLOW=<OFF|ON>
+# -DPGO_GENERATE=<OFF|ON>
+# -DPGO_USE=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
 # <MolSim|bench|tests|doc_doxygen|all|clean|help>
