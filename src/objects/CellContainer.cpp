@@ -146,6 +146,11 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         }
     }
 
+    // check if any condition is periodic
+    // this is done to prevent having to search the vector every time in the force calculation routine
+    anyPeriodic = std::any_of(conditions.begin(), conditions.end(),
+                              [](BoundaryCondition condition) { return condition == BoundaryCondition::PERIODIC; });
+
     // add particles to corresponding cells
     for (Particle &p : particles) {
         addParticle(p);
@@ -465,6 +470,7 @@ const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCell
 const std::array<BoundaryCondition, 6> &CellContainer::getConditions() const { return conditions; }
 double CellContainer::getCutoff() const { return cutoff; }
 size_t CellContainer::getDim() const { return dim; }
+bool CellContainer::getAnyPeriodic() const { return anyPeriodic; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
 const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }

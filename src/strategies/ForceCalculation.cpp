@@ -91,7 +91,7 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
 
 void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // mirror border particles for periodic boundaries
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
         mirrorGhostParticles(lc);
 
 // loop over all (regular) cells ic
@@ -140,13 +140,13 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     }
 
     // delete ghost particles in the end
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
         deleteGhostParticles(lc);
 }
 
 void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellContainer *lc) {
     // mirror border particles for periodic boundaries
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
         mirrorGhostParticles(lc);
 
 #pragma omp parallel
@@ -200,7 +200,7 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
     } // end parallel region
 
     // delete ghost particles in the end
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
         deleteGhostParticles(lc);
 }
 

@@ -55,6 +55,8 @@ class CellContainer {
     double cutoff;
     /// @brief The number of dimensions (2/3)
     size_t dim;
+    /// @brief Determines if there are any periodic halo cells.
+    bool anyPeriodic{false};
     /// @brief A reference to the overarching ParticleContainer.
     ParticleContainer &particles;
 
@@ -466,6 +468,14 @@ class CellContainer {
      * @return The number of dimensions
      */
     size_t getDim() const;
+
+    /**
+     * @brief Checks if any boundary condition is periodic.
+     *
+     * @return true if at least one boundary condition is periodic.
+     * @return false if there are no periodic boundary conditions.
+     */
+    bool getAnyPeriodic() const;
 
     /**
      * @brief Gets a reference to the primary ParticleContainer.
