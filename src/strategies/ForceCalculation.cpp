@@ -95,7 +95,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
         mirrorGhostParticles(lc);
 
 // loop over all (regular) cells ic
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic, 16)
     for (auto &ic : lc->getIterableCells()) {
         // loop over all active particles i in cell ic
         for (auto &ri : ic.get()) {

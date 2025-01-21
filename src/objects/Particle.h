@@ -154,140 +154,144 @@ class Particle {
      *
      * @return A reference to the position array of this particle.
      */
-    std::array<double, 3> &getX();
+    inline std::array<double, 3> &getX() { return x; }
 
     /**
      * @brief Gets the velocity \f$ v \f$ of this particle.
      *
      * @return A reference to the velocity array of this particle.
      */
-    std::array<double, 3> &getV();
+    inline std::array<double, 3> &getV() { return v; }
 
     /**
      * @brief Gets the force \f$ F \f$ effective on this particle.
      *
      * @return A reference to the force array of this particle.
      */
-    std::array<double, 3> &getF();
+    inline std::array<double, 3> &getF() { return f; }
 
     /**
      * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle.
      *
      * @return A reference to the old force array of this particle.
      */
-    std::array<double, 3> &getOldF();
+    inline std::array<double, 3> &getOldF() { return old_f; }
 
     /**
      * @brief Gets the direct neighbours of this particle.
      *
      * @return A reference to the vector of direct neighbour particle references of this particle.
      */
-    std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours();
+    inline std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours() { return direct_neighbours; }
 
     /**
      * @brief Gets the direct neighbours of this particle (const).
      *
      * @return A const reference to the vector of direct neighbour particle references of this particle.
      */
-    const std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours() const;
+    inline const std::vector<std::reference_wrapper<Particle>> &getDirectNeighbours() const {
+        return direct_neighbours;
+    }
 
     /**
      * @brief Gets the diagonal neighbours of this particle.
      *
      * @return A reference to the vector of diagonal neighbour particle references of this particle.
      */
-    std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours();
+    inline std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours() { return diagonal_neighbours; }
 
     /**
      * @brief Gets the diagonal neighbours of this particle (const).
      *
      * @return A const reference to the vector of diagonal neighbour particle references of this particle.
      */
-    const std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours() const;
+    inline const std::vector<std::reference_wrapper<Particle>> &getDiagonalNeighbours() const {
+        return diagonal_neighbours;
+    }
 
     /**
      * @brief Gets the position \f$ x \f$ of this particle (const).
      *
      * @return A const reference to the position array of this particle.
      */
-    const std::array<double, 3> &getX() const;
+    inline const std::array<double, 3> &getX() const { return x; }
 
     /**
      * @brief Gets the velocity \f$ v \f$ of this particle (const).
      *
      * @return A const reference to the velocity array of this particle.
      */
-    const std::array<double, 3> &getV() const;
+    inline const std::array<double, 3> &getV() const { return v; }
 
     /**
      * @brief Gets the thermal motion \f$ thermal_motion \f$ of this particle (const).
      *
      * @return A const reference to the thermal motion array of this particle.
      */
-    const std::array<double, 3> &getThermalMotion() const;
+    inline const std::array<double, 3> &getThermalMotion() const { return thermal_motion; }
 
     /**
      * @brief Gets the force \f$ F \f$ effective on this particle (const).
      *
      * @return A const reference to the force array of this particle.
      */
-    const std::array<double, 3> &getF() const;
+    inline const std::array<double, 3> &getF() const { return f; }
 
     /**
      * @brief Gets the force \f$ F_\text{old} \f$ previously effective on this particle (const).
      *
      * @return A const reference to the old force array of this particle.
      */
-    const std::array<double, 3> &getOldF() const;
+    inline const std::array<double, 3> &getOldF() const { return old_f; }
 
     /**
      * @brief Gets the mass \f$ m \f$ of the particle.
      *
      * @return The mass of the particle.
      */
-    double getM() const;
+    inline double getM() const { return m; }
 
     /**
      * @brief Gets the type of the particle.
      *
      * @return The type of the particle.
      */
-    int getType() const;
+    inline int getType() const { return type; }
 
     /**
      * @brief Gets the Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      *
      * @return The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      */
-    double getEpsilon() const;
+    inline double getEpsilon() const { return epsilon; }
 
     /**
      * @brief Gets the Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      *
      * @return The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      */
-    double getSigma() const;
+    inline double getSigma() const { return sigma; }
 
     /**
      * @brief Gets the stiffness constant \f$ k \f$.
      *
      * @return The stiffness constant \f$ k \f$.
      */
-    double getK() const;
+    inline double getK() const { return k; }
 
     /**
      * @brief Gets the average bond length of a molecule pair \f$ r_0 \f$.
      *
      * @return The average bond length \f$ r_0 \f$.
      */
-    double getR0() const;
+    inline double getR0() const { return r_0; }
 
     /**
      * @brief Gets the constant upward force \f$ F_{Z-UP} \f$.
      *
      * @return The constant upward force \f$ F_{Z-UP} \f$.
      */
-    double getFZUP() const;
+    inline double getFZUP() const { return fzup; }
 
     /**
      * @brief Get the index of the particle in a CellContainer.
@@ -296,7 +300,7 @@ class Particle {
      *
      * @return The index of the particle in a grid of cells.
      */
-    int getCellIndex() const;
+    inline int getCellIndex() const { return cellIndex; }
 
     /**
      * @brief Checks if the particle is currently active.
@@ -304,7 +308,7 @@ class Particle {
      * @return true if the particle is currently active.
      * @return false if the particle is currently inactive.
      */
-    bool isActive() const;
+    inline bool isActive() const { return active; }
 
     /**
      * @brief Get the ID of this particle.
@@ -313,14 +317,14 @@ class Particle {
      *
      * @return The ID of this particle.
      */
-    int getId() const;
+    inline int getId() const { return id; }
 
     /**
      * @brief Get a reference to the Lock object.
      *
      * @return A reference to the Lock object.
      */
-    omp_lock_t &getLock();
+    inline omp_lock_t &getLock() { return lock; }
 
     /**
      * @brief Sets the new position \f$ x \f$ of the particle to a given value.
