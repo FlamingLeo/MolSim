@@ -10,7 +10,10 @@
 
 void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *) {
     SPDLOG_TRACE("Calculating new position...");
-    for (auto &p : particles) {
+
+#pragma omp parallel for
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
         // update position
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
         const std::array<double, 3> posSum2 =
@@ -27,7 +30,8 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
     SPDLOG_TRACE("Calculating new position (linked cells)...");
 
 #pragma omp parallel for
-    for (auto &p : particles) {
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
 
         // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)

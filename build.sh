@@ -178,7 +178,7 @@ while getopts ${OPTSTRING} opt; do
     pgo_gen_opt="-DPGO_GENERATE=ON"
     ;;
   P)
-    # enable pgo 
+    # enable pgo
     echo "[BUILD] Profile guided optimization will be enabled."
     pgo_use_opt="-DPGO_USE=ON"
     ;;
@@ -263,19 +263,37 @@ fi
 # check, if pkg-config is installed, if dependencies are installed
 # if not, install automatically for quicker compilation (unless -l set)
 if [[ "${can_check_for_pkgs}" = true ]]; then
-  echo -n "[BUILD] Checking if xerces-c is installed... "
+  echo -n "[BUILD] Checking if Xerces-C is installed... "
   if pkg-config --list-all | grep -qw xerces; then
     echo "found."
   else
-    if [[ "${install_opt}" = true ]]; then
-      echo "not found! Installing using apt-get..."
-      if [[ "${has_updated_apt}" == "false" ]]; then
-        sudo apt-get update
-        has_updated_apt=true
+    echo "not found!"
+    # special case: if on linux cluster, attempt to load it using module system
+    # otherwise, let user decide locally on debian-based system
+    if command -v squeue &>/dev/null; then
+      echo "[BUILD] Xerces-C: Running on a Linux Cluster. Attempting to load module..."
+      if module load xerces-c &>/dev/null; then
+        echo "[BUILD] Successfully loaded the xerces-c module."
+      else
+        echo "[BUILD] Failed to load the xerces-c module! Aborting."
+        exit 1
       fi
-      sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
     else
-      echo "not found! Will be fetched during compilation..."
+      echo "[BUILD] Xerces-C: Running on a local system."
+      if [[ "${install_opt}" = true ]]; then
+        echo "[BUILD] Installing Xerces-C."
+        if [[ "${has_updated_apt}" == "false" ]]; then
+          sudo apt-get update
+          has_updated_apt=true
+        fi
+        sudo apt-get install -y libxerces-c-dev || {
+          echo "[BUILD] Failed to get libxerces-c-dev, aborting!"
+          exit 1
+        }
+      else
+        echo "[BUILD] Automatic Xerces-C installation turned off! Please install Xerces-C manually and try again."
+        exit 1
+      fi
     fi
   fi
 

@@ -137,7 +137,8 @@ void Thermostat::updateSystemTemp(int currentStep) {
 
     if (!nanoFlow) {
 #pragma omp parallel for
-        for (auto &p : particles) {
+        CONTAINER_LOOP(particles, it) {
+            auto &p = CONTAINER_REF(it);
             // update particle velocities to set new temperature
             CONTINUE_IF_INACTIVE(p);
             SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
@@ -147,7 +148,8 @@ void Thermostat::updateSystemTemp(int currentStep) {
         }
     } else {
 #pragma omp parallel for
-        for (auto &p : particles) {
+        CONTAINER_LOOP(particles, it) {
+            auto &p = CONTAINER_REF(it);
             // update particle thermal motion to set new temperature
             CONTINUE_IF_INACTIVE(p);
             SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),

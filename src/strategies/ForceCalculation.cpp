@@ -96,8 +96,9 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 
 // loop over all (regular) cells ic
 #pragma omp parallel for schedule(dynamic, 16)
-    for (auto &ic : lc->getIterableCells()) {
+    CONTAINER_LOOP(lc->getIterableCells(), it) {
         // loop over all active particles i in cell ic
+        auto &ic = CONTAINER_REF(it);
         for (auto &ri : ic.get()) {
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (auto &kc : lc->getNeighborCells(ic.get().getIndex())) {

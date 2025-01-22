@@ -31,7 +31,6 @@ check_and_set_flag("-ffunction-sections" ffuncsec_supported)
 check_and_set_flag("-fno-math-errno" fme_supported)
 check_and_set_flag("-finline-functions" finline_supported)
 check_and_set_flag("-funroll-loops" funroll_supported)
-check_and_set_flag("-fomit-frame-pointer" fomit_supported)
 
 # fast math options
 option(ENABLE_FAST_MATH "Enable fast math optimizations" OFF)

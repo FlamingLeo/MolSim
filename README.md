@@ -28,7 +28,7 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions
 
 This project uses the following external C++ libraries:
 
--   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0¹
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.2.4¹
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
@@ -37,7 +37,7 @@ If the dependencies are not already installed, they will be automatically fetche
 
 **NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
 
-¹: Xerces-C++ is not supported when compiling with the Intel C++ compiler.
+¹: Xerces-C++ is REQUIRED to be installed beforehand.
 
 ## Getting Started
 

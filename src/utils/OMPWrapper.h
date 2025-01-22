@@ -8,6 +8,14 @@
  */
 #pragma once
 
+#if defined(_OPENMP) && _OPENMP < 201811
+#define CONTAINER_LOOP(container, it_var) for (auto it_var = (container).begin(); it_var < (container).end(); ++it_var)
+#define CONTAINER_REF(it_var) (*it_var)
+#else
+#define CONTAINER_LOOP(container, it_var) for (auto &it_var : (container))
+#define CONTAINER_REF(it_var) (it_var)
+#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #else

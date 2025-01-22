@@ -7,7 +7,8 @@
 
 void calculateV(ParticleContainer &particles, double delta_t) {
 #pragma omp parallel for
-    for (auto &p : particles) {
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
 
         const std::array<double, 3> velocityUpdate =
