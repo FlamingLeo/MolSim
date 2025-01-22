@@ -41,6 +41,35 @@ static inline std::unordered_map<char, std::string> optionNames = {
     {'D', "Domain Size"},      {'R', "Cutoff Radius"}};
 
 /**
+ * @brief Gets the name of the compiler used to build the program executable (or "unknown" if the compiler is not
+ * identifiable via macros).
+ *
+ * @return The name of the compiler used to build the executable or "unknown".
+ */
+static inline std::string getCompilerName() {
+#if defined(__clang__)
+    return "Clang " + std::to_string(__clang_major__) + "." + std::to_string(__clang_minor__) + "." +
+           std::to_string(__clang_patchlevel__);
+#elif defined(__GNUC__) || defined(__GNUG__)
+    return "GNU " + std::to_string(__GNUC__) + "." + std::to_string(__GNUC_MINOR__) + "." +
+           std::to_string(__GNUC_PATCHLEVEL__);
+#elif defined(_MSC_VER)
+    return "Microsoft Visual C++ " + std::to_string(_MSC_VER);
+#elif defined(__INTEL_COMPILER)
+    return "Intel C++ Compiler " + std::to_string(__INTEL_COMPILER);
+#else
+    return "Unknown";
+#endif
+}
+
+/**
+ * @brief Gets the build date and time of the built executable as a string.
+ *
+ * @return The build date and time of the built executable.
+ */
+static inline std::string getBuildDate() { return std::string(__DATE__) + " " + __TIME__; }
+
+/**
  * @brief Prints a usage string explaining the syntax of the main program.
  */
 static inline void printUsage() {
@@ -89,7 +118,9 @@ static inline void printHelp() {
         << ":\n"
            "Logging must be configured at compile time. To change the log level, read the documentation and "
            "recompile the program accordingly.\n"
-           "When specifying the domain size, do NOT use whitespaces between the commas and numbers.\n";
+           "When specifying the domain size, do NOT use whitespaces between the commas and numbers.\n\n"
+        << BOLD_ON << "BUILD DATE" << BOLD_OFF << ": " << getBuildDate() << "\n"
+        << BOLD_ON << "COMPILED WITH" << BOLD_OFF << ": " << getCompilerName() << "\n";
 }
 
 /**

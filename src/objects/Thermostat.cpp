@@ -16,9 +16,9 @@ Thermostat::Thermostat(ParticleContainer &particles) : particles{particles} {
 }
 Thermostat::Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
                        double delta_T, bool initBrownianMotion, bool nanoFlow)
-    : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{std::isfinite(T_target) ? T_target : T_init},
-      n_thermostat{n_thermostat}, delta_T{delta_T}, limitScaling{std::isfinite(delta_T)},
-      initBrownianMotion{initBrownianMotion}, nanoFlow{nanoFlow} {
+    : particles{particles}, dimension{dimension}, T_init{T_init}, T_target{T_target}, n_thermostat{n_thermostat},
+      delta_T{delta_T}, limitScaling{std::isfinite(delta_T)}, initBrownianMotion{initBrownianMotion},
+      nanoFlow{nanoFlow} {
     SPDLOG_TRACE("Created new Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
                  "limit: {}, bm: {}",
                  this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
@@ -28,14 +28,14 @@ Thermostat::~Thermostat() = default;
 
 /* functionality */
 void Thermostat::initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
-                            bool initBrownianMotion, bool nanoFlow) {
+                            bool initBrownianMotion, bool nanoFlow, bool limitScaling) {
     this->dimension = dimension;
     this->T_init = T_init;
     this->n_thermostat = n_thermostat;
-    this->T_target = std::isfinite(T_target) ? T_target : T_init;
+    this->T_target = T_target;
     this->delta_T = delta_T;
     this->initBrownianMotion = initBrownianMotion;
-    this->limitScaling = std::isfinite(delta_T);
+    this->limitScaling = limitScaling;
     this->nanoFlow = nanoFlow;
 
     SPDLOG_TRACE("Initialized Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
@@ -169,6 +169,7 @@ double Thermostat::getDeltaT() const { return delta_T; }
 double Thermostat::getScalingFactor() const { return scalingFactor; }
 int Thermostat::getTimestep() const { return n_thermostat; }
 bool Thermostat::getNanoflow() const { return nanoFlow; }
+bool Thermostat::doScalingLimit() const { return limitScaling; }
 ParticleContainer &Thermostat::getParticles() const { return particles; }
 
 bool Thermostat::operator==(const Thermostat &other) const {

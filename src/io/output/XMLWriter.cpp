@@ -59,7 +59,7 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     tt.brownianMotion() = false; // since this is a continuation, we don't reinitialize velocities
     tt.nanoFlow() = t.getNanoflow();
     tt.target() = t.getTargetTemp(); // no need to check if t_target is finite, because it always is...
-    if (std::isfinite(t.getDeltaT()))
+    if (t.doScalingLimit())
         tt.deltaT() = t.getDeltaT();
 
     // serialize each molecule inside the particle container

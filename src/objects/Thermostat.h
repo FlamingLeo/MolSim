@@ -35,8 +35,7 @@ class Thermostat {
     /**
      * @brief The target temperature \f$ T_{target} \f$ of the system (default: \f$ T_{init} \f$).
      *
-     * @details If no target temperature is given (i.e. if the value is set to `INFINITY`), the target temperature is
-     * set to \f$ T_{init} \f$.
+     * @details If no target temperature is given in the input, the target temperature is set to \f$ T_{init} \f$.
      */
     double T_target{0.0};
 
@@ -108,9 +107,10 @@ class Thermostat {
      * @param delta_T The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application.
      * @param initBrownianMotion Determines whether or not to initialize the velocities with Brownian Motion.
      * @param nanoFlow Determines whether the thermostat is used for the nano-scale flow simulation.
+     * @param limitScaling Determines if the Thermostat should apply gradual or direct velocity scaling.
      */
     void initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
-                    bool initBrownianMotion, bool nanoFlow = false);
+                    bool initBrownianMotion, bool nanoFlow = false, bool limitScaling = false);
 
     /**
      * @brief Initialize the Particle velocities with Brownian Motion.
@@ -182,6 +182,9 @@ class Thermostat {
 
     /// @brief Gets the scaling factor \f$ \beta \f$ by which to scale the Particle velocities.
     double getScalingFactor() const;
+
+    /// @brief Checks if the Thermostat should apply gradual or direct velocity scaling.
+    bool doScalingLimit() const;
 
     /// @brief Gets the number of simulation iterations after which to apply the Thermostat functionality.
     int getTimestep() const;

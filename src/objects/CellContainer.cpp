@@ -28,9 +28,11 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));
 
     // check that domain size and cutoff are initialized
-    if (cutoff == INFINITY)
+    // NOTE: when compiling using fast math, the user must ensure that these values are initialized!
+    //       otherwise, the result is undefined behavior
+    if (std::isinf(cutoff))
         CLIUtils::error("Cutoff radius not initialized!");
-    if (domainSize[0] == INFINITY || domainSize[1] == INFINITY || domainSize[2] == INFINITY)
+    if (std::isinf(domainSize[0]) || std::isinf(domainSize[1]) || std::isinf(domainSize[2]))
         CLIUtils::error("Domain size not initialized!");
 
     SPDLOG_TRACE("Generating CellContainer with domain size {} and cutoff radius {} (in {} dimensions)",
