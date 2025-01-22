@@ -47,7 +47,9 @@ static inline std::unordered_map<char, std::string> optionNames = {
  * @return The name of the compiler used to build the executable or "unknown".
  */
 static inline std::string getCompilerName() {
-#if defined(__clang__)
+#if defined(__INTEL_LLVM_COMPILER)
+    return "Intel C++ Compiler " + std::to_string(__VERSION);
+#elif defined(__clang__)
     return "Clang " + std::to_string(__clang_major__) + "." + std::to_string(__clang_minor__) + "." +
            std::to_string(__clang_patchlevel__);
 #elif defined(__GNUC__) || defined(__GNUG__)
@@ -55,8 +57,6 @@ static inline std::string getCompilerName() {
            std::to_string(__GNUC_PATCHLEVEL__);
 #elif defined(_MSC_VER)
     return "Microsoft Visual C++ " + std::to_string(_MSC_VER);
-#elif defined(__INTEL_COMPILER)
-    return "Intel C++ Compiler " + std::to_string(__INTEL_COMPILER);
 #else
     return "Unknown";
 #endif
