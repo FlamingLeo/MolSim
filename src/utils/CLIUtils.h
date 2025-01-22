@@ -48,7 +48,7 @@ static inline std::unordered_map<char, std::string> optionNames = {
  */
 static inline std::string getCompilerName() {
 #if defined(__INTEL_LLVM_COMPILER)
-    return "Intel C++ Compiler " + std::to_string(__VERSION);
+    return __VERSION__;
 #elif defined(__clang__)
     return "Clang " + std::to_string(__clang_major__) + "." + std::to_string(__clang_minor__) + "." +
            std::to_string(__clang_patchlevel__);
