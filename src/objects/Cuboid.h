@@ -39,7 +39,7 @@ class Cuboid : public Cluster {
      * cuboid.
      * @param h The distance \f$ h \f$ between the particles in the cuboid.
      * @param m The mass \f$ m \f$ of the particles in the cuboid.
-     * @param type The type of the particle.
+     * @param type The type of the particle. 1 if wall, 0 otherwise
      * @param epsilon The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
      * @param k The stiffness constant \f$ k \f$, used for membrane simulations.

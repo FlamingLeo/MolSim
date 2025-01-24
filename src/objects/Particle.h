@@ -58,7 +58,7 @@ class Particle {
     /// @brief Mass \f$ m \f$ of this particle.
     double m;
 
-    /// @brief Type of the particle.
+    /// @brief Type of the particle. 1 if wall, 0 otherwise
     int type;
 
     /// @brief Depth \f$ \epsilon \f$ of the potential well. Lennard-Jones parameter.
