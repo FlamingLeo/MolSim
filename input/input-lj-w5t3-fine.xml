@@ -21,6 +21,7 @@
             <b>periodic</b>
         </bdConditions>
         <gravity>-12.44</gravity>
+        <parallelization>fine</parallelization>
     </args>
     <thermostat>
         <init>40.0</init>

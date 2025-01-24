@@ -2,6 +2,7 @@
 #include "io/output/XMLWriter.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CellUtils.h"
+#include "utils/OMPWrapper.h"
 #include "utils/StringUtils.h"
 
 SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t)
@@ -12,6 +13,7 @@ SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t
 SimulationLC::~SimulationLC() = default;
 
 void SimulationLC::runSimulation() {
+    CHECK_NOUTFLOW(m_args, conditions);
     SPDLOG_INFO("Running {} linked cell simulation with the following arguments:",
                 StringUtils::fromSimulationType(m_args.sim));
     SPDLOG_INFO("start time  : {}", m_args.startTime);
@@ -28,6 +30,12 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
     SPDLOG_INFO("bd. cond.   : {}", CellUtils::fromBoundaryConditionArray(m_args.conditions));
     SPDLOG_INFO("#particles  : {}", m_particles.size());
+#ifdef _OPENMP
+    SPDLOG_INFO("p. strat.   : {}", StringUtils::fromParallelizationType(m_args.parallelization));
+    SPDLOG_INFO("max threads : {}", omp_get_max_threads());
+#else
+    SPDLOG_WARN("Parallelization is DISABLED!");
+#endif
 
     initializeBase();
     runSimulationLoop(&m_cellContainer);

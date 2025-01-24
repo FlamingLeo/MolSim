@@ -7,10 +7,12 @@
 
 void calculateV(ParticleContainer &particles, double delta_t) {
 #pragma omp parallel for
-    for (auto &p : particles) {
-        if (!p.isActive())
-            continue;
-        SPDLOG_DEBUG("Forces on particle {}", p.toString());
+
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
+        CONTINUE_IF_INACTIVE(p);
+
+
         const std::array<double, 3> velocityUpdate =
             ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>());
         p.getV() = p.getV() + velocityUpdate;

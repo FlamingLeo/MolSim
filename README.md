@@ -18,6 +18,7 @@ The code has been developed using the following software on separate machines:
 -   [Clang++](https://clang.llvm.org/) 18.1.3 (minimum: 14)
 -   [CMake](https://cmake.org/) 3.28.3 (minimum: 3.22)
 -   [GNU Make](https://www.gnu.org/software/make/) 4.3 (minimum: 4.3)
+-   [OpenMP](https://www.openmp.org/) 5.0 (minimum: 4.5)
 -   [Doxygen](https://www.doxygen.nl/) 1.9.8 (optional)
 -   [Paraview](https://www.paraview.org/) 5.13.1 (less optional)
 
@@ -27,7 +28,7 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions
 
 This project uses the following external C++ libraries:
 
--   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0¹
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.2.4¹
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
@@ -36,7 +37,7 @@ If the dependencies are not already installed, they will be automatically fetche
 
 **NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
 
-¹: Xerces-C++ is not supported when compiling with the Intel C++ compiler.
+¹: Xerces-C++ is REQUIRED to be installed beforehand.
 
 ## Getting Started
 
@@ -59,12 +60,17 @@ Following options are supported:
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-f       : Enables fast math optimizations (default: disabled).
+-g       : Compiles the program with the '-pg' flag for use with gprof. 
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
 -o       : Disables OpenMP functionality.
--p       : Compiles the program with the '-pg' flag for use with gprof. 
+-O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
+           This skips checking particle activity, since all particles should remain active. Be careful when using this option!
+-p       : Enables PGO instrumentation code generation (default: off).
+-P       : Enables profile-guided compiler optimizations (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -86,6 +92,11 @@ cmake ..
 # -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
 # -DENABLE_DOXYGEN=<OFF|ON>
 # -DENABLE_BENCHMARKING=<OFF|ON>
+# -DENABLE_OPENMP=<OFF|ON>
+# -DENABLE_FAST_MATH=<OFF|ON>
+# -DNO_OUTFLOW=<OFF|ON>
+# -DPGO_GENERATE=<OFF|ON>
+# -DPGO_USE=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
 # <MolSim|bench|tests|doc_doxygen|all|clean|help>
@@ -116,6 +127,10 @@ Currently, the following options are supported:
   - vtk      : Generates VTK Unstructured Grid (.vtu) files.
   - xyz      : Generates XYZ (.xyz) files.
   - nil      : Logs to stdout. Used for debugging purposes.
+-p <type>    : Sets the parallelization strategy used (default: coarse).
+               If OpenMP support is disabled, this option has no effect.
+  - coarse   : Uses the standard OpenMP for-loop parallelization strategy.
+  - fine     : Uses a finer-grained, task-based parallelization approach.
 -t <type>    : Sets the desired simulation to be performed (default: lj).
   - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
   - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
@@ -160,7 +175,9 @@ The program supports XML input files. Currently, the following input files are i
 -   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid.
 -   `input-lj-w4t5-small.xml`: Simulation of the Rayleigh-Taylor instability (small), performance contest environment.
 -   `input-lj-w4t5-large.xml`: Simulation of the Rayleigh-Taylor instability (large), performance contest environment.
--   `input-lj-w5t3.xml`: Simulation of the Rayleigh-Taylor instability in 3D.
+-   `input-lj-w5t1.xml`: Simulation of a membrane.
+-   `input-lj-w5t3-coarse.xml`: Simulation of the Rayleigh-Taylor instability in 3D using coarse-grained parallelization.
+-   `input-lj-w5t3-fine.xml`: Simulation of the Rayleigh-Taylor instability in 3D using fine-grained parallelization.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
@@ -173,12 +190,13 @@ Complete XML input files have the following structure:
 <sim>
   <!-- (Optional) Simulation arguments are wrapped in "args". This may be omitted, if the simulation can be initialized with default values. -->
   <args>
-    <startTime><!-- double --></startTime>  <!-- start time -->
-    <endTime><!-- double --></endTime>      <!-- end time -->
-    <delta_t><!-- double --></delta_t>      <!-- time step -->
-    <frequency><!-- int --></frequency>     <!-- output frequency -->
-    <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
-    <output><!-- vtk, xyz, nil --></output> <!-- output type -->
+    <startTime><!-- double --></startTime>                    <!-- start time -->
+    <endTime><!-- double --></endTime>                        <!-- end time -->
+    <delta_t><!-- double --></delta_t>                        <!-- time step -->
+    <frequency><!-- int --></frequency>                       <!-- output frequency -->
+    <basename><!-- string --></basename>                      <!-- base name without iteration number of output files -->
+    <output><!-- vtk, xyz, nil --></output>                   <!-- output type -->
+    <parallelization><!-- coarse, fine --></parallelization>  <!-- parallelization type -->
   </args>
   <!-- A thermostat used to regulate the temperature of the particle system. -->
   <!-- If you do not wish to use the thermostat, set the timeStep value to something larger than the total number of time integration steps and set brownianMotion to false. -->

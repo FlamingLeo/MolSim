@@ -52,21 +52,21 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
         CellUtils::fromBoundaryCondition(args.conditions[2]), CellUtils::fromBoundaryCondition(args.conditions[3]),
         CellUtils::fromBoundaryCondition(args.conditions[4]), CellUtils::fromBoundaryCondition(args.conditions[5])};
     a.gravity() = args.gravity;
+    a.parallelization() = StringUtils::fromParallelizationType(args.parallelization);
 
     // serialize thermostat
     ThermostatType tt{t.getTemp(), t.getTimestep()};
     tt.brownianMotion() = false; // since this is a continuation, we don't reinitialize velocities
     tt.nanoFlow() = t.getNanoflow();
     tt.target() = t.getTargetTemp(); // no need to check if t_target is finite, because it always is...
-    if (std::isfinite(t.getDeltaT()))
+    if (t.doScalingLimit())
         tt.deltaT() = t.getDeltaT();
 
     // serialize each molecule inside the particle container
     ObjectsType o{};
     for (auto &p : pc) {
         // skip inactive particles
-        if (!p.isActive())
-            continue;
+        CONTINUE_IF_INACTIVE(p);
 
         // serialize particle data
         ParticleType pt{PositionType{p.getX()[0], p.getX()[1], p.getX()[2]},

@@ -1,26 +1,27 @@
 <sim>
     <args>
         <startTime>0.0</startTime>
-        <endTime>50.0</endTime>
+        <endTime>100.0</endTime>
         <delta_t>0.0005</delta_t>
         <frequency>10</frequency>
-        <basename>MD_vtk_LJ_W5T3_S</basename>
+        <basename>MD_vtk_LJ_W5T3</basename>
         <output>vtk</output>
         <domainSize>
-            <x>12.0</x>
-            <y>12.0</y>
-            <z>12.0</z>
+            <x>60.0</x>
+            <y>60.0</y>
+            <z>60.0</z>
         </domainSize>
         <cutoffRadius>3</cutoffRadius>
         <bdConditions>
             <n>reflective</n>
             <s>reflective</s>
-            <w>reflective</w>
-            <e>reflective</e>
-            <a>reflective</a>
-            <b>reflective</b>
+            <w>periodic</w>
+            <e>periodic</e>
+            <a>periodic</a>
+            <b>periodic</b>
         </bdConditions>
         <gravity>-12.44</gravity>
+        <parallelization>coarse</parallelization>
     </args>
     <thermostat>
         <init>40.0</init>
@@ -42,9 +43,9 @@
                 <z>0.0</z>
             </velocity>
             <size>
-                <x>5</x>
-                <y>3</y>
-                <z>5</z>
+                <x>50</x>
+                <y>20</y>
+                <z>50</z>
             </size>
             <distance>1.2</distance>
             <mass>1.0</mass>
@@ -54,7 +55,7 @@
         <cuboid>
             <position>
                 <x>3.6</x>
-                <y>7.0</y>
+                <y>27.6</y>
                 <z>3.6</z>
             </position>
             <velocity>
@@ -63,9 +64,9 @@
                 <z>0.0</z>
             </velocity>
             <size>
-                <x>5</x>
-                <y>3</y>
-                <z>5</z>
+                <x>50</x>
+                <y>20</y>
+                <z>50</z>
             </size>
             <distance>1.2</distance>
             <mass>2.0</mass>
@@ -73,5 +74,5 @@
             <sigma>1.1</sigma>
         </cuboid>
     </objects>
-    <totalParticles>150</totalParticles>
+    <totalParticles>100000</totalParticles>
 </sim>

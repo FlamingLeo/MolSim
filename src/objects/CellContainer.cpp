@@ -28,9 +28,11 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));
 
     // check that domain size and cutoff are initialized
-    if (cutoff == INFINITY)
+    // NOTE: when compiling using fast math, the user must ensure that these values are initialized!
+    //       otherwise, the result is undefined behavior
+    if (std::isinf(cutoff))
         CLIUtils::error("Cutoff radius not initialized!");
-    if (domainSize[0] == INFINITY || domainSize[1] == INFINITY || domainSize[2] == INFINITY)
+    if (std::isinf(domainSize[0]) || std::isinf(domainSize[1]) || std::isinf(domainSize[2]))
         CLIUtils::error("Domain size not initialized!");
 
     SPDLOG_TRACE("Generating CellContainer with domain size {} and cutoff radius {} (in {} dimensions)",
@@ -145,6 +147,11 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
             }
         }
     }
+
+    // check if any condition is periodic
+    // this is done to prevent having to search the vector every time in the force calculation routine
+    anyPeriodic = std::any_of(conditions.begin(), conditions.end(),
+                              [](BoundaryCondition condition) { return condition == BoundaryCondition::PERIODIC; });
 
     // add particles to corresponding cells
     for (Particle &p : particles) {
@@ -262,7 +269,8 @@ bool CellContainer::moveParticle(Particle &p) {
 }
 void CellContainer::removeHaloCellParticles() {
     for (auto &p : particles) {
-        if (p.isActive() && p.getCellIndex() != -1) {
+        CONTINUE_IF_INACTIVE(p);
+        if (p.getCellIndex() != -1) {
             if (cells[p.getCellIndex()].getType() == CellType::HALO) {
                 SPDLOG_TRACE("Found active halo particle, removing...");
                 deleteParticle(p);
@@ -464,6 +472,7 @@ const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCell
 const std::array<BoundaryCondition, 6> &CellContainer::getConditions() const { return conditions; }
 double CellContainer::getCutoff() const { return cutoff; }
 size_t CellContainer::getDim() const { return dim; }
+bool CellContainer::getAnyPeriodic() const { return anyPeriodic; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
 const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }

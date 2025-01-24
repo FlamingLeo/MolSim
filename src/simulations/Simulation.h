@@ -38,6 +38,17 @@
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e) (void)0
 #endif
 
+#ifdef NOUTFLOW
+#define CHECK_NOUTFLOW(_x, _y)                                                                                         \
+    if (std::any_of(_x._y.begin(), _x._y.end(),                                                                        \
+                    [](BoundaryCondition condition) { return condition == BoundaryCondition::OUTFLOW; })) {            \
+        CLIUtils::error("Cannot run simulation with outflow conditions when NOUTFLOW is defined! Please recompile "    \
+                        "the program without defining it.");                                                           \
+    }
+#else
+#define CHECK_NOUTFLOW(_x, _y) (void)0
+#endif
+
 /// @brief Class defining a time-integration simulation.
 class Simulation {
   protected:

@@ -70,33 +70,6 @@ Particle::~Particle() {
 }
 
 /* functionality */
-std::array<double, 3> &Particle::getX() { return x; }
-std::array<double, 3> &Particle::getV() { return v; }
-std::array<double, 3> &Particle::getF() { return f; }
-std::array<double, 3> &Particle::getOldF() { return old_f; }
-std::vector<std::reference_wrapper<Particle>> &Particle::getDirectNeighbours() { return direct_neighbours; }
-std::vector<std::reference_wrapper<Particle>> &Particle::getDiagonalNeighbours() { return diagonal_neighbours; }
-const std::vector<std::reference_wrapper<Particle>> &Particle::getDirectNeighbours() const { return direct_neighbours; }
-const std::vector<std::reference_wrapper<Particle>> &Particle::getDiagonalNeighbours() const {
-    return diagonal_neighbours;
-}
-const std::array<double, 3> &Particle::getX() const { return x; }
-const std::array<double, 3> &Particle::getV() const { return v; }
-const std::array<double, 3> &Particle::getThermalMotion() const { return thermal_motion; }
-const std::array<double, 3> &Particle::getF() const { return f; }
-const std::array<double, 3> &Particle::getOldF() const { return old_f; }
-double Particle::getM() const { return m; }
-int Particle::getType() const { return type; }
-double Particle::getEpsilon() const { return epsilon; }
-double Particle::getSigma() const { return sigma; }
-double Particle::getK() const { return k; }
-double Particle::getR0() const { return r_0; }
-double Particle::getFZUP() const { return fzup; }
-int Particle::getCellIndex() const { return cellIndex; }
-bool Particle::isActive() const { return active; }
-int Particle::getId() const { return id; }
-omp_lock_t &Particle::getLock() { return lock; }
-
 void Particle::setX(const std::array<double, 3> &new_x) { x = new_x; }
 void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }
 void Particle::setThermalMotion(const std::array<double, 3> &new_thermal_motion) {

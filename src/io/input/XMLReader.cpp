@@ -76,14 +76,20 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
                          bdConditions.s(), bdConditions.w(), bdConditions.e(), bdConditions.a(), bdConditions.b());
         }
         LOAD_ARGS(xmlArgs, args, gravity);
+        if (xmlArgs.parallelization().present()) {
+            auto pStrat = xmlArgs.parallelization().get();
+            args.parallelization = StringUtils::toParallelizationType(pStrat);
+            SPDLOG_DEBUG("Loaded parallelization strategy: {}", pStrat);
+        }
     }
 }
 
 // helper function to read and initialize thermostat
 static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t, int dimensions) {
     t.initialize(dimensions, xmlThermostat.init(), xmlThermostat.timeStep(),
-                 GET_IF_PRESENT(xmlThermostat, target, INFINITY), GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY),
-                 GET_IF_PRESENT(xmlThermostat, brownianMotion, true), GET_IF_PRESENT(xmlThermostat, nanoFlow, false));
+                 GET_IF_PRESENT(xmlThermostat, target, xmlThermostat.init()),
+                 GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true),
+                 GET_IF_PRESENT(xmlThermostat, nanoFlow, false), xmlThermostat.deltaT().present());
 }
 
 // helper (wrapper) function to parse cuboids into a particle container

@@ -7,8 +7,8 @@
 #include <spdlog/spdlog.h>
 
 // helper function to calculate force vector
-static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2, const std::array<double, 3> distVec,
-                                           double distNorm) {
+static inline std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2,
+                                                  const std::array<double, 3> distVec, double distNorm) {
     double epsilon = std::sqrt(p1.getEpsilon() * p2.getEpsilon());
     double sigma = (p1.getSigma() + p2.getSigma()) / 2;
 
@@ -38,7 +38,7 @@ static bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>
 }
 
 // helper method to potentially fake the position of a ghost particle, for use with periodic boundaries
-static std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
+static inline std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
     // special case: particle j is a ghost particle
     // otherwise, we just get the real position of the particle
     if (!c.getHaloLocation().empty()) {
@@ -101,13 +101,14 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
 
 void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc) {
     // mirror border particles for periodic boundaries
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
         mirrorGhostParticles(lc);
 
 // loop over all (regular) cells ic
-#pragma omp parallel for
-    for (auto &ic : lc->getIterableCells()) {
+#pragma omp parallel for schedule(dynamic, 16)
+    CONTAINER_LOOP(lc->getIterableCells(), it) {
         // loop over all active particles i in cell ic
+        auto &ic = CONTAINER_REF(it);
         for (auto &ri : ic.get()) {
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (auto &kc : lc->getNeighborCells(ic.get().getIndex())) {
@@ -150,7 +151,67 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
     }
 
     // delete ghost particles in the end
-    if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
+    if (lc->getAnyPeriodic())
+        deleteGhostParticles(lc);
+}
+
+void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellContainer *lc) {
+    // mirror border particles for periodic boundaries
+    if (lc->getAnyPeriodic())
+        mirrorGhostParticles(lc);
+
+#pragma omp parallel
+    {
+#pragma omp single nowait
+        {
+            // loop over all (regular) cells ic
+            for (auto &ic : lc->getIterableCells()) {
+#pragma omp task firstprivate(ic)
+                {
+                    // loop over all active particles i in cell ic
+                    for (auto &ri : ic.get()) {
+                        // loop over all cells kc in Neighbours(ic), including the particle i's own cell
+                        for (auto &kc : lc->getNeighborCells(ic.get().getIndex())) {
+                            // loop over all particles j in kc
+                            for (auto &rj : kc.get()) {
+                                // check if i and j form a distinct pair (N3L)
+                                Particle &i = ri;
+                                Particle &j = rj;
+                                if (&i >= &j)
+                                    continue;
+
+                                // get the position used to calculate the distance between to particles
+                                std::array<double, 3> truePos = getTruePos(j, kc.get(), lc);
+
+                                // calculate the distance between the two particles
+                                auto distVec = i.getX() - truePos;
+                                double dist = ArrayUtils::L2NormSquared(distVec);
+
+                                // compute force if distance is less than cutoff
+                                if (dist <= SQR(lc->getCutoff())) {
+                                    // calculate force
+                                    double distNorm = std::sqrt(dist);
+                                    auto forceVec = getLJForceVec(i, j, distVec, distNorm);
+
+                                    // apply force on particle i (no force on ghost particle)
+                                    omp_set_lock(&i.getLock());
+                                    i.getF() = i.getF() + forceVec;
+                                    omp_unset_lock(&i.getLock());
+
+                                    omp_set_lock(&j.getLock());
+                                    j.getF() = j.getF() - forceVec;
+                                    omp_unset_lock(&j.getLock());
+                                }
+                            }
+                        }
+                    }
+                } // end task
+            }
+        } // end single region
+    } // end parallel region
+
+    // delete ghost particles in the end
+    if (lc->getAnyPeriodic())
         deleteGhostParticles(lc);
 }
 
