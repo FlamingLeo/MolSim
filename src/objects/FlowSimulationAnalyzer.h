@@ -19,11 +19,15 @@ class FlowSimulationAnalyzer {
 
     std::vector<double> velocities;
 
+    int n_analyzer;
+
     public:
 
-    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos);
+    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos, int n_analyzer);
 
     void calculateDensitiesAndVelocities();
+
+    void analyzeFlow(int currentStep);
 
     int getBinNumber() const;
 

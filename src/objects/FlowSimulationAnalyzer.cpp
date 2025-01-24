@@ -1,7 +1,7 @@
 #include "FlowSimulationAnalyzer.h"
 
-FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos)
-:particles{particles}, binNumber{binNumber}, leftWallXPos{leftWallXPos}, rightWallXPos{rightWallXPos}{
+FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos, int n_analyzer)
+:particles{particles}, binNumber{binNumber}, leftWallXPos{leftWallXPos}, rightWallXPos{rightWallXPos}, n_analyzer{n_analyzer}{
     binSize = (rightWallXPos - leftWallXPos) / binNumber;
     densities.resize(binNumber);
     velocities.resize(binNumber);
@@ -22,6 +22,12 @@ void FlowSimulationAnalyzer::calculateDensitiesAndVelocities(){
     }
     for(int i = 0; i < binNumber; i++){
         velocities[i] /= densities[i];
+    }
+}
+
+void FlowSimulationAnalyzer::analyzeFlow(int currentStep){
+    if(currentStep % n_analyzer){
+        calculateDensitiesAndVelocities();
     }
 }
 
