@@ -105,6 +105,8 @@ void Particle::setThermalMotion(const std::array<double, 3> &new_thermal_motion)
 void Particle::setF(const std::array<double, 3> &new_f) { f = new_f; }
 void Particle::setOldF(const std::array<double, 3> &new_old_f) { old_f = new_old_f; }
 void Particle::setFToZero() { std::fill(std::begin(f), std::end(f), 0); }
+void Particle::setDirectNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours) {direct_neighbours = neighbours; }
+void Particle::setDiagonalNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours) {diagonal_neighbours = neighbours;}
 void Particle::setM(double new_m) {
     if (new_m <= 0)
         CLIUtils::error(MASS_ERROR, "", false);

@@ -20,7 +20,7 @@
             <a>reflective</a>
             <b>reflective</b>
         </bdConditions>
-        <gravity>-0.001</gravity>
+        <gravity>0.0</gravity>
     </args>
     <thermostat>
         <init>40.0</init>
@@ -38,9 +38,9 @@
     <objects>
         <cuboid>
             <position>                <!-- TODO: might have to be slightly moved because of domain and cell initialization (see halo cells) -->
-                <x>15.0</x>
-                <y>15.0</y>
-                <z>15.0</z>
+                <x>19.0</x>
+                <y>19.0</y>
+                <z>5.5</z>
             </position>
             <velocity>
                 <x>0.0</x>
@@ -58,5 +58,6 @@
             <sigma>1.0</sigma>
         </cuboid>
     </objects>
+    <totalParticles>2500</totalParticles>
     <!-- TODO (?): total particles -->
 </sim>

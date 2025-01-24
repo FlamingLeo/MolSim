@@ -22,7 +22,7 @@ static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFun
     return std::make_tuple(TimeIntegrationFuncs(type, false), calculateF_LennardJones); // stop compiler warnings
 }
 
-static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFunctions_LC(SimulationType type) {
+static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFunctions_LC(SimulationType type, bool membrane) {
     SPDLOG_DEBUG("Getting physics functions for linked cell simulation...");
     switch (type) {
     case SimulationType::GRAVITY:
@@ -30,6 +30,9 @@ static std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFun
         break;
     case SimulationType::LJ:
         SPDLOG_DEBUG("Chose physics calculations for linked-cell Lennard-Jones simulation.");
+        if(membrane){
+            return std::make_tuple(TimeIntegrationFuncs(type, true), calculateF_Membrane_LC);
+        }
         return std::make_tuple(TimeIntegrationFuncs(type, true), calculateF_LennardJones_LC);
     default:
         CLIUtils::error("Invalid simulation type!");
@@ -50,5 +53,5 @@ TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type, bool lc) {
 }
 
 std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSimulationFunctions(Arguments &args) {
-    return args.linkedCells ? getSimulationFunctions_LC(args.sim) : getSimulationFunctions_nonLC(args.sim);
+    return args.linkedCells ? getSimulationFunctions_LC(args.sim, args.membrane) : getSimulationFunctions_nonLC(args.sim);
 }

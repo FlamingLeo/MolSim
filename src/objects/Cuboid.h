@@ -92,6 +92,20 @@ class Cuboid : public Cluster {
     void initialize(size_t dimensions = 2) override;
 
     /**
+     * @brief Cuboid function for membranes, adds every particle's neighbours to the particle,
+     * based on the index in the ParticleContainer
+     *
+     */
+    void initializeNeighbours();
+
+    /**
+     * @brief Function to define which particles in a membrane should have special forces
+     *
+     * @return True or false
+     */
+    bool specialCase(int x, int y, int z);
+
+    /**
      * @brief Returns a string representation of this Cuboid.
      *
      * @return The formatted Cuboid data as a std::string.

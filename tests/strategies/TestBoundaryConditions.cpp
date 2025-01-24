@@ -58,7 +58,7 @@ TEST(BoundaryConditionTests, Reflective2D) {
 }
 
 // Tests handling reflective corners.
-// The particle should be mirrored and have it's velocity flipped in the X and Y directions.
+// The particle should be mirrored and have its velocity flipped in the X and Y directions.
 TEST(BoundaryConditionTests, ReflectiveCorners2D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -210,6 +210,123 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
     test({1.25, 5.75, 0.}, {-20., 20., 0.}, {5.25, 5.25, 0.}, {-20., -20., 0.}, 40); // nw corner
 }
 
+
+//CONCERNING 3D TESTS:
+//3d tests do not cover all boundaries and boundary types anymore as it's not in my opinion feasible
+//(there's for example 20 distinct corner cases that would need individual testing, which seems a bit much)
+//Rather, tests now only sample from the main categories (double corner etc.)
+
+TEST(BoundaryConditionTests, Outflow3D) {
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
+                                                BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 1.}, conditions, 1., pc, 3};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 0);
+        EXPECT_EQ(pc[0].getCellIndex(), -1);
+        EXPECT_FALSE(pc[0].isActive());
+    };
+    test({2.5, 1.5, 1.5}, {20., 0., 0.}); // X
+    test({1.5, 2.5, 1.5}, {0., 20., 0.}); //Y
+    test({1.5, 1.5, 2.5}, {0., 0., 20.}); //Z
+    test({2.5, 1.5, 1.5}, {20., 0., -20.}); //XZ
+    test({2.5, 1.5, 1.5}, {20., -20., -20.}); //XYZ
+}
+
+TEST(BoundaryConditionTests, Reflective3D) {
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
+        EXPECT_TRUE(pc[0].isActive());
+    };
+
+    //single
+    test({2.75, 1.5, 1.5}, {10., 0., 0.}, {2.75, 1.5, 1.5}, {-10, 0., 0.}, 22); //X
+    test({1.5, 2.75, 1.5}, {0., 10., 0.}, {1.5, 2.75, 1.5}, {0, -10., 0.}, 25); //Y
+    test({1.5, 1.5, 2.75}, {0., 0., 10.}, {1.5, 1.5, 2.75}, {0, 0., -10.}, 37); //Z
+}
+
+TEST(BoundaryConditionTests, ReflectiveCorners3D) {
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedIndex, bool expectedActive) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(c.activeSize(), expectedActive ? 1 : 0);
+        EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
+        if (expectedActive) {
+            EXPECT_EQ(pc[0].getX(), expectedPos);
+            EXPECT_EQ(pc[0].getV(), expectedVel);
+        }
+        EXPECT_EQ(pc[0].isActive(), expectedActive);
+    };
+
+    //double
+    test({2.8, 2.8, 1.5}, {5., 10., 0.}, {2.95, 2.7, 1.5}, {-5., -10., 0}, 26, true); // NE: N first -> reflect
+    test({1.5, 2.8, 2.8}, {0., 10., 5.}, {1.5, 2.7, 2.95}, {0., -10., -5.}, 41, true); // NA: N first -> reflect
+    //triple
+    test({2.8, 2.8, 2.8}, {5., 10., 5.}, {2.95, 2.7, 2.95}, {-5., -10., -5.}, 42, true); //NEA: N first -> reflect
+}
+
+TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner3D) {
+    constexpr double delta_t = 0.05;
+    std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                                                BoundaryCondition::PERIODIC,   BoundaryCondition::PERIODIC,
+                                                BoundaryCondition::PERIODIC,   BoundaryCondition::PERIODIC};
+
+    auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity,
+                    const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
+                    int expectedIndex) {
+        ParticleContainer pc;
+        Particle p{position, velocity, 1, 1};
+        pc.addParticle(p);
+        CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
+        calculateX_LC(pc, delta_t, 0.0, &c);
+        EXPECT_EQ(c.size(), 1);
+        EXPECT_EQ(pc[0].getX(), expectedPos);
+        EXPECT_EQ(pc[0].getV(), expectedVel);
+        EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
+        EXPECT_TRUE(pc[0].isActive());
+    };
+    //double
+    test({2.75, 2.75, 1.5}, {20., 20., 0.}, {1.75, 2.25, 1.5}, {20., -20., 0.}, 25);   // ne corner
+    test({1.5, 2.75, 2.75}, {0., 20., 20.}, {1.5, 2.25, 1.75}, {0., -20., 20.}, 25);    // na corner
+    //triple
+    test({2.75, 2.75, 2.75}, {20., 20., 20.}, {1.75, 2.25, 1.75}, {20., -20., 20.}, 25); //nea corner
+}
+
 TEST(BoundaryConditionTests, Periodic3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -235,7 +352,7 @@ TEST(BoundaryConditionTests, Periodic3D) {
     test({1.5, 2.5, 1.5}, {0., 20., 0.}, {1.5, 1.5, 1.5}, {0, 20., 0.}, 21);  // Y
     test({1.5, 1.5, 2.5}, {0., 0., 20.}, {1.5, 1.5, 1.5}, {0, 0., 20.}, 21);  // Z
 
-    // this is the test for corners (double mirroring)
+    // this is the test for corners (double)
     test({2.75, 1.5, 1.75}, {20., 0., -20.}, {1.75, 1.5, 2.75}, {20., 0., -20.}, 37);
     // triple mirroring
     test({2.75, 1.5, 1.75}, {10., -20., -20.}, {1.25, 2.5, 2.75}, {10., -20., -20.}, 41);

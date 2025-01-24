@@ -27,6 +27,16 @@ static std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p
     return ArrayUtils::elementWiseScalarOp(forceMag, distVec, std::multiplies<>());
 }
 
+// helper function to check whether particles are neighbours
+static bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>> vec, const std::reference_wrapper<Particle> el){
+    for(auto &vec_el : vec){
+        if(vec_el.get() == el.get()){
+            return true;
+        }
+    }
+    return false;
+}
+
 // helper method to potentially fake the position of a ghost particle, for use with periodic boundaries
 static std::array<double, 3> getTruePos(const Particle &p, const Cell &c, CellContainer *lc) {
     // special case: particle j is a ghost particle
@@ -145,6 +155,8 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 }
 
 void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc) {
+    SPDLOG_DEBUG("r0 is {} and k is {}", particles.get(0).getR0(), particles.get(0).getK());
+
     // mirror border particles for periodic boundaries
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
@@ -158,7 +170,13 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
 
         // loop over all active particles i in cell ic
         for (auto &ri : ic) {
+
             Particle &i = ri;
+            //add special force to the particles that are concerned
+            //add a gravitational force on the z-axis (NOT ON THE Y AXIS AS PER USUAL)
+            //again, specific to the given scenario
+            std::array<double, 3> specialForce = {0.0, 0.0, i.getFZUP() - 0.001};
+            i.getF() = ArrayUtils::elementWisePairOp(i.getF(), specialForce, std::plus<>());
 
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
@@ -178,27 +196,28 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                     // calculate the distance between the two particles
                     auto distVec = i.getX() - truePos;
                     double distNorm = ArrayUtils::L2Norm(distVec);
+                    double specialCutoff = std::pow(2, 1.0/6.0) * ((i.getSigma() + j.getSigma()) / 2.0);
 
-                    /*
-                    if (VEC_CONTAINS(i.getDirectNeighbours(), j)){
+
+                    if (inNeighbourVector(i.getDirectNeighbours(), rj)){
                         // compute scalar
-                        double scalar = k * (1 - r_0/ distNorm);
-                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i, we multiply
-                    by -1 forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
-
-                    } else if (VEC_CONTAINS(i.getDiagonalNeighbours(), j)){
-                        double scalar = k * (1 - std::sqrt(2) * r_0/ distNorm);
+                        double scalar = i.getK() * (distNorm - i.getR0()) * (1 / distNorm);
+                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i,
+                        //we multiply by -1
                         forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
 
-                    } else if (distNorm <= lc->getCutoff()){
+                    } else if (inNeighbourVector(i.getDiagonalNeighbours(), rj)){
+                        double scalar = i.getK() * (distNorm - std::sqrt(2) * i.getR0()) * (1 / distNorm);
+                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+
+                    } else if (distNorm <= specialCutoff) {
                         //calculate force
                         forceVec = getLJForceVec(i, j, distVec, distNorm);
-
-                        // apply force on particle i (no force on ghost particle)
-                        i.getF() = i.getF() + forceVec;
-                        j.getF() = j.getF() - forceVec;
                     }
-                     */
+
+                    // apply force on particle i (no force on ghost particle)
+                    i.getF() = i.getF() + forceVec;
+                    j.getF() = j.getF() - forceVec;
                 }
             }
         }

@@ -72,3 +72,5 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
  * @param lc The CellContainer for the linked cells method.
  */
 void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContainer *lc);
+
+void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc);

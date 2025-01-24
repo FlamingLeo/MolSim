@@ -110,6 +110,8 @@ static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::
 
         Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma, k, r_0, fzup};
         cuboidObj.initialize();
+        if(membrane.present())
+            cuboidObj.initializeNeighbours();
     }
 }
 
