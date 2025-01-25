@@ -196,6 +196,21 @@ Complete XML input files have the following structure:
     <frequency><!-- int --></frequency>                       <!-- output frequency -->
     <basename><!-- string --></basename>                      <!-- base name without iteration number of output files -->
     <output><!-- vtk, xyz, nil --></output>                   <!-- output type -->
+    <domainSize>                                              <!-- domain size (linked cells) -->
+      <x><!-- double --></x>
+      <x><!-- double --></y>
+      <z><!-- double --></z>
+    </domainSize>
+    <cutoffRadius><!-- double --></cutoffRadius>              <!-- cutoff radius (linked cells) -->
+    <bdConditions>                                            <!-- boundary conditions (linked cells) -->
+      <n><!-- outflow, reflective, periodic --></n>           <!-- north -->
+      <s><!-- outflow, reflective, periodic --></s>           <!-- south -->
+      <w><!-- outflow, reflective, periodic --></w>           <!-- west -->
+      <e><!-- outflow, reflective, periodic --></e>           <!-- east -->
+      <a><!-- outflow, reflective, periodic --></a>           <!-- above -->
+      <b><!-- outflow, reflective, periodic --></b>           <!-- below -->
+    </bdConditions>
+    <gravity><!-- double --></gravity>                        <!-- gravity (non-membrane: y-axis, membrane: z-axis) -->
     <parallelization><!-- coarse, fine --></parallelization>  <!-- parallelization type -->
   </args>
   <!-- A thermostat used to regulate the temperature of the particle system. -->
@@ -227,6 +242,14 @@ Complete XML input files have the following structure:
     <avgBondLength><!-- double --></avgBondLength>
     <!-- The constant upward force along the z-axis. -->
     <zForce><!-- double --></zForce>
+    <!-- (Optional) A sequence of positional particle indices for which the upward force should be applied. -->
+    <specialCase>
+      <x><!-- int --></x>
+      <y><!-- int --></y>
+      <z><!-- int --></z>
+    </specialCase>
+    <!-- (Optional) The number of simulation iterations after which the upward force is no longer applied. -->
+    <scIterationLimit><!-- int --></scIterationLimit>
   </membrane>
   <!-- The type of the simulation. Must be specified. -->
   <type><!-- gravity, lj --></type>
