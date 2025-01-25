@@ -21,7 +21,6 @@ void SimulationLC::runSimulation() {
     SPDLOG_INFO("timestep    : {}", m_args.delta_t);
     SPDLOG_INFO("output freq.: {}", m_args.itFreq);
     SPDLOG_INFO("dimensions  : {}", m_args.dimensions);
-    SPDLOG_INFO("membrane    : {}", m_args.membrane);
     SPDLOG_INFO("domain size : {}", ArrayUtils::to_string(m_args.domainSize));
     SPDLOG_INFO("cell size   : {}", ArrayUtils::to_string(m_cellContainer.getCellSize()));
     SPDLOG_INFO("cutoff      : {}", m_args.cutoffRadius);

@@ -64,7 +64,7 @@ void Thermostat::calculateKineticEnergy() {
         // nanoflow thermostat: use thermal motion of MOBILE particles
         for (auto &p : particles) {
             CONTINUE_IF_INACTIVE(p);
-            if (p.getType() == 0)
+            if (p.getType() != 1)
                 sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
         }
     }
@@ -102,7 +102,7 @@ void Thermostat::calculateThermalMotions() {
     avg_velocity = {0., 0., 0.};
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        if (p.getType() == 0) {
+        if (p.getType() != 1) {
             avg_velocity[0] += p.getV()[0];
             avg_velocity[1] += p.getV()[1];
             avg_velocity[2] += p.getV()[2];
@@ -115,7 +115,7 @@ void Thermostat::calculateThermalMotions() {
     // calculate thermal motion for each particle
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        if (p.getType() == 0)
+        if (p.getType() != 1)
             p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
     }
 }

@@ -127,11 +127,21 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="specialCaseType">
+        <xs:sequence>
+            <xs:element type="xs:int" name="x"/>
+            <xs:element type="xs:int" name="y"/>
+            <xs:element type="xs:int" name="z"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="membraneType">
         <xs:sequence>
             <xs:element type="xs:double" name="stiffness"/>
             <xs:element type="xs:double" name="avgBondLength"/>
             <xs:element type="xs:double" name="zForce"/>
+            <xs:element type="specialCaseType" name="specialCase" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element type="xs:int" name="scIterationLimit" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

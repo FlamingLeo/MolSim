@@ -108,7 +108,7 @@ std::string Particle::toString() const {
     std::stringstream ss;
     ss << "{ x: " << x << ", v: " << v << ", f: " << f << ", old_f: " << old_f << ", m: " << m
        << ", epsilon: " << epsilon << ", sigma: " << sigma << ", k: " << k << ", r_0: " << r_0 << ", f_z-up: " << fzup
-       << ", type: " << type << ", cellIndex:" << cellIndex << ", active: " << active << " }";
+       << ", type: " << type << ", cellIndex:" << cellIndex << ", active: " << active << ", id: " << id << " }";
     return ss.str();
 }
 

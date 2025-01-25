@@ -12,7 +12,7 @@ void calculateV(ParticleContainer &particles, double delta_t) {
         CONTINUE_IF_INACTIVE(p);
 
         // skip wall particles
-        if (p.getType() != 0)
+        if (p.getType() == 1)
             continue;
 
         // calculate velocity

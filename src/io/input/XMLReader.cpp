@@ -94,7 +94,7 @@ static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermos
 
 // helper (wrapper) function to parse cuboids into a particle container
 static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::MembraneOptional &membrane,
-                         ParticleContainer &pc) {
+                         ParticleContainer &pc, size_t dimensions) {
     for (const auto &cuboid : xmlObjects.cuboid()) {
         std::array<double, 3> position{cuboid.position().x(), cuboid.position().y(), cuboid.position().z()};
         std::array<double, 3> velocity{cuboid.velocity().x(), cuboid.velocity().y(), cuboid.velocity().z()};
@@ -108,6 +108,17 @@ static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::
         double k = membrane.present() ? membrane.get().stiffness() : K_DEFAULT;
         double r_0 = membrane.present() ? membrane.get().avgBondLength() : R0_DEFAULT;
         double fzup = membrane.present() ? membrane.get().zForce() : FZUP_DEFAULT;
+        std::vector<std::array<int, 3>> specialCases;
+        if (membrane.present()) {
+            for (const auto &scase : membrane.get().specialCase()) {
+                std::array<int, 3> caseArray = {scase.x(), scase.y(), scase.z()};
+                specialCases.push_back(caseArray);
+            }
+            if (membrane.get().scIterationLimit().present()) {
+                pc.setSpecialForceLimit(membrane.get().scIterationLimit().get());
+                SPDLOG_DEBUG("Set membrane upward force limit to {}", pc.getSpecialForceLimit());
+            }
+        }
 
         SPDLOG_DEBUG("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}, k: {}, r_0: {}, "
                      "f_z-up: {}",
@@ -115,9 +126,11 @@ static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::
                      distance, mass, epsilon, sigma, k, r_0, fzup);
 
         Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma, k, r_0, fzup};
-        cuboidObj.initialize();
-        if (membrane.present())
+        cuboidObj.getSpecialCases() = specialCases;
+        cuboidObj.initialize(dimensions);
+        if (membrane.present()) {
             cuboidObj.initializeNeighbours();
+        }
     }
 }
 
@@ -217,7 +230,7 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
         args.membrane = membrane.present();
         SPDLOG_DEBUG("Membrane simulation?: {}", args.membrane);
 
-        parseCuboids(xmlObjects, membrane, pc);
+        parseCuboids(xmlObjects, membrane, pc, args.dimensions);
         parseParticles(xmlObjects, pc);
         parseDiscs(xmlObjects, pc);
 

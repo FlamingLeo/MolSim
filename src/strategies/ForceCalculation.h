@@ -10,6 +10,8 @@
 #include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #define SQR(x) ((x) * (x))
+#define SQRT2 1.41421356237309504880
+#define LJTHRESHOLD 1.12246204831
 
 /**
  * @brief Calculates the force \f$ F \f$ for all particles using a naive approach for a Gravity simulation.

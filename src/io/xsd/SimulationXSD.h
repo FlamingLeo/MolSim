@@ -606,6 +606,7 @@ class CuboidType;
 class ParticleType;
 class DiscType;
 class ObjectsType;
+class SpecialCaseType;
 class MembraneType;
 class SimType;
 class ThermostatType;
@@ -4938,6 +4939,223 @@ class ObjectsType : public ::xml_schema::Type {
 };
 
 /**
+ * @brief Class corresponding to the %specialCaseType schema type.
+ *
+ * @nosubgrouping
+ */
+class SpecialCaseType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name x
+     *
+     * @brief Accessor and modifier functions for the %x
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int XType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<XType, char> XTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const XType &x() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    XType &x();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void x(const XType &x);
+
+    //@}
+
+    /**
+     * @name y
+     *
+     * @brief Accessor and modifier functions for the %y
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int YType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<YType, char> YTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const YType &y() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    YType &y();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void y(const YType &x);
+
+    //@}
+
+    /**
+     * @name z
+     *
+     * @brief Accessor and modifier functions for the %z
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int ZType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ZType, char> ZTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const ZType &z() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    ZType &z();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void z(const ZType &x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    SpecialCaseType(const XType &, const YType &, const ZType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    SpecialCaseType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    SpecialCaseType(const SpecialCaseType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual SpecialCaseType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    SpecialCaseType &operator=(const SpecialCaseType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~SpecialCaseType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<XType> x_;
+    ::xsd::cxx::tree::one<YType> y_;
+    ::xsd::cxx::tree::one<ZType> z_;
+
+    //@endcond
+};
+
+/**
  * @brief Class corresponding to the %membraneType schema type.
  *
  * @nosubgrouping
@@ -5078,6 +5296,128 @@ class MembraneType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name specialCase
+     *
+     * @brief Accessor and modifier functions for the %specialCase
+     * sequence element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::SpecialCaseType SpecialCaseType;
+
+    /**
+     * @brief Element sequence container type.
+     */
+    typedef ::xsd::cxx::tree::sequence<SpecialCaseType> SpecialCaseSequence;
+
+    /**
+     * @brief Element iterator type.
+     */
+    typedef SpecialCaseSequence::iterator SpecialCaseIterator;
+
+    /**
+     * @brief Element constant iterator type.
+     */
+    typedef SpecialCaseSequence::const_iterator SpecialCaseConstIterator;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<SpecialCaseType, char> SpecialCaseTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * sequence.
+     *
+     * @return A constant reference to the sequence container.
+     */
+    const SpecialCaseSequence &specialCase() const;
+
+    /**
+     * @brief Return a read-write reference to the element sequence.
+     *
+     * @return A reference to the sequence container.
+     */
+    SpecialCaseSequence &specialCase();
+
+    /**
+     * @brief Copy elements from a given sequence.
+     *
+     * @param s A sequence to copy elements from.
+     *
+     * For each element in @a s this function makes a copy and adds it
+     * to the sequence. Note that this operation completely changes the
+     * sequence and all old elements will be lost.
+     */
+    void specialCase(const SpecialCaseSequence &s);
+
+    //@}
+
+    /**
+     * @name scIterationLimit
+     *
+     * @brief Accessor and modifier functions for the %scIterationLimit
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int ScIterationLimitType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<ScIterationLimitType> ScIterationLimitOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<ScIterationLimitType, char> ScIterationLimitTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const ScIterationLimitOptional &scIterationLimit() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    ScIterationLimitOptional &scIterationLimit();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void scIterationLimit(const ScIterationLimitType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void scIterationLimit(const ScIterationLimitOptional &x);
+
+    //@}
+
+    /**
      * @name Constructors
      */
     //@{
@@ -5151,6 +5491,8 @@ class MembraneType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<StiffnessType> stiffness_;
     ::xsd::cxx::tree::one<AvgBondLengthType> avgBondLength_;
     ::xsd::cxx::tree::one<ZForceType> zForce_;
+    SpecialCaseSequence specialCase_;
+    ScIterationLimitOptional scIterationLimit_;
 
     //@endcond
 };
@@ -6556,6 +6898,8 @@ void operator<<(::xercesc::DOMElement &, const ParticleType &);
 void operator<<(::xercesc::DOMElement &, const DiscType &);
 
 void operator<<(::xercesc::DOMElement &, const ObjectsType &);
+
+void operator<<(::xercesc::DOMElement &, const SpecialCaseType &);
 
 void operator<<(::xercesc::DOMElement &, const MembraneType &);
 

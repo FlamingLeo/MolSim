@@ -12,7 +12,7 @@
             <z>148.0</z>
         </domainSize>
         <cutoffRadius>4</cutoffRadius>
-        <bdConditions>            <!-- TODO: might have to be changed -->
+        <bdConditions>
             <n>reflective</n>
             <s>reflective</s>
             <w>reflective</w>
@@ -20,7 +20,7 @@
             <a>reflective</a>
             <b>reflective</b>
         </bdConditions>
-        <gravity>0.0</gravity>
+        <gravity>-0.001</gravity>
     </args>
     <thermostat>
         <init>40.0</init>
@@ -31,13 +31,35 @@
         <stiffness>300</stiffness>
         <avgBondLength>2.2</avgBondLength>
         <zForce>0.8</zForce>
+        <specialCase>
+            <x>17</x>
+            <y>24</y>
+            <z>0</z>
+        </specialCase>
+        <specialCase>
+            <x>17</x>
+            <y>25</y>
+            <z>0</z>
+        </specialCase>
+        <specialCase>
+            <x>18</x>
+            <y>24</y>
+            <z>0</z>
+        </specialCase>
+        <specialCase>
+            <x>18</x>
+            <y>25</y>
+            <z>0</z>
+        </specialCase>
+        <scIterationLimit>15000</scIterationLimit>
     </membrane>
     <type>lj</type>
     <linkedCells>true</linkedCells>
     <dimensions>3</dimensions>
     <objects>
+        <!-- membrane -->
         <cuboid>
-            <position>                <!-- TODO: might have to be slightly moved because of domain and cell initialization (see halo cells) -->
+            <position>
                 <x>19.0</x>
                 <y>19.0</y>
                 <z>5.5</z>
@@ -59,5 +81,4 @@
         </cuboid>
     </objects>
     <totalParticles>2500</totalParticles>
-    <!-- TODO (?): total particles -->
 </sim>

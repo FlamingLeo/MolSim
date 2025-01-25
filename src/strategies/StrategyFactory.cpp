@@ -40,10 +40,10 @@ static inline std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimula
             return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_LennardJones_LC);
 
         } else {
-            if (args.membrane) {
-                return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_Membrane_LC);
-            }
             SPDLOG_DEBUG("Chose fine-grained (task-based) parallelization strategy.");
+            if (args.membrane) {
+                CLIUtils::error("Fine-grained parallelization unsupported with membrane simulation!");
+            }
             return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_LennardJones_LC_task);
         }
         break;

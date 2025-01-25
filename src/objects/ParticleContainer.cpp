@@ -95,13 +95,16 @@ const Particle &ParticleContainer::get(size_t index) const {
         CLIUtils::error("Index out of bounds for ParticleContainer", StringUtils::fromNumber(index), false);
     return m_particles[index];
 }
+int ParticleContainer::getSpecialForceLimit() const { return m_specialForceLimit; }
+void ParticleContainer::setSpecialForceLimit(int limit) { m_specialForceLimit = limit; }
+void ParticleContainer::decrementSpecialForceLimit() { --m_specialForceLimit; }
 size_t ParticleContainer::size() const { return m_particles.size(); }
 size_t ParticleContainer::activeSize() const {
     return std::count_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return p.isActive(); });
 }
 size_t ParticleContainer::nonWallSize() const {
     return std::count_if(m_particles.begin(), m_particles.end(),
-                         [](const Particle &p) { return p.isActive() && (p.getType() == 0); });
+                         [](const Particle &p) { return p.isActive() && (p.getType() != 1); });
 }
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }

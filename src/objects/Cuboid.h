@@ -12,6 +12,7 @@
 #include "ParticleContainer.h"
 #include <array>
 #include <string>
+#include <vector>
 
 /// @brief Cuboid class storing meta-data about the given cuboids.
 class Cuboid : public Cluster {
@@ -27,6 +28,10 @@ class Cuboid : public Cluster {
 
     /// @brief The constant upward force \f$ F_{Z-UP} \f$ for membrane simulations.
     double fzup;
+
+    /// @brief Vector containing position indices for particles where the constant upward force should be applied, for
+    /// membrane simulations.
+    std::vector<std::array<int, 3>> specialCases;
 
   public:
     /**
@@ -64,6 +69,24 @@ class Cuboid : public Cluster {
      * @return A const reference to the dimensions array of this cuboid.
      */
     const std::array<size_t, 3> &getN() const;
+
+    /**
+     * @brief Get the vector containing position indices for particles where the constant upward force should be
+     * applied.
+     *
+     * @return A reference to the vector containing position indices for particles where the constant upward force
+     * should be applied.
+     */
+    std::vector<std::array<int, 3>> &getSpecialCases();
+
+    /**
+     * @brief Get the vector containing position indices for particles where the constant upward force should be applied
+     * (const).
+     *
+     * @return A const reference to the vector containing position indices for particles where the constant upward force
+     * should be applied.
+     */
+    const std::vector<std::array<int, 3>> &getSpecialCases() const;
 
     /**
      * @brief Overload of the equality operator for Cuboid objects.

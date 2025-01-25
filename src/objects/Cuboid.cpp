@@ -3,11 +3,17 @@
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
+#include <algorithm>
+#include <array>
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
+
+#define ADD_NEIGHBOUR(cond, nv, offset)                                                                                \
+    if (cond)                                                                                                          \
+        (nv).emplace_back(particles.get(ownIndex + (offset)));
 
 Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, const std::array<size_t, 3> &N,
                const std::array<double, 3> &v, double h, double m, int type, double epsilon, double sigma, double k,
@@ -20,11 +26,11 @@ Cuboid::Cuboid(ParticleContainer &particles, const std::array<double, 3> &x, con
 void Cuboid::initialize(size_t dimensions) {
     SPDLOG_TRACE("Initializing Particles for Cuboid {}...", this->toString());
     // we don't initialize with special forces
-    if (fzup == 0) {
+    if (fzup == 0.0) {
         std::array<double, 3> xyz;
-        for (size_t i = 0; i < N[2]; i++) {
-            for (size_t j = 0; j < N[1]; j++) {
-                for (size_t k = 0; k < N[0]; k++) {
+        for (size_t i = 0; i < N[2]; i++) {         // z
+            for (size_t j = 0; j < N[1]; j++) {     // y
+                for (size_t k = 0; k < N[0]; k++) { // x
                     xyz = {x[0] + k * h, x[1] + j * h, x[2] + i * h};
                     v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, dimensions),
                                                       std::plus<>());
@@ -32,17 +38,18 @@ void Cuboid::initialize(size_t dimensions) {
                 }
             }
         }
-
     } else {
         std::array<double, 3> xyz;
-        for (size_t i = 0; i < N[2]; i++) {
-            for (size_t j = 0; j < N[1]; j++) {
-                for (size_t k = 0; k < N[0]; k++) {
+        for (size_t i = 0; i < N[2]; i++) {         // z
+            for (size_t j = 0; j < N[1]; j++) {     // y
+                for (size_t k = 0; k < N[0]; k++) { // x
                     xyz = {x[0] + k * h, x[1] + j * h, x[2] + i * h};
-                    v = ArrayUtils::elementWisePairOp(v, maxwellBoltzmannDistributedVelocity(mean_velocity, dimensions),
-                                                      std::plus<>());
+                    // note: velocity randomization has been disabled to allow the particles to be pulled upwards
+                    // correctly; leaving this on would result in particles being pulled to the bottom left corner and
+                    // interacting strangely with eachother...
+                    // perhaps using a different initialization strategy would work better?
                     if (specialCase(k, j, i)) {
-                        particles.addParticle(xyz, v, m, type, epsilon, sigma, this->k, r_0, fzup);
+                        particles.addParticle(xyz, v, m, 2 /* for vizualisation */, epsilon, sigma, this->k, r_0, fzup);
                     } else {
                         particles.addParticle(xyz, v, m, type, epsilon, sigma, this->k, r_0, 0);
                     }
@@ -66,32 +73,16 @@ void Cuboid::initializeNeighbours() {
                 int ownIndex = startIndex + i * (N[0] * N[1]) + j * N[0] + k;
 
                 // add direct neighbours, minding edge particles
-                // left
-                if (k != 0)
-                    direct.emplace_back(particles.get(ownIndex - 1));
-                // right
-                if (k != N[0] - 1)
-                    direct.emplace_back(particles.get(ownIndex + 1));
-                // down
-                if (j != 0)
-                    direct.emplace_back(particles.get(ownIndex - N[0]));
-                // up
-                if (j != N[1] - 1)
-                    direct.emplace_back(particles.get(ownIndex + N[0]));
+                ADD_NEIGHBOUR(k != 0, direct, -1);          // left
+                ADD_NEIGHBOUR(k != N[0] - 1, direct, 1);    // right
+                ADD_NEIGHBOUR(j != 0, direct, -N[0]);       // down
+                ADD_NEIGHBOUR(j != N[1] - 1, direct, N[0]); // up
 
                 // add diagonal neighbours, minding edge particles
-                // upper left
-                if (k != 0 && j != N[1] - 1)
-                    diagonal.emplace_back(particles.get(ownIndex + N[0] - 1));
-                // lower left
-                if (k != 0 && j != 0)
-                    diagonal.emplace_back(particles.get(ownIndex - N[0] - 1));
-                // upper right
-                if (k != N[0] - 1 && j != N[1] - 1)
-                    diagonal.emplace_back(particles.get(ownIndex + N[0] + 1));
-                // lower right
-                if (k != N[0] - 1 && j != 0)
-                    diagonal.emplace_back(particles.get(ownIndex - N[0] + 1));
+                ADD_NEIGHBOUR(k != 0 && j != N[1] - 1, diagonal, N[0] - 1);        // upper left
+                ADD_NEIGHBOUR(k != 0 && j != 0, diagonal, -N[0] - 1);              // lower left
+                ADD_NEIGHBOUR(k != N[0] - 1 && j != N[1] - 1, diagonal, N[0] + 1); // upper right
+                ADD_NEIGHBOUR(k != N[0] - 1 && j != 0, diagonal, -N[0] + 1);       // lower right
 
                 particles.get(ownIndex).setDirectNeighbours(direct);
                 particles.get(ownIndex).setDiagonalNeighbours(diagonal);
@@ -104,21 +95,14 @@ void Cuboid::initializeNeighbours() {
 }
 
 bool Cuboid::specialCase(int x, int y, int z) {
-    // this function tells whether the particle should have a special force fz applied to it
-    // currently hard-coded
-    if (x == 17 && y == 24)
-        return true;
-    if (x == 17 && y == 25)
-        return true;
-    if (x == 18 && y == 24)
-        return true;
-    if (x == 18 && y == 25)
-        return true;
-    return false;
+    std::array<int, 3> target = {x, y, z};
+    return std::find(specialCases.begin(), specialCases.end(), target) != specialCases.end();
 }
 
 std::array<size_t, 3> &Cuboid::getN() { return N; }
 const std::array<size_t, 3> &Cuboid::getN() const { return N; }
+std::vector<std::array<int, 3>> &Cuboid::getSpecialCases() { return specialCases; }
+const std::vector<std::array<int, 3>> &Cuboid::getSpecialCases() const { return specialCases; }
 bool Cuboid::operator==(const Cuboid &other) const {
     return (x == other.x) && (N == other.N) && (h == other.h) && (m == other.m) && (v == other.v) &&
            (mean_velocity == other.mean_velocity) && (particles == other.particles) && (sigma == other.sigma) &&

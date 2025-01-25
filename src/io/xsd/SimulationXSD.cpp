@@ -539,6 +539,27 @@ ObjectsType::DiscSequence &ObjectsType::disc() { return this->disc_; }
 
 void ObjectsType::disc(const DiscSequence &s) { this->disc_ = s; }
 
+// SpecialCaseType
+//
+
+const SpecialCaseType::XType &SpecialCaseType::x() const { return this->x_.get(); }
+
+SpecialCaseType::XType &SpecialCaseType::x() { return this->x_.get(); }
+
+void SpecialCaseType::x(const XType &x) { this->x_.set(x); }
+
+const SpecialCaseType::YType &SpecialCaseType::y() const { return this->y_.get(); }
+
+SpecialCaseType::YType &SpecialCaseType::y() { return this->y_.get(); }
+
+void SpecialCaseType::y(const YType &x) { this->y_.set(x); }
+
+const SpecialCaseType::ZType &SpecialCaseType::z() const { return this->z_.get(); }
+
+SpecialCaseType::ZType &SpecialCaseType::z() { return this->z_.get(); }
+
+void SpecialCaseType::z(const ZType &x) { this->z_.set(x); }
+
 // MembraneType
 //
 
@@ -559,6 +580,20 @@ const MembraneType::ZForceType &MembraneType::zForce() const { return this->zFor
 MembraneType::ZForceType &MembraneType::zForce() { return this->zForce_.get(); }
 
 void MembraneType::zForce(const ZForceType &x) { this->zForce_.set(x); }
+
+const MembraneType::SpecialCaseSequence &MembraneType::specialCase() const { return this->specialCase_; }
+
+MembraneType::SpecialCaseSequence &MembraneType::specialCase() { return this->specialCase_; }
+
+void MembraneType::specialCase(const SpecialCaseSequence &s) { this->specialCase_ = s; }
+
+const MembraneType::ScIterationLimitOptional &MembraneType::scIterationLimit() const { return this->scIterationLimit_; }
+
+MembraneType::ScIterationLimitOptional &MembraneType::scIterationLimit() { return this->scIterationLimit_; }
+
+void MembraneType::scIterationLimit(const ScIterationLimitType &x) { this->scIterationLimit_.set(x); }
+
+void MembraneType::scIterationLimit(const ScIterationLimitOptional &x) { this->scIterationLimit_ = x; }
 
 // SimType
 //
@@ -1936,19 +1971,104 @@ ObjectsType &ObjectsType::operator=(const ObjectsType &x) {
 
 ObjectsType::~ObjectsType() {}
 
+// SpecialCaseType
+//
+
+SpecialCaseType::SpecialCaseType(const XType &x, const YType &y, const ZType &z)
+    : ::xml_schema::Type(), x_(x, this), y_(y, this), z_(z, this) {}
+
+SpecialCaseType::SpecialCaseType(const SpecialCaseType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), x_(x.x_, f, this), y_(x.y_, f, this), z_(x.z_, f, this) {}
+
+SpecialCaseType::SpecialCaseType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), x_(this), y_(this), z_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void SpecialCaseType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // x
+        //
+        if (n.name() == "x" && n.namespace_().empty()) {
+            if (!x_.present()) {
+                this->x_.set(XTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // y
+        //
+        if (n.name() == "y" && n.namespace_().empty()) {
+            if (!y_.present()) {
+                this->y_.set(YTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // z
+        //
+        if (n.name() == "z" && n.namespace_().empty()) {
+            if (!z_.present()) {
+                this->z_.set(ZTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!x_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("x", "");
+    }
+
+    if (!y_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("y", "");
+    }
+
+    if (!z_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("z", "");
+    }
+}
+
+SpecialCaseType *SpecialCaseType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class SpecialCaseType(*this, f, c);
+}
+
+SpecialCaseType &SpecialCaseType::operator=(const SpecialCaseType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->x_ = x.x_;
+        this->y_ = x.y_;
+        this->z_ = x.z_;
+    }
+
+    return *this;
+}
+
+SpecialCaseType::~SpecialCaseType() {}
+
 // MembraneType
 //
 
 MembraneType::MembraneType(const StiffnessType &stiffness, const AvgBondLengthType &avgBondLength,
                            const ZForceType &zForce)
-    : ::xml_schema::Type(), stiffness_(stiffness, this), avgBondLength_(avgBondLength, this), zForce_(zForce, this) {}
+    : ::xml_schema::Type(), stiffness_(stiffness, this), avgBondLength_(avgBondLength, this), zForce_(zForce, this),
+      specialCase_(this), scIterationLimit_(this) {}
 
 MembraneType::MembraneType(const MembraneType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), stiffness_(x.stiffness_, f, this), avgBondLength_(x.avgBondLength_, f, this),
-      zForce_(x.zForce_, f, this) {}
+      zForce_(x.zForce_, f, this), specialCase_(x.specialCase_, f, this),
+      scIterationLimit_(x.scIterationLimit_, f, this) {}
 
 MembraneType::MembraneType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
-    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), stiffness_(this), avgBondLength_(this), zForce_(this) {
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), stiffness_(this), avgBondLength_(this), zForce_(this),
+      specialCase_(this), scIterationLimit_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -1987,6 +2107,24 @@ void MembraneType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Fl
             }
         }
 
+        // specialCase
+        //
+        if (n.name() == "specialCase" && n.namespace_().empty()) {
+            ::std::unique_ptr<SpecialCaseType> r(SpecialCaseTraits::create(i, f, this));
+
+            this->specialCase_.push_back(::std::move(r));
+            continue;
+        }
+
+        // scIterationLimit
+        //
+        if (n.name() == "scIterationLimit" && n.namespace_().empty()) {
+            if (!this->scIterationLimit_) {
+                this->scIterationLimit_.set(ScIterationLimitTraits::create(i, f, this));
+                continue;
+            }
+        }
+
         break;
     }
 
@@ -2013,6 +2151,8 @@ MembraneType &MembraneType::operator=(const MembraneType &x) {
         this->stiffness_ = x.stiffness_;
         this->avgBondLength_ = x.avgBondLength_;
         this->zForce_ = x.zForce_;
+        this->specialCase_ = x.specialCase_;
+        this->scIterationLimit_ = x.scIterationLimit_;
     }
 
     return *this;
@@ -3049,6 +3189,34 @@ void operator<<(::xercesc::DOMElement &e, const ObjectsType &i) {
     }
 }
 
+void operator<<(::xercesc::DOMElement &e, const SpecialCaseType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // x
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("x", e));
+
+        s << i.x();
+    }
+
+    // y
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("y", e));
+
+        s << i.y();
+    }
+
+    // z
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("z", e));
+
+        s << i.z();
+    }
+}
+
 void operator<<(::xercesc::DOMElement &e, const MembraneType &i) {
     e << static_cast<const ::xml_schema::Type &>(i);
 
@@ -3074,6 +3242,24 @@ void operator<<(::xercesc::DOMElement &e, const MembraneType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("zForce", e));
 
         s << ::xml_schema::AsDouble(i.zForce());
+    }
+
+    // specialCase
+    //
+    for (MembraneType::SpecialCaseConstIterator b(i.specialCase().begin()), n(i.specialCase().end()); b != n; ++b) {
+        const MembraneType::SpecialCaseType &x(*b);
+
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("specialCase", e));
+
+        s << x;
+    }
+
+    // scIterationLimit
+    //
+    if (i.scIterationLimit()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("scIterationLimit", e));
+
+        s << *i.scIterationLimit();
     }
 }
 

@@ -8,7 +8,7 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
-void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *) {
+void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *, bool) {
     SPDLOG_TRACE("Calculating new position...");
 
 #pragma omp parallel for
@@ -17,7 +17,7 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
         CONTINUE_IF_INACTIVE(p);
 
         // skip wall particles
-        if (p.getType() != 0)
+        if (p.getType() == 1)
             continue;
 
         // update position
@@ -32,7 +32,7 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
     }
 }
 
-void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc) {
+void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc, bool membrane) {
     SPDLOG_TRACE("Calculating new position (linked cells)...");
 
 #pragma omp parallel for
@@ -41,7 +41,7 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
         CONTINUE_IF_INACTIVE(p);
 
         // skip wall particles
-        if (p.getType() != 0)
+        if (p.getType() == 1)
             continue;
 
         // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)
@@ -56,7 +56,11 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
         // between the particles or the gravitational force thus, we save having to iterate through all particles
         // once again after calculating the force
         p.getOldF() = p.getF();
-        p.setF({0.0, p.getM() * g_grav, 0.0});
+        if (!membrane) {
+            p.setF({0.0, p.getM() * g_grav, 0.0});
+        } else {
+            p.setF({0.0, 0.0, p.getM() * g_grav});
+        }
 
         // check to see if the particle's cell index got updated
         int newIdx = lc->getCellIndex(p.getX());

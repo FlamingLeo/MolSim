@@ -22,6 +22,10 @@ class ParticleContainer {
     /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
 
+    /// @brief The number of iterations after which the special upward force will no longer be applied, for membrane
+    /// simulations.
+    int m_specialForceLimit;
+
     /* iterator definitions */
   public:
     /// @brief Standard library iterator function for marking the beginning of the iteration process.
@@ -211,6 +215,24 @@ class ParticleContainer {
      * @return A const reference to the Particle at the specified index.
      */
     const Particle &get(size_t index) const;
+
+    /**
+     * @brief Gets the number of iterations after which the special upward force will no longer be applied.
+     *
+     * @return The number of iterations after which the special upward force will no longer be applied.
+     */
+    int getSpecialForceLimit() const;
+
+    /**
+     * @brief Sets the number of iterations after which the special upward force will no longer be applied.
+     *
+     * @param limit The number of iterations after which the special upward force will no longer be applied.
+     */
+    void setSpecialForceLimit(int limit);
+
+    /// @brief Decrements the number of iterations after which the special upward force will no longer be applied by
+    /// one.
+    void decrementSpecialForceLimit();
 
     /**
      * @brief Returns the size of the container.

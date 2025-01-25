@@ -95,10 +95,10 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
             auto forceVec = getLJForceVec(p1, p2, distVec, distNorm);
 
             // use newton's third law to apply force on p1 and opposite force on p2
-            if (p1.getType() == 0)
+            if (p1.getType() != 1)
                 p1.setF(p1.getF() + forceVec);
 
-            if (p2.getType() == 0)
+            if (p2.getType() != 1)
                 p2.setF(p2.getF() - forceVec);
         }
     }
@@ -143,12 +143,12 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 
                         // apply force on non-wall particles (no force on ghost particle)
                         omp_set_lock(&i.getLock());
-                        if (i.getType() == 0)
+                        if (i.getType() != 1)
                             i.getF() = i.getF() + forceVec;
                         omp_unset_lock(&i.getLock());
 
                         omp_set_lock(&j.getLock());
-                        if (j.getType() == 0)
+                        if (j.getType() != 1)
                             j.getF() = j.getF() - forceVec;
                         omp_unset_lock(&j.getLock());
                     }
@@ -202,12 +202,12 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
 
                                     // apply force on particle i (no force on ghost particle)
                                     omp_set_lock(&i.getLock());
-                                    if (i.getType() == 0)
+                                    if (i.getType() != 1)
                                         i.getF() = i.getF() + forceVec;
                                     omp_unset_lock(&i.getLock());
 
                                     omp_set_lock(&j.getLock());
-                                    if (j.getType() == 0)
+                                    if (j.getType() != 1)
                                         j.getF() = j.getF() - forceVec;
                                     omp_unset_lock(&j.getLock());
                                 }
@@ -225,7 +225,7 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
 }
 
 void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc) {
-    SPDLOG_DEBUG("r0 is {} and k is {}", particles.get(0).getR0(), particles.get(0).getK());
+    SPDLOG_TRACE("r0: {}, k: {}", particles[0].getR0(), particles[0].getK());
 
     // mirror border particles for periodic boundaries
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
@@ -244,8 +244,10 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
             // add special force to the particles that are concerned
             // add a gravitational force on the z-axis (NOT ON THE Y AXIS AS PER USUAL)
             // again, specific to the given scenario
-            std::array<double, 3> specialForce = {0.0, 0.0, i.getFZUP() - 0.001};
-            i.getF() = ArrayUtils::elementWisePairOp(i.getF(), specialForce, std::plus<>());
+            if (particles.getSpecialForceLimit() != 0) {
+                i.getF()[2] += i.getFZUP();
+                SPDLOG_TRACE("Added force (gravity + F_Z-UP): {}", ArrayUtils::to_string(i.getF()));
+            }
 
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
             for (size_t kci : lc->getNeighbors(ic.getIndex())) {
@@ -265,20 +267,21 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                     // calculate the distance between the two particles
                     auto distVec = i.getX() - truePos;
                     double distNorm = ArrayUtils::L2Norm(distVec);
-                    double specialCutoff = std::pow(2, 1.0 / 6.0) * ((i.getSigma() + j.getSigma()) / 2.0);
+                    double specialCutoff = LJTHRESHOLD * ((i.getSigma() + j.getSigma()) / 2.0);
 
                     if (inNeighbourVector(i.getDirectNeighbours(), rj)) {
+                        SPDLOG_TRACE("Direct Neigbors! i: {}, j: {}", i.toString(), j.toString());
                         // compute scalar
                         double scalar = i.getK() * (distNorm - i.getR0()) * (1 / distNorm);
                         // because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i,
                         // we multiply by -1
                         forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
-
                     } else if (inNeighbourVector(i.getDiagonalNeighbours(), rj)) {
-                        double scalar = i.getK() * (distNorm - std::sqrt(2) * i.getR0()) * (1 / distNorm);
+                        SPDLOG_TRACE("Diagonal Neigbors! i: {}, j: {}", i.toString(), j.toString());
+                        double scalar = i.getK() * (distNorm - SQRT2 * i.getR0()) * (1 / distNorm);
                         forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
-
                     } else if (distNorm <= specialCutoff) {
+                        SPDLOG_TRACE("Self-Pen Avoidance: i: {}, j: {}", i.toString(), j.toString());
                         // calculate force
                         forceVec = getLJForceVec(i, j, distVec, distNorm);
                     }
@@ -289,6 +292,11 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                 }
             }
         }
+    }
+
+    // decrement special case iteration count
+    if (particles.getSpecialForceLimit() != 0) {
+        particles.decrementSpecialForceLimit();
     }
 
     // delete ghost particles in the end
