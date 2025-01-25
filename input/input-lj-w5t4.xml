@@ -25,6 +25,7 @@
     <thermostat>
         <init>40.0</init>
         <timeStep>10</timeStep>
+        <nanoFlow>true</nanoFlow>
     </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>

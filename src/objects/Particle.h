@@ -59,7 +59,7 @@ class Particle {
     double m;
 
     /// @brief Type of the particle. 1 if wall, 0 otherwise
-    int type;
+    int type; // this could probably be made an enum now
 
     /// @brief Depth \f$ \epsilon \f$ of the potential well. Lennard-Jones parameter.
     double epsilon;

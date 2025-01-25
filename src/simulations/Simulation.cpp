@@ -74,6 +74,8 @@ void Simulation::runSimulation() {
     SPDLOG_INFO("output freq.: {}", m_args.itFreq);
     SPDLOG_INFO("basename    : {}", m_args.basename);
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
+    SPDLOG_INFO("nanoflow?   : {}", m_thermostat.getNanoflow());
+    SPDLOG_INFO("membrane?   : {}", m_args.membrane);
 #ifdef _OPENMP
     SPDLOG_INFO("p. strat.   : {}", StringUtils::fromParallelizationType(m_args.parallelization));
     SPDLOG_INFO("max threads : {}", omp_get_max_threads());

@@ -227,6 +227,13 @@ class ParticleContainer {
     size_t activeSize() const;
 
     /**
+     * @brief Returns the amount of active, mobile, non-wall particles in the container.
+     *
+     * @return The number of active, mobile, non-wall particles in the container.
+     */
+    size_t nonWallSize() const;
+
+    /**
      * @brief Checks if the container is empty.
      *
      * @return true if there are no Particle objects in the container.

@@ -2,13 +2,14 @@
 #include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "utils/OMPWrapper.h"
+#include <cassert>
 #include <cmath>
 #include <functional>
 #include <spdlog/spdlog.h>
 
 // helper methods for double inequality
-static bool areNotEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) > epsilon; }
-static bool areEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) <= epsilon; }
+static inline bool areNotEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) > epsilon; }
+static inline bool areEqual(double a, double b, double epsilon = 1e-9) { return std::fabs(a - b) <= epsilon; }
 
 /* constructors and destructors */
 Thermostat::Thermostat(ParticleContainer &particles) : particles{particles} {
@@ -39,9 +40,9 @@ void Thermostat::initialize(int dimension, double T_init, int n_thermostat, doub
     this->nanoFlow = nanoFlow;
 
     SPDLOG_TRACE("Initialized Thermostat - dimensions: {}, T_init: {}, n_thermostat: {}, T_target: {}, delta_T: {}, "
-                 "limit: {}, bm: {}",
+                 "limit: {}, bm: {}, nanoflow: {}",
                  this->dimension, this->T_init, this->n_thermostat, this->T_target, this->delta_T, limitScaling,
-                 this->initBrownianMotion);
+                 this->initBrownianMotion, this->nanoFlow);
 }
 void Thermostat::initializeBrownianMotion() {
     SPDLOG_TRACE("0-th iteration, initializing velocities with Brownian motion...");
@@ -54,21 +55,24 @@ void Thermostat::initializeBrownianMotion() {
 void Thermostat::calculateKineticEnergy() {
     double sum = 0;
     if (!nanoFlow) {
+        // standard thermostat: use velocity of ALL particles
         for (auto &p : particles) {
             CONTINUE_IF_INACTIVE(p);
             sum += p.getM() * ArrayUtils::L2NormSquared(p.getV());
         }
     } else {
+        // nanoflow thermostat: use thermal motion of MOBILE particles
         for (auto &p : particles) {
             CONTINUE_IF_INACTIVE(p);
-            sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
+            if (p.getType() == 0)
+                sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
         }
     }
     kineticEnergy = sum / 2;
     SPDLOG_TRACE("New kinetic energy: {}", kineticEnergy);
 }
 void Thermostat::calculateTemp() {
-    temperature = 2 * kineticEnergy / (dimension * particles.activeSize());
+    temperature = 2 * kineticEnergy / (dimension * particles.nonWallSize());
     SPDLOG_TRACE("New temperature: {}", temperature);
 }
 void Thermostat::calculateScalingFactor() {
@@ -91,19 +95,28 @@ void Thermostat::calculateScalingFactor() {
 }
 
 void Thermostat::calculateThermalMotions() {
+    // calculate average velocity of active, mobile particles
+    // note: this assumes the simulation has at least one active mobile particle
+    const size_t mobileParticles = particles.nonWallSize();
+    assert(mobileParticles != 0 && "No non-wall particles found!");
+    avg_velocity = {0., 0., 0.};
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        avg_velocity[0] += p.getV()[0];
-        avg_velocity[1] += p.getV()[1];
-        avg_velocity[2] += p.getV()[2];
+        if (p.getType() == 0) {
+            avg_velocity[0] += p.getV()[0];
+            avg_velocity[1] += p.getV()[1];
+            avg_velocity[2] += p.getV()[2];
+        }
     }
-    avg_velocity[0] /= particles.size();
-    avg_velocity[1] /= particles.size();
-    avg_velocity[2] /= particles.size();
+    avg_velocity[0] /= mobileParticles;
+    avg_velocity[1] /= mobileParticles;
+    avg_velocity[2] /= mobileParticles;
 
+    // calculate thermal motion for each particle
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
+        if (p.getType() == 0)
+            p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
     }
 }
 
@@ -141,19 +154,16 @@ void Thermostat::updateSystemTemp(int currentStep) {
             auto &p = CONTAINER_REF(it);
             // update particle velocities to set new temperature
             CONTINUE_IF_INACTIVE(p);
-            SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                         omp_get_num_threads());
             std::array<double, 3> newV = ArrayUtils::elementWiseScalarOp(scalingFactor, p.getV(), std::multiplies<>());
             p.setV(newV);
         }
     } else {
+        calculateThermalMotions();
 #pragma omp parallel for
         CONTAINER_LOOP(particles, it) {
             auto &p = CONTAINER_REF(it);
             // update particle thermal motion to set new temperature
             CONTINUE_IF_INACTIVE(p);
-            SPDLOG_TRACE("TID: {}, Particle: {}, Total #Threads: {}", omp_get_thread_num(), p.getId(),
-                         omp_get_num_threads());
             std::array<double, 3> newV =
                 ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
             p.setV(newV + avg_velocity);
