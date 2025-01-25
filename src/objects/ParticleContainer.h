@@ -187,6 +187,10 @@ class ParticleContainer {
      * @param type The type of the particle.
      * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations.
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations.
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations.
+
      * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
      */
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,

@@ -420,21 +420,21 @@ class Particle {
     /**
      * @brief Sets the new stiffness constant \f$ k \f$ to a given value.
      *
-     * @param new_sigma The new stiffness constant \f$ k \f$.
+     * @param new_k The new stiffness constant \f$ k \f$.
      */
     void setK(double new_k);
 
     /**
      * @brief Sets the new upward force \f$ F_{Z-UP} \f$ to a given value.
      *
-     * @param new_sigma The new upward force \f$ F_{Z-UP} \f$.
+     * @param new_fzup The new upward force \f$ F_{Z-UP} \f$.
      */
     void setFZUP(double new_fzup);
 
     /**
      * @brief Sets the new average bond length \f$ r_0 \f$ to a given value.
      *
-     * @param new_sigma The new average bond length \f$ r_0 \f$.
+     * @param new_r_0 The new average bond length \f$ r_0 \f$.
      */
     void setR0(double new_r_0);
 

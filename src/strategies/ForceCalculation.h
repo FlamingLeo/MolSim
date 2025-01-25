@@ -95,4 +95,25 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
  */
 void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellContainer *lc);
 
+/**
+ * @brief Calculates the force \f$ F \f$ for all particles in a linked-cell membrane simulation using a standard
+ * parallelization approach.
+ *
+ * @details For direct particle neighbors inside the membrane, the force is calculated using the formula \f[ F(x_i, x_j)
+ * = k \cdot (|| x_i - x_j ||_2 - r_0) \cdot \frac{(x_j - x_i)}{|| x_i - x_j ||_2} \f] between each distinct pair of
+ * particles \f$ i,j \f$, where \f$ k \f$ is the stiffness constant and \f$ r_0 \f$ is the average bond length of a
+ * molecule pair. For diagonal neighbors, where the average distance is larger, the formula is slightly changed to \f[
+ * F(x_i, x_j) = k \cdot (|| x_i - x_j ||_2 - \sqrt2 r_0) \cdot \frac{(x_j - x_i)}{|| x_i - x_j ||_2}. \f]
+ *
+ * For certain particles determined during initialization, a special constant upward force along the z-axis \f$ F_{Z-UP}
+ * \f$ is applied for a set number of iterations. After these iterations, the constant force is no longer applied, and
+ * they are treated equally to all other particles.
+ *
+ * **Complexity:** \f$ O(N) \f$
+ *
+ * This method uses Newton's Third Law \f[ F_{ij} = -F_{ji}. \f] to avoid calculating the force twice.
+ *
+ * @param particles
+ * @param lc
+ */
 void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc);
