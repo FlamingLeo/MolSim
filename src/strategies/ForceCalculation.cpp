@@ -5,6 +5,7 @@
 #include "utils/ArrayUtils.h"
 #include <functional>
 #include <spdlog/spdlog.h>
+#include <vector>
 
 // helper function to calculate force vector
 static inline std::array<double, 3> getLJForceVec(const Particle &p1, const Particle &p2,
@@ -28,9 +29,10 @@ static inline std::array<double, 3> getLJForceVec(const Particle &p1, const Part
 }
 
 // helper function to check whether particles are neighbours
-static bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>> vec, const std::reference_wrapper<Particle> el){
-    for(auto &vec_el : vec){
-        if(vec_el.get() == el.get()){
+static bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>> vec,
+                              const std::reference_wrapper<Particle> el) {
+    for (auto &vec_el : vec) {
+        if (vec_el.get() == el.get()) {
             return true;
         }
     }
@@ -231,11 +233,10 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
 
         // loop over all active particles i in cell ic
         for (auto &ri : ic) {
-
             Particle &i = ri;
-            //add special force to the particles that are concerned
-            //add a gravitational force on the z-axis (NOT ON THE Y AXIS AS PER USUAL)
-            //again, specific to the given scenario
+            // add special force to the particles that are concerned
+            // add a gravitational force on the z-axis (NOT ON THE Y AXIS AS PER USUAL)
+            // again, specific to the given scenario
             std::array<double, 3> specialForce = {0.0, 0.0, i.getFZUP() - 0.001};
             i.getF() = ArrayUtils::elementWisePairOp(i.getF(), specialForce, std::plus<>());
 
@@ -257,22 +258,21 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                     // calculate the distance between the two particles
                     auto distVec = i.getX() - truePos;
                     double distNorm = ArrayUtils::L2Norm(distVec);
-                    double specialCutoff = std::pow(2, 1.0/6.0) * ((i.getSigma() + j.getSigma()) / 2.0);
+                    double specialCutoff = std::pow(2, 1.0 / 6.0) * ((i.getSigma() + j.getSigma()) / 2.0);
 
-
-                    if (inNeighbourVector(i.getDirectNeighbours(), rj)){
+                    if (inNeighbourVector(i.getDirectNeighbours(), rj)) {
                         // compute scalar
                         double scalar = i.getK() * (distNorm - i.getR0()) * (1 / distNorm);
-                        //because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i,
-                        //we multiply by -1
-                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+                        // because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i,
+                        // we multiply by -1
+                        forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
 
-                    } else if (inNeighbourVector(i.getDiagonalNeighbours(), rj)){
+                    } else if (inNeighbourVector(i.getDiagonalNeighbours(), rj)) {
                         double scalar = i.getK() * (distNorm - std::sqrt(2) * i.getR0()) * (1 / distNorm);
-                        forceVec =  ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
+                        forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
 
                     } else if (distNorm <= specialCutoff) {
-                        //calculate force
+                        // calculate force
                         forceVec = getLJForceVec(i, j, distVec, distNorm);
                     }
 

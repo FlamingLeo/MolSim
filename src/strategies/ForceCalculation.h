@@ -93,5 +93,4 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
  */
 void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellContainer *lc);
 
-
 void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer *lc);

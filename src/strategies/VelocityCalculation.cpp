@@ -12,11 +12,10 @@ void calculateV(ParticleContainer &particles, double delta_t) {
         auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
 
-        if(p.getType() == 0){
+        if (p.getType() == 0) {
             const std::array<double, 3> velocityUpdate =
                 ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>());
             p.getV() = p.getV() + velocityUpdate;
         }
-
     }
 }

@@ -12,7 +12,7 @@ TEST(BoundaryConditionTests, Outflow2D) {
 
     auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -40,7 +40,7 @@ TEST(BoundaryConditionTests, Reflective2D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -69,7 +69,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners2D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex, bool expectedActive) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{10., 10., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -101,7 +101,7 @@ TEST(BoundaryConditionTests, Periodic2D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -131,7 +131,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring2D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedGhostIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         mirrorGhostParticles(&c);
@@ -161,7 +161,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringCorner2D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     const std::array<double, 3> expectedGhostIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         mirrorGhostParticles(&c);
@@ -194,7 +194,7 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{5., 5., 1.}, conditions, 1., pc, 2};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -210,12 +210,12 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner) {
     test({1.25, 5.75, 0.}, {-20., 20., 0.}, {5.25, 5.25, 0.}, {-20., -20., 0.}, 40); // nw corner
 }
 
+// CONCERNING 3D TESTS:
+// 3D tests do not cover all boundaries and boundary types anymore as it's not in my opinion feasible
+// (there's for example 20 distinct corner cases that would need individual testing, which seems a bit much)
+// Rather, tests now only sample from the main categories (double corner etc.)
 
-//CONCERNING 3D TESTS:
-//3d tests do not cover all boundaries and boundary types anymore as it's not in my opinion feasible
-//(there's for example 20 distinct corner cases that would need individual testing, which seems a bit much)
-//Rather, tests now only sample from the main categories (double corner etc.)
-
+// Test handling 3-dimensional outflow boundaries.
 TEST(BoundaryConditionTests, Outflow3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::OUTFLOW, BoundaryCondition::OUTFLOW,
@@ -224,7 +224,7 @@ TEST(BoundaryConditionTests, Outflow3D) {
 
     auto test = [&](const std::array<double, 3> &position, const std::array<double, 3> &velocity) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 1.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -233,13 +233,14 @@ TEST(BoundaryConditionTests, Outflow3D) {
         EXPECT_EQ(pc[0].getCellIndex(), -1);
         EXPECT_FALSE(pc[0].isActive());
     };
-    test({2.5, 1.5, 1.5}, {20., 0., 0.}); // X
-    test({1.5, 2.5, 1.5}, {0., 20., 0.}); //Y
-    test({1.5, 1.5, 2.5}, {0., 0., 20.}); //Z
-    test({2.5, 1.5, 1.5}, {20., 0., -20.}); //XZ
-    test({2.5, 1.5, 1.5}, {20., -20., -20.}); //XYZ
+    test({2.5, 1.5, 1.5}, {20., 0., 0.});     // X
+    test({1.5, 2.5, 1.5}, {0., 20., 0.});     // Y
+    test({1.5, 1.5, 2.5}, {0., 0., 20.});     // Z
+    test({2.5, 1.5, 1.5}, {20., 0., -20.});   // XZ
+    test({2.5, 1.5, 1.5}, {20., -20., -20.}); // XYZ
 }
 
+// Test handling 3-dimensional reflective boundaries.
 TEST(BoundaryConditionTests, Reflective3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -250,7 +251,7 @@ TEST(BoundaryConditionTests, Reflective3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -262,12 +263,13 @@ TEST(BoundaryConditionTests, Reflective3D) {
         EXPECT_TRUE(pc[0].isActive());
     };
 
-    //single
-    test({2.75, 1.5, 1.5}, {10., 0., 0.}, {2.75, 1.5, 1.5}, {-10, 0., 0.}, 22); //X
-    test({1.5, 2.75, 1.5}, {0., 10., 0.}, {1.5, 2.75, 1.5}, {0, -10., 0.}, 25); //Y
-    test({1.5, 1.5, 2.75}, {0., 0., 10.}, {1.5, 1.5, 2.75}, {0, 0., -10.}, 37); //Z
+    // single
+    test({2.75, 1.5, 1.5}, {10., 0., 0.}, {2.75, 1.5, 1.5}, {-10, 0., 0.}, 22); // X
+    test({1.5, 2.75, 1.5}, {0., 10., 0.}, {1.5, 2.75, 1.5}, {0, -10., 0.}, 25); // Y
+    test({1.5, 1.5, 2.75}, {0., 0., 10.}, {1.5, 1.5, 2.75}, {0, 0., -10.}, 37); // Z
 }
 
+// Test handling 3-dimensional reflective corner boundaries.
 TEST(BoundaryConditionTests, ReflectiveCorners3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -278,7 +280,7 @@ TEST(BoundaryConditionTests, ReflectiveCorners3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex, bool expectedActive) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -293,13 +295,14 @@ TEST(BoundaryConditionTests, ReflectiveCorners3D) {
         EXPECT_EQ(pc[0].isActive(), expectedActive);
     };
 
-    //double
-    test({2.8, 2.8, 1.5}, {5., 10., 0.}, {2.95, 2.7, 1.5}, {-5., -10., 0}, 26, true); // NE: N first -> reflect
+    // double
+    test({2.8, 2.8, 1.5}, {5., 10., 0.}, {2.95, 2.7, 1.5}, {-5., -10., 0}, 26, true);  // NE: N first -> reflect
     test({1.5, 2.8, 2.8}, {0., 10., 5.}, {1.5, 2.7, 2.95}, {0., -10., -5.}, 41, true); // NA: N first -> reflect
-    //triple
-    test({2.8, 2.8, 2.8}, {5., 10., 5.}, {2.95, 2.7, 2.95}, {-5., -10., -5.}, 42, true); //NEA: N first -> reflect
+    // triple
+    test({2.8, 2.8, 2.8}, {5., 10., 5.}, {2.95, 2.7, 2.95}, {-5., -10., -5.}, 42, true); // NEA: N first -> reflect
 }
 
+// Test handling 3-dimensional mixed corner boundaries.
 TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
@@ -310,7 +313,7 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -320,13 +323,14 @@ TEST(BoundaryConditionTests, MixedReflectivePeriodicCorner3D) {
         EXPECT_EQ(pc[0].getCellIndex(), expectedIndex);
         EXPECT_TRUE(pc[0].isActive());
     };
-    //double
-    test({2.75, 2.75, 1.5}, {20., 20., 0.}, {1.75, 2.25, 1.5}, {20., -20., 0.}, 25);   // ne corner
-    test({1.5, 2.75, 2.75}, {0., 20., 20.}, {1.5, 2.25, 1.75}, {0., -20., 20.}, 25);    // na corner
-    //triple
-    test({2.75, 2.75, 2.75}, {20., 20., 20.}, {1.75, 2.25, 1.75}, {20., -20., 20.}, 25); //nea corner
+    // double
+    test({2.75, 2.75, 1.5}, {20., 20., 0.}, {1.75, 2.25, 1.5}, {20., -20., 0.}, 25); // ne corner
+    test({1.5, 2.75, 2.75}, {0., 20., 20.}, {1.5, 2.25, 1.75}, {0., -20., 20.}, 25); // na corner
+    // triple
+    test({2.75, 2.75, 2.75}, {20., 20., 20.}, {1.75, 2.25, 1.75}, {20., -20., 20.}, 25); // nea corner
 }
 
+// Test handling 3-dimensional periodic boundaries.
 TEST(BoundaryConditionTests, Periodic3D) {
     constexpr double delta_t = 0.05;
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -337,7 +341,7 @@ TEST(BoundaryConditionTests, Periodic3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         calculateX_LC(pc, delta_t, 0.0, &c);
@@ -358,6 +362,7 @@ TEST(BoundaryConditionTests, Periodic3D) {
     test({2.75, 1.5, 1.75}, {10., -20., -20.}, {1.25, 2.5, 2.75}, {10., -20., -20.}, 41);
 }
 
+// Test mirroring particles with 3-dimensional periodic boundaries (triple corner).
 TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -367,7 +372,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedGhostIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{2., 2., 2.}, conditions, 1., pc, 3};
         mirrorGhostParticles(&c);
@@ -389,6 +394,7 @@ TEST(BoundaryConditionTests, PeriodicMirroringTriple3D) {
     test({2.5, 1.5, 1.5}, {0., 0., 0.}, {2.5, 1.5, 1.5}, {0., 0., 0.}, 60); // XYZ
 }
 
+// Test mirroring particles with 3-dimensional periodic boundaries (2x, 1x periodic).
 TEST(BoundaryConditionTests, PeriodicMirroring3D) {
     std::array<BoundaryCondition, 6> conditions{BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
                                                 BoundaryCondition::PERIODIC, BoundaryCondition::PERIODIC,
@@ -398,7 +404,7 @@ TEST(BoundaryConditionTests, PeriodicMirroring3D) {
                     const std::array<double, 3> &expectedPos, const std::array<double, 3> &expectedVel,
                     int expectedGhostIndex) {
         ParticleContainer pc;
-        Particle p{position, velocity, 1, 1};
+        Particle p{position, velocity, 1, 0};
         pc.addParticle(p);
         CellContainer c{{3., 3., 3.}, conditions, 1., pc, 3};
         mirrorGhostParticles(&c);

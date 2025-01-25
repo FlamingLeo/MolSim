@@ -23,7 +23,6 @@ getSimulationFunctions_nonLC(SimulationType type) {
     return std::make_tuple(TimeIntegrationFuncs(type, false), calculateF_LennardJones); // stop compiler warnings
 }
 
-
 static inline std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimulationFunctions_LC(Arguments &args) {
     SPDLOG_DEBUG("Getting physics functions for linked cell simulation...");
     switch (args.sim) {
@@ -35,13 +34,13 @@ static inline std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> getSimula
 
         if (args.parallelization == ParallelizationType::COARSE) {
             SPDLOG_DEBUG("Chose coarse-grained (standard) parallelization strategy.");
-            if(args.membrane){
+            if (args.membrane) {
                 return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_Membrane_LC);
             }
             return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_LennardJones_LC);
 
         } else {
-            if(args.membrane){
+            if (args.membrane) {
                 return std::make_tuple(TimeIntegrationFuncs(args.sim, true), calculateF_Membrane_LC);
             }
             SPDLOG_DEBUG("Chose fine-grained (task-based) parallelization strategy.");
@@ -67,7 +66,5 @@ TimeIntegrationFuncs::TimeIntegrationFuncs(SimulationType type, bool lc) {
 }
 
 std::tuple<TimeIntegrationFuncs, StrategyFactory::FFunc> StrategyFactory::getSimulationFunctions(Arguments &args) {
-
     return args.linkedCells ? getSimulationFunctions_LC(args) : getSimulationFunctions_nonLC(args.sim);
-
 }

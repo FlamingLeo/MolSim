@@ -1,10 +1,18 @@
+/**
+ * @file FlowSimulationAnalyzer.h
+ * @brief Component for analyzing particle density and velocity profiles.
+ * @date 2025-01-25
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+#pragma once
+
 #include "ParticleContainer.h"
 #include <vector>
 
 class FlowSimulationAnalyzer {
-
-    private:
-
+  private:
     ParticleContainer &particles;
 
     int binNumber;
@@ -21,9 +29,9 @@ class FlowSimulationAnalyzer {
 
     int n_analyzer;
 
-    public:
-
-    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos, int n_analyzer);
+  public:
+    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos,
+                           int n_analyzer);
 
     void calculateDensitiesAndVelocities();
 
@@ -39,7 +47,7 @@ class FlowSimulationAnalyzer {
 
     ParticleContainer &getParticles() const;
 
-    const std::vector<double>& getDensities() const;
+    const std::vector<double> &getDensities() const;
 
-    const std::vector<double>& getVelocities() const;
+    const std::vector<double> &getVelocities() const;
 };

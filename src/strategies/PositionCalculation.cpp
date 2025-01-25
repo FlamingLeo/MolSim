@@ -15,8 +15,9 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
     CONTAINER_LOOP(particles, it) {
         auto &p = CONTAINER_REF(it);
         // update position
-        if(p.getType() == 0){
-            const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
+        if (p.getType() == 0) {
+            const std::array<double, 3> posSum1 =
+                ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
             const std::array<double, 3> posSum2 =
                 ArrayUtils::elementWiseScalarOp((delta_t * delta_t) / (2 * p.getM()), p.getF(), std::multiplies<>());
             p.getX() = p.getX() + posSum1 + posSum2;
@@ -36,18 +37,19 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
         auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
 
-        if(p.getType() == 0){
+        if (p.getType() == 0) {
             // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)
-            const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
+            const std::array<double, 3> posSum1 =
+                ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
             const std::array<double, 3> posSum2 =
                 ArrayUtils::elementWiseScalarOp((delta_t * delta_t) / (2 * p.getM()), p.getF(), std::multiplies<>());
             p.getX() = p.getX() + posSum1 + posSum2;
 
             // store previous force for velocity calculation, then reset force to 0
             // optimization: add graviational force here
-            // we can do this because the forces are additive; it doesn't matter if we first calculate the forces between
-            // the particles or the gravitational force
-            // thus, we save having to iterate through all particles once again after calculating the force
+            // we can do this because the forces are additive; it doesn't matter if we first calculate the forces
+            // between the particles or the gravitational force thus, we save having to iterate through all particles
+            // once again after calculating the force
             p.getOldF() = p.getF();
             p.setF({0.0, p.getM() * g_grav, 0.0});
 
