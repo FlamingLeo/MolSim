@@ -110,7 +110,7 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
         mirrorGhostParticles(lc);
 
 // loop over all (regular) cells ic
-#pragma omp parallel for schedule(dynamic, 16)
+#pragma omp parallel for
     CONTAINER_LOOP(lc->getIterableCells(), it) {
         // loop over all active particles i in cell ic
         auto &ic = CONTAINER_REF(it);
@@ -201,6 +201,10 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
                                     auto forceVec = getLJForceVec(i, j, distVec, distNorm);
 
                                     // apply force on particle i (no force on ghost particle)
+                                    // technically, we don't even need to check if the particle is a wall, because we
+                                    // don't use its force for anything (as in, we skip updating the positions and
+                                    // velocities of such particles), so these checks could be omitted in the name of
+                                    // speed... but the contest is already done, so check that commit instead :)
                                     omp_set_lock(&i.getLock());
                                     if (i.getType() != 1)
                                         i.getF() = i.getF() + forceVec;
@@ -231,37 +235,34 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
     if (VEC_CONTAINS(lc->getConditions(), BoundaryCondition::PERIODIC))
         mirrorGhostParticles(lc);
 
-    // loop over all cells ic
-    for (auto &ic : *lc) {
-        // special case: if halo cell, skip (no multiple interactions between same particles)
-        if (!ic.getHaloLocation().empty()) {
-            continue;
-        }
-
+// loop over all cells ic
+#pragma omp parallel for
+    CONTAINER_LOOP(lc->getIterableCells(), it) {
+        auto &ic = CONTAINER_REF(it);
         // loop over all active particles i in cell ic
-        for (auto &ri : ic) {
+        for (auto &ri : ic.get()) {
             Particle &i = ri;
             // add special force to the particles that are concerned
             // add a gravitational force on the z-axis (NOT ON THE Y AXIS AS PER USUAL)
             // again, specific to the given scenario
             if (particles.getSpecialForceLimit() != 0) {
+                omp_set_lock(&i.getLock());
                 i.getF()[2] += i.getFZUP();
+                omp_unset_lock(&i.getLock());
                 SPDLOG_TRACE("Added force (gravity + F_Z-UP): {}", ArrayUtils::to_string(i.getF()));
             }
 
             // loop over all cells kc in Neighbours(ic), including the particle i's own cell
-            for (size_t kci : lc->getNeighbors(ic.getIndex())) {
-                Cell &kc = (*lc)[kci];
-
+            for (auto &kc : lc->getNeighborCells(ic.get().getIndex())) {
                 // loop over all particles j in kc
-                for (auto &rj : kc) {
+                for (auto &rj : kc.get()) {
                     // check if j is active AND if i and j form a distinct pair (N3L)
                     // for checking distinct pairs, we compare the memory addresses of the two particles
                     Particle &j = rj;
                     if (&i >= &j)
                         continue;
 
-                    std::array<double, 3> truePos = getTruePos(j, kc, lc);
+                    std::array<double, 3> truePos = getTruePos(j, kc.get(), lc);
                     std::array<double, 3> forceVec = {0.0, 0.0, 0.0};
 
                     // calculate the distance between the two particles
@@ -270,25 +271,28 @@ void calculateF_Membrane_LC(ParticleContainer &particles, double, CellContainer 
                     double specialCutoff = LJTHRESHOLD * ((i.getSigma() + j.getSigma()) / 2.0);
 
                     if (inNeighbourVector(i.getDirectNeighbours(), rj)) {
-                        SPDLOG_TRACE("Direct Neigbors! i: {}, j: {}", i.toString(), j.toString());
-                        // compute scalar
+                        // compute scalar for direct neighbors
                         double scalar = i.getK() * (distNorm - i.getR0()) * (1 / distNorm);
                         // because as a distance we use x_i - x_j as distVec when the formula says x_j - x_i,
                         // we multiply by -1
                         forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
                     } else if (inNeighbourVector(i.getDiagonalNeighbours(), rj)) {
-                        SPDLOG_TRACE("Diagonal Neigbors! i: {}, j: {}", i.toString(), j.toString());
+                        // compute scalar for diagonal neighbors
                         double scalar = i.getK() * (distNorm - SQRT2 * i.getR0()) * (1 / distNorm);
                         forceVec = ArrayUtils::elementWiseScalarOp(-scalar, distVec, std::multiplies<>());
                     } else if (distNorm <= specialCutoff) {
-                        SPDLOG_TRACE("Self-Pen Avoidance: i: {}, j: {}", i.toString(), j.toString());
-                        // calculate force
+                        // calculate special LJ force to prevent self-pen
                         forceVec = getLJForceVec(i, j, distVec, distNorm);
                     }
 
                     // apply force on particle i (no force on ghost particle)
+                    omp_set_lock(&i.getLock());
                     i.getF() = i.getF() + forceVec;
+                    omp_unset_lock(&i.getLock());
+
+                    omp_set_lock(&j.getLock());
                     j.getF() = j.getF() - forceVec;
+                    omp_unset_lock(&j.getLock());
                 }
             }
         }
