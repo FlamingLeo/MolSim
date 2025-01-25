@@ -29,8 +29,8 @@ static inline std::array<double, 3> getLJForceVec(const Particle &p1, const Part
 }
 
 // helper function to check whether particles are neighbours
-static bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>> vec,
-                              const std::reference_wrapper<Particle> el) {
+static inline bool inNeighbourVector(const std::vector<std::reference_wrapper<Particle>> vec,
+                                     const std::reference_wrapper<Particle> el) {
     for (auto &vec_el : vec) {
         if (vec_el.get() == el.get()) {
             return true;
@@ -95,8 +95,11 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
             auto forceVec = getLJForceVec(p1, p2, distVec, distNorm);
 
             // use newton's third law to apply force on p1 and opposite force on p2
-            p1.setF(p1.getF() + forceVec);
-            p2.setF(p2.getF() - forceVec);
+            if (p1.getType() == 0)
+                p1.setF(p1.getF() + forceVec);
+
+            if (p2.getType() == 0)
+                p2.setF(p2.getF() - forceVec);
         }
     }
 }
@@ -138,13 +141,15 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
                         double distNorm = std::sqrt(dist);
                         auto forceVec = getLJForceVec(i, j, distVec, distNorm);
 
-                        // apply force on particle i (no force on ghost particle)
+                        // apply force on non-wall particles (no force on ghost particle)
                         omp_set_lock(&i.getLock());
-                        i.getF() = i.getF() + forceVec;
+                        if (i.getType() == 0)
+                            i.getF() = i.getF() + forceVec;
                         omp_unset_lock(&i.getLock());
 
                         omp_set_lock(&j.getLock());
-                        j.getF() = j.getF() - forceVec;
+                        if (j.getType() == 0)
+                            j.getF() = j.getF() - forceVec;
                         omp_unset_lock(&j.getLock());
                     }
                 }
@@ -197,11 +202,13 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
 
                                     // apply force on particle i (no force on ghost particle)
                                     omp_set_lock(&i.getLock());
-                                    i.getF() = i.getF() + forceVec;
+                                    if (i.getType() == 0)
+                                        i.getF() = i.getF() + forceVec;
                                     omp_unset_lock(&i.getLock());
 
                                     omp_set_lock(&j.getLock());
-                                    j.getF() = j.getF() - forceVec;
+                                    if (j.getType() == 0)
+                                        j.getF() = j.getF() - forceVec;
                                     omp_unset_lock(&j.getLock());
                                 }
                             }
