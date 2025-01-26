@@ -150,14 +150,18 @@ class Thermostat {
     void calculateScalingFactor();
 
     /**
-     * @brief Calculates the thermal motions of each particle of the system.
+     * @brief Calculates the thermal motion of each Particle in the system.
      *
-     * @details TODO
+     * @details First, the average velocity \f[ \tilde v = \frac1N \sum_{i=0}^N v_i \f] is determined using the
+     * velocities of each non-wall particle in the system. Then, for each particle, its thermal motion \f$ \hat v_i \f$
+     * is calculated as the difference between the velocity and the average velocity.
      */
     void calculateThermalMotions();
 
     /**
-     * @brief Updates the system temperature.
+     * @brief Updates the system temperature after the number of iterations specified inside the Thermostat object.
+     *
+     * For nanoscale simulations, the thermal motion of the particles inside the system are taken into account.
      *
      * @param currentStep The current iteration of the simulation, used to determine whether or not to apply the
      * thermostat. In the first iteration, if `initBrownianMotion` is set, the Particle velocities will be initialized

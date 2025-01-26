@@ -40,7 +40,7 @@ class Particle {
     /// @brief Velocity \f$ v \f$ of the particle.
     std::array<double, 3> v;
 
-    /// @brief Thermal motion of the particle
+    /// @brief Thermal motion \f$ \hat v \f$ of the particle
     std::array<double, 3> thermal_motion;
 
     /// @brief Force \f$ F \f$ effective on this particle.
@@ -232,7 +232,7 @@ class Particle {
     inline const std::array<double, 3> &getV() const { return v; }
 
     /**
-     * @brief Gets the thermal motion \f$ thermal_motion \f$ of this particle (const).
+     * @brief Gets the thermal motion \f$ \hat v \f$ of this particle (const).
      *
      * @return A const reference to the thermal motion array of this particle.
      */
@@ -363,7 +363,7 @@ class Particle {
     void setDiagonalNeighbours(const std::vector<std::reference_wrapper<Particle>> &neighbours);
 
     /**
-     * @brief Sets the new thermal motion \f$ thermal_motion \f$ of the particle to a given value.
+     * @brief Sets the new thermal motion \f$ \hat v \f$ of the particle to a given value.
      *
      * @param new_thermal_motion A reference to the array containing the new thermal motion of this particle.
      */
