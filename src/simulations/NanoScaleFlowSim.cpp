@@ -8,13 +8,13 @@
 NanoScaleFlowSim::NanoScaleFlowSim(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer)
     : Simulation(pc, args, t), m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius,
                                                              m_particles, args.dimensions)} {
-    SPDLOG_TRACE("Created new linked cells Simulation.");
+    SPDLOG_TRACE("Created new nano scale flow Simulation.");
 }
 NanoScaleFlowSim::~NanoScaleFlowSim() = default;
 
 void NanoScaleFlowSim::runSimulation() {
     CHECK_NOUTFLOW(m_args, conditions);
-    SPDLOG_INFO("Running {} linked cell simulation with the following arguments:",
+    SPDLOG_INFO("Running {} nano scale flow simulation with the following arguments:",
                 StringUtils::fromSimulationType(m_args.sim));
     SPDLOG_INFO("start time  : {}", m_args.startTime);
     SPDLOG_INFO("end time    : {}", m_args.endTime);
@@ -44,5 +44,5 @@ void NanoScaleFlowSim::runSimulation() {
     // serialize output for future runs
     SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
 
-    SPDLOG_INFO("Completed {} linked cell simulation.", StringUtils::fromSimulationType(m_args.sim));
+    SPDLOG_INFO("Completed {} nano scale flow simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

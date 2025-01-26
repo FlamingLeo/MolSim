@@ -1,5 +1,7 @@
 #include "FlowSimulationAnalyzer.h"
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos,
                                                double rightWallXPos, int n_analyzer)
@@ -32,6 +34,27 @@ void FlowSimulationAnalyzer::analyzeFlow(int currentStep) {
     if (currentStep % n_analyzer) {
         calculateDensitiesAndVelocities();
     }
+    writeToCSV(densities, velocities);
+}
+
+int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vector<double> &velocities){
+    std::string filePath = "../../statistics.csv";
+
+    std::ofstream csvFile(filePath);
+
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to create or open the file at " << filePath << std::endl;
+        return EXIT_FAILURE; 
+    }
+
+    csvFile << "Bin Number,Density,Velocity Average" << std::endl;
+
+    for(int i = 0; i < binNumber; i++){
+        csvFile << i << "," << densities[i] << "," << velocities[i] << std::endl;
+    }
+
+    csvFile.close();
+    return EXIT_SUCCESS;
 }
 
 int FlowSimulationAnalyzer::getBinNumber() const { return binNumber; }

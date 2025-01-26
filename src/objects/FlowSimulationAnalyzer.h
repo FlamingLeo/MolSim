@@ -37,6 +37,8 @@ class FlowSimulationAnalyzer {
 
     void analyzeFlow(int currentStep);
 
+    int writeToCSV(std::vector<double> &densities, std::vector<double> &velocities);
+
     int getBinNumber() const;
 
     double getLeftWallXPos() const;
