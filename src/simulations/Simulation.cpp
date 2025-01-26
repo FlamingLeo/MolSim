@@ -42,7 +42,9 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         SPDLOG_DEBUG("Iteration: {}", iteration);
 
         //compute statistics of the flow if nanoflow argument is set to true
-        m_analyzer.analyzeFlow(iteration);
+        if(m_thermostat.getNanoflow()){
+            m_analyzer.analyzeFlow(iteration);
+        }
 
         // update system temperature using thermostat
         m_thermostat.updateSystemTemp(iteration);
