@@ -36,6 +36,7 @@ TEST(StringUtilsTests, ToDoubleInvalid) {
                                   "2e999",
                                   "-2e999"};
 
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     for (const auto &s : invalids) {
         EXPECT_DEATH(StringUtils::toDouble(s), "") << "Tested with string " << s;
     }
@@ -80,6 +81,7 @@ TEST(StringUtilsTests, ToIntInvalid) {
                                   "2147483648",
                                   "-2147483649"};
 
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     for (const auto &s : invalids) {
         EXPECT_DEATH(StringUtils::toInt(s), "") << "Tested with string " << s;
     }
@@ -126,6 +128,8 @@ TEST(StringUtilsTests, ToIntArrayEmpty) {
 
 // Test attempting to convert strings containing invalid integer arrays.
 TEST(StringUtilsTests, ToIntArrayInvalid) {
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
+
     const std::string s0 = "invalid";
     EXPECT_DEATH(StringUtils::toIntArray<5>(s0), "");
 
@@ -174,6 +178,8 @@ TEST(StringUtilsTests, ToDoubleArrayEmpty) {
 
 // Test attempting to convert strings containing invalid double arrays.
 TEST(StringUtilsTests, ToDoubleArrayInvalid) {
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
+
     const std::string s0 = "invalid";
     EXPECT_DEATH(StringUtils::toDoubleArray<5>(s0), "");
 

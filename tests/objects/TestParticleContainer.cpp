@@ -64,6 +64,7 @@ TEST(ParticleContainerTests, GetParticleInBounds) {
 // Test accessing a specific object (out of bounds).
 TEST(ParticleContainerTests, GetParticleOutOfBounds) {
     ParticleContainer pc;
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH(pc.get(3), "");
 }
 

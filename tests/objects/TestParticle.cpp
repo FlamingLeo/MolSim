@@ -48,6 +48,7 @@ TEST(ParticleTests, CreateParticleInvalid) {
     constexpr double m0 = 0.0;
     constexpr double m1 = -2.0;
 
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH({ Particle p1(x, v, m0, type); }, "");
     EXPECT_DEATH({ Particle p2(x, v, m1, type); }, "");
 }
@@ -108,6 +109,7 @@ TEST(ParticleTests, SetMInvalid) {
     constexpr double mNegative = -2.0;
     constexpr double mZero = 0.0;
     Particle p;
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH({ p.setM(mNegative); }, "");
     EXPECT_DEATH({ p.setM(mZero); }, "");
 }

@@ -118,6 +118,7 @@ TEST_F(XMLReaderTests, OpenFilesInvalid) {
     ParticleContainer pc;
     Thermostat t{pc};
 
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_IncorrectStructure.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_NotXML.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_WrongTypes.xml"); }, "");

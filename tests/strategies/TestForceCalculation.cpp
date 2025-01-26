@@ -52,3 +52,26 @@ TEST_F(ForceTests, UpdateForceLJ) {
         }
     }
 }
+
+// Test the results of both parallelization strategies.
+// Assuming correct parallelization, the results should be identical.
+TEST_F(ForceTests, Parallelization) {
+    CellContainer cc1{{21, 21, 1},
+                      {BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                       BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE},
+                      1,
+                      pc1,
+                      2};
+    CellContainer cc2{{21, 21, 1},
+                      {BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                       BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE},
+                      1,
+                      pc2,
+                      2};
+    calculateF_LennardJones_LC(pc1, 0, &cc1);
+    calculateF_LennardJones_LC_task(pc2, 0, &cc2);
+    ASSERT_EQ(pc1.size(), pc2.size());
+    for (size_t i = 0; i < pc1.size(); ++i) {
+        EXPECT_EQ(pc1[i], pc2[i]);
+    }
+}

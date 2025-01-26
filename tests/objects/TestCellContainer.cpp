@@ -38,6 +38,7 @@ class CellContainerTest : public ::testing::Test {
         for (auto &p : particles) {
             container.addParticle(p);
         }
+        GTEST_FLAG_SET(death_test_style, "threadsafe");
     }
 };
 
