@@ -12,6 +12,7 @@
 #include "io/output/XMLWriter.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
 #include "utils/Timer.h"
@@ -61,6 +62,9 @@ class Simulation {
     /// @brief Reference to the Thermostat, for temperature regulation.
     Thermostat &m_thermostat;
 
+    /// @brief Reference to the Anlayzer, for statistics computation.
+    FlowSimulationAnalyzer &m_analyzer;
+
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;
 
@@ -100,6 +104,16 @@ class Simulation {
      * @param t The Thermostat used for temperature regulation.
      */
     Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
+
+     /**
+     * @brief Constructs a new Simulation.
+     *
+     * @param pc The ParticleContainer containing the simulation molecules.
+     * @param args The Arguments struct containing the simulation metadata.
+     * @param t The Thermostat used for temperature regulation.
+     * @param analyzer The Anlayzer used for statistics computation.
+     */
+    Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer);
 
     /// @brief Destroys the current Simulation object.
     virtual ~Simulation();
