@@ -2,6 +2,7 @@
 #include "io/input/XMLReader.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "simulations/SimulationFactory.h"
 #include "utils/Arguments.h"
 #include "utils/CLIUtils.h"
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
     CLIParser::parseArguments(argc, argv, args);
 
     // create simulation and run with parsed arguments
-    auto sim = SimulationFactory::createSimulation(pc, args, t);
+    FlowSimulationAnalyzer analyzer = FlowSimulationAnalyzer(pc, 50, 4.0, 30.2, 1000);
+    auto sim = SimulationFactory::createSimulation(pc, args, t, analyzer);
     sim->runSimulation();
 }

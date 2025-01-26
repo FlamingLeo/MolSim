@@ -10,6 +10,7 @@
 
 #include "Simulation.h"
 #include "SimulationLC.h"
+#include "NanoScaleFlowSim.h"
 #include "utils/Arguments.h"
 #include <memory>
 #include <string>
@@ -25,5 +26,5 @@ class SimulationFactory {
      * @param t The Thermostat used in the simulation.
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
-    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
+    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer);
 };

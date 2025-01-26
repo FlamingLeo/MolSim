@@ -3,6 +3,11 @@
 #include "utils/StringUtils.h"
 #include <algorithm>
 
+Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
+    : m_particles{pc}, m_args{args}, m_thermostat{t}, m_analyzer{}{
+    SPDLOG_TRACE("Created new Simulation.");
+}
+
 Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer)
     : m_particles{pc}, m_args{args}, m_thermostat{t}, m_analyzer{analyzer} {
     SPDLOG_TRACE("Created new Simulation.");
@@ -42,8 +47,8 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
         SPDLOG_DEBUG("Iteration: {}", iteration);
 
         //compute statistics of the flow if nanoflow argument is set to true
-        if(m_thermostat.getNanoflow()){
-            m_analyzer.analyzeFlow(iteration);
+        if(m_analyzer.has_value() && m_thermostat.getNanoflow()){
+            m_analyzer->get().analyzeFlow(iteration);   
         }
 
         // update system temperature using thermostat

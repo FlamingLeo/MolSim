@@ -19,6 +19,7 @@
 #include <cassert>
 #include <memory>
 #include <string>
+#include <optional>
 
 #if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
 #define SIM_SERIALIZE_XML(_a, _b, _c, _d)                                                                              \
@@ -62,8 +63,8 @@ class Simulation {
     /// @brief Reference to the Thermostat, for temperature regulation.
     Thermostat &m_thermostat;
 
-    /// @brief Reference to the Anlayzer, for statistics computation.
-    FlowSimulationAnalyzer &m_analyzer;
+    /// @brief Optional reference to the Anlayzer, for statistics computation.
+    std::optional<std::reference_wrapper<FlowSimulationAnalyzer>> m_analyzer;
 
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;
