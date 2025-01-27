@@ -17,7 +17,7 @@
 
 #define TYPE_DEFAULT 0
 #define SIGMA_DEFAULT 1
-#define EPSILON_DEFAULT 5
+#define EPSILON_DEFAULT 1
 #define K_DEFAULT 0
 #define R0_DEFAULT 0
 #define FZUP_DEFAULT 0

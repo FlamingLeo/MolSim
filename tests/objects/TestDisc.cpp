@@ -45,7 +45,6 @@ TEST(DiscTests, initializeRadiusZero) {
 // Test attempting to create discs with invalid values.
 TEST(DiscTests, CreateDiscInvalid) {
     ParticleContainer pc;
-    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH({ Disc d(pc, {0, 0, 0}, -1, {1., 2., 3.}, 1., 1.); }, ""); // radius negative
     EXPECT_DEATH({ Disc d(pc, {0, 0, 0}, 1, {1., 2., 3.}, 0., 1.); }, "");  // spacing zero
     EXPECT_DEATH({ Disc d(pc, {0, 0, 0}, 1, {1., 2., 3.}, -1., 1.); }, ""); // spacing negative
