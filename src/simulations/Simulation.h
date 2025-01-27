@@ -63,8 +63,11 @@ class Simulation {
     /// @brief Reference to the Thermostat, for temperature regulation.
     Thermostat &m_thermostat;
 
-    /// @brief Optional reference to the Anlayzer, for statistics computation.
-    std::optional<std::reference_wrapper<FlowSimulationAnalyzer>> m_analyzer;
+    /// @brief Reference to the Anlayzer, for statistics computation.
+    FlowSimulationAnalyzer &m_analyzer;
+
+    /// @brief Default Anlayzer when none is needed.
+    static FlowSimulationAnalyzer defaultAnalyzer;
 
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;
@@ -97,14 +100,6 @@ class Simulation {
     void runSimulationLoop(CellContainer *lc = nullptr);
 
   public:
-    /**
-     * @brief Constructs a new Simulation.
-     *
-     * @param pc The ParticleContainer containing the simulation molecules.
-     * @param args The Arguments struct containing the simulation metadata.
-     * @param t The Thermostat used for temperature regulation.
-     */
-    Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
 
      /**
      * @brief Constructs a new Simulation.

@@ -22,8 +22,9 @@ class SimulationLC : public Simulation {
      * @param pc The ParticleContainer containing the simulation molecules.
      * @param args The Arguments struct containing the simulation metadata.
      * @param t The Thermostat used for temperature regulation.
+     * @param analyzer The Anlayzer used for statistics computation.
      */
-    SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t);
+    SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer);
 
     /// @brief Destroys the current SimulationLC object.
     ~SimulationLC();

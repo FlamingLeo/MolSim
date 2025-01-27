@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos,
                                                double rightWallXPos, int n_analyzer)
@@ -26,19 +27,31 @@ void FlowSimulationAnalyzer::calculateDensitiesAndVelocities() {
         rightRange += binSize;
     }
     for (int i = 0; i < binNumber; i++) {
-        velocities[i] /= densities[i];
+        if(densities[i] > 0){
+            velocities[i] /= densities[i];
+        }
     }
 }
 
 void FlowSimulationAnalyzer::analyzeFlow(int currentStep) {
-    if (currentStep % n_analyzer) {
+    if (currentStep % n_analyzer == 0) {
         calculateDensitiesAndVelocities();
+        writeToCSV(densities, velocities, currentStep);
     }
-    writeToCSV(densities, velocities);
 }
 
-int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vector<double> &velocities){
-    std::string filePath = "../../statistics.csv";
+int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vector<double> &velocities, int fileNumber){
+
+    if(std::filesystem::exists("../../statistics") && fileNumber == 0){
+        std::filesystem::remove_all("../../statistics");
+        std::filesystem::create_directories("../../statistics");
+    }
+
+    if(!(std::filesystem::exists("../../statistics"))){
+        std::filesystem::create_directories("../../statistics");
+    }
+
+    std::string filePath = "../../statistics/statistics" + std::to_string(fileNumber) + ".csv";
 
     std::ofstream csvFile(filePath);
 
@@ -52,6 +65,8 @@ int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vect
     for(int i = 0; i < binNumber; i++){
         csvFile << i << "," << densities[i] << "," << velocities[i] << std::endl;
     }
+    std::fill(densities.begin(), densities.end(), 0);
+    std::fill(velocities.begin(), velocities.end(), 0);
 
     csvFile.close();
     return EXIT_SUCCESS;

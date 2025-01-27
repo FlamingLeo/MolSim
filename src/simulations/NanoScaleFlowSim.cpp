@@ -6,7 +6,7 @@
 #include "utils/StringUtils.h"
 
 NanoScaleFlowSim::NanoScaleFlowSim(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer)
-    : Simulation(pc, args, t), m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius,
+    : Simulation(pc, args, t, analyzer), m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius,
                                                              m_particles, args.dimensions)} {
     SPDLOG_TRACE("Created new nano scale flow Simulation.");
 }

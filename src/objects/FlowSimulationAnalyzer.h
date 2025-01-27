@@ -30,6 +30,8 @@ class FlowSimulationAnalyzer {
     int n_analyzer;
 
   public:
+    FlowSimulationAnalyzer() = default;
+
     FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos,
                            int n_analyzer);
 
@@ -37,7 +39,7 @@ class FlowSimulationAnalyzer {
 
     void analyzeFlow(int currentStep);
 
-    int writeToCSV(std::vector<double> &densities, std::vector<double> &velocities);
+    int writeToCSV(std::vector<double> &densities, std::vector<double> &velocities, int fileNumber);
 
     int getBinNumber() const;
 
