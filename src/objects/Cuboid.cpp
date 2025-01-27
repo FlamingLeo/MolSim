@@ -38,6 +38,7 @@ void Cuboid::initialize(size_t dimensions) {
                 }
             }
         }
+    //we deal with membrane case
     } else {
         std::array<double, 3> xyz;
         for (size_t i = 0; i < N[2]; i++) {         // z
@@ -48,10 +49,11 @@ void Cuboid::initialize(size_t dimensions) {
                     // correctly; leaving this on would result in particles being pulled to the bottom left corner and
                     // interacting strangely with eachother...
                     // perhaps using a different initialization strategy would work better?
+                    //type 5 means membrane for extension to mixed membrane-non_membrane simulations
                     if (specialCase(k, j, i)) {
-                        particles.addParticle(xyz, v, m, 2 /* for vizualisation */, epsilon, sigma, this->k, r_0, fzup);
+                        particles.addParticle(xyz, v, m, 5 , epsilon, sigma, this->k, r_0, fzup);
                     } else {
-                        particles.addParticle(xyz, v, m, type, epsilon, sigma, this->k, r_0, 0);
+                        particles.addParticle(xyz, v, m, 5, epsilon, sigma, this->k, r_0, 0);
                     }
                 }
             }
