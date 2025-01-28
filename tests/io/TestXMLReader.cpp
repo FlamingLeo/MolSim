@@ -86,6 +86,14 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
         EXPECT_EQ(pc[i].getF(), f[i]);
         EXPECT_EQ(pc[i].getOldF(), oldF[i]);
     }
+
+    //check membrane
+    for (size_t i = 0; i < 4; ++i) {
+        EXPECT_EQ(pc[i].getType(), 5);
+        EXPECT_EQ(pc[i].getK(), 300);
+        EXPECT_EQ(pc[i].getR0(), 2.2);
+    }
+    EXPECT_EQ(pc[3].getFZUP(), 0.8);
 }
 
 // Test loading a valid, partial XML file with no arguments and only one object into a particle container.
