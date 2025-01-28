@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     CLIParser::parseArguments(argc, argv, args);
 
     // create simulation and run with parsed arguments
-    FlowSimulationAnalyzer analyzer = FlowSimulationAnalyzer(pc, 50, 4.0, 30.2, 1000);
+    FlowSimulationAnalyzer analyzer = FlowSimulationAnalyzer(pc, 50, 4.0, 30.2, 10000);
     auto sim = SimulationFactory::createSimulation(pc, args, t, analyzer);
     sim->runSimulation();
 }
