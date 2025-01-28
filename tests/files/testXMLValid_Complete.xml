@@ -19,6 +19,16 @@
         <target>60.0</target>
         <deltaT>0.5</deltaT>
     </thermostat>
+    <membrane>
+        <stiffness>300</stiffness>
+        <avgBondLength>2.2</avgBondLength>
+        <zForce>0.8</zForce>
+        <specialCase>
+            <x>1</x>
+            <y>1</y>
+            <z>0</z>
+        </specialCase>
+    </membrane>
     <type>lj</type>
     <objects>
         <cuboid>

@@ -27,7 +27,6 @@ class FileReaderTests : public ::testing::Test {
 
 // Test opening an invalid file.
 TEST_F(FileReaderTests, OpenFileInvalid) {
-    GTEST_FLAG_SET(death_test_style, "threadsafe");
     EXPECT_DEATH({ FileReader f(targetPath); }, "");      // directory
     EXPECT_DEATH({ FileReader f("/dev/null/foo"); }, ""); // non-existent file
 }
