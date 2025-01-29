@@ -10,7 +10,6 @@
 
 #include "Simulation.h"
 #include "SimulationLC.h"
-#include "NanoScaleFlowSim.h"
 #include "utils/Arguments.h"
 #include <memory>
 #include <string>

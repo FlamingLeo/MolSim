@@ -4,5 +4,5 @@
 #include <string>
 
 std::unique_ptr<Simulation> SimulationFactory::createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer) {
-    return args.linkedCells ? std::make_unique<NanoScaleFlowSim>(pc, args, t, analyzer) : std::make_unique<Simulation>(pc, args, t, analyzer);
+    return args.linkedCells ? std::make_unique<SimulationLC>(pc, args, t, analyzer) : std::make_unique<Simulation>(pc, args, t, analyzer);
 }
