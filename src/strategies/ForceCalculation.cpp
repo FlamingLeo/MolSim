@@ -95,11 +95,8 @@ void calculateF_LennardJones(ParticleContainer &particles, double, CellContainer
             auto forceVec = getLJForceVec(p1, p2, distVec, distNorm);
 
             // use newton's third law to apply force on p1 and opposite force on p2
-            if (p1.getType() != 1)
-                p1.setF(p1.getF() + forceVec);
-
-            if (p2.getType() != 1)
-                p2.setF(p2.getF() - forceVec);
+            DO_IF_NOT_WALL(p1, p1.setF(p1.getF() + forceVec));
+            DO_IF_NOT_WALL(p2, p2.setF(p2.getF() - forceVec));
         }
     }
 }
@@ -143,13 +140,11 @@ void calculateF_LennardJones_LC(ParticleContainer &particles, double, CellContai
 
                         // apply force on non-wall particles (no force on ghost particle)
                         omp_set_lock(&i.getLock());
-                        if (i.getType() != 1)
-                            i.getF() = i.getF() + forceVec;
+                        DO_IF_NOT_WALL(i, i.getF() = i.getF() + forceVec);
                         omp_unset_lock(&i.getLock());
 
                         omp_set_lock(&j.getLock());
-                        if (j.getType() != 1)
-                            j.getF() = j.getF() - forceVec;
+                        DO_IF_NOT_WALL(j, j.getF() = j.getF() - forceVec);
                         omp_unset_lock(&j.getLock());
                     }
                 }
@@ -206,13 +201,11 @@ void calculateF_LennardJones_LC_task(ParticleContainer &particles, double, CellC
                                     // velocities of such particles), so these checks could be omitted in the name of
                                     // speed... but the contest is already done, so check that commit instead :)
                                     omp_set_lock(&i.getLock());
-                                    if (i.getType() != 1)
-                                        i.getF() = i.getF() + forceVec;
+                                    DO_IF_NOT_WALL(i, i.getF() = i.getF() + forceVec);
                                     omp_unset_lock(&i.getLock());
 
                                     omp_set_lock(&j.getLock());
-                                    if (j.getType() != 1)
-                                        j.getF() = j.getF() - forceVec;
+                                    DO_IF_NOT_WALL(j, j.getF() = j.getF() - forceVec);
                                     omp_unset_lock(&j.getLock());
                                 }
                             }

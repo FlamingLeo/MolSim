@@ -34,10 +34,15 @@
             _c->writeParticles(_d, _a, _e);                                                                            \
         }                                                                                                              \
     } while (0)
+#define SIM_ANALYZE_FLOW(_a, _b)                                                                                       \
+    do {                                                                                                               \
+        _a.analyzeFlow(_b);                                                                                            \
+    } while (0)
 #else
 #define SIM_SERIALIZE_XML(_a, _b, _c, _d) (void)0
 #define SIM_INIT_WRITER(_a, _b, _c) (void)0
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e) (void)0
+#define SIM_ANALYZE_FLOW(_a, _b) (void)0
 #endif
 
 #ifdef NOUTFLOW
@@ -63,11 +68,8 @@ class Simulation {
     /// @brief Reference to the Thermostat, for temperature regulation.
     Thermostat &m_thermostat;
 
-    /// @brief Reference to the Anlayzer, for statistics computation.
+    /// @brief Reference to the FlowSimulationAnalyzer, for statistics computation.
     FlowSimulationAnalyzer &m_analyzer;
-
-    /// @brief Default Anlayzer when none is needed.
-    static FlowSimulationAnalyzer defaultAnalyzer;
 
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;

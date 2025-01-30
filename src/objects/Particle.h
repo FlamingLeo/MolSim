@@ -23,6 +23,15 @@
 #define FZUP_DEFAULT 0
 #define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
+#define DO_IF_NOT_WALL(_p, _expr)                                                                                      \
+    if ((_p).getType() != 1) {                                                                                         \
+        _expr;                                                                                                         \
+    }
+
+#define SKIP_IF_WALL(_p)                                                                                               \
+    if ((_p).getType() == 1)                                                                                           \
+        continue;
+
 #ifdef NOUTFLOW
 #define CONTINUE_IF_INACTIVE(p) (void)0
 #else

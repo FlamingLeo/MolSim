@@ -10,10 +10,7 @@ void calculateV(ParticleContainer &particles, double delta_t) {
     CONTAINER_LOOP(particles, it) {
         auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
-
-        // skip wall particles
-        if (p.getType() == 1)
-            continue;
+        SKIP_IF_WALL(p);
 
         // calculate velocity
         const std::array<double, 3> velocityUpdate =

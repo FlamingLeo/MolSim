@@ -49,7 +49,7 @@ void Thermostat::initializeBrownianMotion() {
     for (auto &p : particles) {
         // should probably check for active particles here, but we can assume that all of them are active at the
         // beginning of a simulation
-        p.setV(maxwellBoltzmannDistributedVelocity(std::sqrt(T_init / p.getM()), dimension));
+        DO_IF_NOT_WALL(p, p.setV(maxwellBoltzmannDistributedVelocity(std::sqrt(T_init / p.getM()), dimension)));
     }
 }
 void Thermostat::calculateKineticEnergy() {
@@ -64,8 +64,7 @@ void Thermostat::calculateKineticEnergy() {
         // nanoflow thermostat: use thermal motion of MOBILE particles
         for (auto &p : particles) {
             CONTINUE_IF_INACTIVE(p);
-            if (p.getType() != 1)
-                sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion());
+            DO_IF_NOT_WALL(p, sum += p.getM() * ArrayUtils::L2NormSquared(p.getThermalMotion()));
         }
     }
     kineticEnergy = sum / 2;
@@ -102,11 +101,11 @@ void Thermostat::calculateThermalMotions() {
     avg_velocity = {0., 0., 0.};
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        if (p.getType() != 1) {
+        DO_IF_NOT_WALL(p, {
             avg_velocity[0] += p.getV()[0];
             avg_velocity[1] += p.getV()[1];
             avg_velocity[2] += p.getV()[2];
-        }
+        });
     }
     avg_velocity[0] /= mobileParticles;
     avg_velocity[1] /= mobileParticles;
@@ -115,8 +114,7 @@ void Thermostat::calculateThermalMotions() {
     // calculate thermal motion for each particle
     for (auto &p : particles) {
         CONTINUE_IF_INACTIVE(p);
-        if (p.getType() != 1)
-            p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>()));
+        DO_IF_NOT_WALL(p, p.setThermalMotion(ArrayUtils::elementWisePairOp(p.getV(), avg_velocity, std::minus<>())));
     }
 }
 
@@ -170,7 +168,7 @@ void Thermostat::updateSystemTemp(int currentStep) {
             CONTINUE_IF_INACTIVE(p);
             std::array<double, 3> newV =
                 ArrayUtils::elementWiseScalarOp(scalingFactor, p.getThermalMotion(), std::multiplies<>());
-            p.setV(newV + avg_velocity);
+            DO_IF_NOT_WALL(p, p.setV(newV + avg_velocity));
         }
     }
     SPDLOG_TRACE("Finished temperature update for iteration {}", currentStep);

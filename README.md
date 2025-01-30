@@ -178,7 +178,7 @@ The program supports XML input files. Currently, the following input files are i
 -   `input-lj-w5t1.xml`: Simulation of a membrane.
 -   `input-lj-w5t3-coarse.xml`: Simulation of the Rayleigh-Taylor instability in 3D using coarse-grained parallelization.
 -   `input-lj-w5t3-fine.xml`: Simulation of the Rayleigh-Taylor instability in 3D using fine-grained parallelization.
--   `input-lj-w5t4.xml`: Simulation of the nano-scale flow of liquid falling down.
+-   `input-lj-w5t4-<cond>.xml`: Simulation of the nano-scale flow of liquid falling down for various influences.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 

@@ -15,10 +15,7 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
     CONTAINER_LOOP(particles, it) {
         auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
-
-        // skip wall particles
-        if (p.getType() == 1)
-            continue;
+        SKIP_IF_WALL(p);
 
         // update position
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
@@ -39,10 +36,7 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
     CONTAINER_LOOP(particles, it) {
         auto &p = CONTAINER_REF(it);
         CONTINUE_IF_INACTIVE(p);
-
-        // skip wall particles
-        if (p.getType() == 1)
-            continue;
+        SKIP_IF_WALL(p);
 
         // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
