@@ -8,6 +8,28 @@
 #include <string>
 #include <vector>
 
+#define X size_t[0]
+#define Y size_t[1]
+#define Z size_t[2]
+
+#define C1() ((X*X + Y*Y) / (X*X + Y*Y + Z*Z))
+
+//these are the equations for the triple corner vertical planes, just for a bit of lucidity
+//the N's are the plane normal vectors and RHS the right hand side to the plane equation
+//so the condition would be the dot product of the normal and the actual coordinates >= RHS
+//e.g.(no dot product available): (1 - C1) * X * relX + C1 * Y * relY + (C1 - 1) * Z * relZ >= RHS_BSE_ANW
+#define N_BSE_ANW {(1 - C1) * X, C1 * Y, (C1 - 1) * Z}
+#define RHS_BSE_ANW ((1 - C1) * X * X)
+
+#define N_BSW_ANE {(C1 - 1) * X, C1 * Y, (C1 - 1) * Z}
+#define RHS_BSW_ANE 0.0
+
+#define N_BNE_ASW {(C1 - 1) * X, C1 * Y, (1 - C1) * Z}
+#define RHS_BNE_ASW ((1 - C1) * Z * Z)
+
+#define N_BNW_ASE {(1 - C1) * X, C1 * Y, (1 - C1) * Z}
+#define RHS_BNW_ASE (C1 * Y * Y)
+
 #define RETURN_DIAG_CONDITION(cond1, cond2, adCond, loc1, loc2, loc3, loc4)                                            \
     if ((cond1) || (cond2)) {                                                                                          \
         bool aboveDiagonal = (adCond);                                                                                 \
@@ -119,6 +141,7 @@ HaloLocation Cell::handle3DTripleCorner(const std::array<double, 3> &relPos) con
     bool ANE = isCorner(HaloLocation::ABOVE, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::EAST);
     bool ANW = isCorner(HaloLocation::ABOVE, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
     double relX = relPos[0], relY = relPos[1], relZ = relPos[2];
+
     RETURN_TRIPLE_DIAG_CONDITION(BSE, (0.5 * relX - 0.5 * relZ + relY >= 0.5), (relX > relZ), HaloLocation::EAST,
                                  HaloLocation::BELOW, HaloLocation::SOUTH);
     RETURN_TRIPLE_DIAG_CONDITION(BSW, (-0.5 * relX - 0.5 * relZ + relY >= 0), (relX <= relZ), HaloLocation::WEST,
