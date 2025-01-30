@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#define X size_t[0]
-#define Y size_t[1]
-#define Z size_t[2]
+#define X m_size[0]
+#define Y m_size[1]
+#define Z m_size[2]
 
 #define C1() ((X*X + Y*Y) / (X*X + Y*Y + Z*Z))
 
@@ -142,21 +142,27 @@ HaloLocation Cell::handle3DTripleCorner(const std::array<double, 3> &relPos) con
     bool ANW = isCorner(HaloLocation::ABOVE, HaloLocation::NORTH) && VEC_CONTAINS(m_haloLocation, HaloLocation::WEST);
     double relX = relPos[0], relY = relPos[1], relZ = relPos[2];
 
-    RETURN_TRIPLE_DIAG_CONDITION(BSE, (0.5 * relX - 0.5 * relZ + relY >= 0.5), (relX > relZ), HaloLocation::EAST,
+    double x = m_size[0];
+    double y = m_size[1];
+    double z = m_size[2];
+    double c = (m_size[0] * m_size[0] + m_size[2] * m_size[2]) /
+            (m_size[0] * m_size[0] + m_size[1] * m_size[1] + m_size[2] * m_size[2]);
+
+    RETURN_TRIPLE_DIAG_CONDITION(BSE, ((1 * c) * x * relX + (c - 1) * z * relZ + c * y * relY >= (1 - c) * x * x), (relX > relZ), HaloLocation::EAST,
                                  HaloLocation::BELOW, HaloLocation::SOUTH);
-    RETURN_TRIPLE_DIAG_CONDITION(BSW, (-0.5 * relX - 0.5 * relZ + relY >= 0), (relX <= relZ), HaloLocation::WEST,
+    RETURN_TRIPLE_DIAG_CONDITION(BSW, ((c - 1) * x * relX + (c - 1) * z * relZ + c * y * relY >= 0), (relX <= relZ), HaloLocation::WEST,
                                  HaloLocation::BELOW, HaloLocation::SOUTH);
-    RETURN_TRIPLE_DIAG_REVERSE(BNE, (-0.5 * relX + 0.5 * relZ + relY >= 0.5), (relX > relZ), HaloLocation::NORTH,
+    RETURN_TRIPLE_DIAG_REVERSE(BNE, ((c - 1) * x * relX + (1 - c) * z * relZ + c * y * relY >= (1 - c) * z * z), (relX > relZ), HaloLocation::NORTH,
                                HaloLocation::EAST, HaloLocation::BELOW);
-    RETURN_TRIPLE_DIAG_REVERSE(BNW, (0.5 * relX + 0.5 * relZ + relY >= 1), (relX <= relZ), HaloLocation::NORTH,
+    RETURN_TRIPLE_DIAG_REVERSE(BNW, ((1 - c) * x * relX + (1 - c) * x * relZ + c * y * relY >= c * y * y), (relX <= relZ), HaloLocation::NORTH,
                                HaloLocation::WEST, HaloLocation::BELOW);
-    RETURN_TRIPLE_DIAG_CONDITION(ASE, (0.5 * relX + 0.5 * relZ + relY >= 1), (relX <= relZ), HaloLocation::ABOVE,
+    RETURN_TRIPLE_DIAG_CONDITION(ASE, ((1 - c) * x * relX + (1 - c) * x * relZ + c * y * relY >= c * y * y), (relX <= relZ), HaloLocation::ABOVE,
                                  HaloLocation::EAST, HaloLocation::SOUTH);
-    RETURN_TRIPLE_DIAG_CONDITION(ASW, (-0.5 * relX + 0.5 * relZ + relY >= 0.5), (relX > relZ), HaloLocation::ABOVE,
+    RETURN_TRIPLE_DIAG_CONDITION(ASW, ((c - 1) * x * relX + (1 - c) * z * relZ + c * y * relY >= (1 - c) * z * z), (relX > relZ), HaloLocation::ABOVE,
                                  HaloLocation::WEST, HaloLocation::SOUTH);
-    RETURN_TRIPLE_DIAG_REVERSE(ANE, (-0.5 * relX - 0.5 * relZ + relY >= 0), (relX <= relZ), HaloLocation::NORTH,
+    RETURN_TRIPLE_DIAG_REVERSE(ANE, ((c - 1) * x * relX + (c - 1) * z * relZ + c * y * relY >= 0), (relX <= relZ), HaloLocation::NORTH,
                                HaloLocation::ABOVE, HaloLocation::EAST);
-    RETURN_TRIPLE_DIAG_REVERSE(ANW, (0.5 * relX - 0.5 * relZ + relY >= 0.5), (relX > relZ), HaloLocation::NORTH,
+    RETURN_TRIPLE_DIAG_REVERSE(ANW, ((1 * c) * x * relX + (c - 1) * z * relZ + c * y * relY >= (1 - c) * x * x), (relX > relZ), HaloLocation::NORTH,
                                HaloLocation::ABOVE, HaloLocation::WEST);
     CLIUtils::error("Invalid triple corner! This should NOT happen.", "", false);
     return HaloLocation::NORTH; // fallback
