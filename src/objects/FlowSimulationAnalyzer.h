@@ -17,9 +17,9 @@ class FlowSimulationAnalyzer {
 
     int binNumber;
 
-    double leftWallXPos;
+    double leftWallPosX;
 
-    double rightWallXPos;
+    double rightWallPosX;
 
     double binSize;
 
@@ -32,7 +32,7 @@ class FlowSimulationAnalyzer {
   public:
     FlowSimulationAnalyzer() = default;
 
-    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos, double rightWallXPos,
+    FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX, double rightWallPosX,
                            int n_analyzer);
 
     void calculateDensitiesAndVelocities();
@@ -43,9 +43,9 @@ class FlowSimulationAnalyzer {
 
     int getBinNumber() const;
 
-    double getLeftWallXPos() const;
+    double getLeftWallPosX() const;
 
-    double getRightWallXPos() const;
+    double getRightWallPosX() const;
 
     double getBinSize() const;
 

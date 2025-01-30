@@ -4,17 +4,17 @@
 #include <fstream>
 #include <filesystem>
 
-FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallXPos,
-                                               double rightWallXPos, int n_analyzer)
-    : particles{particles}, binNumber{binNumber}, leftWallXPos{leftWallXPos}, rightWallXPos{rightWallXPos},
+FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX,
+                                               double rightWallPosX, int n_analyzer)
+    : particles{particles}, binNumber{binNumber}, leftWallPosX{leftWallPosX}, rightWallPosX{rightWallPosX},
       n_analyzer{n_analyzer} {
-    binSize = (rightWallXPos - leftWallXPos) / binNumber;
+    binSize = (rightWallPosX - leftWallPosX) / binNumber;
     densities.resize(binNumber);
     velocities.resize(binNumber);
 }
 
 void FlowSimulationAnalyzer::calculateDensitiesAndVelocities() {
-    double leftRange = leftWallXPos;
+    double leftRange = leftWallPosX;
     double rightRange = leftRange + binSize;
     for (int i = 0; i < binNumber; i++) {
         for (auto &p : particles) {
@@ -73,8 +73,8 @@ int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vect
 }
 
 int FlowSimulationAnalyzer::getBinNumber() const { return binNumber; }
-double FlowSimulationAnalyzer::getLeftWallXPos() const { return leftWallXPos; }
-double FlowSimulationAnalyzer::getRightWallXPos() const { return rightWallXPos; }
+double FlowSimulationAnalyzer::getLeftWallPosX() const { return leftWallPosX; }
+double FlowSimulationAnalyzer::getRightWallPosX() const { return rightWallPosX; }
 double FlowSimulationAnalyzer::getBinSize() const { return binSize; }
 const std::vector<double> &FlowSimulationAnalyzer::getDensities() const { return densities; }
 const std::vector<double> &FlowSimulationAnalyzer::getVelocities() const { return velocities; }

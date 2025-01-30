@@ -135,6 +135,11 @@ void Thermostat::updateSystemTemp(int currentStep) {
         return;
     }
 
+    //calculate the thermal motions of the particles for a nano flow simulation
+    if(nanoFlow){
+        calculateThermalMotions();
+    }
+
     // calculate temperature based on kinetic energy and scale temperature
     calculateKineticEnergy();
     calculateTemp();
@@ -158,7 +163,6 @@ void Thermostat::updateSystemTemp(int currentStep) {
             p.setV(newV);
         }
     } else {
-        calculateThermalMotions();
 #pragma omp parallel for
         CONTAINER_LOOP(particles, it) {
             auto &p = CONTAINER_REF(it);
