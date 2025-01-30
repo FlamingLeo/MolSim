@@ -1,16 +1,19 @@
 #include "FlowSimulationAnalyzer.h"
-#include <vector>
-#include <iostream>
+#include "io/output/FileWriter.h"
 #include <fstream>
-#include <filesystem>
+#include <iostream>
+#include <spdlog/spdlog.h>
+#include <string>
+#include <vector>
 
 FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX,
-                                               double rightWallPosX, int n_analyzer)
+                                               double rightWallPosX, int n_analyzer, const std::string &dirname)
     : particles{particles}, binNumber{binNumber}, leftWallPosX{leftWallPosX}, rightWallPosX{rightWallPosX},
-      n_analyzer{n_analyzer} {
+      n_analyzer{n_analyzer}, dirname{dirname} {
     binSize = (rightWallPosX - leftWallPosX) / binNumber;
     densities.resize(binNumber);
     velocities.resize(binNumber);
+    FileWriter::initializeFolder(dirname);
 }
 
 void FlowSimulationAnalyzer::calculateDensitiesAndVelocities() {
@@ -27,7 +30,7 @@ void FlowSimulationAnalyzer::calculateDensitiesAndVelocities() {
         rightRange += binSize;
     }
     for (int i = 0; i < binNumber; i++) {
-        if(densities[i] > 0){
+        if (densities[i] > 0) {
             velocities[i] /= densities[i];
         }
     }
@@ -36,38 +39,29 @@ void FlowSimulationAnalyzer::calculateDensitiesAndVelocities() {
 void FlowSimulationAnalyzer::analyzeFlow(int currentStep) {
     if (currentStep % n_analyzer == 0) {
         calculateDensitiesAndVelocities();
-        writeToCSV(densities, velocities, currentStep);
+        writeToCSV(currentStep);
     }
 }
 
-int FlowSimulationAnalyzer::writeToCSV(std::vector<double> &densities, std::vector<double> &velocities, int fileNumber){
-
-    if(std::filesystem::exists("../../statistics") && fileNumber == 0){
-        std::filesystem::remove_all("../../statistics");
-        std::filesystem::create_directories("../../statistics");
-    }
-
-    if(!(std::filesystem::exists("../../statistics"))){
-        std::filesystem::create_directories("../../statistics");
-    }
-
-    std::string filePath = "../../statistics/statistics" + std::to_string(fileNumber) + ".csv";
-
+int FlowSimulationAnalyzer::writeToCSV(int fileNumber) {
+    // write analysis to csv file
+    std::string filePath = dirname + "/" + std::to_string(fileNumber) + ".csv";
     std::ofstream csvFile(filePath);
-
     if (!csvFile.is_open()) {
-        std::cerr << "Failed to create or open the file at " << filePath << std::endl;
-        return EXIT_FAILURE; 
+        SPDLOG_ERROR("Failed to create or open the file at {}", filePath);
+        return EXIT_FAILURE;
+    }
+    csvFile << "binNr,density,velAvg\n";
+    for (int i = 0; i < binNumber; i++) {
+        csvFile << i << "," << densities[i] << "," << velocities[i] << "\n";
     }
 
-    csvFile << "Bin Number,Density,Velocity Average" << std::endl;
-
-    for(int i = 0; i < binNumber; i++){
-        csvFile << i << "," << densities[i] << "," << velocities[i] << std::endl;
-    }
+    // reset densities and velocities to zero
     std::fill(densities.begin(), densities.end(), 0);
     std::fill(velocities.begin(), velocities.end(), 0);
 
+    // cleanup
+    SPDLOG_INFO("Wrote analysis to CSV file {}.", filePath);
     csvFile.close();
     return EXIT_SUCCESS;
 }

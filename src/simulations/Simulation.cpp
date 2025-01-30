@@ -41,9 +41,9 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
     while (currentTime < m_args.endTime) {
         SPDLOG_DEBUG("Iteration: {}", iteration);
 
-        //compute statistics of the flow of the nano scale flow simulation
+        // compute statistics of the flow of the nano scale flow simulation
         m_analyzer.analyzeFlow(iteration);
-        
+
         // update system temperature using thermostat
         m_thermostat.updateSystemTemp(iteration);
 

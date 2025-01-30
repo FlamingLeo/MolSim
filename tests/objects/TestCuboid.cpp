@@ -40,14 +40,13 @@ TEST(CuboidTests, InitializeCuboidParticlesNonEmpty) {
 
 TEST(CuboidTests, InitializeCuboidMembrane) {
     ParticleContainer pc;
-    Cuboid c{pc, {1., 1., 1.}, {3, 3, 1}, {1., 2., 3.}, 1.0, 1., 5, 1, 1,
-             300, 1.0, 0.8};
+    Cuboid c{pc, {1., 1., 1.}, {3, 3, 1}, {1., 2., 3.}, 1.0, 1., 5, 1, 1, 300, 1.0, 0.8};
     c.initialize();
     c.initializeNeighbours();
 
-    constexpr std::array<std::array<double, 9>, 3> expectedX = {
-            {{1., 2., 3., 1., 2., 3., 1., 2., 3.}, {1., 1., 1., 2., 2., 2., 3., 3., 3.},
-             {1., 1., 1., 1., 1., 1., 1., 1., 1.}}};
+    constexpr std::array<std::array<double, 9>, 3> expectedX = {{{1., 2., 3., 1., 2., 3., 1., 2., 3.},
+                                                                 {1., 1., 1., 2., 2., 2., 3., 3., 3.},
+                                                                 {1., 1., 1., 1., 1., 1., 1., 1., 1.}}};
     constexpr std::array<int, 9> expectedNumDirectNeighbours = {2, 3, 2, 3, 4, 3, 2, 3, 2};
     constexpr std::array<int, 9> expectedNumDiagonalNeighbours = {1, 2, 1, 2, 4, 2, 1, 2, 1};
     constexpr std::array f = {0., 0., 0.};
@@ -55,7 +54,7 @@ TEST(CuboidTests, InitializeCuboidMembrane) {
     constexpr double eps = 0.00001;
 
     ASSERT_EQ(c.getParticles().size(), 9);
-    //this checks membrane particle initialization
+    // check membrane particle initialization
     for (size_t i = 0; i < 9; ++i) {
         auto p = c.getParticles()[i];
 
@@ -69,16 +68,15 @@ TEST(CuboidTests, InitializeCuboidMembrane) {
         EXPECT_EQ(p.getK(), 300);
         EXPECT_EQ(p.getR0(), 1.);
         EXPECT_EQ(p.getType(), 5);
-        //idk why p doesn't work
         EXPECT_EQ(c.getParticles()[i].getDirectNeighbours().size(), expectedNumDirectNeighbours[i]);
         EXPECT_EQ(c.getParticles()[i].getDiagonalNeighbours().size(), expectedNumDiagonalNeighbours[i]);
     }
-    //this check the references of some of the particles
-    //particle 0
+    // check the references of some of the particles
+    /* particle 0 */
     EXPECT_EQ(c.getParticles()[0].getDirectNeighbours()[0].get(), c.getParticles()[1]);
     EXPECT_EQ(c.getParticles()[0].getDirectNeighbours()[1].get(), c.getParticles()[3]);
     EXPECT_EQ(c.getParticles()[0].getDiagonalNeighbours()[0].get(), c.getParticles()[4]);
-    //particle 4
+    /* particle 4*/
     EXPECT_EQ(c.getParticles()[4].getDirectNeighbours()[0].get(), c.getParticles()[3]);
     EXPECT_EQ(c.getParticles()[4].getDirectNeighbours()[1].get(), c.getParticles()[5]);
     EXPECT_EQ(c.getParticles()[4].getDirectNeighbours()[2].get(), c.getParticles()[1]);

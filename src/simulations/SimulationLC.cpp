@@ -6,8 +6,9 @@
 #include "utils/StringUtils.h"
 
 SimulationLC::SimulationLC(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer)
-    : Simulation(pc, args, t, analyzer), m_cellContainer{CellContainer(args.domainSize, args.conditions, args.cutoffRadius,
-                                                             m_particles, args.dimensions)} {
+    : Simulation(pc, args, t, analyzer),
+      m_cellContainer{
+          CellContainer(args.domainSize, args.conditions, args.cutoffRadius, m_particles, args.dimensions)} {
     SPDLOG_TRACE("Created new linked cells Simulation.");
 }
 SimulationLC::~SimulationLC() = default;

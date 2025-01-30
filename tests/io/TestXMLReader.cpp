@@ -87,7 +87,7 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
         EXPECT_EQ(pc[i].getOldF(), oldF[i]);
     }
 
-    //check membrane
+    // check membrane
     for (size_t i = 0; i < 4; ++i) {
         EXPECT_EQ(pc[i].getType(), 5);
         EXPECT_EQ(pc[i].getK(), 300);

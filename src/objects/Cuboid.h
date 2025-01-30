@@ -122,9 +122,17 @@ class Cuboid : public Cluster {
     void initializeNeighbours();
 
     /**
-     * @brief Function to define which particles in a membrane should have special forces
+     * @brief Determines, whether Particle objects with the given coordinate indices should have a special upward force
+     * applied to them, for membrane simulations.
      *
-     * @return True or false
+     * Note that the parameters are NOT the coordinates themselves; rather, they are indices in the cuboid starting from
+     * the origin. This cross-references the entries in specialCases.
+     *
+     * @param x The x-index.
+     * @param y The y-index.
+     * @param z The z-index.
+     * @return true if the Particle with the given indices should have a special force applied to it.
+     * @return false if the Particle with the given indices should not have a special force applied to it.
      */
     bool specialCase(int x, int y, int z);
 

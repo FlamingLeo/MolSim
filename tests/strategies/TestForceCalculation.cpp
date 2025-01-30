@@ -76,18 +76,22 @@ TEST_F(ForceTests, Parallelization) {
     }
 }
 
-//Tests calculateF_Membrane_LC (i.e. forces for membranes )
+// Test calculating forces for a membrane simulation.
 TEST_F(ForceTests, ForceMembrane) {
     constexpr double eps = 0.00001;
     ParticleContainer pc3(2);
     pc3.setSpecialForceLimit(100);
 
     constexpr std::array<std::array<double, 3>, 8> force = {{{1., 0., 1.},
-                          {-1., 0., 2.}, {1., 1., 1.}, {-1., -1., 2.}, {-24., 0., 1.}, {24., 0., 2.}, {0., 0., 1.}, {0., 0., 2.}}};
+                                                             {-1., 0., 2.},
+                                                             {1., 1., 1.},
+                                                             {-1., -1., 2.},
+                                                             {-24., 0., 1.},
+                                                             {24., 0., 2.},
+                                                             {0., 0., 1.},
+                                                             {0., 0., 2.}}};
 
-
-    Cuboid cub{pc3, {5., 5., 5.}, {2, 1, 1}, {0., 0., 0.}, 2.0, 1., 5, 1, 1,
-             1, 1.0, 1.0};
+    Cuboid cub{pc3, {5., 5., 5.}, {2, 1, 1}, {0., 0., 0.}, 2.0, 1., 5, 1, 1, 1, 1.0, 1.0};
 
     cub.initialize(3);
     cub.initializeNeighbours();
@@ -96,13 +100,13 @@ TEST_F(ForceTests, ForceMembrane) {
     pc3[1].setFZUP(2);
 
     CellContainer cc{{10, 10, 10},
-                      {BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
-                       BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE},
-                      2.5,
-                      pc3,
-                      3};
+                     {BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                      BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE},
+                     2.5,
+                     pc3,
+                     3};
 
-    //direct neighbour
+    // direct neighbour
     EXPECT_EQ(pc3[0].getDirectNeighbours().size(), 1);
     EXPECT_EQ(pc3[1].getDirectNeighbours().size(), 1);
 
@@ -111,7 +115,7 @@ TEST_F(ForceTests, ForceMembrane) {
     EXPECT_EQ(pc3[0].getF(), force[0]);
     EXPECT_EQ(pc3[1].getF(), force[1]);
 
-    //diagonal neighbour
+    // diagonal neighbour
     pc3[0].setF({0., 0., 0.});
     pc3[1].setF({0., 0., 0.});
 
@@ -127,7 +131,7 @@ TEST_F(ForceTests, ForceMembrane) {
     EXPECT_EQ(pc3[0].getF(), force[2]);
     EXPECT_EQ(pc3[1].getF(), force[3]);
 
-    //too close particles
+    // too close particles
     pc3[0].setF({0., 0., 0.});
     pc3[1].setF({0., 0., 0.});
 
@@ -143,7 +147,7 @@ TEST_F(ForceTests, ForceMembrane) {
     EXPECT_EQ(pc3[0].getF(), force[4]);
     EXPECT_EQ(pc3[1].getF(), force[5]);
 
-    //not neighbours,far away
+    // not neighbours,far away
     pc3[0].setF({0., 0., 0.});
     pc3[1].setF({0., 0., 0.});
 

@@ -25,5 +25,6 @@ class SimulationFactory {
      * @param t The Thermostat used in the simulation.
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
-    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer);
+    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t,
+                                                        FlowSimulationAnalyzer &analyzer);
 };

@@ -135,8 +135,8 @@ void Thermostat::updateSystemTemp(int currentStep) {
         return;
     }
 
-    //calculate the thermal motions of the particles for a nano flow simulation
-    if(nanoFlow){
+    // calculate the thermal motions of the particles for a nano flow simulation
+    if (nanoFlow) {
         calculateThermalMotions();
     }
 

@@ -1,5 +1,5 @@
-#include "objects/ParticleContainer.h"
 #include "objects/FlowSimulationAnalyzer.h"
+#include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include <gtest/gtest.h>
 #include <math.h>
@@ -19,7 +19,7 @@ class FlowSimulationAnalyzerTests : public ::testing::Test {
 };
 
 // Test calculating the size of a bin and lenghts of density and velocities vectors.
-TEST_F(FlowSimulationAnalyzerTests, CalculateAnalyzerComponents){
+TEST_F(FlowSimulationAnalyzerTests, CalculateAnalyzerComponents) {
     constexpr int binNumber = 3;
     constexpr double leftWallPosX = 0;
     constexpr double rightWallPosX = 6;
@@ -31,7 +31,7 @@ TEST_F(FlowSimulationAnalyzerTests, CalculateAnalyzerComponents){
     EXPECT_EQ(a.getVelocities().size(), 3);
 }
 
-TEST_F(FlowSimulationAnalyzerTests, CalculateDensitiesAndVelocities){
+TEST_F(FlowSimulationAnalyzerTests, CalculateDensitiesAndVelocities) {
     constexpr int binNumber = 3;
     constexpr double leftWallPosX = 0;
     constexpr double rightWallPosX = 6;
@@ -48,4 +48,3 @@ TEST_F(FlowSimulationAnalyzerTests, CalculateDensitiesAndVelocities){
     EXPECT_EQ(a.getVelocities()[1], 0);
     EXPECT_EQ(a.getVelocities()[2], 4);
 }
-

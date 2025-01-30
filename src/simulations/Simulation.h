@@ -10,16 +10,16 @@
 #include "io/output/FileWriter.h"
 #include "io/output/WriterFactory.h"
 #include "io/output/XMLWriter.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
-#include "objects/FlowSimulationAnalyzer.h"
 #include "strategies/StrategyFactory.h"
 #include "utils/Arguments.h"
 #include "utils/Timer.h"
 #include <cassert>
 #include <memory>
-#include <string>
 #include <optional>
+#include <string>
 
 #if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
 #define SIM_SERIALIZE_XML(_a, _b, _c, _d)                                                                              \
@@ -100,8 +100,7 @@ class Simulation {
     void runSimulationLoop(CellContainer *lc = nullptr);
 
   public:
-
-     /**
+    /**
      * @brief Constructs a new Simulation.
      *
      * @param pc The ParticleContainer containing the simulation molecules.
