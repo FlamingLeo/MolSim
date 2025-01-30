@@ -10,6 +10,7 @@
 #include "utils/StringUtils.h"
 #include <array>
 #include <memory>
+#include <regex>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
@@ -94,11 +95,13 @@ static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermos
 }
 
 // helper function to intialize analyzer if present or disable otherwise
-static void initAnalyzer(const SimType::AnalyzerOptional &xmlAnalyzer, FlowSimulationAnalyzer &fsa) {
+static void initAnalyzer(const SimType::AnalyzerOptional &xmlAnalyzer, FlowSimulationAnalyzer &fsa,
+                         const std::string &basename) {
     if (xmlAnalyzer.present()) {
         const auto &analyzer = xmlAnalyzer.get();
         fsa.initialize(analyzer.nBins(), analyzer.leftWallX(), analyzer.rightWallX(), analyzer.frequency(),
-                       GET_IF_PRESENT(analyzer, dirname, "statistics"));
+                       GET_IF_PRESENT(analyzer, dirname, "statistics"),
+                       std::regex_replace(basename, std::regex("vtk|xyz"), "csv"));
     } else {
         fsa.initialize(1, 0, 0, -1);
     }
@@ -236,7 +239,7 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t, F
         initThermostat(xmlThermostat, t, args.dimensions);
 
         const auto &xmlAnalyzer = xmlInput->analyzer();
-        initAnalyzer(xmlAnalyzer, fsa);
+        initAnalyzer(xmlAnalyzer, fsa, args.basename);
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?

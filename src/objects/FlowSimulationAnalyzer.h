@@ -39,8 +39,16 @@ class FlowSimulationAnalyzer {
     /// @brief The number of simulation iterations after which to apply the Analyzer functionality (default: 1000).
     int n_analyzer{1000};
 
-    /// @brief The name of the directory containing the generated .csv files.
+    /// @brief The name of the directory containing the generated .csv files (default: "statistics").
     std::string dirname{"statistics"};
+
+    /**
+     * @brief The base name of the generated .csv files (default: "MD_csv").
+     *
+     * @details During initialization using an XML input, if the substring "vtk" or "xyz" is found in the base name of
+     * the output files, it will automatically be replaced with "csv" and used as the base name for the .csv files.
+     */
+    std::string basename{"MD_csv"};
 
   public:
     /**
@@ -59,9 +67,11 @@ class FlowSimulationAnalyzer {
      * @param rightWallPosX The X coordinate of the right wall of the simulation.
      * @param n_analyzer The number of simulation iterations after which to apply the analyzer functionality.
      * @param dirname The name of the directory containing the generated .csv files.
+     * @param basename The base name of the generated .csv files.
      */
     FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX, double rightWallPosX,
-                           int n_analyzer, const std::string &dirname = "statistics");
+                           int n_analyzer, const std::string &dirname = "statistics",
+                           const std::string &basename = "MD_csv");
 
     /**
      * @brief Initializes the current object with the given parameters.
@@ -71,9 +81,10 @@ class FlowSimulationAnalyzer {
      * @param rightWallPosX The X coordinate of the right wall of the simulation.
      * @param n_analyzer The number of simulation iterations after which to apply the analyzer functionality.
      * @param dirname The name of the directory containing the generated .csv files.
+     * @param basename The base name of the generated .csv files.
      */
     void initialize(int binNumber, double leftWallPosX, double rightWallPosX, int n_analyzer,
-                    const std::string &dirname = "statistics");
+                    const std::string &dirname = "statistics", const std::string &basename = "MD_csv");
 
     /**
      * @brief Computes the densities and average velocities of the particles resided in each bin.

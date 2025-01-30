@@ -11,9 +11,10 @@ FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles) : p
     SPDLOG_TRACE("Created new Analyzer, arguments uninitialized!");
 };
 FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX,
-                                               double rightWallPosX, int n_analyzer, const std::string &dirname)
+                                               double rightWallPosX, int n_analyzer, const std::string &dirname,
+                                               const std::string &basename)
     : particles{particles}, binNumber{binNumber}, leftWallPosX{leftWallPosX}, rightWallPosX{rightWallPosX},
-      n_analyzer{n_analyzer}, dirname{dirname} {
+      n_analyzer{n_analyzer}, dirname{dirname}, basename{basename} {
     SPDLOG_TRACE("Created new Analyzer - binNumber: {}, leftWallX: {}, rightWallX: {}, freq: {}, dirname: {}",
                  binNumber, leftWallPosX, rightWallPosX, n_analyzer, dirname);
     binSize = (rightWallPosX - leftWallPosX) / binNumber;
@@ -24,12 +25,13 @@ FlowSimulationAnalyzer::FlowSimulationAnalyzer(ParticleContainer &particles, int
 
 /* functionality */
 void FlowSimulationAnalyzer::initialize(int binNumber, double leftWallPosX, double rightWallPosX, int n_analyzer,
-                                        const std::string &dirname) {
+                                        const std::string &dirname, const std::string &basename) {
     this->binNumber = binNumber;
     this->leftWallPosX = leftWallPosX;
     this->rightWallPosX = rightWallPosX;
     this->n_analyzer = n_analyzer;
     this->dirname = dirname;
+    this->basename = basename;
 
     SPDLOG_TRACE("Initialized Analyzer - binNumber: {}, leftWallX: {}, rightWallX: {}, freq: {}, dirname: {}",
                  binNumber, leftWallPosX, rightWallPosX, n_analyzer, dirname);
@@ -68,7 +70,7 @@ void FlowSimulationAnalyzer::analyzeFlow(int currentStep) {
 }
 int FlowSimulationAnalyzer::writeToCSV(int fileNumber) {
     // write analysis to csv file
-    std::string filePath = dirname + "/" + std::to_string(fileNumber) + ".csv";
+    std::string filePath = dirname + "/" + basename + "_" + std::to_string(fileNumber) + ".csv";
     std::ofstream csvFile(filePath);
     if (!csvFile.is_open()) {
         SPDLOG_ERROR("Failed to create or open the file at {}", filePath);
