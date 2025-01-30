@@ -98,7 +98,7 @@ class FlowSimulationAnalyzer {
     /**
      * @brief The main function that analyzes the simulation.
      *
-     * @param currentstep The current iteration of the simulation, determines whether the Analyzer is applied or not.
+     * @param currentStep The current iteration of the simulation, determines whether the Analyzer is applied or not.
      */
     void analyzeFlow(int currentStep);
 

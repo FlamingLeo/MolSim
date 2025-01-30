@@ -10,7 +10,6 @@
 #include "utils/StringUtils.h"
 #include <array>
 #include <memory>
-#include <regex>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
@@ -86,6 +85,22 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
     }
 }
 
+// helper function to replace output extensions with "csv"
+std::string replaceExtensionsWithCSV(std::string input) {
+    size_t pos = input.find("vtk");
+    if (pos != std::string::npos) {
+        input.replace(pos, 3, "csv");
+        return input;
+    }
+
+    pos = input.find("xyz");
+    if (pos != std::string::npos) {
+        input.replace(pos, 3, "csv");
+    }
+
+    return input;
+}
+
 // helper function to read and initialize thermostat
 static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t, int dimensions) {
     t.initialize(dimensions, xmlThermostat.init(), xmlThermostat.timeStep(),
@@ -100,8 +115,7 @@ static void initAnalyzer(const SimType::AnalyzerOptional &xmlAnalyzer, FlowSimul
     if (xmlAnalyzer.present()) {
         const auto &analyzer = xmlAnalyzer.get();
         fsa.initialize(analyzer.nBins(), analyzer.leftWallX(), analyzer.rightWallX(), analyzer.frequency(),
-                       GET_IF_PRESENT(analyzer, dirname, "statistics"),
-                       std::regex_replace(basename, std::regex("vtk|xyz"), "csv"));
+                       GET_IF_PRESENT(analyzer, dirname, "statistics"), replaceExtensionsWithCSV(basename));
     } else {
         fsa.initialize(1, 0, 0, -1);
     }
