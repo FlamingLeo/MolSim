@@ -31,6 +31,7 @@ TEST_F(FlowSimulationAnalyzerTests, CalculateAnalyzerComponents) {
     EXPECT_EQ(a.getVelocities().size(), 3);
 }
 
+// Test calculating densities and velocities of a particle system.
 TEST_F(FlowSimulationAnalyzerTests, CalculateDensitiesAndVelocities) {
     constexpr int binNumber = 3;
     constexpr double leftWallPosX = 0;

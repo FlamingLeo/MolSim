@@ -4,7 +4,7 @@
 #define READ_XML(_x)                                                                                                   \
     do {                                                                                                               \
         XMLReader xml{targetPath + _x};                                                                                \
-        xml.readXML(args, pc, t);                                                                                      \
+        xml.readXML(args, pc, t, fsa);                                                                                 \
     } while (0)
 
 class XMLReaderTests : public ::testing::Test {
@@ -59,6 +59,7 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     Arguments args;
     ParticleContainer pc;
     Thermostat t{pc};
+    FlowSimulationAnalyzer fsa{pc};
     READ_XML("/testXMLValid_Complete.xml");
 
     // check arguments
@@ -77,6 +78,13 @@ TEST_F(XMLReaderTests, OpenFileValidComplete) {
     EXPECT_EQ(t.getTimestep(), 1000);
     EXPECT_DOUBLE_EQ(t.getTargetTemp(), 60.0);
     EXPECT_DOUBLE_EQ(t.getDeltaT(), 0.5);
+
+    // check analyzer
+    EXPECT_EQ(fsa.getBinNumber(), 42);
+    EXPECT_DOUBLE_EQ(fsa.getLeftWallPosX(), 3.2);
+    EXPECT_DOUBLE_EQ(fsa.getRightWallPosX(), 7.4);
+    EXPECT_EQ(fsa.getFrequency(), 1337);
+    EXPECT_EQ(fsa.getDirname(), "stats");
 
     // check objects
     ASSERT_EQ(pc.size(), 11);
@@ -101,6 +109,7 @@ TEST_F(XMLReaderTests, OpenFileValidPartial) {
     Arguments args;
     ParticleContainer pc;
     Thermostat t{pc};
+    FlowSimulationAnalyzer fsa{pc};
     READ_XML("/testXMLValid_NoOptionals.xml");
 
     // check thermostat
@@ -125,6 +134,7 @@ TEST_F(XMLReaderTests, OpenFilesInvalid) {
     Arguments args;
     ParticleContainer pc;
     Thermostat t{pc};
+    FlowSimulationAnalyzer fsa{pc};
 
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_IncorrectStructure.xml"); }, "");
     EXPECT_DEATH({ READ_XML("/testXMLInvalid_NotXML.xml"); }, "");

@@ -30,6 +30,13 @@
         </specialCase>
     </membrane>
     <type>lj</type>
+    <analyzer>
+        <nBins>42</nBins>
+        <leftWallX>3.2</leftWallX>
+        <rightWallX>7.4</rightWallX>
+        <frequency>1337</frequency>
+        <dirname>stats</dirname>
+    </analyzer>
     <objects>
         <cuboid>
             <position>

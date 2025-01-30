@@ -33,7 +33,8 @@ void XMLWriter::openFile(const std::string &filename) {
 
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
-void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t) {
+void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t,
+                          const FlowSimulationAnalyzer &fsa) {
     if (!(m_file.is_open()))
         CLIUtils::error("No output file opened!", "", false);
 
@@ -88,6 +89,13 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     s.linkedCells() = args.linkedCells;
     s.totalParticles() = pc.activeSize();
     s.dimensions() = args.dimensions;
+
+    // serialize (optional) analyzer
+    if (fsa.getFrequency() > 0) {
+        AnalyzerType aa{fsa.getBinNumber(), fsa.getLeftWallPosX(), fsa.getRightWallPosX(), fsa.getFrequency()};
+        aa.dirname() = fsa.getDirname();
+        s.analyzer() = aa;
+    }
 
     // potentially serialize membrane data
     if (args.membrane && !pc.isEmpty()) {

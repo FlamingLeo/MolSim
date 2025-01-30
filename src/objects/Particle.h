@@ -23,11 +23,13 @@
 #define FZUP_DEFAULT 0
 #define MASS_ERROR "The mass of a particle must be positive for the currently available simulations!"
 
+// note: because these are macros, they could also be wrapped in such a way that compiles them out if not needed,
+// similarly to what is done below with outflow condition checks; but, since this is not part of any
+// performance evaluation environment (see older commit), these are left on by default...
 #define DO_IF_NOT_WALL(_p, _expr)                                                                                      \
     if ((_p).getType() != 1) {                                                                                         \
         _expr;                                                                                                         \
     }
-
 #define SKIP_IF_WALL(_p)                                                                                               \
     if ((_p).getType() == 1)                                                                                           \
         continue;

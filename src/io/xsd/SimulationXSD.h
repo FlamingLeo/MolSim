@@ -608,6 +608,7 @@ class DiscType;
 class ObjectsType;
 class SpecialCaseType;
 class MembraneType;
+class AnalyzerType;
 class SimType;
 class ThermostatType;
 
@@ -5498,6 +5499,340 @@ class MembraneType : public ::xml_schema::Type {
 };
 
 /**
+ * @brief Class corresponding to the %analyzerType schema type.
+ *
+ * @nosubgrouping
+ */
+class AnalyzerType : public ::xml_schema::Type {
+  public:
+    /**
+     * @name nBins
+     *
+     * @brief Accessor and modifier functions for the %nBins
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int NBinsType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<NBinsType, char> NBinsTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const NBinsType &nBins() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    NBinsType &nBins();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void nBins(const NBinsType &x);
+
+    //@}
+
+    /**
+     * @name leftWallX
+     *
+     * @brief Accessor and modifier functions for the %leftWallX
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double LeftWallXType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<LeftWallXType, char, ::xsd::cxx::tree::schema_type::double_> LeftWallXTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const LeftWallXType &leftWallX() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    LeftWallXType &leftWallX();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void leftWallX(const LeftWallXType &x);
+
+    //@}
+
+    /**
+     * @name rightWallX
+     *
+     * @brief Accessor and modifier functions for the %rightWallX
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Double RightWallXType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<RightWallXType, char, ::xsd::cxx::tree::schema_type::double_> RightWallXTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const RightWallXType &rightWallX() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    RightWallXType &rightWallX();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void rightWallX(const RightWallXType &x);
+
+    //@}
+
+    /**
+     * @name frequency
+     *
+     * @brief Accessor and modifier functions for the %frequency
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::Int FrequencyType;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<FrequencyType, char> FrequencyTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const FrequencyType &frequency() const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    FrequencyType &frequency();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void frequency(const FrequencyType &x);
+
+    //@}
+
+    /**
+     * @name dirname
+     *
+     * @brief Accessor and modifier functions for the %dirname
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::String DirnameType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<DirnameType> DirnameOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<DirnameType, char> DirnameTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const DirnameOptional &dirname() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    DirnameOptional &dirname();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void dirname(const DirnameType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void dirname(const DirnameOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void dirname(::std::unique_ptr<DirnameType> p);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    AnalyzerType(const NBinsType &, const LeftWallXType &, const RightWallXType &, const FrequencyType &);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    AnalyzerType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    AnalyzerType(const AnalyzerType &x, ::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual AnalyzerType *_clone(::xml_schema::Flags f = 0, ::xml_schema::Container *c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    AnalyzerType &operator=(const AnalyzerType &x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~AnalyzerType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+  protected:
+    void parse(::xsd::cxx::xml::dom::parser<char> &, ::xml_schema::Flags);
+
+  protected:
+    ::xsd::cxx::tree::one<NBinsType> nBins_;
+    ::xsd::cxx::tree::one<LeftWallXType> leftWallX_;
+    ::xsd::cxx::tree::one<RightWallXType> rightWallX_;
+    ::xsd::cxx::tree::one<FrequencyType> frequency_;
+    DirnameOptional dirname_;
+
+    //@endcond
+};
+
+/**
  * @brief Class corresponding to the %simType schema type.
  *
  * @nosubgrouping
@@ -5877,6 +6212,77 @@ class SimType : public ::xml_schema::Type {
     //@}
 
     /**
+     * @name analyzer
+     *
+     * @brief Accessor and modifier functions for the %analyzer
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::AnalyzerType AnalyzerType;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional<AnalyzerType> AnalyzerOptional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits<AnalyzerType, char> AnalyzerTraits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const AnalyzerOptional &analyzer() const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    AnalyzerOptional &analyzer();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void analyzer(const AnalyzerType &x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void analyzer(const AnalyzerOptional &x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void analyzer(::std::unique_ptr<AnalyzerType> p);
+
+    //@}
+
+    /**
      * @name objects
      *
      * @brief Accessor and modifier functions for the %objects
@@ -6078,6 +6484,7 @@ class SimType : public ::xml_schema::Type {
     ::xsd::cxx::tree::one<TypeType> type_;
     LinkedCellsOptional linkedCells_;
     DimensionsOptional dimensions_;
+    AnalyzerOptional analyzer_;
     ::xsd::cxx::tree::one<ObjectsType> objects_;
     TotalParticlesOptional totalParticles_;
 
@@ -6902,6 +7309,8 @@ void operator<<(::xercesc::DOMElement &, const ObjectsType &);
 void operator<<(::xercesc::DOMElement &, const SpecialCaseType &);
 
 void operator<<(::xercesc::DOMElement &, const MembraneType &);
+
+void operator<<(::xercesc::DOMElement &, const AnalyzerType &);
 
 void operator<<(::xercesc::DOMElement &, const SimType &);
 

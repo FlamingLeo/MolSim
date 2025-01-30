@@ -44,7 +44,14 @@ class FlowSimulationAnalyzer {
 
   public:
     /**
-     * @brief Initialize the current Analyzer's parameters.
+     * @brief Constructs an uninitialized FlowSimulationAnalyzer.
+     *
+     * @param particles A reference to the Particle system.
+     */
+    explicit FlowSimulationAnalyzer(ParticleContainer &particles);
+
+    /**
+     * @brief Creates and initializes a FlowSimulationAnalyzer.
      *
      * @param particles A reference to the Particle system.
      * @param binNumber The number of bins analyzed.
@@ -55,6 +62,18 @@ class FlowSimulationAnalyzer {
      */
     FlowSimulationAnalyzer(ParticleContainer &particles, int binNumber, double leftWallPosX, double rightWallPosX,
                            int n_analyzer, const std::string &dirname = "statistics");
+
+    /**
+     * @brief Initializes the current object with the given parameters.
+     *
+     * @param binNumber The number of bins analyzed.
+     * @param leftWallPosX The X coordinate of the left wall of the simulation.
+     * @param rightWallPosX The X coordinate of the right wall of the simulation.
+     * @param n_analyzer The number of simulation iterations after which to apply the analyzer functionality.
+     * @param dirname The name of the directory containing the generated .csv files.
+     */
+    void initialize(int binNumber, double leftWallPosX, double rightWallPosX, int n_analyzer,
+                    const std::string &dirname = "statistics");
 
     /**
      * @brief Computes the densities and average velocities of the particles resided in each bin.
@@ -108,6 +127,20 @@ class FlowSimulationAnalyzer {
      * @return The size of the bins used in the computation of statistics.
      */
     double getBinSize() const;
+
+    /**
+     * @brief Gets the output frequency.
+     *
+     * @return The output frequency.
+     */
+    int getFrequency() const;
+
+    /**
+     * @brief Gets the name of the output directory.
+     *
+     * @return The name of the output directory.
+     */
+    const std::string &getDirname() const;
 
     /**
      * @brief Gets a reference to the analyzed ParticleContainer.

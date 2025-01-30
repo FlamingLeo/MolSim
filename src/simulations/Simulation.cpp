@@ -79,6 +79,14 @@ void Simulation::runSimulation() {
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
     SPDLOG_INFO("nanoflow?   : {}", m_thermostat.getNanoflow());
     SPDLOG_INFO("membrane?   : {}", m_args.membrane);
+    SPDLOG_INFO("analyzer?   : {}", m_analyzer.getFrequency() > 0);
+    if (m_analyzer.getFrequency() > 0) {
+        SPDLOG_INFO("a: bin nr.  : {}", m_analyzer.getBinNumber());
+        SPDLOG_INFO("a: lwall    : {}", m_analyzer.getLeftWallPosX());
+        SPDLOG_INFO("a: rwall    : {}", m_analyzer.getRightWallPosX());
+        SPDLOG_INFO("a: freq.    : {}", m_analyzer.getFrequency());
+        SPDLOG_INFO("a: dirname  : {}", m_analyzer.getDirname());
+    }
 #ifdef _OPENMP
     SPDLOG_INFO("p. strat.   : {}", StringUtils::fromParallelizationType(m_args.parallelization));
     SPDLOG_INFO("max threads : {}", omp_get_max_threads());
@@ -90,7 +98,7 @@ void Simulation::runSimulation() {
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
 
     // serialize output for future runs
-    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
+    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat, m_analyzer);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

@@ -45,14 +45,14 @@ int main(int argc, char *argv[]) {
     Arguments args;
     ParticleContainer pc;
     Thermostat t{pc};
+    FlowSimulationAnalyzer fsa{pc};
 
     // parse xml file first, then parse command line arguments
     XMLReader r(argv[argc - 1]);
-    r.readXML(args, pc, t);
+    r.readXML(args, pc, t, fsa);
     CLIParser::parseArguments(argc, argv, args);
 
     // create simulation and run with parsed arguments
-    FlowSimulationAnalyzer analyzer = FlowSimulationAnalyzer(pc, 40, 4.0, 30.2, 10);
-    auto sim = SimulationFactory::createSimulation(pc, args, t, analyzer);
+    auto sim = SimulationFactory::createSimulation(pc, args, t, fsa);
     sim->runSimulation();
 }

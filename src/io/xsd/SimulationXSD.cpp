@@ -595,6 +595,43 @@ void MembraneType::scIterationLimit(const ScIterationLimitType &x) { this->scIte
 
 void MembraneType::scIterationLimit(const ScIterationLimitOptional &x) { this->scIterationLimit_ = x; }
 
+// AnalyzerType
+//
+
+const AnalyzerType::NBinsType &AnalyzerType::nBins() const { return this->nBins_.get(); }
+
+AnalyzerType::NBinsType &AnalyzerType::nBins() { return this->nBins_.get(); }
+
+void AnalyzerType::nBins(const NBinsType &x) { this->nBins_.set(x); }
+
+const AnalyzerType::LeftWallXType &AnalyzerType::leftWallX() const { return this->leftWallX_.get(); }
+
+AnalyzerType::LeftWallXType &AnalyzerType::leftWallX() { return this->leftWallX_.get(); }
+
+void AnalyzerType::leftWallX(const LeftWallXType &x) { this->leftWallX_.set(x); }
+
+const AnalyzerType::RightWallXType &AnalyzerType::rightWallX() const { return this->rightWallX_.get(); }
+
+AnalyzerType::RightWallXType &AnalyzerType::rightWallX() { return this->rightWallX_.get(); }
+
+void AnalyzerType::rightWallX(const RightWallXType &x) { this->rightWallX_.set(x); }
+
+const AnalyzerType::FrequencyType &AnalyzerType::frequency() const { return this->frequency_.get(); }
+
+AnalyzerType::FrequencyType &AnalyzerType::frequency() { return this->frequency_.get(); }
+
+void AnalyzerType::frequency(const FrequencyType &x) { this->frequency_.set(x); }
+
+const AnalyzerType::DirnameOptional &AnalyzerType::dirname() const { return this->dirname_; }
+
+AnalyzerType::DirnameOptional &AnalyzerType::dirname() { return this->dirname_; }
+
+void AnalyzerType::dirname(const DirnameType &x) { this->dirname_.set(x); }
+
+void AnalyzerType::dirname(const DirnameOptional &x) { this->dirname_ = x; }
+
+void AnalyzerType::dirname(::std::unique_ptr<DirnameType> x) { this->dirname_.set(std::move(x)); }
+
 // SimType
 //
 
@@ -649,6 +686,16 @@ SimType::DimensionsOptional &SimType::dimensions() { return this->dimensions_; }
 void SimType::dimensions(const DimensionsType &x) { this->dimensions_.set(x); }
 
 void SimType::dimensions(const DimensionsOptional &x) { this->dimensions_ = x; }
+
+const SimType::AnalyzerOptional &SimType::analyzer() const { return this->analyzer_; }
+
+SimType::AnalyzerOptional &SimType::analyzer() { return this->analyzer_; }
+
+void SimType::analyzer(const AnalyzerType &x) { this->analyzer_.set(x); }
+
+void SimType::analyzer(const AnalyzerOptional &x) { this->analyzer_ = x; }
+
+void SimType::analyzer(::std::unique_ptr<AnalyzerType> x) { this->analyzer_.set(std::move(x)); }
 
 const SimType::ObjectsType &SimType::objects() const { return this->objects_.get(); }
 
@@ -2160,26 +2207,140 @@ MembraneType &MembraneType::operator=(const MembraneType &x) {
 
 MembraneType::~MembraneType() {}
 
+// AnalyzerType
+//
+
+AnalyzerType::AnalyzerType(const NBinsType &nBins, const LeftWallXType &leftWallX, const RightWallXType &rightWallX,
+                           const FrequencyType &frequency)
+    : ::xml_schema::Type(), nBins_(nBins, this), leftWallX_(leftWallX, this), rightWallX_(rightWallX, this),
+      frequency_(frequency, this), dirname_(this) {}
+
+AnalyzerType::AnalyzerType(const AnalyzerType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(x, f, c), nBins_(x.nBins_, f, this), leftWallX_(x.leftWallX_, f, this),
+      rightWallX_(x.rightWallX_, f, this), frequency_(x.frequency_, f, this), dirname_(x.dirname_, f, this) {}
+
+AnalyzerType::AnalyzerType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
+    : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), nBins_(this), leftWallX_(this), rightWallX_(this),
+      frequency_(this), dirname_(this) {
+    if ((f & ::xml_schema::Flags::base) == 0) {
+        ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
+        this->parse(p, f);
+    }
+}
+
+void AnalyzerType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f) {
+    for (; p.more_content(); p.next_content(false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+        // nBins
+        //
+        if (n.name() == "nBins" && n.namespace_().empty()) {
+            if (!nBins_.present()) {
+                this->nBins_.set(NBinsTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // leftWallX
+        //
+        if (n.name() == "leftWallX" && n.namespace_().empty()) {
+            if (!leftWallX_.present()) {
+                this->leftWallX_.set(LeftWallXTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // rightWallX
+        //
+        if (n.name() == "rightWallX" && n.namespace_().empty()) {
+            if (!rightWallX_.present()) {
+                this->rightWallX_.set(RightWallXTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // frequency
+        //
+        if (n.name() == "frequency" && n.namespace_().empty()) {
+            if (!frequency_.present()) {
+                this->frequency_.set(FrequencyTraits::create(i, f, this));
+                continue;
+            }
+        }
+
+        // dirname
+        //
+        if (n.name() == "dirname" && n.namespace_().empty()) {
+            ::std::unique_ptr<DirnameType> r(DirnameTraits::create(i, f, this));
+
+            if (!this->dirname_) {
+                this->dirname_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!nBins_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("nBins", "");
+    }
+
+    if (!leftWallX_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("leftWallX", "");
+    }
+
+    if (!rightWallX_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("rightWallX", "");
+    }
+
+    if (!frequency_.present()) {
+        throw ::xsd::cxx::tree::expected_element<char>("frequency", "");
+    }
+}
+
+AnalyzerType *AnalyzerType::_clone(::xml_schema::Flags f, ::xml_schema::Container *c) const {
+    return new class AnalyzerType(*this, f, c);
+}
+
+AnalyzerType &AnalyzerType::operator=(const AnalyzerType &x) {
+    if (this != &x) {
+        static_cast<::xml_schema::Type &>(*this) = x;
+        this->nBins_ = x.nBins_;
+        this->leftWallX_ = x.leftWallX_;
+        this->rightWallX_ = x.rightWallX_;
+        this->frequency_ = x.frequency_;
+        this->dirname_ = x.dirname_;
+    }
+
+    return *this;
+}
+
+AnalyzerType::~AnalyzerType() {}
+
 // SimType
 //
 
 SimType::SimType(const ThermostatType &thermostat, const TypeType &type, const ObjectsType &objects)
     : ::xml_schema::Type(), args_(this), thermostat_(thermostat, this), membrane_(this), type_(type, this),
-      linkedCells_(this), dimensions_(this), objects_(objects, this), totalParticles_(this) {}
+      linkedCells_(this), dimensions_(this), analyzer_(this), objects_(objects, this), totalParticles_(this) {}
 
 SimType::SimType(::std::unique_ptr<ThermostatType> thermostat, const TypeType &type,
                  ::std::unique_ptr<ObjectsType> objects)
     : ::xml_schema::Type(), args_(this), thermostat_(std::move(thermostat), this), membrane_(this), type_(type, this),
-      linkedCells_(this), dimensions_(this), objects_(std::move(objects), this), totalParticles_(this) {}
+      linkedCells_(this), dimensions_(this), analyzer_(this), objects_(std::move(objects), this),
+      totalParticles_(this) {}
 
 SimType::SimType(const SimType &x, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(x, f, c), args_(x.args_, f, this), thermostat_(x.thermostat_, f, this),
       membrane_(x.membrane_, f, this), type_(x.type_, f, this), linkedCells_(x.linkedCells_, f, this),
-      dimensions_(x.dimensions_, f, this), objects_(x.objects_, f, this), totalParticles_(x.totalParticles_, f, this) {}
+      dimensions_(x.dimensions_, f, this), analyzer_(x.analyzer_, f, this), objects_(x.objects_, f, this),
+      totalParticles_(x.totalParticles_, f, this) {}
 
 SimType::SimType(const ::xercesc::DOMElement &e, ::xml_schema::Flags f, ::xml_schema::Container *c)
     : ::xml_schema::Type(e, f | ::xml_schema::Flags::base, c), args_(this), thermostat_(this), membrane_(this),
-      type_(this), linkedCells_(this), dimensions_(this), objects_(this), totalParticles_(this) {
+      type_(this), linkedCells_(this), dimensions_(this), analyzer_(this), objects_(this), totalParticles_(this) {
     if ((f & ::xml_schema::Flags::base) == 0) {
         ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
         this->parse(p, f);
@@ -2253,6 +2414,17 @@ void SimType::parse(::xsd::cxx::xml::dom::parser<char> &p, ::xml_schema::Flags f
             }
         }
 
+        // analyzer
+        //
+        if (n.name() == "analyzer" && n.namespace_().empty()) {
+            ::std::unique_ptr<AnalyzerType> r(AnalyzerTraits::create(i, f, this));
+
+            if (!this->analyzer_) {
+                this->analyzer_.set(::std::move(r));
+                continue;
+            }
+        }
+
         // objects
         //
         if (n.name() == "objects" && n.namespace_().empty()) {
@@ -2302,6 +2474,7 @@ SimType &SimType::operator=(const SimType &x) {
         this->type_ = x.type_;
         this->linkedCells_ = x.linkedCells_;
         this->dimensions_ = x.dimensions_;
+        this->analyzer_ = x.analyzer_;
         this->objects_ = x.objects_;
         this->totalParticles_ = x.totalParticles_;
     }
@@ -3263,6 +3436,50 @@ void operator<<(::xercesc::DOMElement &e, const MembraneType &i) {
     }
 }
 
+void operator<<(::xercesc::DOMElement &e, const AnalyzerType &i) {
+    e << static_cast<const ::xml_schema::Type &>(i);
+
+    // nBins
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("nBins", e));
+
+        s << i.nBins();
+    }
+
+    // leftWallX
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("leftWallX", e));
+
+        s << ::xml_schema::AsDouble(i.leftWallX());
+    }
+
+    // rightWallX
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("rightWallX", e));
+
+        s << ::xml_schema::AsDouble(i.rightWallX());
+    }
+
+    // frequency
+    //
+    {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("frequency", e));
+
+        s << i.frequency();
+    }
+
+    // dirname
+    //
+    if (i.dirname()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("dirname", e));
+
+        s << *i.dirname();
+    }
+}
+
 void operator<<(::xercesc::DOMElement &e, const SimType &i) {
     e << static_cast<const ::xml_schema::Type &>(i);
 
@@ -3312,6 +3529,14 @@ void operator<<(::xercesc::DOMElement &e, const SimType &i) {
         ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("dimensions", e));
 
         s << *i.dimensions();
+    }
+
+    // analyzer
+    //
+    if (i.analyzer()) {
+        ::xercesc::DOMElement &s(::xsd::cxx::xml::dom::create_element("analyzer", e));
+
+        s << *i.analyzer();
     }
 
     // objects

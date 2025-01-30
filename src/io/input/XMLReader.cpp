@@ -2,6 +2,7 @@
 #include "io/xsd/SimulationXSD.h"
 #include "objects/Cuboid.h"
 #include "objects/Disc.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
@@ -90,6 +91,17 @@ static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermos
                  GET_IF_PRESENT(xmlThermostat, target, xmlThermostat.init()),
                  GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true),
                  GET_IF_PRESENT(xmlThermostat, nanoFlow, false), xmlThermostat.deltaT().present());
+}
+
+// helper function to intialize analyzer if present or disable otherwise
+static void initAnalyzer(const SimType::AnalyzerOptional &xmlAnalyzer, FlowSimulationAnalyzer &fsa) {
+    if (xmlAnalyzer.present()) {
+        const auto &analyzer = xmlAnalyzer.get();
+        fsa.initialize(analyzer.nBins(), analyzer.leftWallX(), analyzer.rightWallX(), analyzer.frequency(),
+                       GET_IF_PRESENT(analyzer, dirname, "statistics"));
+    } else {
+        fsa.initialize(1, 0, 0, -1);
+    }
 }
 
 // helper (wrapper) function to parse cuboids into a particle container
@@ -196,7 +208,7 @@ XMLReader::XMLReader(const std::string &filename) {
     openFile(filename);
 }
 
-void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
+void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t, FlowSimulationAnalyzer &fsa) {
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!", "", false);
 
@@ -222,6 +234,9 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
 
         const auto &xmlThermostat = xmlInput->thermostat();
         initThermostat(xmlThermostat, t, args.dimensions);
+
+        const auto &xmlAnalyzer = xmlInput->analyzer();
+        initAnalyzer(xmlAnalyzer, fsa);
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?

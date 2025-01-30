@@ -145,6 +145,16 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="analyzerType">
+        <xs:sequence>
+            <xs:element type="xs:int" name="nBins"/>
+            <xs:element type="xs:double" name="leftWallX"/>
+            <xs:element type="xs:double" name="rightWallX"/>
+            <xs:element type="xs:int" name="frequency"/>
+            <xs:element type="xs:string" name="dirname" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="simType">
         <xs:sequence>
             <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1"/>
@@ -153,6 +163,7 @@
             <xs:element type="xs:string" name="type"/>
             <xs:element type="xs:boolean" name="linkedCells" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:positiveInteger" name="dimensions" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="analyzerType" name="analyzer" minOccurs="0" maxOccurs="1"/>
             <xs:element type="objectsType" name="objects"/>
             <xs:element type="xs:long" name="totalParticles" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>

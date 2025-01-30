@@ -4,7 +4,7 @@
         <endTime>500.0</endTime>
         <delta_t>0.0005</delta_t>
         <frequency>10</frequency>
-        <basename>MD_vtk_LJ_W5T4</basename>
+        <basename>MD_vtk_LJ_W5T4_NORMAL</basename>
         <output>vtk</output>
         <domainSize>
             <x>30.0</x>
@@ -30,6 +30,13 @@
     <type>lj</type>
     <linkedCells>true</linkedCells>
     <dimensions>3</dimensions>
+    <analyzer>
+        <nBins>50</nBins>
+        <leftWallX>4.0</leftWallX>
+        <rightWallX>31.2</rightWallX>
+        <frequency>10</frequency>
+        <dirname>statistics</dirname>
+    </analyzer>
     <objects>
         <cuboid> <!-- wall 1 -->
             <position>

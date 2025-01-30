@@ -265,6 +265,20 @@ Complete XML input files have the following structure:
   <!-- If this tag isn't specified, the simulation will be 2D by default. -->
   <!-- Note that this may cause unexpected results for 3D input. -->
   <dimensions><!-- unsigned --></dimensions>
+  <!-- (Optional) An analyzer component used to log the densities and velocities of a system. -->
+  <!-- The generated .csv files will be stored in a separate directory. -->
+  <analyzer>
+    <!-- The number of bins along the x-axis in which to split the domain. -->
+    <nBins><!-- int --></nBins>
+    <!-- The x coordinate of the left wall. -->
+    <leftWallX><!-- double --></leftWallX>
+    <!-- The x coordinate of the right wall. -->
+    <rightWallX><!-- double --></rightWallX>
+    <!-- The output frequency of the analyzer. -->
+    <frequency><!-- int --></frequency>
+    <!-- (Optional) The name of the output directory. -->
+    <dirname><!-- string --></dirname>
+  </analyzer>
   <!-- The simulation molecules. May contain any positive number of "particle", "cuboid" or "disc" entries. -->
   <objects>
     <!-- A simple particle. -->

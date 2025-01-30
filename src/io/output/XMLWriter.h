@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include "objects/FlowSimulationAnalyzer.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
 #include "utils/Arguments.h"
@@ -50,6 +51,8 @@ class XMLWriter {
      * @param pc The ParticleContainer containing the active simulation particles.
      * @param args The Arguments struct containing simulation metadata.
      * @param t The thermostat.
+     * @param fsa The analyzer, which may be on or off. If disabled, it will not be serialized.
      */
-    void serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t);
+    void serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t,
+                   const FlowSimulationAnalyzer &fsa);
 };

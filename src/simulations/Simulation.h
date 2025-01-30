@@ -22,10 +22,10 @@
 #include <string>
 
 #if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
-#define SIM_SERIALIZE_XML(_a, _b, _c, _d)                                                                              \
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d, _e)                                                                          \
     do {                                                                                                               \
         XMLWriter xmlw{_a};                                                                                            \
-        xmlw.serialize(_b, _c, _d);                                                                                    \
+        xmlw.serialize(_b, _c, _d, _e);                                                                                \
     } while (0)
 #define SIM_INIT_WRITER(_a, _b, _c) _a = WriterFactory::createWriter(_b, _c)
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e)                                                                           \
@@ -39,7 +39,7 @@
         _a.analyzeFlow(_b);                                                                                            \
     } while (0)
 #else
-#define SIM_SERIALIZE_XML(_a, _b, _c, _d) (void)0
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d, _e) (void)0
 #define SIM_INIT_WRITER(_a, _b, _c) (void)0
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e) (void)0
 #define SIM_ANALYZE_FLOW(_a, _b) (void)0
