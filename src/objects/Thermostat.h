@@ -193,7 +193,7 @@ class Thermostat {
     /// @brief Gets the number of simulation iterations after which to apply the Thermostat functionality.
     int getTimestep() const;
 
-    // @brief Determines whether the thermostat is used for the nano-scale flow simulation.
+    /// @brief Determines whether the thermostat is used for the nano-scale flow simulation.
     bool getNanoflow() const;
 
     /// @brief Gets a reference to the Particle system.
