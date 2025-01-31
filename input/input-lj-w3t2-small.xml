@@ -14,16 +14,17 @@
         <cutoffRadius>3.0</cutoffRadius>
         <bdConditions>
             <n>outflow</n>
-            <s>reflective</s>
+            <s>outflow</s>
             <w>outflow</w>
-            <e>reflective</e>
-            <a>reflective</a>
+            <e>outflow</e>
+            <a>outflow</a>
             <b>outflow</b>
         </bdConditions>
     </args>
     <thermostat>
         <init>40.0</init>
         <timeStep>2147483647</timeStep>
+        <brownianMotion>false</brownianMotion>
     </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>

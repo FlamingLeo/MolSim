@@ -22,8 +22,9 @@ class ParticleContainer {
     /// @brief A ContainerType storing multiple Particle objects, forming the base of this class.
     ContainerType m_particles;
 
-    /// @brief Flag that determines if inactive particles should be removed after a time integration step.
-    bool m_removeInactiveParticles = false;
+    /// @brief The number of iterations after which the special upward force will no longer be applied, for membrane
+    /// simulations.
+    int m_specialForceLimit;
 
     /* iterator definitions */
   public:
@@ -167,9 +168,13 @@ class ParticleContainer {
      * @param type The type of the new particle.
      * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations.
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations.
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations.
      */
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type = TYPE_DEFAULT,
-                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT);
+                     double eps = EPSILON_DEFAULT, double sigma = SIGMA_DEFAULT, double k = K_DEFAULT,
+                     double r_0 = R0_DEFAULT, double fzup = FZUP_DEFAULT);
 
     /**
      * @brief Creates and adds a new complete particle to the container.
@@ -182,22 +187,15 @@ class ParticleContainer {
      * @param type The type of the particle.
      * @param eps The Lennard-Jones parameter \f$ \epsilon \f$ of the particle.
      * @param sigma The Lennard-Jones parameter \f$ \sigma \f$ of the particle.
+     * @param k The stiffness constant \f$ k \f$, used for membrane simulations.
+     * @param r_0 The average bond length \f$ r_0 \f$, used for membrane simulations.
+     * @param fzup The constant upward force \f$ F_{Z-UP} \f$, used for membrane simulations.
+
      * @param cellIndex The index of this particle inside a cell. For use with the linked cell method.
      */
     void addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, const std::array<double, 3> &f,
-                     const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, int cellIndex);
-
-    /**
-     * @brief Removes inactive Particle objects from the container.
-     *
-     */
-    void removeInactiveParticles();
-
-    /**
-     * @brief Notifies the container that inactive particles should be removed after a time integration step.
-     *
-     */
-    void notifyInactivity();
+                     const std::array<double, 3> &old_f, double m, int type, double eps, double sigma, double k,
+                     double r_0, double fzup, int cellIndex);
 
     /**
      * @brief Reserves a certain amount of spaces inside the Particle vector.
@@ -223,11 +221,43 @@ class ParticleContainer {
     const Particle &get(size_t index) const;
 
     /**
+     * @brief Gets the number of iterations after which the special upward force will no longer be applied.
+     *
+     * @return The number of iterations after which the special upward force will no longer be applied.
+     */
+    int getSpecialForceLimit() const;
+
+    /**
+     * @brief Sets the number of iterations after which the special upward force will no longer be applied.
+     *
+     * @param limit The number of iterations after which the special upward force will no longer be applied.
+     */
+    void setSpecialForceLimit(int limit);
+
+    /// @brief Decrements the number of iterations after which the special upward force will no longer be applied by
+    /// one.
+    void decrementSpecialForceLimit();
+
+    /**
      * @brief Returns the size of the container.
      *
      * @return The size of the container.
      */
     size_t size() const;
+
+    /**
+     * @brief Returns the amount of active particles in the container.
+     *
+     * @return The number of active particles in the container.
+     */
+    size_t activeSize() const;
+
+    /**
+     * @brief Returns the amount of active, mobile, non-wall particles in the container.
+     *
+     * @return The number of active, mobile, non-wall particles in the container.
+     */
+    size_t nonWallSize() const;
 
     /**
      * @brief Checks if the container is empty.

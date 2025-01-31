@@ -10,6 +10,7 @@
     <thermostat>
         <init>40.0</init>
         <timeStep>2147483647</timeStep>
+        <brownianMotion>false</brownianMotion>
     </thermostat>
     <type>lj</type>
     <linkedCells>false</linkedCells>

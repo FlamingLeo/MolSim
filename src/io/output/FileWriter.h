@@ -50,7 +50,7 @@ class FileWriter {
      *
      * @param dirname The name of the output directory.
      */
-    void initializeFolder(const std::string &dirname);
+    static void initializeFolder(const std::string &dirname);
 
     /**
      * @brief Overwrites the contents of the file opened in m_file with a given string. On error, the program will

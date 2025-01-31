@@ -19,7 +19,7 @@ struct TimeIntegrationFuncs {
     /// @brief Typedef for velocity-calculating functions.
     using VFunc = void (*)(ParticleContainer &, double);
     /// @brief Typedef for position-calculating functions.
-    using XFunc = void (*)(ParticleContainer &, double, double, CellContainer *);
+    using XFunc = void (*)(ParticleContainer &, double, double, CellContainer *, bool);
     /// @brief Typedef for velocity-calculating functions for the linked cell method.
 
     /// @brief The velocity-calculating function.

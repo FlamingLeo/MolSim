@@ -1,11 +1,18 @@
 #include "VelocityCalculation.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
+#include "utils/OMPWrapper.h"
 #include <functional>
 #include <spdlog/spdlog.h>
 
 void calculateV(ParticleContainer &particles, double delta_t) {
-    for (auto &p : particles) {
+#pragma omp parallel for
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
+        CONTINUE_IF_INACTIVE(p);
+        SKIP_IF_WALL(p);
+
+        // calculate velocity
         const std::array<double, 3> velocityUpdate =
             ArrayUtils::elementWiseScalarOp(delta_t / (2 * p.getM()), p.getOldF() + p.getF(), std::multiplies<>());
         p.getV() = p.getV() + velocityUpdate;

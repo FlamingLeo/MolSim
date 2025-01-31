@@ -10,6 +10,7 @@
 #include "io/output/FileWriter.h"
 #include "io/output/WriterFactory.h"
 #include "io/output/XMLWriter.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "objects/ParticleContainer.h"
 #include "objects/Thermostat.h"
 #include "strategies/StrategyFactory.h"
@@ -17,13 +18,14 @@
 #include "utils/Timer.h"
 #include <cassert>
 #include <memory>
+#include <optional>
 #include <string>
 
 #if (!defined(DO_BENCHMARKING) && !defined(DO_PROFILING))
-#define SIM_SERIALIZE_XML(_a, _b, _c, _d)                                                                              \
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d, _e)                                                                          \
     do {                                                                                                               \
         XMLWriter xmlw{_a};                                                                                            \
-        xmlw.serialize(_b, _c, _d);                                                                                    \
+        xmlw.serialize(_b, _c, _d, _e);                                                                                \
     } while (0)
 #define SIM_INIT_WRITER(_a, _b, _c) _a = WriterFactory::createWriter(_b, _c)
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e)                                                                           \
@@ -32,10 +34,26 @@
             _c->writeParticles(_d, _a, _e);                                                                            \
         }                                                                                                              \
     } while (0)
+#define SIM_ANALYZE_FLOW(_a, _b)                                                                                       \
+    do {                                                                                                               \
+        _a.analyzeFlow(_b);                                                                                            \
+    } while (0)
 #else
-#define SIM_SERIALIZE_XML(_a, _b, _c, _d) (void)0
+#define SIM_SERIALIZE_XML(_a, _b, _c, _d, _e) (void)0
 #define SIM_INIT_WRITER(_a, _b, _c) (void)0
 #define SIM_WRITE_OUTPUT(_a, _b, _c, _d, _e) (void)0
+#define SIM_ANALYZE_FLOW(_a, _b) (void)0
+#endif
+
+#ifdef NOUTFLOW
+#define CHECK_NOUTFLOW(_x, _y)                                                                                         \
+    if (std::any_of(_x._y.begin(), _x._y.end(),                                                                        \
+                    [](BoundaryCondition condition) { return condition == BoundaryCondition::OUTFLOW; })) {            \
+        CLIUtils::error("Cannot run simulation with outflow conditions when NOUTFLOW is defined! Please recompile "    \
+                        "the program without defining it.");                                                           \
+    }
+#else
+#define CHECK_NOUTFLOW(_x, _y) (void)0
 #endif
 
 /// @brief Class defining a time-integration simulation.
@@ -49,6 +67,9 @@ class Simulation {
 
     /// @brief Reference to the Thermostat, for temperature regulation.
     Thermostat &m_thermostat;
+
+    /// @brief Reference to the FlowSimulationAnalyzer, for statistics computation.
+    FlowSimulationAnalyzer &m_analyzer;
 
     /// @brief The total number of iterations for which the simulation will run.
     int m_totalIt;
@@ -87,8 +108,9 @@ class Simulation {
      * @param pc The ParticleContainer containing the simulation molecules.
      * @param args The Arguments struct containing the simulation metadata.
      * @param t The Thermostat used for temperature regulation.
+     * @param analyzer The Anlayzer used for statistics computation.
      */
-    Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
+    Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer);
 
     /// @brief Destroys the current Simulation object.
     virtual ~Simulation();

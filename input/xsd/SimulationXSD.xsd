@@ -15,8 +15,16 @@
             <xs:element type="xs:double" name="cutoffRadius" minOccurs="0" maxOccurs="1"/>
             <xs:element type="bdConditionsType" name="bdConditions" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:double" name="gravity" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="parallelType" name="parallelization" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:simpleType name="parallelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="coarse"/>
+            <xs:enumeration value="fine"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="bdConditionsType">
         <xs:sequence>
@@ -119,12 +127,43 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="specialCaseType">
+        <xs:sequence>
+            <xs:element type="xs:int" name="x"/>
+            <xs:element type="xs:int" name="y"/>
+            <xs:element type="xs:int" name="z"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="membraneType">
+        <xs:sequence>
+            <xs:element type="xs:double" name="stiffness"/>
+            <xs:element type="xs:double" name="avgBondLength"/>
+            <xs:element type="xs:double" name="zForce"/>
+            <xs:element type="specialCaseType" name="specialCase" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element type="xs:int" name="scIterationLimit" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="analyzerType">
+        <xs:sequence>
+            <xs:element type="xs:int" name="nBins"/>
+            <xs:element type="xs:double" name="leftWallX"/>
+            <xs:element type="xs:double" name="rightWallX"/>
+            <xs:element type="xs:int" name="frequency"/>
+            <xs:element type="xs:string" name="dirname" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="simType">
         <xs:sequence>
             <xs:element type="argsType" name="args" minOccurs="0" maxOccurs="1"/>
             <xs:element type="thermostatType" name="thermostat"/>
+            <xs:element type="membraneType" name="membrane" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:string" name="type"/>
             <xs:element type="xs:boolean" name="linkedCells" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:positiveInteger" name="dimensions" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="analyzerType" name="analyzer" minOccurs="0" maxOccurs="1"/>
             <xs:element type="objectsType" name="objects"/>
             <xs:element type="xs:long" name="totalParticles" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
@@ -137,6 +176,7 @@
             <xs:element type="xs:double" name="target" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:double" name="deltaT" minOccurs="0" maxOccurs="1"/>
             <xs:element type="xs:boolean" name="brownianMotion" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:boolean" name="nanoFlow" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

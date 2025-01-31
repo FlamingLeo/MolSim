@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Particle.h"
-#include "ParticleContainer.h"
 #include "utils/CellUtils.h"
 #include <algorithm>
 #include <array>
@@ -46,6 +45,7 @@ class Cell {
     int m_index;
 
   public:
+    /* constructor */
     /**
      * @brief Constructs a new Cell object.
      *
@@ -61,6 +61,7 @@ class Cell {
     Cell(const std::array<double, 3> &size, const std::array<double, 3> &position, CellType type, int index,
          const std::vector<HaloLocation> &haloLocation, const std::vector<BorderLocation> &borderLocation);
 
+    /* iterator */
     /**
      * @brief Gets an iterator to the beginning of the Particle* forward list.
      *
@@ -75,6 +76,90 @@ class Cell {
      */
     ContainerType::iterator end();
 
+    /* corner cells */
+    /**
+     * @brief Calculates the relative position of a particle within the current cell.
+     *
+     * @param p The particle whose relative position is to be calculated.
+     * @return An array representing the relative position of the particle within the cell.
+     */
+    std::array<double, 3> getRelativePosition(const Particle &p) const;
+
+    /**
+     * @brief Validates if the provided relative position is within the bounds of the current cell (debug).
+     *
+     * This function uses the `assert` macro. As such, it has no effect in `Release` builds.
+     *
+     * @param relPos The relative position to be validated, represented as a 3D array of doubles.
+     */
+    void validatePosition(const std::array<double, 3> &relPos) const;
+
+    /**
+     * @brief Checks if two HaloLocation values correspond to a corner.
+     *
+     * This function determines if the two given `HaloLocation` values represent opposite corners of the cell.
+     *
+     * @param loc1 The first HaloLocation to check.
+     * @param loc2 The second HaloLocation to check.
+     * @return true if the two locations represent a corner.
+     * @return false if the two locations do not represent a corner.
+     */
+    bool isCorner(HaloLocation loc1, HaloLocation loc2) const;
+
+    /**
+     * @brief Handles the logic for 2D corner cell handling.
+     *
+     * This function handles the determination of the corner region in a 2D context based on the relative position
+     * within the cell. It returns the appropriate HaloLocation (NORTH, SOUTH, EAST, or WEST) based on the position.
+     *
+     * See the report for Worksheet 3 for more info.
+     *
+     * @param relPos The relative position of the particle in 2D within the cell, represented as a 3D array.
+     * @return The appropriate HaloLocation for the 2D corner (e.g., NORTH, SOUTH, EAST, WEST).
+     */
+    HaloLocation handle2DCorner(const std::array<double, 3> &relPos) const;
+
+    /**
+     * @brief Handles the logic for 3D corner cell handling.
+     *
+     * This function handles the determination of the corner region in a 3D context based on the relative position
+     * within the cell. It returns the appropriate HaloLocation based on the position in the 3D corner regions.
+     *
+     * See the report for Worksheet 5 for a detailed explanation.
+     *
+     * @param relPos The relative position of the particle in 3D within the cell, represented as a 3D array.
+     * @return The appropriate HaloLocation for the 3D corner (e.g., NORTH, SOUTH, EAST, WEST, ABOVE, BELOW).
+     */
+    HaloLocation handle3DCorner(const std::array<double, 3> &relPos) const;
+
+    /**
+     * @brief Handles the logic for determining the 3D diagonal region.
+     *
+     * This function handles the determination of the diagonal region in a 3D context, where the relative position
+     * determines if the corner is on the diagonal. It returns the appropriate HaloLocation based on the diagonal logic.
+     *
+     * See the report for Worksheet 5 for a detailed explanation.
+     *
+     * @param relPos The relative position of the particle in 3D within the cell, represented as a 3D array.
+     * @return The appropriate HaloLocation for the 3D diagonal region.
+     */
+    HaloLocation handle3DDiagonal(const std::array<double, 3> &relPos) const;
+
+    /**
+     * @brief Handles the logic for determining the 3D triple corner region.
+     *
+     * This function handles the 3D triple corner region case, where the relative position is used to determine the
+     * specific triple corner region in 3D (e.g. NORTH, WEST and ABOVE). It returns the appropriate HaloLocation for the
+     * triple corner.
+     *
+     * See the report for Worksheet 5 for a detailed explanation.
+     *
+     * @param relPos The relative position of the particle in 3D within the cell, represented as a 3D array.
+     * @return The appropriate HaloLocation for the 3D triple corner region.
+     */
+    HaloLocation handle3DTripleCorner(const std::array<double, 3> &relPos) const;
+
+    /* main functionality */
     /**
      * @brief Adds a Particle reference to the front of the forward list.
      *
@@ -90,11 +175,10 @@ class Cell {
     void removeParticle(Particle &particle);
 
     /**
-     * @brief If this Cell is a corner Halo Cell, check if a Particle is above or below the diagonal line separating the
-     * two cardinal directions.
+     * @brief Dispatch function to handle a corner cell.
      *
-     * This is used primarily with reflective boundaries to check which boundary the Cell hit first. This method is only
-     * compatible with 2D domains. See the report and presentation slides for more information.
+     * This function calls the above corner cell routines to determine which boundary conditon should be applied based
+     * on the Particle's position inside the corner cell, if it even is inside a corner cell.
      *
      * @param p The Particle to analyze.
      * @return The singular cardinal direction of the Halo Cell based on the Particle's position.

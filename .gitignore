@@ -49,6 +49,9 @@ doxys_documentation/
 vtk/
 xyz/
 
+# PGO data
+profiledata/
+
 # Personal todo files and logs
 todo.*
 *.log

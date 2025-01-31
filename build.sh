@@ -19,11 +19,17 @@ help() {
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-f       : Enables fast math optimizations (default: disabled).
+-g       : Compiles the program with the '-pg' flag for use with gprof. 
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
--p       : Compiles the program with the '-pg' flag for use with gprof. 
+-o       : Disables OpenMP functionality.
+-O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
+           This skips checking particle activity, since all particles should remain active. Be careful when using this option!
+-p       : Enables PGO instrumentation code generation (default: off).
+-P       : Enables profile-guided compiler optimizations (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -38,11 +44,16 @@ This is done using 'sudo apt-get install'. As such, you may be required to enter
 }
 
 # parse command line options
-OPTSTRING=":b:cdhj:lmps:tC:X:"
+OPTSTRING=":b:cdfghj:lmoOpPs:tC:X:"
 can_check_for_pkgs=true
 build_string=""
 doxygen_opt=""
+fastmath_opt=""
+openmp_opt=""
+outflow_opt=""
 profiling_opt=""
+pgo_gen_opt=""
+pgo_use_opt=""
 benchmarking_opt=""
 spdlog_level=""
 c_compiler=""
@@ -62,7 +73,7 @@ while getopts ${OPTSTRING} opt; do
       usage
     fi
     # disable benchmarking with debug builds
-    if [[ ("${OPTARG}" != "Release" || "${OPTARG}" != "RelWithDebInfo") && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
+    if [[ "${OPTARG}" != "Release" && "${OPTARG}" != "RelWithDebInfo" && "${benchmarking_opt}" == "-DENABLE_BENCHMARKING=ON" ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
@@ -71,7 +82,7 @@ while getopts ${OPTSTRING} opt; do
     ;;
   c)
     # disable benchmarking with debug builds
-    if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
+    if [[ "${build_string}" != "" && "${build_string}" != "-DCMAKE_BUILD_TYPE=Release" && "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo" ]]; then
       echo "[ERROR] Cannot benchmark with non-release builds!"
       usage
     fi
@@ -94,6 +105,11 @@ while getopts ${OPTSTRING} opt; do
 
     echo "[BUILD] Documentation generation will be disabled."
     doxygen_opt="-DENABLE_DOXYGEN=OFF"
+    ;;
+  f)
+    # enable fast math
+    echo "[BUILD] Fast math optimizations will be enabled."
+    fastmath_opt="-DENABLE_FAST_MATH=ON"
     ;;
   j)
     # number of makefile jobs
@@ -120,7 +136,17 @@ while getopts ${OPTSTRING} opt; do
     echo "[BUILD] Documentation will be built after compilation."
     make_documentation=true
     ;;
-  p)
+  o)
+    # disable openmp
+    echo "[BUILD] OpenMP will be disabled."
+    openmp_opt="-DENABLE_OPENMP=OFF"
+    ;;
+  O)
+    # disable outflow simulations
+    echo "[BUILD] Outflow simulations will be disabled."
+    outflow_opt="-DNO_OUTFLOW=ON"
+    ;;
+  g)
     # disable profiling with debug builds
     if [[ "${build_string}" != "" && ("${build_string}" != "-DCMAKE_BUILD_TYPE=Release" || "${build_string}" != "-DCMAKE_BUILD_TYPE=RelWithDebInfo") ]]; then
       echo "[ERROR] Cannot profile with non-release builds!"
@@ -145,6 +171,16 @@ while getopts ${OPTSTRING} opt; do
     # enable profiling
     echo "[BUILD] Profiling will be enabled."
     profiling_opt="-DENABLE_PROFILING=ON"
+    ;;
+  p)
+    # enable pgo instrumentation
+    echo "[BUILD] PGO instrumentation generation will be enabled."
+    pgo_gen_opt="-DPGO_GENERATE=ON"
+    ;;
+  P)
+    # enable pgo
+    echo "[BUILD] Profile guided optimization will be enabled."
+    pgo_use_opt="-DPGO_USE=ON"
     ;;
   t)
     # run tests
@@ -227,19 +263,37 @@ fi
 # check, if pkg-config is installed, if dependencies are installed
 # if not, install automatically for quicker compilation (unless -l set)
 if [[ "${can_check_for_pkgs}" = true ]]; then
-  echo -n "[BUILD] Checking if xerces-c is installed... "
+  echo -n "[BUILD] Checking if Xerces-C is installed... "
   if pkg-config --list-all | grep -qw xerces; then
     echo "found."
   else
-    if [[ "${install_opt}" = true ]]; then
-      echo "not found! Installing using apt-get..."
-      if [[ "${has_updated_apt}" == "false" ]]; then
-        sudo apt-get update
-        has_updated_apt=true
+    echo "not found!"
+    # special case: if on linux cluster, attempt to load it using module system
+    # otherwise, let user decide locally on debian-based system
+    if command -v squeue &>/dev/null; then
+      echo "[BUILD] Xerces-C: Running on a Linux Cluster. Attempting to load module..."
+      if module load xerces-c &>/dev/null; then
+        echo "[BUILD] Successfully loaded the xerces-c module."
+      else
+        echo "[BUILD] Failed to load the xerces-c module! Aborting."
+        exit 1
       fi
-      sudo apt-get install -y libxerces-c-dev || echo "[BUILD] Failed to get xerces-c, will be fetched during compilation."
     else
-      echo "not found! Will be fetched during compilation..."
+      echo "[BUILD] Xerces-C: Running on a local system."
+      if [[ "${install_opt}" = true ]]; then
+        echo "[BUILD] Installing Xerces-C."
+        if [[ "${has_updated_apt}" == "false" ]]; then
+          sudo apt-get update
+          has_updated_apt=true
+        fi
+        sudo apt-get install -y libxerces-c-dev || {
+          echo "[BUILD] Failed to get libxerces-c-dev, aborting!"
+          exit 1
+        }
+      else
+        echo "[BUILD] Automatic Xerces-C installation turned off! Please install Xerces-C manually and try again."
+        exit 1
+      fi
     fi
   fi
 
@@ -285,7 +339,7 @@ echo "done."
 
 # run cmake
 echo "[BUILD] Calling CMake..."
-cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${doxygen_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
+cmake .. ${spdlog_level} ${benchmarking_opt} ${profiling_opt} ${pgo_gen_opt} ${pgo_use_opt} ${doxygen_opt} ${fastmath_opt} ${openmp_opt} ${outflow_opt} ${build_string} ${c_compiler} ${cpp_compiler} || {
   echo "[BUILD] CMake failed! Aborting..."
   exit 1
 }

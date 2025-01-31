@@ -129,6 +129,10 @@ void CLIParser::parseArguments(int argc, char **argv, Arguments &args) {
             args.type = StringUtils::toWriterType(optarg);
             SPDLOG_DEBUG("Set output type to {}.", optarg);
             break;
+        case 'p': /* parallelization type */
+            args.parallelization = StringUtils::toParallelizationType(optarg);
+            SPDLOG_DEBUG("Set parallelization type to {}.", optarg);
+            break;
         case 't': /* simulation type */
             args.sim = StringUtils::toSimulationType(optarg);
             SPDLOG_DEBUG("Set simulation type to {}.", optarg);

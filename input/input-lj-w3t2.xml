@@ -12,10 +12,19 @@
             <z>1.0</z>
         </domainSize>
         <cutoffRadius>3.0</cutoffRadius>
+        <bdConditions>
+            <n>reflective</n>
+            <s>reflective</s>
+            <w>reflective</w>
+            <e>reflective</e>
+            <a>reflective</a>
+            <b>reflective</b>
+        </bdConditions>
     </args>
     <thermostat>
         <init>40.0</init>
         <timeStep>2147483647</timeStep>
+        <brownianMotion>false</brownianMotion>
     </thermostat>
     <type>lj</type>
     <linkedCells>true</linkedCells>

@@ -3,13 +3,20 @@
 #include "objects/CellContainer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
+#include "utils/OMPWrapper.h"
 #include <functional>
 #include <spdlog/spdlog.h>
 #include <vector>
 
-void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *) {
+void calculateX(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *, bool) {
     SPDLOG_TRACE("Calculating new position...");
-    for (auto &p : particles) {
+
+#pragma omp parallel for
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
+        CONTINUE_IF_INACTIVE(p);
+        SKIP_IF_WALL(p);
+
         // update position
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
         const std::array<double, 3> posSum2 =
@@ -22,9 +29,15 @@ void calculateX(ParticleContainer &particles, double delta_t, double g_grav, Cel
     }
 }
 
-void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc) {
+void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, CellContainer *lc, bool membrane) {
     SPDLOG_TRACE("Calculating new position (linked cells)...");
-    for (auto &p : particles) {
+
+#pragma omp parallel for
+    CONTAINER_LOOP(particles, it) {
+        auto &p = CONTAINER_REF(it);
+        CONTINUE_IF_INACTIVE(p);
+        SKIP_IF_WALL(p);
+
         // update position (maybe precompute dt^2, even though it's probably only marginally faster, if anything)
         const std::array<double, 3> posSum1 = ArrayUtils::elementWiseScalarOp(delta_t, p.getV(), std::multiplies<>());
         const std::array<double, 3> posSum2 =
@@ -33,11 +46,15 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
 
         // store previous force for velocity calculation, then reset force to 0
         // optimization: add graviational force here
-        // we can do this because the forces are additive; it doesn't matter if we first calculate the forces between
-        // the particles or the gravitational force
-        // thus, we save having to iterate through all particles once again after calculating the force
+        // we can do this because the forces are additive; it doesn't matter if we first calculate the forces
+        // between the particles or the gravitational force thus, we save having to iterate through all particles
+        // once again after calculating the force
         p.getOldF() = p.getF();
-        p.setF({0.0, p.getM() * g_grav, 0.0});
+        if (!membrane) {
+            p.setF({0.0, p.getM() * g_grav, 0.0});
+        } else {
+            p.setF({0.0, 0.0, p.getM() * g_grav});
+        }
 
         // check to see if the particle's cell index got updated
         int newIdx = lc->getCellIndex(p.getX());
@@ -48,7 +65,6 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
             SPDLOG_ERROR("Particle {} out of bounds! Removing...", p.toString());
             p.markInactive();
             p.setCellIndex(-1);
-            particles.notifyInactivity();
             continue;
         }
 
@@ -58,14 +74,13 @@ void calculateX_LC(ParticleContainer &particles, double delta_t, double g_grav, 
             Cell &targetCell = (*lc)[newIdx];
 
             // check if the particle entered a halo cell and apply the correct boundary condition
-            if (handleHaloCell(particles, p, targetCell, lc))
+            if (handleHaloCell(p, targetCell, lc))
                 continue;
 
             // move particle (update stored cell index)
             if (!lc->moveParticle(p)) {
                 SPDLOG_ERROR("Cannot move particle {}!", p.toString());
                 p.markInactive();
-                particles.notifyInactivity();
             }
         }
     }
