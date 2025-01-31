@@ -34,7 +34,7 @@
         <nBins>50</nBins>
         <leftWallX>4.0</leftWallX>
         <rightWallX>31.2</rightWallX>
-        <frequency>10</frequency>
+        <frequency>10000</frequency>
         <dirname>statistics</dirname>
     </analyzer>
     <objects>
