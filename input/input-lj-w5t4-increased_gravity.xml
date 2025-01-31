@@ -20,7 +20,7 @@
             <a>periodic</a>
             <b>periodic</b>
         </bdConditions>
-        <gravity>-5.0</gravity>
+        <gravity>-10.0</gravity>
     </args>
     <thermostat>
         <init>40.0</init>
