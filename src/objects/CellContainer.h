@@ -420,10 +420,13 @@ class CellContainer {
     std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
 
     /**
-     * @brief For a collection of border locations, returns all unique pairs
+     * @brief For a collection of border locations, returns all combinations of size 2.
      *
-     * @param locations The border locations/directions which form the pairs
-     * @return A vector of vectors representing the unique pairs
+     * For example, given the vector of border locations `N`, `W`, `A` (abbreviated), the function returns the pairs
+     * `(N,W)`, `(N,A)`, `(W,A)`.
+     *
+     * @param locations The border locations/directions which form the combinations.
+     * @return A vector of vectors representing the combinations of size 2.
      */
     std::vector<std::vector<BorderLocation>> getBorderCombinations(std::vector<BorderLocation> &locations);
 
