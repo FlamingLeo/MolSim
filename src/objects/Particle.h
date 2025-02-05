@@ -26,17 +26,23 @@
 // note: because these are macros, they could also be wrapped in such a way that compiles them out if not needed,
 // similarly to what is done below with outflow condition checks; but, since this is not part of any
 // performance evaluation environment (see older commit), these are left on by default...
+
+/// @brief Executes a piece of code if the particle is not a wall particle (if the type is not 1).
 #define DO_IF_NOT_WALL(_p, _expr)                                                                                      \
     if ((_p).getType() != 1) {                                                                                         \
         _expr;                                                                                                         \
     }
+
+/// @brief Executes a piece of code if the particle is a wall particle (if the type is 1).
 #define SKIP_IF_WALL(_p)                                                                                               \
     if ((_p).getType() == 1)                                                                                           \
         continue;
 
 #ifdef NOUTFLOW
+/// @brief Does nothing.
 #define CONTINUE_IF_INACTIVE(p) (void)0
 #else
+/// @brief Skips a loop iteration if the given particle is inactive.
 #define CONTINUE_IF_INACTIVE(p)                                                                                        \
     if (!(p).isActive())                                                                                               \
         continue;
