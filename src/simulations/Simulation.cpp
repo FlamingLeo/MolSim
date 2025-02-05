@@ -1,8 +1,10 @@
 #include "Simulation.h"
+#include "utils/OMPWrapper.h"
 #include "utils/StringUtils.h"
+#include <algorithm>
 
-Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t)
-    : m_particles{pc}, m_args{args}, m_thermostat{t} {
+Simulation::Simulation(ParticleContainer &pc, Arguments &args, Thermostat &t, FlowSimulationAnalyzer &analyzer)
+    : m_particles{pc}, m_args{args}, m_thermostat{t}, m_analyzer{analyzer} {
     SPDLOG_TRACE("Created new Simulation.");
 }
 Simulation::~Simulation() = default;
@@ -39,12 +41,14 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
     while (currentTime < m_args.endTime) {
         SPDLOG_DEBUG("Iteration: {}", iteration);
 
+        // compute statistics of the flow of the nano scale flow simulation
+        SIM_ANALYZE_FLOW(m_analyzer, iteration);
+
         // update system temperature using thermostat
         m_thermostat.updateSystemTemp(iteration);
 
         // update position, force and velocity
-        m_calculateX(m_particles, m_args.delta_t, m_args.gravity, lc);
-        m_particles.removeInactiveParticles();
+        m_calculateX(m_particles, m_args.delta_t, m_args.gravity, lc, m_args.membrane);
         m_calculateF(m_particles, m_args.cutoffRadius, lc);
         m_calculateV(m_particles, m_args.delta_t);
 
@@ -55,7 +59,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 
         // add the number of active particles to the molecule update counter
         // we do this since we update each active molecule during one iteration
-        TIMER_UPDATE_MOLECULES(m_timer, m_particles.size());
+        TIMER_UPDATE_MOLECULES(m_timer, m_particles.activeSize());
         iteration++;
     }
 
@@ -65,6 +69,7 @@ void Simulation::runSimulationLoop(CellContainer *lc) {
 }
 
 void Simulation::runSimulation() {
+    CHECK_NOUTFLOW(m_args, conditions);
     SPDLOG_INFO("Running {} simulation with the following arguments:", StringUtils::fromSimulationType(m_args.sim));
     SPDLOG_INFO("start time  : {}", m_args.startTime);
     SPDLOG_INFO("end time    : {}", m_args.endTime);
@@ -72,12 +77,28 @@ void Simulation::runSimulation() {
     SPDLOG_INFO("output freq.: {}", m_args.itFreq);
     SPDLOG_INFO("basename    : {}", m_args.basename);
     SPDLOG_INFO("output type : {}", StringUtils::fromWriterType(m_args.type));
+    SPDLOG_INFO("nanoflow?   : {}", m_thermostat.getNanoflow());
+    SPDLOG_INFO("membrane?   : {}", m_args.membrane);
+    SPDLOG_INFO("analyzer?   : {}", m_analyzer.getFrequency() > 0);
+    if (m_analyzer.getFrequency() > 0) {
+        SPDLOG_INFO("a: bin nr.  : {}", m_analyzer.getBinNumber());
+        SPDLOG_INFO("a: lwall    : {}", m_analyzer.getLeftWallPosX());
+        SPDLOG_INFO("a: rwall    : {}", m_analyzer.getRightWallPosX());
+        SPDLOG_INFO("a: freq.    : {}", m_analyzer.getFrequency());
+        SPDLOG_INFO("a: dirname  : {}", m_analyzer.getDirname());
+    }
+#ifdef _OPENMP
+    SPDLOG_INFO("p. strat.   : {}", StringUtils::fromParallelizationType(m_args.parallelization));
+    SPDLOG_INFO("max threads : {}", omp_get_max_threads());
+#else
+    SPDLOG_WARN("Parallelization is DISABLED!");
+#endif
 
     initializeBase();
     runSimulationLoop(nullptr); // "nullptr" isn't necessary here, but it shows the diff between this and lc
 
     // serialize output for future runs
-    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat);
+    SIM_SERIALIZE_XML(m_args.basename + "_results.xml", m_particles, m_args, m_thermostat, m_analyzer);
 
     SPDLOG_INFO("Completed {} simulation.", StringUtils::fromSimulationType(m_args.sim));
 }

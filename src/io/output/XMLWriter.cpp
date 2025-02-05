@@ -33,7 +33,8 @@ void XMLWriter::openFile(const std::string &filename) {
 
     SPDLOG_DEBUG("Opened file {} for writing.", filename);
 }
-void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t) {
+void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, const Thermostat &t,
+                          const FlowSimulationAnalyzer &fsa) {
     if (!(m_file.is_open()))
         CLIUtils::error("No output file opened!", "", false);
 
@@ -52,20 +53,21 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
         CellUtils::fromBoundaryCondition(args.conditions[2]), CellUtils::fromBoundaryCondition(args.conditions[3]),
         CellUtils::fromBoundaryCondition(args.conditions[4]), CellUtils::fromBoundaryCondition(args.conditions[5])};
     a.gravity() = args.gravity;
+    a.parallelization() = StringUtils::fromParallelizationType(args.parallelization);
 
     // serialize thermostat
     ThermostatType tt{t.getTemp(), t.getTimestep()};
-    tt.brownianMotion() = false;     // since this is a continuation, we don't reinitialize velocities
+    tt.brownianMotion() = false; // since this is a continuation, we don't reinitialize velocities
+    tt.nanoFlow() = t.getNanoflow();
     tt.target() = t.getTargetTemp(); // no need to check if t_target is finite, because it always is...
-    if (std::isfinite(t.getDeltaT()))
+    if (t.doScalingLimit())
         tt.deltaT() = t.getDeltaT();
 
     // serialize each molecule inside the particle container
     ObjectsType o{};
     for (auto &p : pc) {
         // skip inactive particles
-        if (!p.isActive())
-            continue;
+        CONTINUE_IF_INACTIVE(p);
 
         // serialize particle data
         ParticleType pt{PositionType{p.getX()[0], p.getX()[1], p.getX()[2]},
@@ -85,7 +87,22 @@ void XMLWriter::serialize(const ParticleContainer &pc, const Arguments &args, co
     SimType s{tt, StringUtils::fromSimulationType(args.sim), o};
     s.args(a);
     s.linkedCells() = args.linkedCells;
-    s.totalParticles() = pc.size();
+    s.totalParticles() = pc.activeSize();
+    s.dimensions() = args.dimensions;
+
+    // serialize (optional) analyzer
+    if (fsa.getFrequency() > 0) {
+        AnalyzerType aa{fsa.getBinNumber(), fsa.getLeftWallPosX(), fsa.getRightWallPosX(), fsa.getFrequency()};
+        aa.dirname() = fsa.getDirname();
+        s.analyzer() = aa;
+    }
+
+    // potentially serialize membrane data
+    if (args.membrane && !pc.isEmpty()) {
+        // this can be expanded if the values differ for each particle
+        MembraneType m{pc[0].getK(), pc[0].getR0(), pc[0].getFZUP()};
+        s.membrane() = m;
+    }
 
     // write output to file
     sim(m_file, s);

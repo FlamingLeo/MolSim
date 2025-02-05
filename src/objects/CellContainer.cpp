@@ -18,19 +18,21 @@
 #define PRINT_CELL_CONTENTS() (void)0
 #endif
 
-/* constructor */
+/* constructor and destructor */
 CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                              const std::array<BoundaryCondition, 6> &conditions, double cutoff,
                              ParticleContainer &particles, size_t dim)
-    : domainSize{domainSize}, conditions{conditions}, cutoff{cutoff}, particles{particles} {
+    : domainSize{domainSize}, conditions{conditions}, cutoff{cutoff}, particles{particles}, dim{dim} {
     // check correct dimensions (could probably be a boolean instead...)
     if (dim < 2 || dim > 3)
         CLIUtils::error("Invalid cell container dimensions! (must be 2 or 3)", StringUtils::fromNumber(dim));
 
     // check that domain size and cutoff are initialized
-    if (cutoff == INFINITY)
+    // NOTE: when compiling using fast math, the user must ensure that these values are initialized!
+    //       otherwise, the result is undefined behavior
+    if (std::isinf(cutoff))
         CLIUtils::error("Cutoff radius not initialized!");
-    if (domainSize[0] == INFINITY || domainSize[1] == INFINITY || domainSize[2] == INFINITY)
+    if (std::isinf(domainSize[0]) || std::isinf(domainSize[1]) || std::isinf(domainSize[2]))
         CLIUtils::error("Domain size not initialized!");
 
     SPDLOG_TRACE("Generating CellContainer with domain size {} and cutoff radius {} (in {} dimensions)",
@@ -53,9 +55,10 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
         }
     }
 
-    // reserve space for all cells
+    // reserve space for all cells and cell locks
     size_t totalNumCells = numCells[0] * numCells[1] * numCells[2];
     cells.reserve(totalNumCells);
+    cellLocks.reserve(totalNumCells);
     SPDLOG_DEBUG("Reserved space for {} cells (X: {}, Y: {}, Z: {}).", totalNumCells, numCells[0], numCells[1],
                  numCells[2]);
 
@@ -111,8 +114,9 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                         borderLocation.push_back(BorderLocation::BELOW);
                 }
 
-                // this should be deleted and borderLocation condition added, but I'm afraid to break everything
-                //  we don't care about which type of border it is, for now...
+                // this should be deleted and borderLocation condition added, but I'm afraid to break everything (who
+                // wrote this? - in any case I agree)
+                // we don't care about which type of border it is, for now...
                 bool border = dim == 3 ? (z == 1 || z == (numCells[2] - 2) || y == 1 || y == (numCells[1] - 2) ||
                                           x == 1 || x == (numCells[0] - 2))
                                        : (y == 1 || y == (numCells[1] - 2) || x == 1 || x == (numCells[0] - 2));
@@ -123,19 +127,31 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
                 cells.emplace_back(cellSize, position, type, index, haloLocation, borderLocation);
                 calculateNeighbors(cells.size() - 1);
 
-                // add to special cell ref. containers
+                // add to cell ref. containers
                 // we can do this in here because we reserved the size of the vector beforehand...
                 if (type == CellType::HALO) {
                     haloCells.push_back(std::ref(cells[cells.size() - 1]));
                 } else if (type == CellType::BORDER) {
                     borderCells.push_back(std::ref(cells[cells.size() - 1]));
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
+                } else {
+                    iterableCells.push_back(std::ref(cells[cells.size() - 1]));
                 }
 
                 SPDLOG_TRACE("Created new cell ({}, {}) (index: {})", x, y, index);
+
+                // initialize corresponding cell lock
+                omp_init_lock(&cellLocks[index]);
+
                 index++;
             }
         }
     }
+
+    // check if any condition is periodic
+    // this is done to prevent having to search the vector every time in the force calculation routine
+    anyPeriodic = std::any_of(conditions.begin(), conditions.end(),
+                              [](BoundaryCondition condition) { return condition == BoundaryCondition::PERIODIC; });
 
     // add particles to corresponding cells
     for (Particle &p : particles) {
@@ -145,6 +161,12 @@ CellContainer::CellContainer(const std::array<double, 3> &domainSize,
     // debug print
     PRINT_CELL_INDICES();
     PRINT_CELL_CONTENTS();
+}
+
+CellContainer::~CellContainer() {
+    for (size_t i = 0; i < cellLocks.size(); ++i) {
+        omp_destroy_lock(&cellLocks[i]);
+    }
 }
 
 /* iterators */
@@ -222,7 +244,9 @@ bool CellContainer::addParticle(Particle &p) {
     int cellIndex = p.getCellIndex() == -1 ? getCellIndex(p.getX()) : p.getCellIndex();
     if (cellIndex >= 0 && cellIndex < static_cast<int>(cells.size())) {
         p.setCellIndex(cellIndex);
+        omp_set_lock(&cellLocks[cellIndex]);
         cells[cellIndex].addParticle(p);
+        omp_unset_lock(&cellLocks[cellIndex]);
         SPDLOG_TRACE("Added particle {}", p.toString());
         return true;
     } else {
@@ -233,7 +257,9 @@ bool CellContainer::addParticle(Particle &p) {
 void CellContainer::deleteParticle(Particle &p) {
     int cellIndex = p.getCellIndex();
     assert(cellIndex != -1);
+    omp_set_lock(&cellLocks[cellIndex]);
     cells[cellIndex].removeParticle(p);
+    omp_unset_lock(&cellLocks[cellIndex]);
     p.setCellIndex(-1);
     SPDLOG_TRACE("Removed particle from cell {}: {}", cellIndex, p.toString());
 }
@@ -243,12 +269,12 @@ bool CellContainer::moveParticle(Particle &p) {
 }
 void CellContainer::removeHaloCellParticles() {
     for (auto &p : particles) {
+        CONTINUE_IF_INACTIVE(p);
         if (p.getCellIndex() != -1) {
             if (cells[p.getCellIndex()].getType() == CellType::HALO) {
                 SPDLOG_TRACE("Found active halo particle, removing...");
                 deleteParticle(p);
                 p.markInactive();
-                particles.notifyInactivity();
             }
         }
     }
@@ -276,6 +302,22 @@ int CellContainer::getOppositeNeighbor(int cellIndex, HaloLocation direction) co
         SPDLOG_TRACE("West set, getting eastern cell index...");
         return cellIndex + 1;
         break;
+    case HaloLocation::ABOVE:
+        SPDLOG_TRACE("Above set, getting below cell index...");
+        if (dim == 3) {
+            return cellIndex - numCells[0] * numCells[1];
+        } else {
+            return -1;
+        }
+        break;
+    case HaloLocation::BELOW:
+        SPDLOG_TRACE("Below set, getting above cell index...");
+        if (dim == 3) {
+            return cellIndex + numCells[0] * numCells[1];
+        } else {
+            return -1;
+        }
+        break;
     default:
         SPDLOG_WARN("Not yet implemented! Come back later.\n");
         return -1;
@@ -301,17 +343,21 @@ std::array<double, 3> CellContainer::getMirrorPosition(const std::array<double, 
 
 void CellContainer::calculateNeighbors(int cellIndex) {
     std::array<int, 3> coords = getVirtualCellCoordinates(cellIndex);
+    // here we check whether we have a 3rd dimension
     for (int dz = (cellSize[2] == 0 ? 0 : -1); dz <= (cellSize[2] == 0 ? 0 : 1); ++dz) {
         for (int dy = -1; dy <= 1; ++dy) {
             for (int dx = -1; dx <= 1; ++dx) {
                 if (dx == 0 && dy == 0 && dz == 0) {
+                    // cell itself is also a neighbor
                     cells[cellIndex].getNeighbors().push_back(cellIndex);
                     continue;
                 }
-                std::array<int, 3> neighborCoords = {coords[0] + dx, coords[1] + dy, 0};
+                // coords[2] + dz = 0 if in 2D
+                std::array<int, 3> neighborCoords = {coords[0] + dx, coords[1] + dy, coords[2] + dz};
                 if (neighborCoords[0] >= 0 && neighborCoords[0] < numCells[0] && neighborCoords[1] >= 0 &&
-                    neighborCoords[1] < numCells[1]) {
-                    int neighborIndex = neighborCoords[1] * numCells[0] + neighborCoords[0];
+                    neighborCoords[1] < numCells[1] && neighborCoords[2] >= 0 && neighborCoords[2] < numCells[2]) {
+                    int neighborIndex = neighborCoords[2] * numCells[1] * numCells[0] +
+                                        neighborCoords[1] * numCells[0] + neighborCoords[0];
                     cells[cellIndex].getNeighbors().push_back(neighborIndex);
                 }
             }
@@ -320,6 +366,13 @@ void CellContainer::calculateNeighbors(int cellIndex) {
 }
 
 const std::vector<int> &CellContainer::getNeighbors(int cellIndex) const { return cells[cellIndex].getNeighbors(); }
+std::vector<std::reference_wrapper<Cell>> CellContainer::getNeighborCells(int cellIndex) {
+    std::vector<std::reference_wrapper<Cell>> neighbors;
+    for (size_t idx : getNeighbors(cellIndex)) {
+        neighbors.push_back(std::ref(cells[idx]));
+    }
+    return neighbors;
+}
 
 int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
     // coincidentally works just as well for getting the opposite halo cell for a border cell; currently in 2D
@@ -332,6 +385,10 @@ int CellContainer::getOppositeOfHalo(const Cell &from, HaloLocation location) {
         return cellIndex + (numCells[0] - 2);
     } else if (location == HaloLocation::EAST) {
         return cellIndex - (numCells[0] - 2);
+    } else if (location == HaloLocation::BELOW) {
+        return cellIndex + numCells[0] * numCells[1] * (numCells[2] - 2);
+    } else if (location == HaloLocation::ABOVE) {
+        return cellIndex - numCells[0] * numCells[1] * (numCells[2] - 2);
     }
     return -1;
 }
@@ -347,27 +404,56 @@ int CellContainer::getOppositeOfBorder(const Cell &from, BorderLocation location
         return cellIndex + (numCells[0] - 2);
     } else if (location == BorderLocation::EAST) {
         return cellIndex - (numCells[0] - 2);
+    } else if (location == BorderLocation::BELOW) {
+        return cellIndex + numCells[0] * numCells[1] * (numCells[2] - 2);
+    } else if (location == BorderLocation::ABOVE) {
+        return cellIndex - numCells[0] * numCells[1] * (numCells[2] - 2);
     }
     return -1;
 }
 
 std::vector<int> CellContainer::getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations) {
-    // currently in 2D, god help us in 3D
-    int cellIndex = from.getIndex();
+    // switched to 3D, should still work in 2D
     std::vector<int> ghostCorners;
-    for (auto loc : locations) {
-        if (loc == BorderLocation::NORTH) {
-            cellIndex = cellIndex - numCells[0] * (numCells[1] - 2);
-        } else if (loc == BorderLocation::SOUTH) {
-            cellIndex = cellIndex + numCells[0] * (numCells[1] - 2);
-        } else if (loc == BorderLocation::WEST) {
-            cellIndex = cellIndex + (numCells[0] - 2);
-        } else if (loc == BorderLocation::EAST) {
-            cellIndex = cellIndex - (numCells[0] - 2);
+    for (auto &pair : getBorderCombinations(locations)) {
+        int cellIndex = from.getIndex();
+        for (auto &loc : pair) {
+            if (loc == BorderLocation::NORTH) {
+                cellIndex = cellIndex - numCells[0] * (numCells[1] - 2);
+            } else if (loc == BorderLocation::SOUTH) {
+                cellIndex = cellIndex + numCells[0] * (numCells[1] - 2);
+            } else if (loc == BorderLocation::WEST) {
+                cellIndex = cellIndex + (numCells[0] - 2);
+            } else if (loc == BorderLocation::EAST) {
+                cellIndex = cellIndex - (numCells[0] - 2);
+            } else if (loc == BorderLocation::ABOVE) {
+                cellIndex = cellIndex - numCells[0] * numCells[1] * (numCells[2] - 2);
+            } else if (loc == BorderLocation::BELOW) {
+                cellIndex = cellIndex + numCells[0] * numCells[1] * (numCells[2] - 2);
+            }
+        }
+        ghostCorners.push_back(cellIndex);
+    }
+    return ghostCorners;
+}
+
+std::vector<std::vector<BorderLocation>> CellContainer::getBorderCombinations(std::vector<BorderLocation> &locations) {
+    std::vector<std::vector<BorderLocation>> pairs;
+    int n = locations.size();
+
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            pairs.push_back({locations[i], locations[j]});
         }
     }
-    ghostCorners.push_back(cellIndex);
-    return ghostCorners;
+
+    // if we have a triple corner, I have come to the conclusion we should also mirror across all 3 dimensions
+    // it's just intuition tho, I wouldn't stake my life on it
+    if (locations.size() == 3) {
+        pairs.push_back(locations);
+    }
+
+    return pairs;
 }
 
 Cell &CellContainer::operator[](size_t index) { return cells[index]; }
@@ -378,14 +464,19 @@ std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() { ret
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getBorderCells() const { return borderCells; }
 std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() { return haloCells; }
 const std::vector<std::reference_wrapper<Cell>> &CellContainer::getHaloCells() const { return haloCells; }
+std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() { return iterableCells; }
+const std::vector<std::reference_wrapper<Cell>> &CellContainer::getIterableCells() const { return iterableCells; }
 const std::array<double, 3> &CellContainer::getDomainSize() const { return domainSize; }
 const std::array<double, 3> &CellContainer::getCellSize() const { return cellSize; }
 const std::array<size_t, 3> &CellContainer::getNumCells() const { return numCells; }
 const std::array<BoundaryCondition, 6> &CellContainer::getConditions() const { return conditions; }
 double CellContainer::getCutoff() const { return cutoff; }
+size_t CellContainer::getDim() const { return dim; }
+bool CellContainer::getAnyPeriodic() const { return anyPeriodic; }
 ParticleContainer &CellContainer::getParticles() { return particles; }
 const ParticleContainer &CellContainer::getParticles() const { return particles; }
 size_t CellContainer::size() const { return particles.size(); }
+size_t CellContainer::activeSize() const { return particles.activeSize(); }
 
 /* debug functions */
 void CellContainer::printCellIndices() const {

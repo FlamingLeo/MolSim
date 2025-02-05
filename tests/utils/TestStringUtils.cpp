@@ -126,6 +126,7 @@ TEST(StringUtilsTests, ToIntArrayEmpty) {
 
 // Test attempting to convert strings containing invalid integer arrays.
 TEST(StringUtilsTests, ToIntArrayInvalid) {
+
     const std::string s0 = "invalid";
     EXPECT_DEATH(StringUtils::toIntArray<5>(s0), "");
 
@@ -174,6 +175,7 @@ TEST(StringUtilsTests, ToDoubleArrayEmpty) {
 
 // Test attempting to convert strings containing invalid double arrays.
 TEST(StringUtilsTests, ToDoubleArrayInvalid) {
+
     const std::string s0 = "invalid";
     EXPECT_DEATH(StringUtils::toDoubleArray<5>(s0), "");
 

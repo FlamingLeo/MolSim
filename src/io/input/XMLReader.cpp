@@ -2,6 +2,7 @@
 #include "io/xsd/SimulationXSD.h"
 #include "objects/Cuboid.h"
 #include "objects/Disc.h"
+#include "objects/FlowSimulationAnalyzer.h"
 #include "objects/ParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include "utils/CLIUtils.h"
@@ -76,18 +77,53 @@ static void readXMLArgs(Arguments &args, const std::unique_ptr<SimType> &xmlInpu
                          bdConditions.s(), bdConditions.w(), bdConditions.e(), bdConditions.a(), bdConditions.b());
         }
         LOAD_ARGS(xmlArgs, args, gravity);
+        if (xmlArgs.parallelization().present()) {
+            auto pStrat = xmlArgs.parallelization().get();
+            args.parallelization = StringUtils::toParallelizationType(pStrat);
+            SPDLOG_DEBUG("Loaded parallelization strategy: {}", pStrat);
+        }
     }
 }
 
+// helper function to replace output extensions with "csv"
+std::string replaceExtensionsWithCSV(std::string input) {
+    size_t pos = input.find("vtk");
+    if (pos != std::string::npos) {
+        input.replace(pos, 3, "csv");
+        return input;
+    }
+
+    pos = input.find("xyz");
+    if (pos != std::string::npos) {
+        input.replace(pos, 3, "csv");
+    }
+
+    return input;
+}
+
 // helper function to read and initialize thermostat
-static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t) {
-    t.initialize(2 /* this will be made changed once 3D is supported... */, xmlThermostat.init(),
-                 xmlThermostat.timeStep(), GET_IF_PRESENT(xmlThermostat, target, INFINITY),
-                 GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true));
+static void initThermostat(const SimType::ThermostatType &xmlThermostat, Thermostat &t, int dimensions) {
+    t.initialize(dimensions, xmlThermostat.init(), xmlThermostat.timeStep(),
+                 GET_IF_PRESENT(xmlThermostat, target, xmlThermostat.init()),
+                 GET_IF_PRESENT(xmlThermostat, deltaT, INFINITY), GET_IF_PRESENT(xmlThermostat, brownianMotion, true),
+                 GET_IF_PRESENT(xmlThermostat, nanoFlow, false), xmlThermostat.deltaT().present());
+}
+
+// helper function to intialize analyzer if present or disable otherwise
+static void initAnalyzer(const SimType::AnalyzerOptional &xmlAnalyzer, FlowSimulationAnalyzer &fsa,
+                         const std::string &basename) {
+    if (xmlAnalyzer.present()) {
+        const auto &analyzer = xmlAnalyzer.get();
+        fsa.initialize(analyzer.nBins(), analyzer.leftWallX(), analyzer.rightWallX(), analyzer.frequency(),
+                       GET_IF_PRESENT(analyzer, dirname, "statistics"), replaceExtensionsWithCSV(basename));
+    } else {
+        fsa.initialize(1, 0, 0, -1);
+    }
 }
 
 // helper (wrapper) function to parse cuboids into a particle container
-static void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContainer &pc) {
+static void parseCuboids(const SimType::ObjectsType &xmlObjects, const SimType::MembraneOptional &membrane,
+                         ParticleContainer &pc, size_t dimensions) {
     for (const auto &cuboid : xmlObjects.cuboid()) {
         std::array<double, 3> position{cuboid.position().x(), cuboid.position().y(), cuboid.position().z()};
         std::array<double, 3> velocity{cuboid.velocity().x(), cuboid.velocity().y(), cuboid.velocity().z()};
@@ -98,13 +134,32 @@ static void parseCuboids(const SimType::ObjectsType &xmlObjects, ParticleContain
         int type = cuboid.type().present() ? cuboid.type().get() : TYPE_DEFAULT;
         double epsilon = cuboid.epsilon().present() ? cuboid.epsilon().get() : EPSILON_DEFAULT;
         double sigma = cuboid.sigma().present() ? cuboid.sigma().get() : SIGMA_DEFAULT;
+        double k = membrane.present() ? membrane.get().stiffness() : K_DEFAULT;
+        double r_0 = membrane.present() ? membrane.get().avgBondLength() : R0_DEFAULT;
+        double fzup = membrane.present() ? membrane.get().zForce() : FZUP_DEFAULT;
+        std::vector<std::array<int, 3>> specialCases;
+        if (membrane.present()) {
+            for (const auto &scase : membrane.get().specialCase()) {
+                std::array<int, 3> caseArray = {scase.x(), scase.y(), scase.z()};
+                specialCases.push_back(caseArray);
+            }
+            if (membrane.get().scIterationLimit().present()) {
+                pc.setSpecialForceLimit(membrane.get().scIterationLimit().get());
+                SPDLOG_DEBUG("Set membrane upward force limit to {}", pc.getSpecialForceLimit());
+            }
+        }
 
-        SPDLOG_TRACE("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}",
+        SPDLOG_DEBUG("Initializing cuboid with x: {}, v: {}, N: {}, h: {}, m: {}, eps: {}, sigma: {}, k: {}, r_0: {}, "
+                     "f_z-up: {}",
                      ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), ArrayUtils::to_string(size),
-                     distance, mass, epsilon, sigma);
+                     distance, mass, epsilon, sigma, k, r_0, fzup);
 
-        Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma};
-        cuboidObj.initialize();
+        Cuboid cuboidObj{pc, position, size, velocity, distance, mass, type, epsilon, sigma, k, r_0, fzup};
+        cuboidObj.getSpecialCases() = specialCases;
+        cuboidObj.initialize(dimensions);
+        if (membrane.present()) {
+            cuboidObj.initializeNeighbours();
+        }
     }
 }
 
@@ -137,7 +192,9 @@ static void parseParticles(const SimType::ObjectsType &xmlObjects, ParticleConta
             ArrayUtils::to_string(position), ArrayUtils::to_string(velocity), ArrayUtils::to_string(force),
             ArrayUtils::to_string(oldForce), mass, type, epsilon, sigma, cellIndex);
 
-        pc.addParticle(position, velocity, force, oldForce, mass, type, epsilon, sigma, cellIndex);
+        // membrane properties cannot be applied to singular particles
+        pc.addParticle(position, velocity, force, oldForce, mass, type, epsilon, sigma, K_DEFAULT, R0_DEFAULT,
+                       FZUP_DEFAULT, cellIndex);
     }
 }
 
@@ -168,7 +225,7 @@ XMLReader::XMLReader(const std::string &filename) {
     openFile(filename);
 }
 
-void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
+void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t, FlowSimulationAnalyzer &fsa) {
     if (!m_infile.is_open())
         CLIUtils::error("No file opened for reading!", "", false);
 
@@ -187,13 +244,25 @@ void XMLReader::readXML(Arguments &args, ParticleContainer &pc, Thermostat &t) {
             SPDLOG_DEBUG("Using linked cells?: {}", args.linkedCells);
         }
 
+        if (xmlInput->dimensions().present()) {
+            args.dimensions = xmlInput->dimensions().get();
+        }
+        SPDLOG_DEBUG("Number of dimensions: {}", args.dimensions);
+
         const auto &xmlThermostat = xmlInput->thermostat();
-        initThermostat(xmlThermostat, t);
+        initThermostat(xmlThermostat, t, args.dimensions);
+
+        const auto &xmlAnalyzer = xmlInput->analyzer();
+        initAnalyzer(xmlAnalyzer, fsa, args.basename);
 
         const auto &xmlObjects = xmlInput->objects();
         size_t initialParticles = pc.size(); // might come in handy?
 
-        parseCuboids(xmlObjects, pc);
+        SimType::MembraneOptional &membrane = xmlInput->membrane();
+        args.membrane = membrane.present();
+        SPDLOG_DEBUG("Membrane simulation?: {}", args.membrane);
+
+        parseCuboids(xmlObjects, membrane, pc, args.dimensions);
         parseParticles(xmlObjects, pc);
         parseDiscs(xmlObjects, pc);
 

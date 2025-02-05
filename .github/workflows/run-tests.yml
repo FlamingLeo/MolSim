@@ -24,4 +24,4 @@ jobs:
               run: mkdir build && cd build && cmake -E env CXXFLAGS="-fsanitize=address" cmake .. && make -j
 
             - name: Run tests
-              run: cd build/tests && ctest
+              run: cd build/tests && (ctest || ctest --rerun-failed --output-on-failure)

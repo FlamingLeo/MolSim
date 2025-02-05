@@ -18,6 +18,7 @@ The code has been developed using the following software on separate machines:
 -   [Clang++](https://clang.llvm.org/) 18.1.3 (minimum: 14)
 -   [CMake](https://cmake.org/) 3.28.3 (minimum: 3.22)
 -   [GNU Make](https://www.gnu.org/software/make/) 4.3 (minimum: 4.3)
+-   [OpenMP](https://www.openmp.org/) 5.0 (minimum: 4.5)
 -   [Doxygen](https://www.doxygen.nl/) 1.9.8 (optional)
 -   [Paraview](https://www.paraview.org/) 5.13.1 (less optional)
 
@@ -27,7 +28,7 @@ Different compilers (e.g. [G++](https://gcc.gnu.org/) 14) or some older versions
 
 This project uses the following external C++ libraries:
 
--   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.3.0¹
+-   [Xerces-C++](https://xerces.apache.org/xerces-c/) 3.2.4¹
 -   [GoogleTest](https://github.com/google/googletest) 1.15.2
 -   [spdlog](https://github.com/gabime/spdlog) 1.14.1
 -   [CodeSynthesis XSD](https://www.codesynthesis.com/products/xsd/) 4.0.0
@@ -36,7 +37,7 @@ If the dependencies are not already installed, they will be automatically fetche
 
 **NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
 
-¹: Xerces-C++ is not supported when compiling with the Intel C++ compiler.
+¹: Xerces-C++ is REQUIRED to be installed beforehand.
 
 ## Getting Started
 
@@ -59,11 +60,17 @@ Following options are supported:
   - MinSizeRel     : Small file size, no debug information.
 -c       : Enables benchmarking (default: benchmarking disabled). You MUST compile a Release build.
 -d       : Disables Doxygen Makefile target. Incompatible with -m (default: Doxygen enabled).
+-f       : Enables fast math optimizations (default: disabled).
+-g       : Compiles the program with the '-pg' flag for use with gprof. 
 -h       : Prints out a help message. Doesn't build the program.
 -j <num> : Sets the number of parallel Makefile jobs to run simultaneously (default: num. of CPU cores).
 -l       : Disables automatically installing missing libraries (default: installs automatically)
 -m       : Automatically generates documentation after successful compilation. Incompatible with -d (default: off).
--p       : Compiles the program with the '-pg' flag for use with gprof. 
+-o       : Disables OpenMP functionality.
+-O       : Ensures that no outflow simulations will be performed (default: outflow enabled)
+           This skips checking particle activity, since all particles should remain active. Be careful when using this option!
+-p       : Enables PGO instrumentation code generation (default: off).
+-P       : Enables profile-guided compiler optimizations (default: off).
 -s <num> : Sets the spdlog level (0: Trace, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical, 6: Off).
            If this option is not explicitly set, the level is based on the build type (Debug: 0, Release: 2).
 -t       : Automatically runs tests after successful compilation (default: off).
@@ -85,6 +92,11 @@ cmake ..
 # -DSPDLOG_LEVEL=<0|1|2|3|4|5|6>
 # -DENABLE_DOXYGEN=<OFF|ON>
 # -DENABLE_BENCHMARKING=<OFF|ON>
+# -DENABLE_OPENMP=<OFF|ON>
+# -DENABLE_FAST_MATH=<OFF|ON>
+# -DNO_OUTFLOW=<OFF|ON>
+# -DPGO_GENERATE=<OFF|ON>
+# -DPGO_USE=<OFF|ON>
 # -DCMAKE_BUILD_TYPE=<Release|Debug|RelWithDebInfo|MinSizeRel>
 make
 # <MolSim|bench|tests|doc_doxygen|all|clean|help>
@@ -115,6 +127,10 @@ Currently, the following options are supported:
   - vtk      : Generates VTK Unstructured Grid (.vtu) files.
   - xyz      : Generates XYZ (.xyz) files.
   - nil      : Logs to stdout. Used for debugging purposes.
+-p <type>    : Sets the parallelization strategy used (default: coarse).
+               If OpenMP support is disabled, this option has no effect.
+  - coarse   : Uses the standard OpenMP for-loop parallelization strategy.
+  - fine     : Uses a finer-grained, task-based parallelization approach.
 -t <type>    : Sets the desired simulation to be performed (default: lj).
   - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).
   - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).
@@ -145,17 +161,24 @@ sudo cpupower frequency-set --governor powersave   # re-enable CPU scaling
 
 ## Input Files
 
+**Filename Structure**: `input-lj-w<n>t<m>` = Worksheet `n`, Task `m`.
+
 The program supports XML input files. Currently, the following input files are included in the repository, inside the `input` directory:
 
--   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids. _Worksheet 2, Task 4_.
--   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method. _Worksheet 3, Task 2_.
--   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method. _For testing purposes_.
--   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary. _Worksheet 3, Task 4_
--   `input-lj-w4t2-small.xml`: Simulation of the Rayleigh-Taylor instability (small). _Worksheet 4, Task 2a_
--   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large). _Worksheet 4, Task 2b_
--   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation. _Worksheet 4, Task 3a_
--   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid. _Worksheet 4, Task 3b_
--   `input-lj-w4t5.xml`: Simulation of the Rayleigh-Taylor instability, performance contest environment. _Worksheet 4, Task 5_
+-   `input-lj-w2t4.xml`: Simulation of the collision of two particle cuboids.
+-   `input-lj-w3t2.xml`: Simulation of the collision of two large particle cuboids, using the linked cell method.
+-   `input-lj-w3t2-small.xml`: Simulation of the collision of two small particle cuboids, using the linked cell method.
+-   `input-lj-w3t4.xml`: Simulation of a drop of liquid against a reflecting boundary.
+-   `input-lj-w4t2-small.xml`: Simulation of the Rayleigh-Taylor instability (small).
+-   `input-lj-w4t2-large.xml`: Simulation of the Rayleigh-Taylor instability (large).
+-   `input-lj-w4t3-base.xml`: Simulation of the base liquid for the falling drop simulation.
+-   `input-lj-w4t3-disc.xml`: Simulation of a falling drop into a liquid.
+-   `input-lj-w4t5-small.xml`: Simulation of the Rayleigh-Taylor instability (small), performance contest environment.
+-   `input-lj-w4t5-large.xml`: Simulation of the Rayleigh-Taylor instability (large), performance contest environment.
+-   `input-lj-w5t1.xml`: Simulation of a membrane.
+-   `input-lj-w5t3-coarse.xml`: Simulation of the Rayleigh-Taylor instability in 3D using coarse-grained parallelization.
+-   `input-lj-w5t3-fine.xml`: Simulation of the Rayleigh-Taylor instability in 3D using fine-grained parallelization.
+-   `input-lj-w5t4-<cond>.xml`: Simulation of the nano-scale flow of liquid falling down for various influences.
 
 **NOTE**: Arguments passed in the command line interface take precedence over arguments included in the XML file. For example, if you have `<startTime>0.0</startTime>` in the input file but specify `-s 5.0` through your terminal, the start time will be 5.0.
 
@@ -168,12 +191,28 @@ Complete XML input files have the following structure:
 <sim>
   <!-- (Optional) Simulation arguments are wrapped in "args". This may be omitted, if the simulation can be initialized with default values. -->
   <args>
-    <startTime><!-- double --></startTime>  <!-- start time -->
-    <endTime><!-- double --></endTime>      <!-- end time -->
-    <delta_t><!-- double --></delta_t>      <!-- time step -->
-    <frequency><!-- int --></frequency>     <!-- output frequency -->
-    <basename><!-- string --></basename>    <!-- base name without iteration number of output files -->
-    <output><!-- vtk, xyz, nil --></output> <!-- output type -->
+    <startTime><!-- double --></startTime>                    <!-- start time -->
+    <endTime><!-- double --></endTime>                        <!-- end time -->
+    <delta_t><!-- double --></delta_t>                        <!-- time step -->
+    <frequency><!-- int --></frequency>                       <!-- output frequency -->
+    <basename><!-- string --></basename>                      <!-- base name without iteration number of output files -->
+    <output><!-- vtk, xyz, nil --></output>                   <!-- output type -->
+    <domainSize>                                              <!-- domain size (linked cells) -->
+      <x><!-- double --></x>
+      <x><!-- double --></y>
+      <z><!-- double --></z>
+    </domainSize>
+    <cutoffRadius><!-- double --></cutoffRadius>              <!-- cutoff radius (linked cells) -->
+    <bdConditions>                                            <!-- boundary conditions (linked cells) -->
+      <n><!-- outflow, reflective, periodic --></n>           <!-- north -->
+      <s><!-- outflow, reflective, periodic --></s>           <!-- south -->
+      <w><!-- outflow, reflective, periodic --></w>           <!-- west -->
+      <e><!-- outflow, reflective, periodic --></e>           <!-- east -->
+      <a><!-- outflow, reflective, periodic --></a>           <!-- above -->
+      <b><!-- outflow, reflective, periodic --></b>           <!-- below -->
+    </bdConditions>
+    <gravity><!-- double --></gravity>                        <!-- gravity (non-membrane: y-axis, membrane: z-axis) -->
+    <parallelization><!-- coarse, fine --></parallelization>  <!-- parallelization type -->
   </args>
   <!-- A thermostat used to regulate the temperature of the particle system. -->
   <!-- If you do not wish to use the thermostat, set the timeStep value to something larger than the total number of time integration steps and set brownianMotion to false. -->
@@ -191,7 +230,28 @@ Complete XML input files have the following structure:
     <deltaT><!-- double --></deltaT>
     <!-- Specify, whether or not particle velocities should be initialized with Brownian Motion in the first iteration. -->
     <brownianMotion><!-- boolean --></brownianMotion>
+    <!-- (Optional) Specify, whether or not the thermostat is used for the nano-scale flow simulation. -->
+    <!-- By default, this is set to false. -->
+    <nanoFlow><!-- boolean --></nanoFlow>
   </thermostat>
+  <!-- (Optional) Membrane data used for membrane simulations. -->
+  <!-- Currently, this is only compatible with cuboid objects. -->
+  <membrane>
+    <!-- The stiffness constant. -->
+    <stiffness><!-- double --></stiffness>
+    <!-- The average bond length of a molecule pair. -->
+    <avgBondLength><!-- double --></avgBondLength>
+    <!-- The constant upward force along the z-axis. -->
+    <zForce><!-- double --></zForce>
+    <!-- (Optional) A sequence of positional particle indices for which the upward force should be applied. -->
+    <specialCase>
+      <x><!-- int --></x>
+      <y><!-- int --></y>
+      <z><!-- int --></z>
+    </specialCase>
+    <!-- (Optional) The number of simulation iterations after which the upward force is no longer applied. -->
+    <scIterationLimit><!-- int --></scIterationLimit>
+  </membrane>
   <!-- The type of the simulation. Must be specified. -->
   <type><!-- gravity, lj --></type>
   <!-- (Optional) Specify whether the simulation should use the linked cells method. -->
@@ -201,6 +261,24 @@ Complete XML input files have the following structure:
   <!-- Use this to reserve enough space in the ParticleContainer beforehand to potentially speed up initialization. -->
   <!-- You could theoretically specify any number here, but for optimal memory usage, it should be exact. -->
   <totalParticles><!-- size_t --></totalParticles>
+  <!-- (Optional) The dimensions of the simulation. Must be either 2 or 3. -->
+  <!-- If this tag isn't specified, the simulation will be 2D by default. -->
+  <!-- Note that this may cause unexpected results for 3D input. -->
+  <dimensions><!-- unsigned --></dimensions>
+  <!-- (Optional) An analyzer component used to log the densities and velocities of a system. -->
+  <!-- The generated .csv files will be stored in a separate directory. -->
+  <analyzer>
+    <!-- The number of bins along the x-axis in which to split the domain. -->
+    <nBins><!-- int --></nBins>
+    <!-- The x coordinate of the left wall. -->
+    <leftWallX><!-- double --></leftWallX>
+    <!-- The x coordinate of the right wall. -->
+    <rightWallX><!-- double --></rightWallX>
+    <!-- The output frequency of the analyzer. -->
+    <frequency><!-- int --></frequency>
+    <!-- (Optional) The name of the output directory. -->
+    <dirname><!-- string --></dirname>
+  </analyzer>
   <!-- The simulation molecules. May contain any positive number of "particle", "cuboid" or "disc" entries. -->
   <objects>
     <!-- A simple particle. -->

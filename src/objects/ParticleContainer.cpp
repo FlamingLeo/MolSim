@@ -63,19 +63,6 @@ ParticleContainer::PairIterator ParticleContainer::endPairs() {
 }
 
 /* container functions */
-void ParticleContainer::removeInactiveParticles() {
-    if (m_removeInactiveParticles) {
-        SPDLOG_TRACE("Removing inactive particles from ParticleContainer.");
-        m_particles.erase(
-            std::remove_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return !p.isActive(); }),
-            m_particles.end());
-        m_removeInactiveParticles = false;
-    }
-}
-void ParticleContainer::notifyInactivity() {
-    m_removeInactiveParticles = true;
-    SPDLOG_TRACE("Marked ParticleContainer for inactivity notification.");
-}
 Particle &ParticleContainer::operator[](size_t index) { return m_particles[index]; }
 const Particle &ParticleContainer::operator[](size_t index) const { return m_particles[index]; }
 void ParticleContainer::addParticle(const Particle &particle) {
@@ -83,14 +70,15 @@ void ParticleContainer::addParticle(const Particle &particle) {
     SPDLOG_TRACE("Added Particle to ParticleContainer - {}", particle.toString());
 }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int type,
-                                    double eps, double sigma) {
-    m_particles.emplace_back(x, v, m, type, eps, sigma);
+                                    double eps, double sigma, double k, double r_0, double fzup) {
+    m_particles.emplace_back(x, v, m, type, eps, sigma, k, r_0, fzup);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::addParticle(const std::array<double, 3> &x, const std::array<double, 3> &v,
                                     const std::array<double, 3> &f, const std::array<double, 3> &old_f, double m,
-                                    int type, double eps, double sigma, int cellIndex) {
-    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, cellIndex);
+                                    int type, double eps, double sigma, double k, double r_0, double fzup,
+                                    int cellIndex) {
+    m_particles.emplace_back(x, v, f, old_f, m, type, eps, sigma, k, r_0, fzup, cellIndex);
     SPDLOG_TRACE("Created and added Particle to ParticleContainer - {}", m_particles.back().toString());
 }
 void ParticleContainer::reserve(size_t capacity) {
@@ -107,7 +95,17 @@ const Particle &ParticleContainer::get(size_t index) const {
         CLIUtils::error("Index out of bounds for ParticleContainer", StringUtils::fromNumber(index), false);
     return m_particles[index];
 }
+int ParticleContainer::getSpecialForceLimit() const { return m_specialForceLimit; }
+void ParticleContainer::setSpecialForceLimit(int limit) { m_specialForceLimit = limit; }
+void ParticleContainer::decrementSpecialForceLimit() { --m_specialForceLimit; }
 size_t ParticleContainer::size() const { return m_particles.size(); }
+size_t ParticleContainer::activeSize() const {
+    return std::count_if(m_particles.begin(), m_particles.end(), [](const Particle &p) { return p.isActive(); });
+}
+size_t ParticleContainer::nonWallSize() const {
+    return std::count_if(m_particles.begin(), m_particles.end(),
+                         [](const Particle &p) { return p.isActive() && (p.getType() != 1); });
+}
 bool ParticleContainer::isEmpty() const { return this->size() == 0; }
 ParticleContainer::ContainerType &ParticleContainer::getParticles() { return m_particles; }
 bool ParticleContainer::operator==(const ParticleContainer &other) const { return m_particles == other.m_particles; }

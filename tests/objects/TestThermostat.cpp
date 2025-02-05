@@ -136,3 +136,43 @@ TEST_F(ThermostatTests, HoldSystemTemperature) {
     t.updateSystemTemp(30);
     EXPECT_DOUBLE_EQ(t.getTemp(), 4);
 }
+
+// Test calculating the thermal motions of the particles.
+TEST_F(ThermostatTests, CalculateThermalMotions) {
+    constexpr int dim = 2;
+    constexpr double T_init = 4;
+    constexpr int n_thermostat = 10;
+    constexpr double T_target = 9;
+    constexpr double delta_T = 12.0;
+    constexpr bool initBrownianMotion = false;
+    constexpr bool nanoFlow = true;
+    Thermostat t{pc, dim, T_init, n_thermostat, T_target, delta_T, initBrownianMotion, nanoFlow};
+
+    t.calculateThermalMotions();
+
+    constexpr std::array<double, 3> v0 = {0, -1, 1};
+    EXPECT_EQ(pc.getParticles()[0].getThermalMotion(), v0);
+
+    constexpr std::array<double, 3> v1 = {0, 1, -1};
+    EXPECT_EQ(pc.getParticles()[1].getThermalMotion(), v1);
+}
+
+// Test calculating update system using thermal motions.
+TEST_F(ThermostatTests, UpdateSystemWithThermalMotions) {
+    constexpr int dim = 2;
+    constexpr double T_init = 4;
+    constexpr int n_thermostat = 10;
+    constexpr double T_target = 9;
+    constexpr double delta_T = 12.0;
+    constexpr bool initBrownianMotion = false;
+    constexpr bool nanoFlow = true;
+    Thermostat t{pc, dim, T_init, n_thermostat, T_target, delta_T, initBrownianMotion, nanoFlow};
+
+    t.updateSystemTemp(100);
+
+    constexpr std::array<double, 3> v0 = {2, -2, 4};
+    EXPECT_EQ(pc.getParticles()[0].getV(), v0);
+
+    constexpr std::array<double, 3> v1 = {2, 4, -2};
+    EXPECT_EQ(pc.getParticles()[1].getV(), v1);
+}

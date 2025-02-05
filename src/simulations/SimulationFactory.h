@@ -23,7 +23,9 @@ class SimulationFactory {
      * @param pc The ParticleContainer to be used for the simulation.
      * @param args The program and simulation arguments to be passed to the Simulation constructor.
      * @param t The Thermostat used in the simulation.
+     * @param analyzer The FlowSimulationAnalyzer used in the simulation.
      * @return A std::unique_ptr<Simulation> instance matching the desired simulation type.
      */
-    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t);
+    static std::unique_ptr<Simulation> createSimulation(ParticleContainer &pc, Arguments &args, Thermostat &t,
+                                                        FlowSimulationAnalyzer &analyzer);
 };

@@ -313,3 +313,74 @@ TEST_F(CellContainerTest, GetMirrorPosition) {
     result = container.getMirrorPosition(position, fromCell, toCell, 0);
     EXPECT_EQ(result, expectedPosition);
 }
+
+// Test removing halo cells from a cell container.
+TEST_F(CellContainerTest, RemoveHaloCells) {
+    // populate particle container with halo cells
+    ParticleContainer pc;
+    Particle p1({0.0, 0.0, 0.0},
+                {
+                    0.,
+                    0.,
+                    0.,
+                },
+                1);
+    Particle p2({1.0, 0.0, 0.0},
+                {
+                    0.,
+                    0.,
+                    0.,
+                },
+                2);
+    Particle p3({2.0, 0.0, 0.0},
+                {
+                    0.,
+                    0.,
+                    0.,
+                },
+                3);
+    pc.addParticle(p1);
+    pc.addParticle(p2);
+    pc.addParticle(p3);
+    CellContainer c({10, 10, 1}, conditions, 1.0, pc, 2);
+
+    // verify that there are no more particles after removal
+    c.removeHaloCellParticles();
+    EXPECT_EQ(c.size(), 3);
+    EXPECT_EQ(c.activeSize(), 0);
+}
+
+// Tests emulating some of the above tests (the ones that seemed more relevant or for functions that actually changes)
+// but for 3D
+TEST_F(CellContainerTest, Additional3DTests) {
+    ParticleContainer pc;
+    Cuboid cub{pc, {1., 1., 1.}, {2, 1, 1}, {0., 0., 0.}, 1, 1, 0, 1, 1};
+
+    cub.initialize(3);
+
+    CellContainer cc{{3, 3, 3},
+                     {BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE,
+                      BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE, BoundaryCondition::REFLECTIVE},
+                     1,
+                     pc,
+                     3};
+
+    // neighbours
+    EXPECT_EQ(pc[0].getCellIndex(), 31);
+    std::vector<int> expectedNeighbours = {0,  1,  2,  5,  6,  7,  10, 11, 12, 25, 26, 27, 30, 31,
+                                           32, 35, 36, 37, 50, 51, 52, 55, 56, 57, 60, 61, 62};
+    EXPECT_EQ(cc.getNeighbors(31), expectedNeighbours);
+
+    // getOppositeNeighbour
+    EXPECT_EQ(cc.getOppositeNeighbor(35, HaloLocation::WEST), 36);
+    EXPECT_EQ(cc.getOppositeNeighbor(39, HaloLocation::EAST), 38);
+    EXPECT_EQ(cc.getOppositeNeighbor(6, HaloLocation::BELOW), 31);
+    EXPECT_EQ(cc.getOppositeNeighbor(81, HaloLocation::ABOVE), 56);
+
+    // getMirrorPostion
+    std::array<double, 3> expectedPos = {1.5, 1.5, 1.2};
+    EXPECT_EQ(cc.getMirrorPosition({1.5, 1.5, 0.8}, cc.getCells()[6], cc.getCells()[31], 2), expectedPos);
+    // getOppositeOfHalo
+    EXPECT_EQ(cc.getOppositeOfHalo(cc.getCells()[6], HaloLocation::BELOW), 81);
+    EXPECT_EQ(cc.getOppositeOfHalo(cc.getCells()[100], HaloLocation::ABOVE), 25);
+}

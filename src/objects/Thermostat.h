@@ -35,8 +35,7 @@ class Thermostat {
     /**
      * @brief The target temperature \f$ T_{target} \f$ of the system (default: \f$ T_{init} \f$).
      *
-     * @details If no target temperature is given (i.e. if the value is set to `INFINITY`), the target temperature is
-     * set to \f$ T_{init} \f$.
+     * @details If no target temperature is given in the input, the target temperature is set to \f$ T_{init} \f$.
      */
     double T_target{0.0};
 
@@ -63,6 +62,12 @@ class Thermostat {
     /// @brief Determines whether or not to initialize the velocities with Brownian Motion (default: on).
     bool initBrownianMotion{true};
 
+    /// @brief Determines whether the thermostat is used for the nano-scale flow simulation.
+    bool nanoFlow{false};
+
+    /// @brief Average velocity of the system
+    std::array<double, 3> avg_velocity{0, 0, 0};
+
     /// @brief A reference to the Particle system.
     ParticleContainer &particles;
 
@@ -84,9 +89,10 @@ class Thermostat {
      * @param T_target The target temperature \f$ T_{target} \f$ of the system.
      * @param delta_T The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application.
      * @param initBrownianMotion Determines whether or not to initialize the velocities with Brownian Motion.
+     * @param nanoFlow Determines whether the thermostat is used for the nano-scale flow simulation.
      */
     Thermostat(ParticleContainer &particles, int dimension, double T_init, int n_thermostat, double T_target,
-               double delta_T, bool initBrownianMotion);
+               double delta_T, bool initBrownianMotion, bool nanoFlow = false);
 
     /// @brief Destroys the current Thermostat object.
     ~Thermostat();
@@ -100,9 +106,11 @@ class Thermostat {
      * @param T_target The target temperature \f$ T_{target} \f$ of the system.
      * @param delta_T The maximum temperature difference \f$ \Delta T \f$ in one Thermostat application.
      * @param initBrownianMotion Determines whether or not to initialize the velocities with Brownian Motion.
+     * @param nanoFlow Determines whether the thermostat is used for the nano-scale flow simulation.
+     * @param limitScaling Determines if the Thermostat should apply gradual or direct velocity scaling.
      */
     void initialize(int dimension, double T_init, int n_thermostat, double T_target, double delta_T,
-                    bool initBrownianMotion);
+                    bool initBrownianMotion, bool nanoFlow = false, bool limitScaling = false);
 
     /**
      * @brief Initialize the Particle velocities with Brownian Motion.
@@ -142,7 +150,18 @@ class Thermostat {
     void calculateScalingFactor();
 
     /**
-     * @brief Updates the system temperature.
+     * @brief Calculates the thermal motion of each Particle in the system.
+     *
+     * @details First, the average velocity \f[ \tilde v = \frac1N \sum_{i=0}^N v_i \f] is determined using the
+     * velocities of each non-wall particle in the system. Then, for each particle, its thermal motion \f$ \hat v_i \f$
+     * is calculated as the difference between the velocity and the average velocity.
+     */
+    void calculateThermalMotions();
+
+    /**
+     * @brief Updates the system temperature after the number of iterations specified inside the Thermostat object.
+     *
+     * For nanoscale simulations, the thermal motion of the particles inside the system are taken into account.
      *
      * @param currentStep The current iteration of the simulation, used to determine whether or not to apply the
      * thermostat. In the first iteration, if `initBrownianMotion` is set, the Particle velocities will be initialized
@@ -168,8 +187,14 @@ class Thermostat {
     /// @brief Gets the scaling factor \f$ \beta \f$ by which to scale the Particle velocities.
     double getScalingFactor() const;
 
+    /// @brief Checks if the Thermostat should apply gradual or direct velocity scaling.
+    bool doScalingLimit() const;
+
     /// @brief Gets the number of simulation iterations after which to apply the Thermostat functionality.
     int getTimestep() const;
+
+    /// @brief Determines whether the thermostat is used for the nano-scale flow simulation.
+    bool getNanoflow() const;
 
     /// @brief Gets a reference to the Particle system.
     ParticleContainer &getParticles() const;

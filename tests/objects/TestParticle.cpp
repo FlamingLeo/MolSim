@@ -9,6 +9,11 @@ TEST(ParticleTests, CreateParticleValid) {
     constexpr std::array zero{0., 0., 0.};
     constexpr double m = 10.0;
     constexpr double type = 11.0;
+    constexpr double eps = 3.0;
+    constexpr double sigma = 2.0;
+    constexpr double k = 300.0;
+    constexpr double r0 = 2.2;
+    constexpr double fzup = 0.8;
 
     // default constructor
     Particle p0;
@@ -18,15 +23,25 @@ TEST(ParticleTests, CreateParticleValid) {
     EXPECT_EQ(p0.getType(), 0);
     EXPECT_EQ(p0.getV(), zero);
     EXPECT_EQ(p0.getX(), zero);
+    EXPECT_EQ(p0.getEpsilon(), 1.0);
+    EXPECT_EQ(p0.getSigma(), 1.0);
+    EXPECT_EQ(p0.getK(), 0.0);
+    EXPECT_EQ(p0.getR0(), 0.0);
+    EXPECT_EQ(p0.getFZUP(), 0.0);
 
     // pass arguments directly
-    Particle p1(x, v, m, type);
+    Particle p1(x, v, m, type, eps, sigma, k, r0, fzup);
     EXPECT_EQ(p1.getF(), zero);
     EXPECT_EQ(p1.getOldF(), zero);
     EXPECT_EQ(p1.getM(), m);
     EXPECT_EQ(p1.getType(), type);
     EXPECT_EQ(p1.getV(), v);
     EXPECT_EQ(p1.getX(), x);
+    EXPECT_EQ(p1.getEpsilon(), eps);
+    EXPECT_EQ(p1.getSigma(), sigma);
+    EXPECT_EQ(p1.getK(), k);
+    EXPECT_EQ(p1.getR0(), r0);
+    EXPECT_EQ(p1.getFZUP(), fzup);
 
     // get attributes from another particle
     Particle p2(p1);

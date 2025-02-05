@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#define OPTSTRING "s:e:d:f:g:b:o:t:B:D:R:h"
+#define OPTSTRING "s:e:d:f:g:b:o:p:t:B:D:R:h"
 #define BOLD_ON "\033[1m"
 #define BOLD_OFF "\033[0m"
 #define RED "\e[0;31m"
@@ -33,9 +33,41 @@ static inline std::string_view filename{"./MolSim"};
  * @brief Mapping from getopt option characters to their full names.
  */
 static inline std::unordered_map<char, std::string> optionNames = {
-    {'s', "Start time"},          {'e', "End time"},    {'d', "Timestep"},     {'b', "Basename"},
-    {'f', "Output frequency"},    {'g', "Gravity"},     {'o', "Output type"},  {'t', "Simulation type"},
-    {'B', "Boundary Conditions"}, {'D', "Domain Size"}, {'R', "Cutoff Radius"}};
+    {'s', "Start time"},       {'e', "End time"},
+    {'d', "Timestep"},         {'b', "Basename"},
+    {'f', "Output frequency"}, {'g', "Gravity"},
+    {'o', "Output type"},      {'p', "Parallelization type"},
+    {'t', "Simulation type"},  {'B', "Boundary Conditions"},
+    {'D', "Domain Size"},      {'R', "Cutoff Radius"}};
+
+/**
+ * @brief Gets the name of the compiler used to build the program executable (or "unknown" if the compiler is not
+ * identifiable via macros).
+ *
+ * @return The name of the compiler used to build the executable or "unknown".
+ */
+static inline std::string getCompilerName() {
+#if defined(__INTEL_LLVM_COMPILER)
+    return __VERSION__;
+#elif defined(__clang__)
+    return "Clang " + std::to_string(__clang_major__) + "." + std::to_string(__clang_minor__) + "." +
+           std::to_string(__clang_patchlevel__);
+#elif defined(__GNUC__) || defined(__GNUG__)
+    return "GNU " + std::to_string(__GNUC__) + "." + std::to_string(__GNUC_MINOR__) + "." +
+           std::to_string(__GNUC_PATCHLEVEL__);
+#elif defined(_MSC_VER)
+    return "Microsoft Visual C++ " + std::to_string(_MSC_VER);
+#else
+    return "Unknown";
+#endif
+}
+
+/**
+ * @brief Gets the build date and time of the built executable as a string.
+ *
+ * @return The build date and time of the built executable.
+ */
+static inline std::string getBuildDate() { return std::string(__DATE__) + " " + __TIME__; }
 
 /**
  * @brief Prints a usage string explaining the syntax of the main program.
@@ -74,6 +106,10 @@ static inline void printHelp() {
            "  - vtk      : Generates VTK Unstructured Grid (.vtu) files.\n"
            "  - xyz      : Generates XYZ (.xyz) files.\n"
            "  - nil      : Logs to stdout. Used for debugging purposes.\n"
+           "-p <type>    : Sets the parallelization strategy used (default: coarse).\n"
+           "               If OpenMP support is disabled, this option has no effect.\n"
+           "  - coarse   : Uses the standard OpenMP for-loop parallelization strategy.\n"
+           "  - fine     : Uses a finer-grained, task-based parallelization approach.\n"
            "-t <type>    : Sets the desired simulation to be performed (default: lj).\n"
            "  - gravity  : Performs a gravitational simulation (t_0 = 0, t_end = 1000, dt = 0.014).\n"
            "  - lj       : Performs a simulation of Lennard-Jones potential (t_0 = 0, t_end = 5, dt = 0.0002).\n"
@@ -82,7 +118,9 @@ static inline void printHelp() {
         << ":\n"
            "Logging must be configured at compile time. To change the log level, read the documentation and "
            "recompile the program accordingly.\n"
-           "When specifying the domain size, do NOT use whitespaces between the commas and numbers.\n";
+           "When specifying the domain size, do NOT use whitespaces between the commas and numbers.\n\n"
+        << BOLD_ON << "BUILD DATE" << BOLD_OFF << ": " << getBuildDate() << "\n"
+        << BOLD_ON << "COMPILED WITH" << BOLD_OFF << ": " << getCompilerName() << "\n";
 }
 
 /**

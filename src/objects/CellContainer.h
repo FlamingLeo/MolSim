@@ -13,6 +13,7 @@
 #include "io/input/FileReader.h"
 #include "io/output/WriterFactory.h"
 #include "utils/CellUtils.h"
+#include "utils/OMPWrapper.h"
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -34,10 +35,14 @@ class CellContainer {
   private:
     /// @brief The container of Cell objects itself.
     ContainerType cells;
-    /// @brief Container of pointers to border cells.
+    /// @brief Container of mutual exclusion locks for each cell.
+    std::vector<omp_lock_t> cellLocks;
+    /// @brief Container of references to border cells.
     std::vector<std::reference_wrapper<Cell>> borderCells;
-    /// @brief Container of pointers to halo cells.
+    /// @brief Container of references to halo cells.
     std::vector<std::reference_wrapper<Cell>> haloCells;
+    /// @brief Container of references to cells to iterate over when calculating the forces between particles.
+    std::vector<std::reference_wrapper<Cell>> iterableCells;
     /// @brief The size of the domain in each dimension.
     std::array<double, 3> domainSize;
     /// @brief The size of each cell in each dimension (default: 0, 0, 0).
@@ -48,12 +53,16 @@ class CellContainer {
     std::array<BoundaryCondition, 6> conditions;
     /// @brief The cutoff radius.
     double cutoff;
+    /// @brief The number of dimensions (2/3)
+    size_t dim;
+    /// @brief Determines if there are any periodic halo cells.
+    bool anyPeriodic{false};
     /// @brief A reference to the overarching ParticleContainer.
     ParticleContainer &particles;
 
   public:
     /**
-     * @brief Constructs a new CellContainer.
+     * @brief Constructs a new CellContainer and initializes all Cell objects and locks.
      *
      * @param domainSize The size of the domain.
      * @param conditions The boundary conditions to be applied at each boundary.
@@ -62,7 +71,10 @@ class CellContainer {
      * @param dim The dimension of the container. May either be two- (2) or three-dimensional (3).
      */
     CellContainer(const std::array<double, 3> &domainSize, const std::array<BoundaryCondition, 6> &conditions,
-                  double cutoff, ParticleContainer &particles, size_t dim = 2);
+                  double cutoff, ParticleContainer &particles, size_t dim = 3);
+
+    /// @brief Destroys the CellContainer object and frees the reserved locks.
+    ~CellContainer();
 
     /**
      * @brief Standard library iterator function for marking the beginning of the iteration process.
@@ -265,6 +277,20 @@ class CellContainer {
     const std::vector<std::reference_wrapper<Cell>> &getHaloCells() const;
 
     /**
+     * @brief Gets a reference to the iterable Cell container.
+     *
+     * @return A reference to the iterable Cell container.
+     */
+    std::vector<std::reference_wrapper<Cell>> &getIterableCells();
+
+    /**
+     * @brief Gets a const reference to the iterable Cell container.
+     *
+     * @return A const reference to the iterable Cell container.
+     */
+    const std::vector<std::reference_wrapper<Cell>> &getIterableCells() const;
+
+    /**
      * @brief Removes the active halo Cell Particle objects.
      *
      * For each halo Cell particle, if the Particle is active, it is removed from the Cell's linked list and is marked
@@ -364,6 +390,8 @@ class CellContainer {
      */
     const std::vector<int> &getNeighbors(int cellIndex) const;
 
+    std::vector<std::reference_wrapper<Cell>> getNeighborCells(int cellIndex);
+
     /**
      * @brief For a halo cell returns the index of the border cell on the opposite side of the domain
      *
@@ -390,6 +418,17 @@ class CellContainer {
      * @return The indices of the opposite halo cells
      */
     std::vector<int> getOppositeOfBorderCorner(const Cell &from, std::vector<BorderLocation> &locations);
+
+    /**
+     * @brief For a collection of border locations, returns all combinations of size 2.
+     *
+     * For example, given the vector of border locations `N`, `W`, `A` (abbreviated), the function returns the pairs
+     * `(N,W)`, `(N,A)`, `(W,A)`.
+     *
+     * @param locations The border locations/directions which form the combinations.
+     * @return A vector of vectors representing the combinations of size 2.
+     */
+    std::vector<std::vector<BorderLocation>> getBorderCombinations(std::vector<BorderLocation> &locations);
 
     /**
      * @brief Gets a const reference to the CellContainer's domain size.
@@ -427,6 +466,21 @@ class CellContainer {
     double getCutoff() const;
 
     /**
+     * @brief Gets the number of dimensions of the linked cells.
+     *
+     * @return The number of dimensions
+     */
+    size_t getDim() const;
+
+    /**
+     * @brief Checks if any boundary condition is periodic.
+     *
+     * @return true if at least one boundary condition is periodic.
+     * @return false if there are no periodic boundary conditions.
+     */
+    bool getAnyPeriodic() const;
+
+    /**
      * @brief Gets a reference to the primary ParticleContainer.
      *
      * @return A reference to the overarching ParticleContainer.
@@ -446,6 +500,13 @@ class CellContainer {
      * @return The total size of the ParticleContainer.
      */
     size_t size() const;
+
+    /**
+     * @brief Gets the amount of active Particle objects in the ParticleContainer.
+     *
+     * @return The total number of active Particle objects.
+     */
+    size_t activeSize() const;
 
     /**
      * @brief Debug function to print the indices of all cells for a 2D container.
