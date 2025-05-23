@@ -35,9 +35,11 @@ This project uses the following external C++ libraries:
 
 If the dependencies are not already installed, they will be automatically fetched via CMake during the build process.
 
-**NOTE**: It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
+> [!TIP]
+> It is recommended to pre-install the libraries before building to speed up compilation and reduce the size of the `build` folder.
 
-¹: Xerces-C++ is REQUIRED to be installed beforehand.
+> [!IMPORTANT]
+> ¹: Xerces-C++ is REQUIRED to be installed beforehand.
 
 ## Getting Started
 
@@ -139,7 +141,8 @@ Currently, the following options are supported:
 
 The generated output for use with programs such as [ParaView](https://www.paraview.org/) will be located in the respective `vtk` or `xyz` subdirectory from which the program executable was called (i.e. if the program was called from `build/src` with VTK output, the output will be in `build/src/vtk`)
 
-**NOTE**: Logging must be configured at compile time. To change the log level, you must recompile the program [accordingly](#build-instructions-automatic).
+> [!NOTE]
+> Logging must be configured at compile time. To change the log level, you must recompile the program [accordingly](#build-instructions-automatic).
 
 ### Test Instructions
 
@@ -149,9 +152,11 @@ The test executable will be located in the `build/tests` directory. From there, 
 
 Benchmarking is **disabled** by default and must be enabled manually using CMake. When enabled, benchmarking is done automatically when running a simulation in the main executable.
 
-**IMPORTANT**: The log level **must** be at least `INFO`, and you **must** compile a `Release` build. Otherwise, compilation and / or execution will fail.
+> [!IMPORTANT]
+> The log level **must** be at least `INFO`, and you **must** compile a `Release` build. Otherwise, compilation and / or execution will fail.
 
-**NOTE**: You may need to disable CPU scaling when benchmarking for more accurate results. You can do this using `cpupower`.
+> [!NOTE]
+> You may need to disable CPU scaling when benchmarking for more accurate results. You can do this using `cpupower`.
 
 ```bash
 sudo cpupower frequency-set --governor performance # disable CPU scaling
